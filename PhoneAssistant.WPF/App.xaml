@@ -1,9 +1,15 @@
 ﻿<Application x:Class="PhoneAssistant.WPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:PhoneAssistant.WPF"
+             xmlns:views="clr-namespace:PhoneAssistant.WPF.Views"
+             xmlns:viewmodels="clr-namespace:PhoneAssistant.WPF.ViewModels"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <DataTemplate DataType="{x:Type viewmodels:PhoneMainViewModel}">
+            <views:PhoneMainView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:SimMainViewModel}">
+            <views:SimMainView/>
+        </DataTemplate>
     </Application.Resources>
 </Application>

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using PhoneAssistant.WPF.ViewModels;
+using System.Windows;
 
 namespace PhoneAssistant.WPF;
 /// <summary>
@@ -9,5 +10,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
+        DataContext = new MainViewModel();
     }
 }

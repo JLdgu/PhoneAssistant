@@ -6,6 +6,16 @@
         mc:Ignorable="d"
         Title="Phone Assistant" Height="450" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
 
-    </Grid>
+        <ContentControl Content="{Binding SelectedViewModel}"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Margin="10" Width="200" Content="Phone" Command="{Binding UpdateViewCommand}" CommandParameter="Phone"/>
+            <Button Margin="10" Width="200" Content="SIM" Command="{Binding UpdateViewCommand}" CommandParameter="SIM"/>
+        </StackPanel>
+    </Grid>    
 </Window>

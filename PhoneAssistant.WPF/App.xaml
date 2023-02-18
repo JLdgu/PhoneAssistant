@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:views="clr-namespace:PhoneAssistant.WPF.Views"
              xmlns:viewmodels="clr-namespace:PhoneAssistant.WPF.ViewModels"
-             StartupUri="MainWindow.xaml">
+             Startup="OnStartup"
+             Exit="OnExit"
+             DispatcherUnhandledException="OnDispatcherUnhandledException">
     <Application.Resources>
         <DataTemplate DataType="{x:Type viewmodels:PhoneMainViewModel}">
             <views:PhoneMainView/>

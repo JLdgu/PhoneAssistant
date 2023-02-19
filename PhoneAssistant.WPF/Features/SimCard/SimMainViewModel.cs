@@ -1,12 +1,12 @@
-﻿using PhoneAssistant.WPF.ViewModels;
+﻿using PhoneAssistant.WPF.Shared;
 using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.Features.SimCard;
 
 internal sealed partial class SimMainViewModel : IViewModel
 {
-    public Task LoadAsync()
+    public async Task LoadAsync()
     {
-        throw new System.NotImplementedException();
+        await Task.CompletedTask;
     }
 }

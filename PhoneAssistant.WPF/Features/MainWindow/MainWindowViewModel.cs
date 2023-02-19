@@ -3,10 +3,19 @@ using CommunityToolkit.Mvvm.Input;
 using PhoneAssistant.WPF.Features.Phone;
 using PhoneAssistant.WPF.Features.SimCard;
 using PhoneAssistant.WPF.Models;
-using PhoneAssistant.WPF.ViewModels;
+using PhoneAssistant.WPF.Shared;
 using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.Features.MainWindow;
+
+public enum ViewType
+{
+    Dashboard,
+    Phone,
+    SimCard,
+    ServiceRequest,
+    Settings
+}
 
 public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
 {
@@ -38,8 +47,4 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
     {
         await SelectedViewModel!.LoadAsync();
     }
-
-    //public MainViewModel()
-    //{
-    //}
 }

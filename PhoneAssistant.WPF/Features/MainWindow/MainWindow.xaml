@@ -17,16 +17,64 @@
         Height="1000" MinHeight="400"
         Width="1800" MinWidth="600">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="auto"/>
-        </Grid.RowDefinitions>
-
-        <ContentControl Content="{Binding SelectedViewModel}"/>
-
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Margin="10" Width="200" Content="Phone" Command="{Binding UpdateViewCommand}" CommandParameter="Phone"/>
-            <Button Margin="10" Width="200" Content="SIM" Command="{Binding UpdateViewCommand}" CommandParameter="SIM"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <StackPanel Grid.Column="1" Orientation="Vertical">
+            <!--<RadioButton Visibility="Hidden" d:Visibility="Visible"
+                         Style="{StaticResource MaterialDesignTabRadioButton}"
+                         Command="{Binding UpdateViewCommand}" CommandParameter="Dashboard">
+                <StackPanel>
+                    <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" 
+                                         Kind="ViewDashboardOutline" />
+                    <TextBlock Margin="0,4,0,0" Text="Dashboard" />
+                </StackPanel>
+            </RadioButton>-->
+            <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
+                         Command="{Binding UpdateViewCommand}" CommandParameter="Phone">
+                <StackPanel>
+                    <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" 
+                                         Kind="CellphoneScreenshot" />
+                    <TextBlock Margin="0,4,0,0" Text="Phones" />
+                </StackPanel>
+            </RadioButton>
+            <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
+                         Command="{Binding UpdateViewCommand}" CommandParameter="SIM">
+                <StackPanel>
+                    <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" 
+                                         Kind="SimOutline" />
+                    <TextBlock Margin="0,4,0,0" Text="SIM Cards" />
+                </StackPanel>
+            </RadioButton>
+            <RadioButton Visibility="Hidden" d:Visibility="Visible"
+                         Style="{StaticResource MaterialDesignTabRadioButton}"
+                         Command="{Binding UpdateViewCommand}" CommandParameter="ServiceRequest">
+                <StackPanel>
+                    <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" 
+                                         Kind="RoomServiceOutline" />
+                    <TextBlock Margin="0,4,0,0" Text="Service Requests" />
+                </StackPanel>
+            </RadioButton>
+            <RadioButton Visibility="Hidden" d:Visibility="Visible"
+                         Style="{StaticResource MaterialDesignTabRadioButton}"
+                         Command="{Binding UpdateViewCommand}" CommandParameter="Settings">
+                <StackPanel>
+                    <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" 
+                                         Kind="CogOutline" />
+                    <TextBlock Margin="0,4,0,0" Text="Settings" />
+                </StackPanel>
+            </RadioButton>
         </StackPanel>
+
+            <!--
+            <materialDesign:PackIcon Kind="CogOutline" />
+            -->
+            <!--<Button Margin="10" Width="100" Content="Phone" Command="{Binding UpdateViewCommand}" CommandParameter="Phone"/>
+            <Button Margin="10" Width="100" Content="SIM" Command="{Binding UpdateViewCommand}" CommandParameter="SIM"/>-->
+
+        <ContentControl Grid.Column="2" Content="{Binding SelectedViewModel}"/>
     </Grid>    
 </Window>

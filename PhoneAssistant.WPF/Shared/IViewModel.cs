@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace PhoneAssistant.WPF.ViewModels;
+namespace PhoneAssistant.WPF.Shared;
 
 /// <summary>
 /// Use Interface rather than class as CommunityToolkit.MVVM objects

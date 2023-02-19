@@ -1,7 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace PhoneAssistant.WPF.Views;
-
+namespace PhoneAssistant.WPF.Features.Phone;
 /// <summary>
 /// Interaction logic for PhoneMainView.xaml
 /// </summary>

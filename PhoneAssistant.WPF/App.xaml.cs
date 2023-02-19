@@ -1,11 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PhoneAssistant.WPF.Models;
 using PhoneAssistant.WPF.ViewModels;
-using System.Configuration;
-using System.Reflection;
 using System.Windows;
-using System.Windows.Navigation;
 using System.Windows.Threading;
 
 namespace PhoneAssistant.WPF;
@@ -65,23 +63,18 @@ public partial class App : Application
 
         // Windows
         services.AddSingleton<MainWindow>();
-
+        services.AddTransient<PhoneRepository>();
         // Views and ViewModels
         //services.AddTransient<IShellWindow, ShellWindow>();
         //services.AddTransient<ShellViewModel>();
 
-        //services.AddTransient<MainViewModel>();
+        services.AddTransient<MainViewModel>();
+        services.AddScoped<MainWindow>(s => new MainWindow(s.GetRequiredService<MainViewModel>()));
         //services.AddTransient<MainPage>();
 
         //services.AddTransient<BlankViewModel>();
         //services.AddTransient<BlankPage>();
-
-        //services.AddTransient<ListDetailsViewModel>();
-        //services.AddTransient<ListDetailsPage>();
-
-        //services.AddTransient<DataGridViewModel>();
-        //services.AddTransient<DataGridPage>();
-
+       
         //services.AddTransient<SettingsViewModel>();
         //services.AddTransient<SettingsPage>();
 

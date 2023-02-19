@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="PhoneAssistant.WPF.Features.Phone.PhoneMainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.Phone"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=viewmodel:PhoneMainViewModel}"
+             d:DesignHeight="200" d:DesignWidth="1000">
+    <UserControl.Resources>        
+        <DataTemplate x:Key="PhoneListItemDataTemplate">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding IMEI, ValidatesOnNotifyDataErrors=False}"/>
+                <Label Content="Former User"/>
+                <TextBlock Text="{Binding FormerUser}" Margin="5 0 0 0"/>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" FontSize="36" HorizontalAlignment="Center" Content="Phone View"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Label Content="IMEI"/>
+            <ListView Margin="10 0 10 10" d:Height="40"                  
+                  ItemsSource="{Binding Phones}"
+                  ItemTemplate="{StaticResource PhoneListItemDataTemplate}"/>
+                  <!--SelectedItem="{Binding SelectedCustomer, Mode=TwoWay}"-->
+            <Label Content="IMEI"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

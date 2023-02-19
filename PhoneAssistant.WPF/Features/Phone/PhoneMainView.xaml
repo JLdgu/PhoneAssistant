@@ -24,11 +24,11 @@
         <Label Grid.Row="0" FontSize="36" HorizontalAlignment="Center" Content="Phone View"/>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <Label Content="IMEI"/>
-            <ListView Margin="10 0 10 10" d:Height="40"                  
-                  ItemsSource="{Binding Phones}"
-                  ItemTemplate="{StaticResource PhoneListItemDataTemplate}"/>
-                  <!--SelectedItem="{Binding SelectedCustomer, Mode=TwoWay}"-->
-            <Label Content="IMEI"/>
+            <ListView Margin="10 0 10 10" d:Height="40" 
+                      SelectionMode="Single"
+                      ItemsSource="{Binding Phones}"
+                      ItemTemplate="{StaticResource PhoneListItemDataTemplate}"/>
+                        <!--SelectedItem="{Binding SelectedCustomer, Mode=TwoWay}"-->            
         </StackPanel>
     </Grid>
 </UserControl>

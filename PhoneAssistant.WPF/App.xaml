@@ -1,17 +1,27 @@
 ﻿<Application x:Class="PhoneAssistant.WPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:phone="clr-namespace:PhoneAssistant.WPF.Features.Phone"
              xmlns:simcard="clr-namespace:PhoneAssistant.WPF.Features.SimCard"
              Startup="OnStartup"
              Exit="OnExit"
              DispatcherUnhandledException="OnDispatcherUnhandledException">
     <Application.Resources>
-        <DataTemplate DataType="{x:Type phone:PhoneMainViewModel}">
-            <phone:PhoneMainView/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type simcard:SimMainViewModel}">
-            <simcard:SimCardMainView/>
-        </DataTemplate>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme BaseTheme="Inherit"
+                                     ColorAdjustment="{materialDesign:ColorAdjustment}"
+                                     PrimaryColor="Cyan"
+                                     SecondaryColor="Teal" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <DataTemplate DataType="{x:Type phone:PhoneMainViewModel}">
+                <phone:PhoneMainView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type simcard:SimMainViewModel}">
+                <simcard:SimCardMainView/>
+            </DataTemplate>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

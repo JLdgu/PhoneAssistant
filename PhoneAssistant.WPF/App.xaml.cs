@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PhoneAssistant.WPF.Features.MainWindow;
 using PhoneAssistant.WPF.Models;
-using PhoneAssistant.WPF.ViewModels;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -68,8 +68,8 @@ public partial class App : Application
         //services.AddTransient<IShellWindow, ShellWindow>();
         //services.AddTransient<ShellViewModel>();
 
-        services.AddTransient<MainViewModel>();
-        services.AddScoped<MainWindow>(s => new MainWindow(s.GetRequiredService<MainViewModel>()));
+        services.AddTransient<MainWindowViewModel>();
+        services.AddScoped<MainWindow>(s => new MainWindow(s.GetRequiredService<MainWindowViewModel>()));
         //services.AddTransient<MainPage>();
 
         //services.AddTransient<BlankViewModel>();

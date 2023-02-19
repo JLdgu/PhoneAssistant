@@ -3,15 +3,16 @@ using CommunityToolkit.Mvvm.Input;
 using PhoneAssistant.WPF.Features.Phone;
 using PhoneAssistant.WPF.Features.SimCard;
 using PhoneAssistant.WPF.Models;
+using PhoneAssistant.WPF.ViewModels;
 using System.Threading.Tasks;
 
-namespace PhoneAssistant.WPF.ViewModels;
+namespace PhoneAssistant.WPF.Features.MainWindow;
 
-public sealed partial class MainViewModel : ObservableObject, IViewModel
+public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
 {
     private readonly PhoneRepository _phoneRepository;
 
-    public MainViewModel(PhoneRepository phoneRepository)
+    public MainWindowViewModel(PhoneRepository phoneRepository)
     {
         _phoneRepository = phoneRepository;
     }
@@ -24,7 +25,7 @@ public sealed partial class MainViewModel : ObservableObject, IViewModel
     {
         if (selectedViewModel == "Phone")
         {
-            SelectedViewModel = new PhoneMainViewModel(_phoneRepository);            
+            SelectedViewModel = new PhoneMainViewModel(_phoneRepository);
         }
         else if (selectedViewModel.ToString() == "SIM")
         {
@@ -35,7 +36,7 @@ public sealed partial class MainViewModel : ObservableObject, IViewModel
 
     public async Task LoadAsync()
     {
-        await SelectedViewModel!.LoadAsync();        
+        await SelectedViewModel!.LoadAsync();
     }
 
     //public MainViewModel()

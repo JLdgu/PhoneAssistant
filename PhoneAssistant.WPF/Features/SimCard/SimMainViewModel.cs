@@ -1,5 +1,4 @@
 ﻿using PhoneAssistant.WPF.ViewModels;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.Features.SimCard;

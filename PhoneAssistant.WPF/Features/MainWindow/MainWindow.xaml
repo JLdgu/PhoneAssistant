@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.ViewModels"
+        xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.MainWindow"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
@@ -11,7 +11,8 @@
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance Type=viewmodel:MainViewModel}"
+        d:DataContext="{d:DesignInstance Type=viewmodel:MainWindowViewModel}"
+        WindowStartupLocation="CenterScreen"
         Title="Phone Assistant" 
         Height="1000" MinHeight="400"
         Width="1800" MinWidth="600">

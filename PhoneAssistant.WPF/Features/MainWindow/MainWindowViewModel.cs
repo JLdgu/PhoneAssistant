@@ -4,6 +4,7 @@ using PhoneAssistant.WPF.Features.Phone;
 using PhoneAssistant.WPF.Features.SimCard;
 using PhoneAssistant.WPF.Models;
 using PhoneAssistant.WPF.Shared;
+using System;
 using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.Features.MainWindow;
@@ -30,13 +31,18 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
     private IViewModel? _selectedViewModel;
 
     [RelayCommand]
-    private async Task UpdateViewAsync(string selectedViewModel)
+    private async Task UpdateViewAsync(object selectedViewModel)
     {
-        if (selectedViewModel == "Phone")
+        if (selectedViewModel is null) return;
+
+        if (selectedViewModel.GetType() != typeof(ViewType))  return;
+        var viewType = (ViewType) selectedViewModel;
+
+        if (viewType == ViewType.Phone)
         {
             SelectedViewModel = new PhoneMainViewModel(_phoneRepository);
         }
-        else if (selectedViewModel.ToString() == "SIM")
+        else if (viewType == ViewType.SimCard)
         {
             SelectedViewModel = new SimMainViewModel();
         }

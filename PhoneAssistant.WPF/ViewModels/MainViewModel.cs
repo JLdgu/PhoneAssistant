@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.ViewModels;
 
-public sealed partial class MainViewModel : ObservableObject, IMainViewModel
+public sealed partial class MainViewModel : ObservableObject, IViewModel
 {
     private readonly PhoneRepository _phoneRepository;
 
@@ -17,7 +17,7 @@ public sealed partial class MainViewModel : ObservableObject, IMainViewModel
     }
 
     [ObservableProperty]
-    private IMainViewModel? _selectedViewModel;
+    private IViewModel? _selectedViewModel;
 
     [RelayCommand]
     private async Task UpdateViewAsync(string selectedViewModel)

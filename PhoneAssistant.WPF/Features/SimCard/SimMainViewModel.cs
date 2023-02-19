@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.Features.SimCard;
 
-internal sealed partial class SimMainViewModel : IMainViewModel
+internal sealed partial class SimMainViewModel : IViewModel
 {
     public Task LoadAsync()
     {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.Features.Phone;
 
-internal sealed partial class PhoneMainViewModel : ObservableObject, IMainViewModel
+internal sealed partial class PhoneMainViewModel : ObservableObject, IViewModel
 {
     private readonly PhoneRepository _phoneRepository;
 

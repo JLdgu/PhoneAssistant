@@ -8,5 +8,9 @@ namespace PhoneAssistant.WPF.Shared;
 /// </summary>
 public interface IViewModel
 {
+    //public abstract string ViewPackIcon { get; }
+
+    //public abstract string ViewName { get; }
+
     public abstract Task LoadAsync();
 }

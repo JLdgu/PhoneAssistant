@@ -30,6 +30,10 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
     [ObservableProperty]
     private IViewModel? _selectedViewModel;
 
+    public string ViewPackIcon => throw new NotImplementedException();
+
+    public string ViewName => throw new NotImplementedException();
+
     [RelayCommand]
     private async Task UpdateViewAsync(object selectedViewModel)
     {

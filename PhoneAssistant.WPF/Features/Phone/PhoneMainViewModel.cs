@@ -19,6 +19,10 @@ internal sealed partial class PhoneMainViewModel : ObservableObject, IViewModel
 
     public ObservableCollection<Models.Phone> Phones { get; } = new();
 
+    //public string ViewPackIcon => "CellphoneScreenshot";
+
+    //public string ViewName => "Phones";
+
     public async Task LoadAsync()
     {
         if (Phones.Any()) 

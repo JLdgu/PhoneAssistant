@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.Phone"
+             xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.Phone" 
+             xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance Type=viewmodel:PhoneMainViewModel}"
              d:DesignHeight="200" d:DesignWidth="1000">
@@ -21,14 +22,18 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" FontSize="36" HorizontalAlignment="Center" Content="Phone View"/>
+        <!--<Label Grid.Row="0" FontSize="36" HorizontalAlignment="Center" Content="Phone View"/>-->
+        <shared:MainViewHeader HeaderText="Phones" 
+                               HeaderIcon="CellphoneScreenshot"/>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <Label Content="IMEI"/>
             <ListView Margin="10 0 10 10" d:Height="40" 
                       SelectionMode="Single"
                       ItemsSource="{Binding Phones}"
-                      ItemTemplate="{StaticResource PhoneListItemDataTemplate}"/>
-                        <!--SelectedItem="{Binding SelectedCustomer, Mode=TwoWay}"-->            
+                      ItemTemplate="{StaticResource PhoneListItemDataTemplate}">
+                <!--SelectedItem="{Binding SelectedCustomer, Mode=TwoWay}"-->
+                
+            </ListView>
         </StackPanel>
     </Grid>
 </UserControl>

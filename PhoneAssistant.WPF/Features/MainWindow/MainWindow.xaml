@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.MainWindow"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+        xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{materialDesign:MaterialDesignFont}"
@@ -70,12 +71,9 @@
             </RadioButton>
         </StackPanel>
 
-            <!--
-            <materialDesign:PackIcon Kind="CogOutline" />
-            -->
-            <!--<Button Margin="10" Width="100" Content="Phone" Command="{Binding UpdateViewCommand}" CommandParameter="Phone"/>
-            <Button Margin="10" Width="100" Content="SIM" Command="{Binding UpdateViewCommand}" CommandParameter="SIM"/>-->
+        <StackPanel Grid.Column="2" Orientation="Vertical">
+            <ContentControl  Content="{Binding SelectedViewModel}"/>
+        </StackPanel>           
 
-        <ContentControl Grid.Column="2" Content="{Binding SelectedViewModel}"/>
     </Grid>    
 </Window>

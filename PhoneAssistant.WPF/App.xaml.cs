@@ -1,8 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PhoneAssistant.WPF.Features.Application;
 using PhoneAssistant.WPF.Features.MainWindow;
 using PhoneAssistant.WPF.Models;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -16,28 +19,27 @@ public partial class App : Application
 
     public App()
     {
-        
+        // For more information about .NET generic host see  https://docs.microsoft.com/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-3.0
+        _host = Host.CreateDefaultBuilder()
+            .ConfigureAppConfiguration(ch => { })
+            .ConfigureServices(ConfigureServices)
+            .Build();        
     }
 
-    private async void OnStartup(object sender, StartupEventArgs e)
+    protected override void OnStartup(StartupEventArgs e)
     {
-        //var appLocation = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+        _host.Start();
 
-        // For more information about .NET generic host see  https://docs.microsoft.com/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-3.0
-        
-        _host = Host.CreateDefaultBuilder(e.Args)
-                .ConfigureAppConfiguration(c =>
-                {
-                    //c.SetBasePath(appLocation);
-                })
-                .ConfigureServices(ConfigureServices)
-                .Build();
+        PhoneAssistantDbContext dbContext = _host.Services.GetRequiredService<PhoneAssistantDbContext>();
 
-        
-        await _host.StartAsync();
+        //dbContext.Database.EnsureDeleted();
+        dbContext.Database.EnsureCreated();
+        //dbContext.Database.Migrate();
 
         MainWindow = _host.Services.GetRequiredService<MainWindow>();
         MainWindow.Show();
+
+        base.OnStartup(e);
     }
 
     private void ConfigureServices(HostBuilderContext context, IServiceCollection services)
@@ -51,7 +53,8 @@ public partial class App : Application
 
         // Core Services
         //services.AddSingleton<IFileService, FileService>();
-
+        services.AddDbContext<PhoneAssistantDbContext>(
+                        options => options.UseSqlite(connectionString));  //,ServiceLifetime.Singleton);
         // Services
         //services.AddSingleton<IApplicationInfoService, ApplicationInfoService>();
         //services.AddSingleton<ISystemService, SystemService>();
@@ -64,6 +67,9 @@ public partial class App : Application
         // Windows
         services.AddSingleton<MainWindow>();
         services.AddTransient<PhoneRepository>();
+        services.AddTransient<SimRepository>();
+        services.AddTransient<StateRepository>();
+
         // Views and ViewModels
         //services.AddTransient<IShellWindow, ShellWindow>();
         //services.AddTransient<ShellViewModel>();
@@ -82,11 +88,11 @@ public partial class App : Application
         //services.Configure<AppConfig>(context.Configuration.GetSection(nameof(AppConfig)));
     }
 
-    private async void OnExit(object sender, ExitEventArgs e)
-    {
-        await _host.StopAsync();
-        _host.Dispose();
-        _host = null;
+    protected override void OnExit(ExitEventArgs e)
+    {        
+        _host.Dispose();       
+        
+        base.OnExit(e);
     }
 
     private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

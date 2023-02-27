@@ -1,15 +1,52 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using PhoneAssistant.WPF.Features.Application;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.Models;
 
 public sealed class PhoneRepository
 {
+    private readonly PhoneAssistantDbContext _dbContext;
+
+    public PhoneRepository(PhoneAssistantDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
     public async Task<IEnumerable<Phone>> AllAsync()
     {
-        await Task.CompletedTask;
-        return AllPhones();
-    }    
+        List<MobilePhone> MobilePhones = await _dbContext.MobilePhones.ToListAsync();
+        List<Phone> phones = new List<Phone>();
+        foreach (MobilePhone mobile in MobilePhones)
+        {
+            phones.Add(new Phone 
+            { 
+                Id = mobile.Id, 
+                IMEI = mobile.IMEI,
+                FormerUser = mobile.FormerUser,
+                Wiped = mobile.Wiped,
+                Status = mobile.Status,
+                OEM = mobile.OEM
+            });
+        }
+        return phones;
+    }
+
+    public void SaveChanges(Phone changedPhone)
+    {
+        MobilePhone mobile = new MobilePhone
+        {
+            Id = changedPhone.Id,
+            IMEI = changedPhone.IMEI,
+            FormerUser = changedPhone.FormerUser,
+            Wiped = changedPhone.Wiped,
+            Status = changedPhone.Status,
+            OEM = changedPhone.OEM
+        };
+        //_dbContext.MobilePhones.Update(mobile);
+        //_dbContext.SaveChanges();
+    }
 
     public static IEnumerable<Phone> AllPhones()
     {

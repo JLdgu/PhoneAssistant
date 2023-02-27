@@ -6,10 +6,39 @@
              xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.SimCard" 
              xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance Type=viewmodel:SimMainViewModel}"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DataContext="{d:DesignInstance Type=viewmodel:SimCardMainViewModel}"
+             d:DesignHeight="250" d:DesignWidth="800">
+    <UserControl.Resources>
+        <DataTemplate x:Key="SimCardItemTemplate">
+            <StackPanel Orientation="Horizontal" d:Background="LightCoral">
+                <TextBlock Text="{Binding SelectedSimCard.PhoneNumber}"/>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
     <Grid>
-        <shared:MainViewHeader HeaderText="Binding ViewName" 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            
+        </Grid.RowDefinitions>
+        <shared:MainViewHeader HeaderText="SIM Cards" 
                                HeaderIcon="SimOutline"/>
+
+        <ListView Grid.Row="2" Margin="0" d:Height="40"
+                  SelectionMode="Single"
+                  ItemsSource="{Binding Sims}"
+                  SelectedItem="{Binding SelectedSimCard}">
+            <ListView.View>
+                <GridView AllowsColumnReorder="False">
+                    
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=PhoneNumber}" Header="Phone Number" Width="auto"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=SimNumber}" Header="SIM Card NUmber" Width="auto"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Status}" Header="Status" Width="auto"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Note}" Header="Note" Width="300"/>                    
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </UserControl>

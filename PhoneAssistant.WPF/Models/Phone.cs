@@ -1,4 +1,5 @@
 ﻿namespace PhoneAssistant.WPF.Models;
+
 public sealed class Phone
 {
     public int Id { get; init; }
@@ -15,9 +16,9 @@ public sealed class Phone
 
     public string? AssetTag { get; init; }
 
-    public string? Note { get; init; }
-
     public string? NewUser { get; init; }
 
     public string? DespatchDetails { get; init; }
+
+    public string? Note { get; init; }
 }

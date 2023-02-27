@@ -20,11 +20,10 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
-        <StackPanel Grid.Column="1" Orientation="Vertical">
+        <StackPanel Grid.Column="0" Orientation="Vertical">
             <!--<RadioButton Visibility="Hidden" d:Visibility="Visible"
                          Style="{StaticResource MaterialDesignTabRadioButton}"
                          Command="{Binding UpdateViewCommand}" CommandParameter="{x:Static viewmodel:ViewType.Dashboard}">
@@ -51,8 +50,7 @@
                     <TextBlock Margin="0,4,0,0" Text="SIM Cards" />
                 </StackPanel>
             </RadioButton>
-            <RadioButton Visibility="Hidden" d:Visibility="Visible"
-                         Style="{StaticResource MaterialDesignTabRadioButton}"
+            <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
                          Command="{Binding UpdateViewCommand}" CommandParameter="{x:Static viewmodel:ViewType.ServiceRequest}">
                 <StackPanel>
                     <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" 
@@ -71,9 +69,8 @@
             </RadioButton>
         </StackPanel>
 
-        <StackPanel Grid.Column="2" Orientation="Vertical">
+        <StackPanel Grid.Column="1" Orientation="Vertical" d:Background="Aquamarine">
             <ContentControl  Content="{Binding SelectedViewModel}"/>
         </StackPanel>           
-
     </Grid>    
 </Window>

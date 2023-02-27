@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="PhoneAssistant.WPF.Features.SmartPhone.SmartPhoneMainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.SmartPhone" 
+             xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared" 
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=viewmodel:SmartPhoneMainViewModel}"             
+             d:DesignHeight="200" d:DesignWidth="1000">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>        
+        <shared:MainViewHeader HeaderText="Phones" 
+                               HeaderIcon="CellphoneScreenshot"/>
+
+        <DataGrid Grid.Row="2" Name="dataGrid1" AutoGenerateColumns="False" CanUserSortColumns="True"
+                  AlternatingRowBackground="{DynamicResource PrimaryHueLightBrush}"
+                  ItemsSource="{Binding Phones}"
+                  SelectedItem="{Binding SelectedPhone}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="IMEI" Binding="{Binding IMEI}" />
+                <DataGridTextColumn Header="Former User" Binding="{Binding FormerUser}"/>
+                <DataGridCheckBoxColumn Header="Wiped" Binding="{Binding Wiped}"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}"/>
+                <DataGridTextColumn Header="OEM" Binding="{Binding OEM}"/>
+                <DataGridTextColumn Header="Asset Tag" Binding="{Binding AssetTag}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

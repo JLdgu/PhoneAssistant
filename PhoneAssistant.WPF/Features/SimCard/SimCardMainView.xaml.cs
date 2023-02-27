@@ -10,4 +10,9 @@ public partial class SimCardMainView : UserControl
     {
         InitializeComponent();
     }
+
+    private void SimNumber_Click(object sender, System.Windows.RoutedEventArgs e)
+    {
+
+    }
 }

@@ -1,12 +1,12 @@
 ﻿using System.Windows.Controls;
 
-namespace PhoneAssistant.WPF.Features.Phone;
+namespace PhoneAssistant.WPF.Features.SmartPhone;
 /// <summary>
 /// Interaction logic for PhoneMainView.xaml
 /// </summary>
-public partial class PhoneMainView : UserControl
+public partial class SmartPhoneMainView : UserControl
 {
-    public PhoneMainView()
+    public SmartPhoneMainView()
     {
         InitializeComponent();
     }

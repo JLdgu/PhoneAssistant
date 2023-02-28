@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Models;
 
 namespace PhoneAssistant.WPF.Features.Application;
@@ -9,6 +10,8 @@ public sealed class PhoneAssistantDbContext : DbContext
     //public DbSet<LinkDTO> Links { get; set; }
     public DbSet<MobilePhone> MobilePhones { get; set; }
     //public DbSet<SimCardDTO> SimCards { get; set; }
+
+    public DbSet<Setting> Setting { get; set; }
 
     public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
 
@@ -54,6 +57,8 @@ public sealed class PhoneAssistantDbContext : DbContext
         //    .HasIndex(sc => sc.SimNumber).IsUnique();
         //modelBuilder.Entity<SmartCard>()
         //    .HasIndex(sc => sc.PhoneNumber).IsUnique();
+
+        modelBuilder.Entity<Setting>().HasData(new Setting { Id = 1, MinimumVersion = "0.0.0.1" });
 
         base.OnModelCreating(modelBuilder);
     }

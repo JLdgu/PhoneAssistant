@@ -14,7 +14,8 @@ internal sealed partial class SmartPhoneMainViewModel : ObservableObject, IViewM
     private readonly PhoneRepository _phoneRepository;
     private readonly StateRepository _stateRepository;
 
-    public SmartPhoneMainViewModel(PhoneRepository phoneRepository, StateRepository stateRepository)
+    public SmartPhoneMainViewModel(PhoneRepository phoneRepository, 
+                                   StateRepository stateRepository)
     {
         _phoneRepository = phoneRepository;
         _stateRepository = stateRepository;

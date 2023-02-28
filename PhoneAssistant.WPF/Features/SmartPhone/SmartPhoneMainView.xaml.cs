@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using PhoneAssistant.WPF.Application.Entities;
+using PhoneAssistant.WPF.Models;
+using System.Windows.Controls;
 
 namespace PhoneAssistant.WPF.Features.SmartPhone;
 /// <summary>

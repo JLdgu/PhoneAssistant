@@ -8,6 +8,9 @@ using System;
 using System.Threading.Tasks;
 using PhoneAssistant.WPF.Features.ServiceRequest;
 using PhoneAssistant.WPF.Features.Settings;
+using PhoneAssistant.WPF.Application.Entities;
+using PhoneAssistant.WPF.Application;
+using System.Windows;
 
 namespace PhoneAssistant.WPF.Features.MainWindow;
 
@@ -22,20 +25,26 @@ public enum ViewType
 
 public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
 {
+    private readonly AppRepository _appRepository;
     private readonly PhoneRepository _phoneRepository;
     private readonly SimRepository _simCardRepository;
+    private readonly ISettingRepository _settingRepository;
     private readonly StateRepository _stateRepository;
 
 
     [ObservableProperty]
-    private IViewModel? _selectedViewModel;
+    private IViewModel? _selectedViewModel;     
 
-    public MainWindowViewModel(PhoneRepository phoneRepository, 
+    public MainWindowViewModel(AppRepository appRepository, 
+                               PhoneRepository phoneRepository, 
                                SimRepository simCardRepository, 
+                               ISettingRepository settingRepository, 
                                StateRepository stateRepository)
     {
+        _appRepository = appRepository;
         _phoneRepository = phoneRepository;
         _simCardRepository = simCardRepository;
+        _settingRepository = settingRepository;
         _stateRepository = stateRepository;
     }
 
@@ -65,7 +74,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
                 SelectedViewModel = new ServiceRequestMainViewModel();
                 break;
             case ViewType.Settings:
-                SelectedViewModel = new SettingsMainViewModel();
+                SelectedViewModel = new SettingsMainViewModel(_appRepository);
                 break;
             default: throw new NotImplementedException();
         }

@@ -2,8 +2,11 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PhoneAssistant.WPF.Application;
+using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Application;
 using PhoneAssistant.WPF.Features.MainWindow;
+using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Models;
 using System;
 using System.Diagnostics;
@@ -15,7 +18,7 @@ namespace PhoneAssistant.WPF;
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
-public partial class App : Application
+public partial class App : System.Windows.Application
 {
     private IHost _host;
 
@@ -38,6 +41,16 @@ public partial class App : Application
         dbContext.Database.EnsureCreated();
         //dbContext.Database.Migrate();
 
+        var _appRepository = _host.Services.GetRequiredService<AppRepository>();
+        bool InvalidVersion = _appRepository.InvalidVersionAsync().Result;
+        if (InvalidVersion)
+        {
+            MessageBox.Show("Invalid version, please update to the latest version","Phone Assistant",
+                MessageBoxButton.OK, MessageBoxImage.Stop);
+            Current.Shutdown();
+            return;
+        }  
+
         MainWindow = _host.Services.GetRequiredService<MainWindow>();
         MainWindow.Show();
 
@@ -48,46 +61,18 @@ public partial class App : Application
     {
         string? connectionString = context.Configuration.GetConnectionString("Default");
 
-        // App Host
-        //services.AddHostedService<ApplicationHostService>();
+        services.AddSingleton<AppRepository>();
 
-        // Activation Handlers
-
-        // Core Services
-        //services.AddSingleton<IFileService, FileService>();
-        services.AddDbContext<PhoneAssistantDbContext>(
-                        options => options.UseSqlite(connectionString));  //,ServiceLifetime.Singleton);
-        // Services
-        //services.AddSingleton<IApplicationInfoService, ApplicationInfoService>();
-        //services.AddSingleton<ISystemService, SystemService>();
-        //services.AddSingleton<IPersistAndRestoreService, PersistAndRestoreService>();
-        //services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
-        //services.AddSingleton<ISampleDataService, SampleDataService>();
-        //services.AddSingleton<IPageService, PageService>();
-        //services.AddSingleton<INavigationService, NavigationService>();
-
-        // Windows
-        services.AddSingleton<MainWindow>();
         services.AddTransient<PhoneRepository>();
         services.AddTransient<SimRepository>();
+        services.AddTransient<ISettingRepository, SettingRepository>();
         services.AddTransient<StateRepository>();
 
-        // Views and ViewModels
-        //services.AddTransient<IShellWindow, ShellWindow>();
-        //services.AddTransient<ShellViewModel>();
+        services.AddDbContext<PhoneAssistantDbContext>(
+                        options => options.UseSqlite(connectionString));  //,ServiceLifetime.Singleton);
 
         services.AddTransient<MainWindowViewModel>();
-        services.AddScoped<MainWindow>(s => new MainWindow(s.GetRequiredService<MainWindowViewModel>()));
-        //services.AddTransient<MainPage>();
-
-        //services.AddTransient<BlankViewModel>();
-        //services.AddTransient<BlankPage>();
-       
-        //services.AddTransient<SettingsViewModel>();
-        //services.AddTransient<SettingsPage>();
-
-        //// Configuration
-        //services.Configure<AppConfig>(context.Configuration.GetSection(nameof(AppConfig)));
+        services.AddScoped(s => new MainWindow(s.GetRequiredService<MainWindowViewModel>()));
     }
 
     protected override void OnExit(ExitEventArgs e)

@@ -6,7 +6,6 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\Phone.ico</ApplicationIcon>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyVersion>0.1.2.4</AssemblyVersion>
   </PropertyGroup>
 

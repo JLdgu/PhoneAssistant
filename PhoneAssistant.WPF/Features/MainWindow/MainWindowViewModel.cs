@@ -7,6 +7,7 @@ using PhoneAssistant.WPF.Shared;
 using System;
 using System.Threading.Tasks;
 using PhoneAssistant.WPF.Features.ServiceRequest;
+using PhoneAssistant.WPF.Features.Settings;
 
 namespace PhoneAssistant.WPF.Features.MainWindow;
 
@@ -52,6 +53,8 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
         var viewType = (ViewType) selectedViewModel;
         switch (viewType)
         {
+            case ViewType.Dashboard:
+                throw new NotImplementedException();
             case ViewType.Phone:
                 SelectedViewModel = new SmartPhoneMainViewModel(_phoneRepository, _stateRepository);
                 break;
@@ -61,6 +64,10 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
             case ViewType.ServiceRequest:
                 SelectedViewModel = new ServiceRequestMainViewModel();
                 break;
+            case ViewType.Settings:
+                SelectedViewModel = new SettingsMainViewModel();
+                break;
+            default: throw new NotImplementedException();
         }
         await LoadAsync();
     }

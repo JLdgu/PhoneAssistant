@@ -5,6 +5,7 @@
              xmlns:smartphone="clr-namespace:PhoneAssistant.WPF.Features.SmartPhone"
              xmlns:simcard="clr-namespace:PhoneAssistant.WPF.Features.SimCard"
              xmlns:sr="clr-namespace:PhoneAssistant.WPF.Features.ServiceRequest"
+             xmlns:settings="clr-namespace:PhoneAssistant.WPF.Features.Settings"
              DispatcherUnhandledException="OnDispatcherUnhandledException">
              <!--Startup="OnStartup"
              Exit="OnExit"-->
@@ -25,6 +26,9 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type sr:ServiceRequestMainViewModel}">
                 <sr:ServiceRequestMainView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type settings:SettingsMainViewModel}">
+                <settings:SettingsMainView/>
             </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>

@@ -5,7 +5,9 @@ using Microsoft.Extensions.Hosting;
 using PhoneAssistant.WPF.Features.Application;
 using PhoneAssistant.WPF.Features.MainWindow;
 using PhoneAssistant.WPF.Models;
-using System.Threading.Tasks;
+using System;
+using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Threading;
 

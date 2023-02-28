@@ -13,10 +13,9 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>        
+        </Grid.RowDefinitions>
         <shared:MainViewHeader HeaderText="Phones" 
                                HeaderIcon="CellphoneScreenshot"/>
-
         <DataGrid Grid.Row="2" Name="dataGrid1" AutoGenerateColumns="False" CanUserSortColumns="True"
                   AlternatingRowBackground="{DynamicResource PrimaryHueLightBrush}"
                   ItemsSource="{Binding Phones}"

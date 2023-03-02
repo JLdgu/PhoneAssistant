@@ -51,7 +51,7 @@ public sealed class PhoneAssistantDbContext : DbContext
             new MobilePhone() {Id = 5, IMEI = "353427861419768", FormerUser = "James Tisshaw", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
             new MobilePhone() {Id = 6, IMEI = "351554742085336", FormerUser = null, Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00016", Note = "Replacement"}
             };
-        //modelBuilder.Entity<MobilePhone>().HasData(testdata);
+        modelBuilder.Entity<MobilePhone>().HasData(testdata);
 
         //modelBuilder.Entity<SmartCard>()
         //    .HasIndex(sc => sc.SimNumber).IsUnique();

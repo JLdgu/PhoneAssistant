@@ -19,13 +19,13 @@ internal sealed partial class SimCardMainViewModel : ObservableObject, IViewMode
         _simCardRepository = simCardRepository;
         _stateRepository = stateRepository;
     }
-    
+
     public ObservableCollection<Sim> Sims { get; } = new();
 
     public ObservableCollection<string> States { get; } = new();
 
     [ObservableProperty]
-    private SimCardItemViewModel? _selectedSimCardViewModel;    
+    private SimCardItemViewModel? _selectedSimCardViewModel;
 
     [ObservableProperty]
     private Sim? _selectedSimCard;
@@ -33,7 +33,7 @@ internal sealed partial class SimCardMainViewModel : ObservableObject, IViewMode
     partial void OnSelectedSimCardChanged(Sim? value)
     {
         if (value is not null)
-            SelectedSimCardViewModel = new SimCardItemViewModel(value);            
+            SelectedSimCardViewModel = new SimCardItemViewModel(value);
     }
 
     public async Task LoadAsync()
@@ -64,7 +64,7 @@ internal sealed partial class SimCardMainViewModel : ObservableObject, IViewMode
             throw new ArgumentNullException(nameof(states));
         }
 
-        foreach(var state in states)
+        foreach (var state in states)
         {
             States.Add(state.Status);
         }

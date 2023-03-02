@@ -20,9 +20,9 @@ public sealed class PhoneRepository
         List<Phone> phones = new List<Phone>();
         foreach (MobilePhone mobile in MobilePhones)
         {
-            phones.Add(new Phone 
-            { 
-                Id = mobile.Id, 
+            phones.Add(new Phone
+            {
+                Id = mobile.Id,
                 IMEI = mobile.IMEI,
                 FormerUser = mobile.FormerUser,
                 Wiped = mobile.Wiped,

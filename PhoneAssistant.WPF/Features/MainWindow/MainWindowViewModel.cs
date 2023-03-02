@@ -1,16 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PhoneAssistant.WPF.Features.SmartPhone;
+using PhoneAssistant.WPF.Application;
+using PhoneAssistant.WPF.Application.Entities;
+using PhoneAssistant.WPF.Features.ServiceRequest;
+using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Features.SimCard;
+using PhoneAssistant.WPF.Features.SmartPhone;
 using PhoneAssistant.WPF.Models;
 using PhoneAssistant.WPF.Shared;
 using System;
 using System.Threading.Tasks;
-using PhoneAssistant.WPF.Features.ServiceRequest;
-using PhoneAssistant.WPF.Features.Settings;
-using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Application;
-using System.Windows;
 
 namespace PhoneAssistant.WPF.Features.MainWindow;
 
@@ -33,12 +32,12 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
 
 
     [ObservableProperty]
-    private IViewModel? _selectedViewModel;     
+    private IViewModel? _selectedViewModel;
 
-    public MainWindowViewModel(AppRepository appRepository, 
-                               PhoneRepository phoneRepository, 
-                               SimRepository simCardRepository, 
-                               ISettingRepository settingRepository, 
+    public MainWindowViewModel(AppRepository appRepository,
+                               PhoneRepository phoneRepository,
+                               SimRepository simCardRepository,
+                               ISettingRepository settingRepository,
                                StateRepository stateRepository)
     {
         _appRepository = appRepository;
@@ -57,9 +56,9 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
     {
         if (selectedViewModel is null) return;
 
-        if (selectedViewModel.GetType() != typeof(ViewType))  return;
-        
-        var viewType = (ViewType) selectedViewModel;
+        if (selectedViewModel.GetType() != typeof(ViewType)) return;
+
+        var viewType = (ViewType)selectedViewModel;
         switch (viewType)
         {
             case ViewType.Dashboard:

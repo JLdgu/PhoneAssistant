@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using PhoneAssistant.WPF.Application;
-using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Shared;
-using System;
 using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.Features.Settings;

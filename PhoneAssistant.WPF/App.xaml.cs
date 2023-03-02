@@ -6,11 +6,7 @@ using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Application;
 using PhoneAssistant.WPF.Features.MainWindow;
-using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Models;
-using System;
-using System.Diagnostics;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -28,7 +24,7 @@ public partial class App : System.Windows.Application
         _host = Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration(ch => { })
             .ConfigureServices(ConfigureServices)
-            .Build();        
+            .Build();
     }
 
     protected override void OnStartup(StartupEventArgs e)
@@ -45,11 +41,11 @@ public partial class App : System.Windows.Application
         bool InvalidVersion = _appRepository.InvalidVersionAsync().Result;
         if (InvalidVersion)
         {
-            MessageBox.Show("Invalid version, please update to the latest version","Phone Assistant",
+            MessageBox.Show("Invalid version, please update to the latest version", "Phone Assistant",
                 MessageBoxButton.OK, MessageBoxImage.Stop);
             Current.Shutdown();
             return;
-        }  
+        }
 
         MainWindow = _host.Services.GetRequiredService<MainWindow>();
         MainWindow.Show();
@@ -76,9 +72,9 @@ public partial class App : System.Windows.Application
     }
 
     protected override void OnExit(ExitEventArgs e)
-    {        
-        _host.Dispose();       
-        
+    {
+        _host.Dispose();
+
         base.OnExit(e);
     }
 

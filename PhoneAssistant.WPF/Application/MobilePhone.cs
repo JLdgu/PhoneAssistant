@@ -16,7 +16,7 @@ public class MobilePhone
 
     public string? AssetTag { get; set; }
 
-    public string? Note { get; set; } 
+    public string? Note { get; set; }
 
     // Navigation properties
     //public virtual LinkDTO? Link { get; set; }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Models;
 
 namespace PhoneAssistant.WPF.Features.Application;
 

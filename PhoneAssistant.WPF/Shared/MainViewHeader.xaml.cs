@@ -18,7 +18,7 @@ public partial class MainViewHeader : UserControl
         get { return (string)GetValue(HeaderTextProperty); }
         set { SetValue(HeaderTextProperty, value); }
     }
-    
+
     public string HeaderIcon
     {
         get { return (string)GetValue(HeaderIconProperty); }

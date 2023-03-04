@@ -4,7 +4,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:phones="clr-namespace:PhoneAssistant.WPF.Features.Phones"
              xmlns:sims="clr-namespace:PhoneAssistant.WPF.Features.Sims"
-             xmlns:sr="clr-namespace:PhoneAssistant.WPF.Features.ServiceRequest"
+             xmlns:sr="clr-namespace:PhoneAssistant.WPF.Features.ServiceRequests"
              xmlns:settings="clr-namespace:PhoneAssistant.WPF.Features.Settings"
              DispatcherUnhandledException="OnDispatcherUnhandledException">
              <!--Startup="OnStartup"
@@ -24,8 +24,8 @@
             <DataTemplate DataType="{x:Type sims:SimsMainViewModel}">
                 <sims:SimsMainView/>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type sr:ServiceRequestMainViewModel}">
-                <sr:ServiceRequestMainView/>
+            <DataTemplate DataType="{x:Type sr:ServiceRequestsMainViewModel}">
+                <sr:ServiceRequestsMainView/>
             </DataTemplate>
             <DataTemplate DataType="{x:Type settings:SettingsMainViewModel}">
                 <settings:SettingsMainView/>

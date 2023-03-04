@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PhoneAssistant.WPF.Features.Phones;
-using PhoneAssistant.WPF.Features.ServiceRequest;
+using PhoneAssistant.WPF.Features.ServiceRequests;
 using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Features.Sims;
 using PhoneAssistant.WPF.Shared;
@@ -21,7 +21,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
 {
     private readonly PhonesMainViewModel _phonesMainViewModel;
     private readonly SimsMainViewModel _simCardMainViewModel;
-    private readonly ServiceRequestMainViewModel _serviceRequestMainViewModel;
+    private readonly ServiceRequestsMainViewModel _serviceRequestMainViewModel;
     private readonly SettingsMainViewModel _settingsMainViewModel;
 
     [ObservableProperty]
@@ -29,7 +29,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
 
     public MainWindowViewModel(PhonesMainViewModel phonesMainViewModel,
                                SimsMainViewModel simCardMainViewModel,
-                               ServiceRequestMainViewModel serviceRequestMainViewModel,
+                               ServiceRequestsMainViewModel serviceRequestMainViewModel,
                                SettingsMainViewModel settingsMainViewModel)
     {
         _phonesMainViewModel = phonesMainViewModel;

@@ -6,7 +6,7 @@ using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.Application;
 using PhoneAssistant.WPF.Features.MainWindow;
 using PhoneAssistant.WPF.Features.Phones;
-using PhoneAssistant.WPF.Features.ServiceRequest;
+using PhoneAssistant.WPF.Features.ServiceRequests;
 using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Features.Sims;
 using System.Windows;
@@ -67,7 +67,7 @@ public partial class App : System.Windows.Application
 
         services.AddTransient<PhonesMainViewModel>();
         services.AddTransient<SimsMainViewModel>();
-        services.AddTransient<ServiceRequestMainViewModel>();
+        services.AddTransient<ServiceRequestsMainViewModel>();
         services.AddTransient<SettingsMainViewModel>();
         services.AddTransient<MainWindowViewModel>();
 

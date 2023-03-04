@@ -1,8 +1,8 @@
 ﻿using PhoneAssistant.WPF.Shared;
 
-namespace PhoneAssistant.WPF.Features.ServiceRequest;
+namespace PhoneAssistant.WPF.Features.ServiceRequests;
 
-public sealed class ServiceRequestMainViewModel : IViewModel
+public sealed class ServiceRequestsMainViewModel : IViewModel
 {
     //public List<Employer> Employers { get; set; } = new List<Employer>();
 

@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PhoneAssistant.WPF.Features.Application;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.Models;
 

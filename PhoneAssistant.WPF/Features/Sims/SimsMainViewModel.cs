@@ -1,16 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Models;
 using PhoneAssistant.WPF.Shared;
 using System.Collections.ObjectModel;
 
-namespace PhoneAssistant.WPF.Features.SimCard;
+namespace PhoneAssistant.WPF.Features.Sims;
 
-public sealed partial class SimCardMainViewModel : ObservableObject, IViewModel
+public sealed partial class SimsMainViewModel : ObservableObject, IViewModel
 {
-    private readonly SimRepository _simCardRepository;
+    private readonly SimsRepository _simCardRepository;
     private readonly StateRepository _stateRepository;
 
-    public SimCardMainViewModel(SimRepository simCardRepository, StateRepository stateRepository)
+    public SimsMainViewModel(SimsRepository simCardRepository, StateRepository stateRepository)
     {
         _simCardRepository = simCardRepository;
         _stateRepository = stateRepository;
@@ -21,7 +22,7 @@ public sealed partial class SimCardMainViewModel : ObservableObject, IViewModel
     public ObservableCollection<string> States { get; } = new();
 
     [ObservableProperty]
-    private SimCardItemViewModel? _selectedSimCardViewModel;
+    private SimsItemViewModel? _selectedSimCardViewModel;
 
     [ObservableProperty]
     private Sim? _selectedSimCard;
@@ -29,7 +30,7 @@ public sealed partial class SimCardMainViewModel : ObservableObject, IViewModel
     partial void OnSelectedSimCardChanged(Sim? value)
     {
         if (value is not null)
-            SelectedSimCardViewModel = new SimCardItemViewModel(value);
+            SelectedSimCardViewModel = new SimsItemViewModel(value);
     }
 
     public async Task LoadAsync()

@@ -8,9 +8,7 @@ using PhoneAssistant.WPF.Features.MainWindow;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.ServiceRequest;
 using PhoneAssistant.WPF.Features.Settings;
-using PhoneAssistant.WPF.Features.SimCard;
-using PhoneAssistant.WPF.Models;
-using System.Configuration;
+using PhoneAssistant.WPF.Features.Sims;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -63,12 +61,12 @@ public partial class App : System.Windows.Application
 
         services.AddSingleton<AppRepository>();
         services.AddTransient<PhonesRepository>();
-        services.AddTransient<SimRepository>();
+        services.AddTransient<SimsRepository>();
         services.AddTransient<ISettingsRepository, SettingsRepository>();
         services.AddTransient<StateRepository>();
 
         services.AddTransient<PhonesMainViewModel>();
-        services.AddTransient<SimCardMainViewModel>();
+        services.AddTransient<SimsMainViewModel>();
         services.AddTransient<ServiceRequestMainViewModel>();
         services.AddTransient<SettingsMainViewModel>();
         services.AddTransient<MainWindowViewModel>();

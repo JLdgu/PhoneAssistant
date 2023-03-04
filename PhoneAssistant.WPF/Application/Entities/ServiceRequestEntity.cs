@@ -1,6 +1,4 @@
-﻿using PhoneAssistant.WPF.Application.Entities;
-
-namespace PhoneAssistant.WPF.Features.Application;
+﻿namespace PhoneAssistant.WPF.Application.Entities;
 
 public class ServiceRequestEntity
 {

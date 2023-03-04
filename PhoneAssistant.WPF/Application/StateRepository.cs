@@ -1,4 +1,6 @@
-﻿namespace PhoneAssistant.WPF.Models;
+﻿using PhoneAssistant.WPF.Models;
+
+namespace PhoneAssistant.WPF.Application;
 public sealed class StateRepository
 {
     public async Task<IEnumerable<State>?> AllAsync()

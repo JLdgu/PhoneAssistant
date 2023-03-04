@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.ServiceRequest;
 using PhoneAssistant.WPF.Features.Settings;
-using PhoneAssistant.WPF.Features.SimCard;
+using PhoneAssistant.WPF.Features.Sims;
 using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.MainWindow;
@@ -20,7 +20,7 @@ public enum ViewType
 public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
 {
     private readonly PhonesMainViewModel _phonesMainViewModel;
-    private readonly SimCardMainViewModel _simCardMainViewModel;
+    private readonly SimsMainViewModel _simCardMainViewModel;
     private readonly ServiceRequestMainViewModel _serviceRequestMainViewModel;
     private readonly SettingsMainViewModel _settingsMainViewModel;
 
@@ -28,7 +28,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
     private IViewModel? _selectedViewModel;
 
     public MainWindowViewModel(PhonesMainViewModel phonesMainViewModel,
-                               SimCardMainViewModel simCardMainViewModel,
+                               SimsMainViewModel simCardMainViewModel,
                                ServiceRequestMainViewModel serviceRequestMainViewModel,
                                SettingsMainViewModel settingsMainViewModel)
     {

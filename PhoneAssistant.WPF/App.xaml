@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:phones="clr-namespace:PhoneAssistant.WPF.Features.Phones"
-             xmlns:simcard="clr-namespace:PhoneAssistant.WPF.Features.SimCard"
+             xmlns:sims="clr-namespace:PhoneAssistant.WPF.Features.Sims"
              xmlns:sr="clr-namespace:PhoneAssistant.WPF.Features.ServiceRequest"
              xmlns:settings="clr-namespace:PhoneAssistant.WPF.Features.Settings"
              DispatcherUnhandledException="OnDispatcherUnhandledException">
@@ -21,8 +21,8 @@
             <DataTemplate DataType="{x:Type phones:PhonesMainViewModel}">
                 <phones:PhonesMainView/>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type simcard:SimCardMainViewModel}">
-                <simcard:SimCardMainView/>
+            <DataTemplate DataType="{x:Type sims:SimsMainViewModel}">
+                <sims:SimsMainView/>
             </DataTemplate>
             <DataTemplate DataType="{x:Type sr:ServiceRequestMainViewModel}">
                 <sr:ServiceRequestMainView/>

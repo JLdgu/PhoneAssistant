@@ -1,5 +1,8 @@
-﻿namespace PhoneAssistant.WPF.Models;
-public sealed class SimRepository
+﻿using PhoneAssistant.WPF.Models;
+
+namespace PhoneAssistant.WPF.Features.Sims;
+
+public sealed class SimsRepository
 {
     public async Task<IEnumerable<Sim>?> AllAsync()
     {

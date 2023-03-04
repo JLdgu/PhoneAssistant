@@ -1,11 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Shared;
-using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.Features.Settings;
 
-internal sealed partial class SettingsMainViewModel : ObservableObject, IViewModel
+public sealed partial class SettingsMainViewModel : ObservableObject, IViewModel
 {
     private readonly AppRepository _appRepository;
 
@@ -19,7 +18,9 @@ internal sealed partial class SettingsMainViewModel : ObservableObject, IViewMod
 
     public Task LoadAsync()
     {
-        VersionDescription = _appRepository.VersionDescription;
+        if (_appRepository.VersionDescription is not null) 
+            VersionDescription = _appRepository.VersionDescription;
+
         return Task.CompletedTask;
     }
 }

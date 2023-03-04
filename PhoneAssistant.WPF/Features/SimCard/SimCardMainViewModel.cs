@@ -1,18 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using PhoneAssistant.WPF.Models;
 using PhoneAssistant.WPF.Shared;
-using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.Features.SimCard;
 
-internal sealed partial class SimCardMainViewModel : ObservableObject, IViewModel
+public sealed partial class SimCardMainViewModel : ObservableObject, IViewModel
 {
     private readonly SimRepository _simCardRepository;
     private readonly StateRepository _stateRepository;
-
 
     public SimCardMainViewModel(SimRepository simCardRepository, StateRepository stateRepository)
     {

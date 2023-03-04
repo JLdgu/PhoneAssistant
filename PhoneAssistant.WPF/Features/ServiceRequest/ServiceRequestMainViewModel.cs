@@ -1,5 +1,4 @@
 ﻿using PhoneAssistant.WPF.Shared;
-using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.Features.ServiceRequest;
 

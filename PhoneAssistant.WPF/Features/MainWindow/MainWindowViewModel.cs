@@ -8,8 +8,6 @@ using PhoneAssistant.WPF.Features.SimCard;
 using PhoneAssistant.WPF.Features.SmartPhone;
 using PhoneAssistant.WPF.Models;
 using PhoneAssistant.WPF.Shared;
-using System;
-using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.Features.MainWindow;
 
@@ -24,27 +22,23 @@ public enum ViewType
 
 public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
 {
-    private readonly AppRepository _appRepository;
-    private readonly PhoneRepository _phoneRepository;
-    private readonly SimRepository _simCardRepository;
-    private readonly ISettingRepository _settingRepository;
-    private readonly StateRepository _stateRepository;
-
+    private readonly SmartPhoneMainViewModel _smartPhoneMainViewModel;
+    private readonly SimCardMainViewModel _simCardMainViewModel;
+    private readonly ServiceRequestMainViewModel _serviceRequestMainViewModel;
+    private readonly SettingsMainViewModel _settingsMainViewModel;
 
     [ObservableProperty]
     private IViewModel? _selectedViewModel;
 
-    public MainWindowViewModel(AppRepository appRepository,
-                               PhoneRepository phoneRepository,
-                               SimRepository simCardRepository,
-                               ISettingRepository settingRepository,
-                               StateRepository stateRepository)
+    public MainWindowViewModel(SmartPhoneMainViewModel smartPhoneMainViewModel,
+                               SimCardMainViewModel simCardMainViewModel,
+                               ServiceRequestMainViewModel serviceRequestMainViewModel,
+                               SettingsMainViewModel settingsMainViewModel)
     {
-        _appRepository = appRepository;
-        _phoneRepository = phoneRepository;
-        _simCardRepository = simCardRepository;
-        _settingRepository = settingRepository;
-        _stateRepository = stateRepository;
+        _smartPhoneMainViewModel = smartPhoneMainViewModel;
+        _simCardMainViewModel = simCardMainViewModel;
+        _serviceRequestMainViewModel = serviceRequestMainViewModel;
+        _settingsMainViewModel = settingsMainViewModel;
     }
 
     public string ViewPackIcon => throw new NotImplementedException();
@@ -64,16 +58,16 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
             case ViewType.Dashboard:
                 throw new NotImplementedException();
             case ViewType.Phone:
-                SelectedViewModel = new SmartPhoneMainViewModel(_phoneRepository, _stateRepository);
+                SelectedViewModel = _smartPhoneMainViewModel;
                 break;
             case ViewType.SimCard:
-                SelectedViewModel = new SimCardMainViewModel(_simCardRepository, _stateRepository);
+                SelectedViewModel = _simCardMainViewModel;
                 break;
             case ViewType.ServiceRequest:
-                SelectedViewModel = new ServiceRequestMainViewModel();
+                SelectedViewModel = _serviceRequestMainViewModel;
                 break;
             case ViewType.Settings:
-                SelectedViewModel = new SettingsMainViewModel(_appRepository);
+                SelectedViewModel = _settingsMainViewModel;
                 break;
             default: throw new NotImplementedException();
         }

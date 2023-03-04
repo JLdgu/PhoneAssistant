@@ -1,22 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Application;
+using PhoneAssistant.WPF.Models;
 
-namespace PhoneAssistant.WPF.Models;
+namespace PhoneAssistant.WPF.Features.Phones;
 
-public sealed class PhoneRepository
+public sealed class PhonesRepository
 {
     private readonly PhoneAssistantDbContext _dbContext;
 
-    public PhoneRepository(PhoneAssistantDbContext dbContext)
+    public PhonesRepository(PhoneAssistantDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
     public async Task<IEnumerable<Phone>> AllAsync()
     {
-        List<MobilePhone> MobilePhones = await _dbContext.MobilePhones.ToListAsync();
+        List<PhoneEntity> MobilePhones = await _dbContext.MobilePhones.ToListAsync();
         List<Phone> phones = new List<Phone>();
-        foreach (MobilePhone mobile in MobilePhones)
+        foreach (PhoneEntity mobile in MobilePhones)
         {
             phones.Add(new Phone
             {
@@ -33,7 +35,7 @@ public sealed class PhoneRepository
 
     public void SaveChanges(Phone changedPhone)
     {
-        MobilePhone mobile = new MobilePhone
+        PhoneEntity mobile = new PhoneEntity
         {
             Id = changedPhone.Id,
             IMEI = changedPhone.IMEI,

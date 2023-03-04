@@ -1,13 +1,13 @@
-﻿using PhoneAssistant.WPF.Application.Entities;
+﻿using PhoneAssistant.WPF.Features.Settings;
 
 namespace PhoneAssistant.WPF.Application;
 public class AppRepository
 {
-    private readonly ISettingRepository _settingRepository;
+    private readonly ISettingsRepository _settingsRepository;
 
-    public AppRepository(ISettingRepository settingRepository)
+    public AppRepository(ISettingsRepository settingRepository)
     {
-        _settingRepository = settingRepository;
+        _settingsRepository = settingRepository;
 
         AssemblyVersion();
     }
@@ -17,7 +17,7 @@ public class AppRepository
 
     public async Task<bool> InvalidVersionAsync()
     {
-        string version = await _settingRepository.GetAsync();
+        string version = await _settingsRepository.GetAsync();
         var dbMinVersion = new Version(version);
 
 

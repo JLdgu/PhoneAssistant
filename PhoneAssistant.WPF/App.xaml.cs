@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PhoneAssistant.WPF.Application;
-using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Application;
 using PhoneAssistant.WPF.Features.MainWindow;
 using PhoneAssistant.WPF.Features.Phones;
@@ -11,6 +10,7 @@ using PhoneAssistant.WPF.Features.ServiceRequest;
 using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Features.SimCard;
 using PhoneAssistant.WPF.Models;
+using System.Configuration;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -62,9 +62,9 @@ public partial class App : System.Windows.Application
         string? connectionString = context.Configuration.GetConnectionString("Default");
 
         services.AddSingleton<AppRepository>();
-        services.AddTransient<PhoneRepository>();
+        services.AddTransient<PhonesRepository>();
         services.AddTransient<SimRepository>();
-        services.AddTransient<ISettingRepository, SettingRepository>();
+        services.AddTransient<ISettingsRepository, SettingsRepository>();
         services.AddTransient<StateRepository>();
 
         services.AddTransient<PhonesMainViewModel>();

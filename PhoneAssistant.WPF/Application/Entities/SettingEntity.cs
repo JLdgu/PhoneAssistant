@@ -1,6 +1,6 @@
 ﻿namespace PhoneAssistant.WPF.Application.Entities;
 
-public class Setting
+public class SettingEntity
 {
     public int Id { get; set; }
 

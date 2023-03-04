@@ -7,10 +7,10 @@ namespace PhoneAssistant.WPF.Features.Phones;
 
 public sealed partial class PhonesMainViewModel : ObservableObject, IViewModel
 {
-    private readonly PhoneRepository _phoneRepository;
+    private readonly PhonesRepository _phoneRepository;
     private readonly StateRepository _stateRepository;
 
-    public PhonesMainViewModel(PhoneRepository phoneRepository,
+    public PhonesMainViewModel(PhonesRepository phoneRepository,
                                    StateRepository stateRepository)
     {
         _phoneRepository = phoneRepository;
@@ -23,18 +23,6 @@ public sealed partial class PhonesMainViewModel : ObservableObject, IViewModel
 
     [ObservableProperty]
     private Phone _selectedPhone;
-
-    partial void OnSelectedPhoneChanged(Phone value)
-    {
-        Phone phone = Phones.First(x => x.Id == value.Id);
-        if (phone != null)
-        {
-            _phoneRepository.SaveChanges(phone);
-        }
-    }
-
-    //public string ViewName => "Phones";
-    //public string ViewPackIcon => "CellphoneScreenshot";
 
     public async Task LoadAsync()
     {

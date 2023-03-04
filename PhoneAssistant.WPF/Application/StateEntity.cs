@@ -1,6 +1,6 @@
 namespace PhoneAssistant.WPF.Features.Application;
 
-public class StateDTO
+public class StateEntity
 {
     //public int Id { get; set; }
 

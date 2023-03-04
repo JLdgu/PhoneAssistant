@@ -35,7 +35,7 @@
             </RadioButton>-->
             <RadioButton Margin="0 10 0 0"
                          Style="{StaticResource MaterialDesignTabRadioButton}"
-                         Command="{Binding UpdateViewCommand}" CommandParameter="{x:Static viewmodel:ViewType.Phone}">
+                         Command="{Binding UpdateViewCommand}" CommandParameter="{x:Static viewmodel:ViewType.Phones}">
                 <StackPanel>
                     <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" 
                                          Kind="CellphoneScreenshot" />
@@ -43,7 +43,7 @@
                 </StackPanel>
             </RadioButton>
             <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
-                         Command="{Binding UpdateViewCommand}" CommandParameter="{x:Static viewmodel:ViewType.SimCard}">
+                         Command="{Binding UpdateViewCommand}" CommandParameter="{x:Static viewmodel:ViewType.Sims}">
                 <StackPanel>
                     <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" 
                                          Kind="SimOutline" />
@@ -51,7 +51,7 @@
                 </StackPanel>
             </RadioButton>
             <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
-                         Command="{Binding UpdateViewCommand}" CommandParameter="{x:Static viewmodel:ViewType.ServiceRequest}">
+                         Command="{Binding UpdateViewCommand}" CommandParameter="{x:Static viewmodel:ViewType.ServiceRequests}">
                 <StackPanel HorizontalAlignment="Center">
                     <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center" 
                                          Kind="RoomServiceOutline" />

@@ -11,9 +11,9 @@ namespace PhoneAssistant.WPF.Features.MainWindow;
 public enum ViewType
 {
     Dashboard,
-    Phone,
-    SimCard,
-    ServiceRequest,
+    Phones,
+    Sims,
+    ServiceRequests,
     Settings
 }
 
@@ -54,13 +54,13 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
         {
             case ViewType.Dashboard:
                 throw new NotImplementedException();
-            case ViewType.Phone:
+            case ViewType.Phones:
                 SelectedViewModel = _phonesMainViewModel;
                 break;
-            case ViewType.SimCard:
+            case ViewType.Sims:
                 SelectedViewModel = _simCardMainViewModel;
                 break;
-            case ViewType.ServiceRequest:
+            case ViewType.ServiceRequests:
                 SelectedViewModel = _serviceRequestMainViewModel;
                 break;
             case ViewType.Settings:

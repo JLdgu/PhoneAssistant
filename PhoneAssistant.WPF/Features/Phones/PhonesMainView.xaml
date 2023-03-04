@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <shared:MainViewHeader HeaderText="Phones2" 
+        <shared:MainViewHeader HeaderText="Phones" 
                                HeaderIcon="CellphoneScreenshot"/>
         <Grid Grid.Row="1" d:Background="LightCoral" Margin="16 0 0 5">
             <Grid.ColumnDefinitions>

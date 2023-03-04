@@ -7,10 +7,10 @@ public sealed class PhoneAssistantDbContext : DbContext
 {
     //public DbSet<StateDTO> State { get; set; }
     //public DbSet<LinkDTO> Links { get; set; }
-    public DbSet<MobilePhone> MobilePhones { get; set; }
+    public DbSet<PhoneEntity> MobilePhones { get; set; }
     //public DbSet<SimCardDTO> SimCards { get; set; }
 
-    public DbSet<Setting> Setting { get; set; }
+    public DbSet<SettingEntity> Setting { get; set; }
 
     public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
 
@@ -38,26 +38,26 @@ public sealed class PhoneAssistantDbContext : DbContext
         //};
         //modelBuilder.Entity<StateDTO>().HasData(states);
 
-        modelBuilder.Entity<MobilePhone>()
+        modelBuilder.Entity<PhoneEntity>()
             .HasIndex(p => p.IMEI).IsUnique();
 
-        MobilePhone[] testdata = new MobilePhone[]
+        PhoneEntity[] testdata = new PhoneEntity[]
         {
-            new MobilePhone() {Id = 1, IMEI = "353427866717729", FormerUser = "Rehana Kausar", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null  },
-            new MobilePhone() {Id = 2, IMEI = "355808981132845", FormerUser = null, Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00017", Note = "Replacement"},
-            new MobilePhone() {Id = 3, IMEI = "355808983976082", FormerUser = "Charlie Baker", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
-            new MobilePhone() {Id = 4, IMEI = "355808981101899", FormerUser = "Olatunji Okedeyi", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
-            new MobilePhone() {Id = 5, IMEI = "353427861419768", FormerUser = "James Tisshaw", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
-            new MobilePhone() {Id = 6, IMEI = "351554742085336", FormerUser = null, Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00016", Note = "Replacement"}
+            new PhoneEntity() {Id = 1, IMEI = "353427866717729", FormerUser = "Rehana Kausar", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null  },
+            new PhoneEntity() {Id = 2, IMEI = "355808981132845", FormerUser = null, Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00017", Note = "Replacement"},
+            new PhoneEntity() {Id = 3, IMEI = "355808983976082", FormerUser = "Charlie Baker", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
+            new PhoneEntity() {Id = 4, IMEI = "355808981101899", FormerUser = "Olatunji Okedeyi", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
+            new PhoneEntity() {Id = 5, IMEI = "353427861419768", FormerUser = "James Tisshaw", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
+            new PhoneEntity() {Id = 6, IMEI = "351554742085336", FormerUser = null, Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00016", Note = "Replacement"}
             };
-        modelBuilder.Entity<MobilePhone>().HasData(testdata);
+        modelBuilder.Entity<PhoneEntity>().HasData(testdata);
 
         //modelBuilder.Entity<SmartCard>()
         //    .HasIndex(sc => sc.SimNumber).IsUnique();
         //modelBuilder.Entity<SmartCard>()
         //    .HasIndex(sc => sc.PhoneNumber).IsUnique();
 
-        modelBuilder.Entity<Setting>().HasData(new Setting { Id = 1, MinimumVersion = "0.0.0.1" });
+        modelBuilder.Entity<SettingEntity>().HasData(new SettingEntity { Id = 1, MinimumVersion = "0.0.0.1" });
 
         base.OnModelCreating(modelBuilder);
     }

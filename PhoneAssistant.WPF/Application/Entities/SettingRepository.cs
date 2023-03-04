@@ -1,5 +1,4 @@
 ﻿using PhoneAssistant.WPF.Features.Application;
-using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.Application.Entities;
 public sealed class SettingRepository : ISettingRepository

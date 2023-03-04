@@ -1,12 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PhoneAssistant.WPF.Application;
-using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.ServiceRequest;
 using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Features.SimCard;
 using PhoneAssistant.WPF.Features.SmartPhone;
-using PhoneAssistant.WPF.Models;
 using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.MainWindow;

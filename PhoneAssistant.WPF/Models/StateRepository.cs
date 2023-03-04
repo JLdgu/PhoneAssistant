@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace PhoneAssistant.WPF.Models;
+﻿namespace PhoneAssistant.WPF.Models;
 public sealed class StateRepository
 {
     public async Task<IEnumerable<State>?> AllAsync()

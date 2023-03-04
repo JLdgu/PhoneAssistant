@@ -18,7 +18,7 @@ public sealed partial class SettingsMainViewModel : ObservableObject, IViewModel
 
     public Task LoadAsync()
     {
-        if (_appRepository.VersionDescription is not null) 
+        if (_appRepository.VersionDescription is not null)
             VersionDescription = _appRepository.VersionDescription;
 
         return Task.CompletedTask;

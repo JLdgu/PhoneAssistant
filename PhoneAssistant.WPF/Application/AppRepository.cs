@@ -1,6 +1,4 @@
 ﻿using PhoneAssistant.WPF.Application.Entities;
-using System;
-using System.Threading.Tasks;
 
 namespace PhoneAssistant.WPF.Application;
 public class AppRepository

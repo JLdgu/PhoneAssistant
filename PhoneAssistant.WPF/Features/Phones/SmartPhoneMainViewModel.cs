@@ -3,14 +3,14 @@ using PhoneAssistant.WPF.Models;
 using PhoneAssistant.WPF.Shared;
 using System.Collections.ObjectModel;
 
-namespace PhoneAssistant.WPF.Features.SmartPhone;
+namespace PhoneAssistant.WPF.Features.Phones;
 
-public sealed partial class SmartPhoneMainViewModel : ObservableObject, IViewModel
+public sealed partial class PhonesMainViewModel : ObservableObject, IViewModel
 {
     private readonly PhoneRepository _phoneRepository;
     private readonly StateRepository _stateRepository;
 
-    public SmartPhoneMainViewModel(PhoneRepository phoneRepository,
+    public PhonesMainViewModel(PhoneRepository phoneRepository,
                                    StateRepository stateRepository)
     {
         _phoneRepository = phoneRepository;

@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.ServiceRequest;
 using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Features.SimCard;
-using PhoneAssistant.WPF.Features.SmartPhone;
 using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.MainWindow;
@@ -19,7 +19,7 @@ public enum ViewType
 
 public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
 {
-    private readonly SmartPhoneMainViewModel _smartPhoneMainViewModel;
+    private readonly PhonesMainViewModel _phonesMainViewModel;
     private readonly SimCardMainViewModel _simCardMainViewModel;
     private readonly ServiceRequestMainViewModel _serviceRequestMainViewModel;
     private readonly SettingsMainViewModel _settingsMainViewModel;
@@ -27,12 +27,12 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
     [ObservableProperty]
     private IViewModel? _selectedViewModel;
 
-    public MainWindowViewModel(SmartPhoneMainViewModel smartPhoneMainViewModel,
+    public MainWindowViewModel(PhonesMainViewModel phonesMainViewModel,
                                SimCardMainViewModel simCardMainViewModel,
                                ServiceRequestMainViewModel serviceRequestMainViewModel,
                                SettingsMainViewModel settingsMainViewModel)
     {
-        _smartPhoneMainViewModel = smartPhoneMainViewModel;
+        _phonesMainViewModel = phonesMainViewModel;
         _simCardMainViewModel = simCardMainViewModel;
         _serviceRequestMainViewModel = serviceRequestMainViewModel;
         _settingsMainViewModel = settingsMainViewModel;
@@ -55,7 +55,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
             case ViewType.Dashboard:
                 throw new NotImplementedException();
             case ViewType.Phone:
-                SelectedViewModel = _smartPhoneMainViewModel;
+                SelectedViewModel = _phonesMainViewModel;
                 break;
             case ViewType.SimCard:
                 SelectedViewModel = _simCardMainViewModel;

@@ -6,10 +6,10 @@ using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Application;
 using PhoneAssistant.WPF.Features.MainWindow;
+using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.ServiceRequest;
 using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Features.SimCard;
-using PhoneAssistant.WPF.Features.SmartPhone;
 using PhoneAssistant.WPF.Models;
 using System.Windows;
 using System.Windows.Threading;
@@ -67,7 +67,7 @@ public partial class App : System.Windows.Application
         services.AddTransient<ISettingRepository, SettingRepository>();
         services.AddTransient<StateRepository>();
 
-        services.AddTransient<SmartPhoneMainViewModel>();
+        services.AddTransient<PhonesMainViewModel>();
         services.AddTransient<SimCardMainViewModel>();
         services.AddTransient<ServiceRequestMainViewModel>();
         services.AddTransient<SettingsMainViewModel>();

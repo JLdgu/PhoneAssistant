@@ -6,7 +6,7 @@ using PhoneAssistant.WPF.Features.Settings;
 namespace PhoneAssistant.Tests;
 
 [TestClass]
-public class AppRepositoryTests
+public sealed class AppRepositoryTests
 {
     [TestMethod]
     public async Task InvalidVersion_False_WhenAssemblyVersionEqualsDBVersion()

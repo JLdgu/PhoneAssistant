@@ -41,7 +41,7 @@ public partial class App : System.Windows.Application
         dbContext.Database.EnsureCreated();
         //dbContext.Database.Migrate();
 
-        var _appRepository = _host.Services.GetRequiredService<AppRepository>();
+        var _appRepository = _host.Services.GetRequiredService<IAppRepository>();
         bool InvalidVersion = _appRepository.InvalidVersionAsync().Result;
         if (InvalidVersion)
         {
@@ -61,7 +61,7 @@ public partial class App : System.Windows.Application
     {
         string? connectionString = context.Configuration.GetConnectionString("Default");
 
-        services.AddSingleton<AppRepository>();
+        services.AddSingleton<IAppRepository, AppRepository>();
         services.AddTransient<PhonesRepository>();
         services.AddTransient<SimsRepository>();
         services.AddTransient<ISettingsRepository, SettingsRepository>();

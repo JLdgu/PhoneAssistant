@@ -1,19 +1,22 @@
 ﻿using PhoneAssistant.WPF.Features.Settings;
 
 namespace PhoneAssistant.WPF.Application;
-public class AppRepository
+
+public class AppRepository : IAppRepository
 {
     private readonly ISettingsRepository _settingsRepository;
+    private Version? _assemblyVersion;
 
     public AppRepository(ISettingsRepository settingRepository)
     {
         _settingsRepository = settingRepository;
 
         AssemblyVersion();
+
+        VersionDescription = $"Phone Assistant - Version : {_assemblyVersion}";
     }
 
-    public string? VersionDescription;
-    private Version? _assemblyVersion;
+    public string VersionDescription { get; init; }
 
     public async Task<bool> InvalidVersionAsync()
     {
@@ -32,7 +35,5 @@ public class AppRepository
         var assembly = typeof(App).Assembly;
         var assemblyName = assembly.GetName();
         _assemblyVersion = assemblyName.Version;
-
-        VersionDescription = $"Phone Assistant - Version : {_assemblyVersion}";
     }
 }

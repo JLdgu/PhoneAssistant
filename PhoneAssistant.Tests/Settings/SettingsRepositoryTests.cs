@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PhoneAssistant.WPF.Features.Application;
 using PhoneAssistant.WPF.Features.Settings;
 
-namespace PhoneAssistant.Tests;
+namespace PhoneAssistant.Tests.Settings;
 
 [TestClass]
 public class SettingsRepositoryTests

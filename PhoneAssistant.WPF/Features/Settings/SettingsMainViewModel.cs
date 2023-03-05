@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Shared;
 

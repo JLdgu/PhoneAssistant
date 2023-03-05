@@ -1,8 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+
+using CommunityToolkit.Mvvm.ComponentModel;
+
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Models;
 using PhoneAssistant.WPF.Shared;
-using System.Collections.ObjectModel;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 

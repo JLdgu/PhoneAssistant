@@ -1,4 +1,5 @@
 using Moq;
+
 using PhoneAssistant.WPF;
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.Settings;

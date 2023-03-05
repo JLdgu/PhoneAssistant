@@ -1,5 +1,6 @@
-﻿using PhoneAssistant.WPF.Features.MainWindow;
-using System.Windows;
+﻿using System.Windows;
+
+using PhoneAssistant.WPF.Features.MainWindow;
 
 namespace PhoneAssistant.WPF;
 /// <summary>

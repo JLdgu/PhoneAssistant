@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+
 using PhoneAssistant.WPF.Features.Application;
 using PhoneAssistant.WPF.Features.Settings;
 
@@ -34,5 +35,5 @@ public class SettingsRepositoryTests
             Connection.Close();
             Connection.Dispose();
         }
-    }  
+    }
 }

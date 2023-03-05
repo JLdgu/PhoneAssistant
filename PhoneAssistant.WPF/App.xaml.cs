@@ -1,7 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Windows;
+using System.Windows.Threading;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.Application;
 using PhoneAssistant.WPF.Features.MainWindow;
@@ -9,8 +13,6 @@ using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.ServiceRequests;
 using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Features.Sims;
-using System.Windows;
-using System.Windows.Threading;
 
 namespace PhoneAssistant.WPF;
 /// <summary>

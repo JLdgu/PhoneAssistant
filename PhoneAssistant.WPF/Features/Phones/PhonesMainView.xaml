@@ -15,38 +15,95 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <shared:MainViewHeader HeaderIcon="CellphoneScreenshot" HeaderText="Phones" />
         <Grid
             Grid.Row="1"
-            Margin="16,0,0,5"
+            Margin="16,20,0,15"
             d:Background="LightCoral">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="{Binding ElementName=gridIMEI, Path=ActualWidth}" />
+                <ColumnDefinition Width="{Binding ElementName=gridFormerUser, Path=ActualWidth}" />
+                <ColumnDefinition Width="{Binding ElementName=gridWiped, Path=ActualWidth}" />
+                <ColumnDefinition Width="{Binding ElementName=gridStatus, Path=ActualWidth}" />
+                <ColumnDefinition Width="{Binding ElementName=gridOEM, Path=ActualWidth}" />
+                <ColumnDefinition Width="{Binding ElementName=gridAssesTag, Path=ActualWidth}" />
             </Grid.ColumnDefinitions>
             <TextBox
                 Grid.Column="0"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="IMEI"
-                Text="{Binding SelectedPhone.IMEI, Mode=TwoWay}" />
+                materialDesign:HintAssist.IsFloating="True"
+                Text="{Binding SelectedPhone.IMEI}" />
+            <TextBox
+                Grid.Column="1"
+                Margin="0,0,5,0"
+                materialDesign:HintAssist.Hint="Former User"
+                materialDesign:HintAssist.IsFloating="True"
+                Text="{Binding SelectedPhone.FormerUser, Mode=TwoWay}" />
+            <CheckBox
+                Grid.Column="2"
+                Margin="0,0,5,0"
+                materialDesign:HintAssist.Hint="Wiped"
+                materialDesign:HintAssist.IsFloating="True"
+                IsChecked="{Binding SelectedPhone.Wiped}" />
             <TextBox
                 Grid.Column="3"
                 Margin="0,0,5,0"
-                materialDesign:HintAssist.Hint="Former User"
-                Text="{Binding SelectedPhone.FormerUser, Mode=TwoWay}" />
+                materialDesign:HintAssist.Hint="Status"
+                materialDesign:HintAssist.IsFloating="True"
+                Text="{Binding SelectedPhone.Status, Mode=TwoWay}" />
+            <TextBox
+                Grid.Column="4"
+                Margin="0,0,5,0"
+                materialDesign:HintAssist.Hint="OEM"
+                materialDesign:HintAssist.IsFloating="True"
+                Text="{Binding SelectedPhone.OEM, Mode=TwoWay}" />
+            <TextBox
+                Grid.Column="5"
+                Margin="0,0,5,0"
+                materialDesign:HintAssist.Hint="Asset Tag"
+                materialDesign:HintAssist.IsFloating="True"
+                Text="{Binding SelectedPhone.AssetTag, Mode=TwoWay}" />
         </Grid>
+        <materialDesign:ColorZone
+            Grid.Row="2"
+            Margin="0,0,0,0"
+            Padding="8,4,8,4"
+            Panel.ZIndex="1"
+            materialDesign:ElevationAssist.Elevation="Dp2"
+            CornerRadius="2"
+            Mode="Standard">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Button Style="{StaticResource MaterialDesignToolButton}">
+                    <materialDesign:PackIcon Kind="Search" Opacity=".56" />
+                </Button>
 
+                <TextBox
+                    x:Name="SearchBox"
+                    Grid.Column="1"
+                    MinWidth="250"
+                    Margin="16,4"
+                    Padding="10,5"
+                    materialDesign:HintAssist.Hint="Search"
+                    materialDesign:HintAssist.IsFloating="True"
+                    materialDesign:TextFieldAssist.DecorationVisibility="Collapsed"
+                    materialDesign:TextFieldAssist.HasClearButton="True"
+                    materialDesign:TextFieldAssist.HasOutlinedTextField="True"
+                    materialDesign:TextFieldAssist.TextFieldCornerRadius="4"
+                    Text="{Binding SearchPhones, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </materialDesign:ColorZone>
         <DataGrid
             Name="dataGrid1"
-            Grid.Row="2"
+            Grid.Row="3"
             AlternatingRowBackground="{DynamicResource PrimaryHueLightBrush}"
             AutoGenerateColumns="False"
             CanUserAddRows="False"
@@ -56,12 +113,36 @@
             ItemsSource="{Binding Phones}"
             SelectedItem="{Binding SelectedPhone}">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding IMEI}" Header="IMEI" />
-                <DataGridTextColumn Binding="{Binding FormerUser}" Header="Former User" />
-                <DataGridCheckBoxColumn Binding="{Binding Wiped}" Header="Wiped" />
-                <DataGridTextColumn Binding="{Binding Status}" Header="Status" />
-                <DataGridTextColumn Binding="{Binding OEM}" Header="OEM" />
-                <DataGridTextColumn Binding="{Binding AssetTag}" Header="Asset Tag" />
+                <DataGridTextColumn
+                    x:Name="gridIMEI"
+                    Width="auto"
+                    Binding="{Binding IMEI}"
+                    Header="IMEI" />
+                <DataGridTextColumn
+                    x:Name="gridFormerUser"
+                    Width="auto"
+                    Binding="{Binding FormerUser}"
+                    Header="Former User" />
+                <DataGridCheckBoxColumn
+                    x:Name="gridWiped"
+                    Width="auto"
+                    Binding="{Binding Wiped}"
+                    Header="Wiped" />
+                <DataGridTextColumn
+                    x:Name="gridStatus"
+                    Width="auto"
+                    Binding="{Binding Status}"
+                    Header="Status" />
+                <DataGridTextColumn
+                    x:Name="gridOEM"
+                    Width="auto"
+                    Binding="{Binding OEM}"
+                    Header="OEM" />
+                <DataGridTextColumn
+                    x:Name="gridAssesTag"
+                    Width="auto"
+                    Binding="{Binding AssetTag}"
+                    Header="Asset Tag" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

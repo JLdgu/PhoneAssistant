@@ -10,10 +10,10 @@ namespace PhoneAssistant.WPF.Features.Phones;
 
 public sealed partial class PhonesMainViewModel : ObservableObject, IViewModel
 {
-    private readonly PhonesRepository _phoneRepository;
+    private readonly IPhonesRepository _phoneRepository;
     private readonly StateRepository _stateRepository;
 
-    public PhonesMainViewModel(PhonesRepository phoneRepository,
+    public PhonesMainViewModel(IPhonesRepository phoneRepository,
                                    StateRepository stateRepository)
     {
         _phoneRepository = phoneRepository;
@@ -23,6 +23,14 @@ public sealed partial class PhonesMainViewModel : ObservableObject, IViewModel
     public ObservableCollection<Phone> Phones { get; } = new();
 
     public List<string> States { get; } = new();
+
+    [ObservableProperty]
+    private string _searchPhones;
+
+    partial void OnSearchPhonesChanged(string value)
+    {
+        var a = value;
+    }
 
     [ObservableProperty]
     private Phone _selectedPhone;

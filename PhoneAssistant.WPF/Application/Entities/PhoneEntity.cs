@@ -10,9 +10,9 @@ public class PhoneEntity
 
     public bool Wiped { get; set; }
 
-    public string? Status { get; set; }
+    public string Status { get; set; }
 
-    public string? OEM { get; set; }
+    public string OEM { get; set; }
 
     public string? AssetTag { get; set; }
 

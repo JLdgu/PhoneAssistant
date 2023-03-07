@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <shared:MainViewHeader HeaderIcon="CogOutline" HeaderText="Settings" />
+        <shared:HeaderMainView HeaderIcon="CogOutline" HeaderText="Settings" />
         <StackPanel
             Grid.Row="1"
             Margin="10,10"

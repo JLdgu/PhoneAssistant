@@ -14,7 +14,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <shared:MainViewHeader HeaderIcon="RoomServiceOutline" HeaderText="Service Requests" />
+        <shared:HeaderMainView HeaderIcon="RoomServiceOutline" HeaderText="Service Requests" />
 
     </Grid>
 </UserControl>

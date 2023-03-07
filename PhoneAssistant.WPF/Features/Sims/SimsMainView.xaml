@@ -25,7 +25,7 @@
             <RowDefinition Height="*" />
 
         </Grid.RowDefinitions>
-        <shared:MainViewHeader HeaderIcon="SimOutline" HeaderText="SIM Cards" />
+        <shared:HeaderMainView HeaderIcon="SimOutline" HeaderText="SIM Cards" />
 
         <ListView
             Grid.Row="2"

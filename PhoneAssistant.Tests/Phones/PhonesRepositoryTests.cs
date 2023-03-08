@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Application;
@@ -8,14 +9,16 @@ using PhoneAssistant.WPF.Features.Settings;
 namespace PhoneAssistant.Tests.Phones;
 
 [TestClass]
-public sealed class PhonesRepositoryTests : DbTestBase
+public sealed class PhonesRepositoryTests : DbTestHelper
 {
     [TestMethod]
     public async Task SearchAsync_ReturnsEmptyList_WhenIMEINotFound()
     {
-        using PhoneAssistantDbContext dbContext = new PhoneAssistantDbContext(Options);
+        DbTestHelper helper = new();
+        using SqliteConnection Connection = helper.CreateConnection();
+        using PhoneAssistantDbContext dbContext = new PhoneAssistantDbContext(helper.Options!);
+        dbContext.Database.EnsureCreated();
 
-        // Arrange
         PhoneEntity[] testdata = new PhoneEntity[]
         {
             new PhoneEntity() {Id = 1, IMEI = "353427866717729", FormerUser = "Rehana Kausar", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null  },
@@ -40,9 +43,11 @@ public sealed class PhonesRepositoryTests : DbTestBase
     [TestMethod]
     public async Task SearchAsync_ReturnsList_WhenSearchTermFound()
     {
-        using PhoneAssistantDbContext dbContext = new PhoneAssistantDbContext(Options);
-
-        // Arrange
+        DbTestHelper helper = new();
+        using SqliteConnection Connection = helper.CreateConnection();
+        using PhoneAssistantDbContext dbContext = new PhoneAssistantDbContext(helper.Options!);
+        dbContext.Database.EnsureCreated();
+                
         PhoneEntity[] testdata = new PhoneEntity[]
         {
             new PhoneEntity() {Id = 1, IMEI = "353427866717729", FormerUser = "Rehana Kausar", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null  },
@@ -56,12 +61,10 @@ public sealed class PhonesRepositoryTests : DbTestBase
         dbContext.SaveChanges();
 
         var repository = new PhonesRepository(dbContext);
-
-        // Act
+                
         var actual = await repository.SearchAsync("729");
+                
         var actualPhone = actual.First();
-
-        // Assert
         Assert.AreEqual(2, actual.Count());
     }
 }

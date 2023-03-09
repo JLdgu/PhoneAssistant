@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Windows.Controls;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -25,15 +27,13 @@ public sealed partial class PhonesMainViewModel : ObservableObject, IViewModel
     public List<string> States { get; } = new();
 
     [ObservableProperty]
-    private string _searchPhones;
-
-    partial void OnSearchPhonesChanged(string value)
-    {
-        var a = value;
-    }
-
-    [ObservableProperty]
     private Phone _selectedPhone;
+
+    async partial void OnSelectedPhoneChanging(Phone value)
+    {
+        if (SelectedPhone is null) return;
+        await _phoneRepository.UpdateAsync(SelectedPhone);
+    }
 
     public async Task LoadAsync()
     {

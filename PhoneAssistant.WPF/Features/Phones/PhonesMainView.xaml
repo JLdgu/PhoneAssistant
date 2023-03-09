@@ -68,7 +68,7 @@
                 materialDesign:HintAssist.IsFloating="True"
                 Text="{Binding SelectedPhone.AssetTag, Mode=TwoWay}" />
         </Grid>
-        <materialDesign:ColorZone
+        <!--<materialDesign:ColorZone
             Grid.Row="2"
             Margin="0,0,0,0"
             Padding="8,4,8,4"
@@ -100,18 +100,21 @@
                     materialDesign:TextFieldAssist.TextFieldCornerRadius="4"
                     Text="{Binding SearchPhones, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
-        </materialDesign:ColorZone>
+        </materialDesign:ColorZone>-->
         <DataGrid
-            Name="dataGrid1"
+            Name="PhonesGrid"
             Grid.Row="3"
             AlternatingRowBackground="{DynamicResource PrimaryHueLightBrush}"
             AutoGenerateColumns="False"
             CanUserAddRows="False"
             CanUserReorderColumns="False"
             CanUserSortColumns="True"
-            IsReadOnly="True"
+            IsReadOnly="False"
             ItemsSource="{Binding Phones}"
-            SelectedItem="{Binding SelectedPhone}">
+            MouseDown="PhonesGrid_MouseDown"
+            SelectedItem="{Binding SelectedPhone}"
+            SelectionMode="Single"
+            SelectionUnit="FullRow">
             <DataGrid.Columns>
                 <DataGridTextColumn
                     x:Name="gridIMEI"
@@ -143,6 +146,7 @@
                     Width="auto"
                     Binding="{Binding AssetTag}"
                     Header="Asset Tag" />
+                <!--<DataGridTextColumn Width="*" />-->
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

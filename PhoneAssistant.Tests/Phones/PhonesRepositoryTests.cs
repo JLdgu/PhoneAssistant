@@ -1,16 +1,21 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Application;
 using PhoneAssistant.WPF.Features.Phones;
-using PhoneAssistant.WPF.Features.Settings;
+using PhoneAssistant.WPF.Models;
 
 namespace PhoneAssistant.Tests.Phones;
 
 [TestClass]
 public sealed class PhonesRepositoryTests : DbTestHelper
 {
+    #region Search
+
     [TestMethod]
     public async Task SearchAsync_ReturnsEmptyList_WhenIMEINotFound()
     {
@@ -35,7 +40,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
 
         // Act
         var actual = await repository.SearchAsync("not found");
-        
+
         // Assert
         Assert.AreEqual(0, actual.Count());
     }
@@ -47,7 +52,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         using SqliteConnection Connection = helper.CreateConnection();
         using PhoneAssistantDbContext dbContext = new PhoneAssistantDbContext(helper.Options!);
         dbContext.Database.EnsureCreated();
-                
+
         PhoneEntity[] testdata = new PhoneEntity[]
         {
             new PhoneEntity() {Id = 1, IMEI = "353427866717729", FormerUser = "Rehana Kausar", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null  },
@@ -61,10 +66,57 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         dbContext.SaveChanges();
 
         var repository = new PhonesRepository(dbContext);
-                
+
         var actual = await repository.SearchAsync("729");
-                
+
         var actualPhone = actual.First();
         Assert.AreEqual(2, actual.Count());
+    }
+}
+#endregion
+
+[TestClass]
+public sealed class PhonesRepositoryUpdateTests : DbTestHelper
+{
+    [TestMethod()]
+    public async Task UpdateAsync()
+    {
+        Phone phoneToUpdate = new();
+        phoneToUpdate.Id = 1;
+        phoneToUpdate.IMEI = "A";
+        phoneToUpdate.FormerUser = "A";
+        phoneToUpdate.Wiped = true;
+        phoneToUpdate.Status = "A";
+        phoneToUpdate.OEM = "A";
+        phoneToUpdate.AssetTag = "A";
+        phoneToUpdate.Note = "A";
+
+        DbTestHelper helper = new();
+        using SqliteConnection Connection = helper.CreateConnection();
+
+        using PhoneAssistantDbContext dbContext = new PhoneAssistantDbContext(helper.Options!);
+        dbContext.Database.EnsureCreated();
+        dbContext.MobilePhones.Add(phoneToUpdate);
+        dbContext.SaveChanges();
+
+        var repository = new PhonesRepository(dbContext);
+        phoneToUpdate.IMEI = "B";
+        phoneToUpdate.FormerUser = "B";
+        phoneToUpdate.Wiped = false;
+        phoneToUpdate.Status = "B";
+        phoneToUpdate.OEM = "B";
+        phoneToUpdate.AssetTag = "B";
+        phoneToUpdate.Note = "B";
+
+        await repository.UpdateAsync(phoneToUpdate);
+
+        PhoneEntity actual = dbContext.MobilePhones.Where(mp => mp.Id == 1).First();
+        //Assert.AreEqual(phoneToUpdate, actual);
+        Assert.AreEqual(phoneToUpdate.IMEI, actual.IMEI);
+        Assert.AreEqual(phoneToUpdate.FormerUser, actual.FormerUser);
+        Assert.IsFalse(actual.Wiped);
+        Assert.AreEqual(phoneToUpdate.Status, actual.Status);
+        Assert.AreEqual(phoneToUpdate.OEM, actual.OEM);
+        Assert.AreEqual(phoneToUpdate.AssetTag, actual.AssetTag);
     }
 }

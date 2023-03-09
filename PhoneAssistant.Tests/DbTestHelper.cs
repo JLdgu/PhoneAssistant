@@ -11,10 +11,9 @@ public class DbTestHelper : IDisposable
     public DbContextOptions<PhoneAssistantDbContext>? Options;
     private bool _disposedValue;
 
-    internal SqliteConnection CreateConnection()
+    internal SqliteConnection CreateConnection(string datasource = "DataSource=:memory:;")
     {
-        const string IN_MEMORY = "DataSource=:memory:";
-        var Connection = new SqliteConnection(IN_MEMORY);
+        var Connection = new SqliteConnection(datasource);
         Connection.Open();
         
         Options = new DbContextOptionsBuilder<PhoneAssistantDbContext>().UseSqlite(Connection!).Options;

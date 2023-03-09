@@ -5,5 +5,5 @@ public interface IPhonesRepository
 {
     Task<IEnumerable<Phone>> AllAsync();
     Task<IEnumerable<Phone>> SearchAsync(string search);
-    void SaveChanges(Phone changedPhone);
+    Task UpdateAsync(Phone phoneToUpdate);
 }

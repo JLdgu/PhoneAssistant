@@ -28,16 +28,20 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel
-            Grid.Column="0"
-            VerticalAlignment="Top"
-            Orientation="Vertical">
-            <!--<RadioButton Visibility="Hidden" d:Visibility="Visible"
-                         Style="{StaticResource MaterialDesignTabRadioButton}"
-                         Command="{Binding UpdateViewCommand}" CommandParameter="{x:Static viewmodel:ViewType.Dashboard}">
+        <DockPanel Grid.Column="0" LastChildFill="False">
+            <!--<RadioButton
+                d:Visibility="Visible"
+                Command="{Binding UpdateViewCommand}"
+                CommandParameter="{x:Static viewmodel:ViewType.Dashboard}"
+                DockPanel.Dock="Top"
+                Style="{StaticResource MaterialDesignTabRadioButton}"
+                Visibility="Hidden">
                 <StackPanel>
-                    <materialDesign:PackIcon Width="24" Height="24" HorizontalAlignment="Center"
-                                         Kind="ViewDashboardOutline" />
+                    <materialDesign:PackIcon
+                        Width="24"
+                        Height="24"
+                        HorizontalAlignment="Center"
+                        Kind="ViewDashboardOutline" />
                     <TextBlock Text="Dashboard" />
                 </StackPanel>
             </RadioButton>-->
@@ -45,6 +49,7 @@
                 Margin="0,10,0,0"
                 Command="{Binding UpdateViewCommand}"
                 CommandParameter="{x:Static viewmodel:ViewType.Phones}"
+                DockPanel.Dock="Top"
                 Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon
@@ -58,6 +63,7 @@
             <RadioButton
                 Command="{Binding UpdateViewCommand}"
                 CommandParameter="{x:Static viewmodel:ViewType.Sims}"
+                DockPanel.Dock="Top"
                 Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon
@@ -71,6 +77,7 @@
             <RadioButton
                 Command="{Binding UpdateViewCommand}"
                 CommandParameter="{x:Static viewmodel:ViewType.ServiceRequests}"
+                DockPanel.Dock="Top"
                 Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel HorizontalAlignment="Center">
                     <materialDesign:PackIcon
@@ -82,15 +89,10 @@
                     <TextBlock HorizontalAlignment="Center" Text="Requests" />
                 </StackPanel>
             </RadioButton>
-        </StackPanel>
-        <StackPanel
-            Grid.Column="0"
-            Margin="0,0,0,10"
-            VerticalAlignment="Bottom"
-            Orientation="Vertical">
             <RadioButton
                 Command="{Binding UpdateViewCommand}"
                 CommandParameter="{x:Static viewmodel:ViewType.Settings}"
+                DockPanel.Dock="Bottom"
                 Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon
@@ -101,7 +103,7 @@
                     <TextBlock Text="Settings" />
                 </StackPanel>
             </RadioButton>
-        </StackPanel>
+        </DockPanel>
 
         <StackPanel
             Grid.Column="1"

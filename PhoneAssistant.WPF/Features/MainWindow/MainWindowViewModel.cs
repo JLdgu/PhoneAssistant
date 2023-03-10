@@ -9,7 +9,7 @@ using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.MainWindow;
 
-public enum ViewType
+public enum ViewModelType
 {
     Dashboard,
     Phones,
@@ -44,27 +44,27 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
     public string ViewName => throw new NotImplementedException();
 
     [RelayCommand]
-    private async Task UpdateViewAsync(object selectedViewModel)
+    private async Task UpdateViewAsync(object selectedViewModelType)
     {
-        if (selectedViewModel is null) return;
+        if (selectedViewModelType is null) return;
 
-        if (selectedViewModel.GetType() != typeof(ViewType)) return;
+        if (selectedViewModelType.GetType() != typeof(ViewModelType)) return;
 
-        var viewType = (ViewType)selectedViewModel;
+        var viewType = (ViewModelType)selectedViewModelType;
         switch (viewType)
         {
-            case ViewType.Dashboard:
+            case ViewModelType.Dashboard:
                 throw new NotImplementedException();
-            case ViewType.Phones:
+            case ViewModelType.Phones:
                 SelectedViewModel = _phonesMainViewModel;
                 break;
-            case ViewType.Sims:
+            case ViewModelType.Sims:
                 SelectedViewModel = _simCardMainViewModel;
                 break;
-            case ViewType.ServiceRequests:
+            case ViewModelType.ServiceRequests:
                 SelectedViewModel = _serviceRequestMainViewModel;
                 break;
-            case ViewType.Settings:
+            case ViewModelType.Settings:
                 SelectedViewModel = _settingsMainViewModel;
                 break;
             default: throw new NotImplementedException();

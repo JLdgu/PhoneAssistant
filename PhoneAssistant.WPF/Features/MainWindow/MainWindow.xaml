@@ -48,7 +48,7 @@
             <RadioButton
                 Margin="0,10,0,0"
                 Command="{Binding UpdateViewCommand}"
-                CommandParameter="{x:Static viewmodel:ViewType.Phones}"
+                CommandParameter="{x:Static viewmodel:ViewModelType.Phones}"
                 DockPanel.Dock="Top"
                 Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
@@ -62,7 +62,7 @@
             </RadioButton>
             <RadioButton
                 Command="{Binding UpdateViewCommand}"
-                CommandParameter="{x:Static viewmodel:ViewType.Sims}"
+                CommandParameter="{x:Static viewmodel:ViewModelType.Sims}"
                 DockPanel.Dock="Top"
                 Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
@@ -76,7 +76,7 @@
             </RadioButton>
             <RadioButton
                 Command="{Binding UpdateViewCommand}"
-                CommandParameter="{x:Static viewmodel:ViewType.ServiceRequests}"
+                CommandParameter="{x:Static viewmodel:ViewModelType.ServiceRequests}"
                 DockPanel.Dock="Top"
                 Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel HorizontalAlignment="Center">
@@ -91,7 +91,7 @@
             </RadioButton>
             <RadioButton
                 Command="{Binding UpdateViewCommand}"
-                CommandParameter="{x:Static viewmodel:ViewType.Settings}"
+                CommandParameter="{x:Static viewmodel:ViewModelType.Settings}"
                 DockPanel.Dock="Bottom"
                 Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>

@@ -3,7 +3,7 @@
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.Settings;
 
-namespace PhoneAssistant.Tests.Settings;
+namespace PhoneAssistant.Tests.Features.Settings;
 
 [TestClass]
 public sealed class SettingsMainViewModelTests

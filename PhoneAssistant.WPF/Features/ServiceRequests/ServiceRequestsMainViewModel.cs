@@ -2,7 +2,7 @@
 
 namespace PhoneAssistant.WPF.Features.ServiceRequests;
 
-public sealed class ServiceRequestsMainViewModel : IViewModel
+public sealed class ServiceRequestsMainViewModel : IServiceRequestsMainViewModel
 {
     //public List<Employer> Employers { get; set; } = new List<Employer>();
 

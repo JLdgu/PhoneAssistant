@@ -1,16 +1,13 @@
 ﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Windows.Controls;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Models;
-using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
-public sealed partial class PhonesMainViewModel : ObservableObject, IViewModel
+public sealed partial class PhonesMainViewModel : ObservableObject, IPhonesMainViewModel
 {
     private readonly IPhonesRepository _phoneRepository;
     private readonly StateRepository _stateRepository;

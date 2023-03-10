@@ -11,6 +11,7 @@ namespace PhoneAssistant.WPF.Features.MainWindow;
 
 public enum ViewModelType
 {
+    None,
     Dashboard,
     Phones,
     Sims,
@@ -18,20 +19,20 @@ public enum ViewModelType
     Settings
 }
 
-public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
+public sealed partial class MainWindowViewModel : ObservableObject
 {
-    private readonly PhonesMainViewModel _phonesMainViewModel;
-    private readonly SimsMainViewModel _simCardMainViewModel;
-    private readonly ServiceRequestsMainViewModel _serviceRequestMainViewModel;
-    private readonly SettingsMainViewModel _settingsMainViewModel;
+    private readonly IPhonesMainViewModel _phonesMainViewModel;
+    private readonly ISimsMainViewModel _simCardMainViewModel;
+    private readonly IServiceRequestsMainViewModel _serviceRequestMainViewModel;
+    private readonly ISettingsMainViewModel _settingsMainViewModel;
 
     [ObservableProperty]
     private IViewModel? _selectedViewModel;
 
-    public MainWindowViewModel(PhonesMainViewModel phonesMainViewModel,
-                               SimsMainViewModel simCardMainViewModel,
-                               ServiceRequestsMainViewModel serviceRequestMainViewModel,
-                               SettingsMainViewModel settingsMainViewModel)
+    public MainWindowViewModel(IPhonesMainViewModel phonesMainViewModel,
+                               ISimsMainViewModel simCardMainViewModel,
+                               IServiceRequestsMainViewModel serviceRequestMainViewModel,
+                               ISettingsMainViewModel settingsMainViewModel)
     {
         _phonesMainViewModel = phonesMainViewModel;
         _simCardMainViewModel = simCardMainViewModel;
@@ -39,17 +40,15 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
         _settingsMainViewModel = settingsMainViewModel;
     }
 
-    public string ViewPackIcon => throw new NotImplementedException();
-
-    public string ViewName => throw new NotImplementedException();
-
     [RelayCommand]
     private async Task UpdateViewAsync(object selectedViewModelType)
     {
-        if (selectedViewModelType is null) return;
+        if (selectedViewModelType is null) 
+            throw new ArgumentNullException(nameof(selectedViewModelType));
 
-        if (selectedViewModelType.GetType() != typeof(ViewModelType)) return;
-
+        if (selectedViewModelType.GetType() != typeof(ViewModelType))
+            throw new ArgumentException("Type " + selectedViewModelType.GetType() + " is not handled."); 
+        
         var viewType = (ViewModelType)selectedViewModelType;
         switch (viewType)
         {
@@ -69,11 +68,6 @@ public sealed partial class MainWindowViewModel : ObservableObject, IViewModel
                 break;
             default: throw new NotImplementedException();
         }
-        await LoadAsync();
-    }
-
-    public async Task LoadAsync()
-    {
-        await SelectedViewModel!.LoadAsync();
+        await SelectedViewModel.LoadAsync();
     }
 }

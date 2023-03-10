@@ -8,7 +8,7 @@ using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.Sims;
 
-public sealed partial class SimsMainViewModel : ObservableObject, IViewModel
+public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewModel
 {
     private readonly SimsRepository _simCardRepository;
     private readonly StateRepository _stateRepository;

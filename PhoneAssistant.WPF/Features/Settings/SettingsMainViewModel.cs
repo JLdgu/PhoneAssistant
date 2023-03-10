@@ -1,11 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 using PhoneAssistant.WPF.Application;
-using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.Settings;
 
-public sealed partial class SettingsMainViewModel : ObservableObject, IViewModel
+public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsMainViewModel
 {
     private readonly IAppRepository _appRepository;
 

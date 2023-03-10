@@ -89,10 +89,10 @@ public partial class App : System.Windows.Application
         services.AddTransient<ISettingsRepository, SettingsRepository>();
         services.AddTransient<StateRepository>();
 
-        services.AddTransient<PhonesMainViewModel>();
-        services.AddTransient<SimsMainViewModel>();
-        services.AddTransient<ServiceRequestsMainViewModel>();
-        services.AddTransient<SettingsMainViewModel>();
+        services.AddTransient<IPhonesMainViewModel,PhonesMainViewModel>();
+        services.AddTransient<ISimsMainViewModel,SimsMainViewModel>();
+        services.AddTransient<IServiceRequestsMainViewModel,ServiceRequestsMainViewModel>();
+        services.AddTransient<ISettingsMainViewModel,SettingsMainViewModel>();
         services.AddTransient<MainWindowViewModel>();
 
         services.AddDbContext<PhoneAssistantDbContext>(

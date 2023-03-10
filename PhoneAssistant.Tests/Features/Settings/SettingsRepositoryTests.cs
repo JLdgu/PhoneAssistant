@@ -1,10 +1,9 @@
 ﻿using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 
 using PhoneAssistant.WPF.Features.Application;
 using PhoneAssistant.WPF.Features.Settings;
 
-namespace PhoneAssistant.Tests.Settings;
+namespace PhoneAssistant.Tests.Features.Settings;
 
 [TestClass]
 public class SettingsRepositoryTests : DbTestHelper

@@ -1,15 +1,11 @@
 ﻿using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Application;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Models;
 
-namespace PhoneAssistant.Tests.Phones;
+namespace PhoneAssistant.Tests.Features.Phones;
 
 [TestClass]
 public sealed class PhonesRepositoryTests : DbTestHelper

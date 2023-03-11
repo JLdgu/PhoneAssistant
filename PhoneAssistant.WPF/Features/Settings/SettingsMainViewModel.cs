@@ -22,4 +22,10 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
 
         return Task.CompletedTask;
     }
+
+    public Task WindowClosingAsync()
+    {
+        // TODO : Check outstanding edits have been saved
+        return Task.CompletedTask;
+    }
 }

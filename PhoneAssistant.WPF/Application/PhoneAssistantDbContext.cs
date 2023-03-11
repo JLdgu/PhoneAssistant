@@ -22,7 +22,7 @@ public sealed class PhoneAssistantDbContext : DbContext
             optionsBuilder.UseSqlite(@"data source=phoneassistant.db;");
         }
         //optionsBuilder.UseLazyLoadingProxies(); //requires entityframeworkcore.proxies package
-        //optionsBuilder.EnableSensitiveDataLogging();
+        optionsBuilder.EnableSensitiveDataLogging();
         //optionsBuilder.LogTo(Console.WriteLine, LogLevel.Information).EnableSensitiveDataLogging();
         //optionsBuilder.LogTo(Console.WriteLine , new[] { DbLoggerCategory.Query.Name, DbLoggerCategory.Update.Name}).EnableSensitiveDataLogging();
     }

@@ -65,4 +65,10 @@ public sealed partial class PhonesMainViewModel : ObservableObject, IPhonesMainV
             States.Add(state.Status);
         }
     }
+
+    public async Task WindowClosingAsync()
+    {
+        if (SelectedPhone is null) return;
+        await _phoneRepository.UpdateAsync(SelectedPhone);
+    }
 }

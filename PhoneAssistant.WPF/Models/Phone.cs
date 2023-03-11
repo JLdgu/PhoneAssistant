@@ -20,6 +20,10 @@ public sealed class Phone
 
     public string? Note { get; set; }
 
+    public Phone()
+    {
+
+    }
     //public Phone(int id, string iMEI, string? formerUser, bool wiped, string status, string oEM, string? assetTag, string? note)
     //{
     //    Id = id;

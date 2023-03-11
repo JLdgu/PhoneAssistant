@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using Microsoft.EntityFrameworkCore.Diagnostics;
+
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.ServiceRequests;
 using PhoneAssistant.WPF.Features.Settings;
@@ -37,7 +39,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         _phonesMainViewModel = phonesMainViewModel;
         _simCardMainViewModel = simCardMainViewModel;
         _serviceRequestMainViewModel = serviceRequestMainViewModel;
-        _settingsMainViewModel = settingsMainViewModel;
+        _settingsMainViewModel = settingsMainViewModel;        
     }
 
     [RelayCommand]
@@ -69,5 +71,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
             default: throw new NotImplementedException();
         }
         await SelectedViewModel.LoadAsync();
+    }
+
+    public void WindowClosing()
+    {
+        if (SelectedViewModel is null) return;
+        Task.Run(async () => await SelectedViewModel.WindowClosingAsync());
     }
 }

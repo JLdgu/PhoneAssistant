@@ -68,4 +68,11 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
             States.Add(state.Status);
         }
     }
+
+    public Task WindowClosingAsync()
+    {
+        // TODO : Check outstanding edits have been saved
+        return Task.CompletedTask;
+
+    }
 }

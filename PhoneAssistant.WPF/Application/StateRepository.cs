@@ -1,24 +1,27 @@
-﻿using PhoneAssistant.WPF.Models;
+﻿using Microsoft.EntityFrameworkCore;
+
+using PhoneAssistant.WPF.Application.Entities;
+using PhoneAssistant.WPF.Features.Application;
+using PhoneAssistant.WPF.Models;
 
 namespace PhoneAssistant.WPF.Application;
 public sealed class StateRepository : IStateRepository
 {
+    private readonly PhoneAssistantDbContext _dbContext;
+
+    public StateRepository(PhoneAssistantDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
     public async Task<IEnumerable<State>?> GetStatesAsync()
     {
-        await Task.CompletedTask;
-        return AllStates();
-    }
-
-    private static IEnumerable<State> AllStates()
-    {
-        return new List<State>()
+        List<StateEntity> allStates = await _dbContext.States.ToListAsync();
+        List<State> states = new List<State>();
+        foreach (StateEntity entity in allStates)
         {
-            new State () {Status = "In Stock"},
-            new State () {Status = "In Repair"},
-            new State () {Status = "Production"},
-            new State () {Status = "Decomissioned"},
-            new State () {Status = "Disposed"}
-        };
+            states.Add(State.ToState(entity));
+        }
+        return states;
     }
-
 }

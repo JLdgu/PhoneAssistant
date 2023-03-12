@@ -74,7 +74,6 @@ public partial class App : System.Windows.Application
         new PhoneEntity() {Id = 5, IMEI = "353427861419768", FormerUser = "James Tisshaw", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
         new PhoneEntity() {Id = 6, IMEI = "351554742085336", FormerUser = "Unknown", Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00016", Note = "Replacement"}
         };
-
         dbContext.Phones.AddRange(testPhones);
 
         StateEntity[] testStates = new StateEntity[]{

@@ -4,9 +4,6 @@ using Moq;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.ServiceRequests;
 using PhoneAssistant.WPF.Features.Sims;
-using PhoneAssistant.WPF.Application;
-using System.Windows.Controls;
-using PhoneAssistant.WPF;
 
 namespace PhoneAssistant.Tests.Features.MainWindow;
 

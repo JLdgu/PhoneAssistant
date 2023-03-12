@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Windows.Data;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -16,10 +17,12 @@ public sealed partial class PhonesMainViewModel : ObservableObject, IPhonesMainV
     public PhonesMainViewModel(IPhonesRepository phoneRepository, IStateRepository stateRepository)
     {
         _phoneRepository = phoneRepository;
-        _stateRepository = stateRepository;
+        _stateRepository = stateRepository;        
     }
 
     public ObservableCollection<Phone> Phones { get; } = new();
+
+    public ListCollectionView PhonesView;
 
     public List<string> States { get; } = new();
 
@@ -49,6 +52,7 @@ public sealed partial class PhonesMainViewModel : ObservableObject, IPhonesMainV
             {
                 Phones.Add(phone);
             }
+            PhonesView = new ListCollectionView(Phones);
         }
 
         if (States.Any())

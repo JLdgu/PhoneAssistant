@@ -2,6 +2,8 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 
+using PhoneAssistant.WPF.Models;
+
 namespace PhoneAssistant.WPF.Features.Phones;
 /// <summary>
 /// Interaction logic for PhonesMainView.xaml
@@ -35,5 +37,23 @@ public partial class PhonesMainView : UserControl
     private void PhonesGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         SelectedIMEI.Focus();
+    }
+
+    private void CollectionViewSource_Filter(object sender, System.Windows.Data.FilterEventArgs e)
+    {
+        Phone p = e.Item as Phone;
+        if (p is null)
+            return;
+
+        var vm = (IPhonesMainViewModel)DataContext;
+
+
+        // If filter is turned on, filter completed items.
+        {
+            if (p.Wiped == true)
+                e.Accepted = false;
+            else
+                e.Accepted = true;
+        }
     }
 }

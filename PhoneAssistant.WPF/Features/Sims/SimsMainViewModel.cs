@@ -22,17 +22,12 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
     public ObservableCollection<Sim> Sims { get; } = new();
 
     public ObservableCollection<string> States { get; } = new();
-
-    [ObservableProperty]
-    private SimsItemViewModel? _selectedSimCardViewModel;
-
+   
     [ObservableProperty]
     private Sim? _selectedSimCard;
 
     partial void OnSelectedSimCardChanged(Sim? value)
     {
-        if (value is not null)
-            SelectedSimCardViewModel = new SimsItemViewModel(value);
     }
 
     public async Task LoadAsync()

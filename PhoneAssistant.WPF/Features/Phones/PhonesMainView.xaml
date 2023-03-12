@@ -2,7 +2,6 @@
     x:Class="PhoneAssistant.WPF.Features.Phones.PhonesMainView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -10,8 +9,14 @@
     xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.Phones"
     d:DataContext="{d:DesignInstance Type=viewmodel:PhonesMainViewModel}"
     d:DesignHeight="200"
-    d:DesignWidth="1000"
+    d:DesignWidth="800"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <CollectionViewSource
+            x:Key="cvsPhones"
+            Filter="CollectionViewSource_Filter"
+            Source="{Binding Phones}" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -52,11 +57,11 @@
                 materialDesign:HintAssist.IsFloating="True"
                 IsChecked="{Binding SelectedPhone.Wiped}" />
             <ComboBox
-                ItemsSource="{Binding States}"                
                 Grid.Column="3"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="Status"
                 materialDesign:HintAssist.IsFloating="True"
+                ItemsSource="{Binding States}"
                 Text="{Binding SelectedPhone.Status}" />
             <TextBox
                 Grid.Column="4"
@@ -104,6 +109,7 @@
                     Text="{Binding SearchPhones, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </materialDesign:ColorZone>-->
+
         <DataGrid
             Name="PhonesGrid"
             Grid.Row="3"
@@ -114,7 +120,7 @@
             CanUserResizeRows="True"
             CanUserSortColumns="True"
             IsReadOnly="true"
-            ItemsSource="{Binding Phones}"
+            ItemsSource="{Binding Source={StaticResource cvsPhones}}"
             MouseDown="PhonesGrid_MouseDown"
             SelectedItem="{Binding SelectedPhone}"
             SelectionChanged="PhonesGrid_SelectionChanged"

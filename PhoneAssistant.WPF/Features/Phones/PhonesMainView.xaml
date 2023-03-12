@@ -33,6 +33,7 @@
                 <ColumnDefinition Width="{Binding ElementName=gridAssesTag, Path=ActualWidth}" />
             </Grid.ColumnDefinitions>
             <TextBox
+                Name="SelectedIMEI"
                 Grid.Column="0"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="IMEI"
@@ -43,31 +44,32 @@
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="Former User"
                 materialDesign:HintAssist.IsFloating="True"
-                Text="{Binding SelectedPhone.FormerUser, Mode=TwoWay}" />
+                Text="{Binding SelectedPhone.FormerUser}" />
             <CheckBox
                 Grid.Column="2"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="Wiped"
                 materialDesign:HintAssist.IsFloating="True"
                 IsChecked="{Binding SelectedPhone.Wiped}" />
-            <TextBox
+            <ComboBox
+                ItemsSource="{Binding States}"                
                 Grid.Column="3"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="Status"
                 materialDesign:HintAssist.IsFloating="True"
-                Text="{Binding SelectedPhone.Status, Mode=TwoWay}" />
+                Text="{Binding SelectedPhone.Status}" />
             <TextBox
                 Grid.Column="4"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="OEM"
                 materialDesign:HintAssist.IsFloating="True"
-                Text="{Binding SelectedPhone.OEM, Mode=TwoWay}" />
+                Text="{Binding SelectedPhone.OEM}" />
             <TextBox
                 Grid.Column="5"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="Asset Tag"
                 materialDesign:HintAssist.IsFloating="True"
-                Text="{Binding SelectedPhone.AssetTag, Mode=TwoWay}" />
+                Text="{Binding SelectedPhone.AssetTag}" />
         </Grid>
         <!--<materialDesign:ColorZone
             Grid.Row="2"
@@ -109,11 +111,13 @@
             AutoGenerateColumns="False"
             CanUserAddRows="True"
             CanUserReorderColumns="False"
+            CanUserResizeRows="True"
             CanUserSortColumns="True"
             IsReadOnly="true"
             ItemsSource="{Binding Phones}"
             MouseDown="PhonesGrid_MouseDown"
             SelectedItem="{Binding SelectedPhone}"
+            SelectionChanged="PhonesGrid_SelectionChanged"
             SelectionMode="Single"
             SelectionUnit="FullRow">
             <DataGrid.Columns>
@@ -147,7 +151,6 @@
                     Width="auto"
                     Binding="{Binding AssetTag}"
                     Header="Asset Tag" />
-                <!--<DataGridTextColumn Width="*" />-->
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

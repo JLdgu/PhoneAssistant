@@ -29,7 +29,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
             new PhoneEntity() {Id = 5, IMEI = "353427861419768", FormerUser = "James Tisshaw", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
             new PhoneEntity() {Id = 6, IMEI = "351554742085336", FormerUser = "Unknown", Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00016", Note = "Replacement"}
         };
-        dbContext.MobilePhones.AddRange(testdata);
+        dbContext.Phones.AddRange(testdata);
         dbContext.SaveChanges();
 
         var repository = new PhonesRepository(dbContext);
@@ -58,7 +58,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
             new PhoneEntity() {Id = 5, IMEI = "353427861419768", FormerUser = "James Tisshaw", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
             new PhoneEntity() {Id = 6, IMEI = "351554742085336", FormerUser = "Unknown", Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00768", Note = "Replacement"}
         };
-        dbContext.MobilePhones.AddRange(testdata);
+        dbContext.Phones.AddRange(testdata);
         dbContext.SaveChanges();
 
         var repository = new PhonesRepository(dbContext);
@@ -92,7 +92,7 @@ public sealed class PhonesRepositoryUpdateTests : DbTestHelper
 
         using PhoneAssistantDbContext dbContext = new PhoneAssistantDbContext(helper.Options!);
         dbContext.Database.EnsureCreated();
-        dbContext.MobilePhones.Add(phoneToUpdate);
+        dbContext.Phones.Add(phoneToUpdate);
         dbContext.SaveChanges();
 
         var repository = new PhonesRepository(dbContext);
@@ -106,7 +106,7 @@ public sealed class PhonesRepositoryUpdateTests : DbTestHelper
 
         await repository.UpdateAsync(phoneToUpdate);
 
-        PhoneEntity actual = dbContext.MobilePhones.Where(mp => mp.Id == 1).First();
+        PhoneEntity actual = dbContext.Phones.Where(mp => mp.Id == 1).First();
         //Assert.AreEqual(phoneToUpdate, actual);
         Assert.AreEqual(phoneToUpdate.IMEI, actual.IMEI);
         Assert.AreEqual(phoneToUpdate.FormerUser, actual.FormerUser);

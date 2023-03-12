@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -10,10 +11,9 @@ namespace PhoneAssistant.WPF.Features.Phones;
 public sealed partial class PhonesMainViewModel : ObservableObject, IPhonesMainViewModel
 {
     private readonly IPhonesRepository _phoneRepository;
-    private readonly StateRepository _stateRepository;
+    private readonly IStateRepository _stateRepository;
 
-    public PhonesMainViewModel(IPhonesRepository phoneRepository,
-                                   StateRepository stateRepository)
+    public PhonesMainViewModel(IPhonesRepository phoneRepository, IStateRepository stateRepository)
     {
         _phoneRepository = phoneRepository;
         _stateRepository = stateRepository;
@@ -29,7 +29,7 @@ public sealed partial class PhonesMainViewModel : ObservableObject, IPhonesMainV
     async partial void OnSelectedPhoneChanging(Phone value)
     {
         if (SelectedPhone is null) return;
-        await _phoneRepository.UpdateAsync(SelectedPhone);
+        await _phoneRepository.UpdateAsync(SelectedPhone);        
     }
 
     public async Task LoadAsync()
@@ -39,7 +39,7 @@ public sealed partial class PhonesMainViewModel : ObservableObject, IPhonesMainV
 
         if (!Phones.Any())
         {
-            var phones = await _phoneRepository.AllAsync();
+            var phones = await _phoneRepository.GetPhonesAsync();
             if (phones == null)
             {
                 throw new ArgumentNullException(nameof(phones));
@@ -54,7 +54,7 @@ public sealed partial class PhonesMainViewModel : ObservableObject, IPhonesMainV
         if (States.Any())
             return;
 
-        var states = await _stateRepository.AllAsync();
+        var states = await _stateRepository.GetStatesAsync();
         if (states == null)
         {
             throw new ArgumentNullException(nameof(states));

@@ -11,7 +11,7 @@ public sealed class SettingsMainViewModelTests
     [TestMethod]
     public async Task LoadAsync_ReturnsVersionDescription()
     {
-        const string versionDescription = "Version Description";        
+            
         IAppRepository app = Mock.Of<IAppRepository>(a => a.VersionDescription == versionDescription);
         var viewModel = new SettingsMainViewModel(app);
 

@@ -10,10 +10,10 @@ namespace PhoneAssistant.WPF.Features.Sims;
 
 public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewModel
 {
-    private readonly SimsRepository _simCardRepository;
-    private readonly StateRepository _stateRepository;
+    private readonly ISimsRepository _simCardRepository;
+    private readonly IStateRepository _stateRepository;
 
-    public SimsMainViewModel(SimsRepository simCardRepository, StateRepository stateRepository)
+    public SimsMainViewModel(ISimsRepository simCardRepository, IStateRepository stateRepository)
     {
         _simCardRepository = simCardRepository;
         _stateRepository = stateRepository;
@@ -42,7 +42,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
 
         if (!Sims.Any())
         {
-            var simCards = await _simCardRepository.AllAsync();
+            var simCards = await _simCardRepository.GetSimsAsync();
             if (simCards == null)
             {
                 throw new ArgumentNullException(nameof(simCards));
@@ -57,7 +57,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
         if (States.Any())
             return;
 
-        var states = await _stateRepository.AllAsync();
+        var states = await _stateRepository.GetStatesAsync();
         if (states == null)
         {
             throw new ArgumentNullException(nameof(states));

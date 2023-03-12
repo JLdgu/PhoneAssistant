@@ -6,12 +6,12 @@ namespace PhoneAssistant.WPF.Features.Application;
 
 public sealed class PhoneAssistantDbContext : DbContext
 {
-    //public DbSet<StateDTO> State { get; set; }
-    //public DbSet<LinkDTO> Links { get; set; }
-    public DbSet<PhoneEntity> MobilePhones { get; set; }
-    //public DbSet<SimCardDTO> SimCards { get; set; }
-
+    public DbSet<PhoneEntity> Phones { get; set; }
+    //public DbSet<ServiceRequestEntity> ServiceRequests { get; set; }
     public DbSet<SettingEntity> Setting { get; set; }
+    //public DbSet<SimEntity> Sims { get; set; }
+    public DbSet<StateEntity> States { get; set; }
+
 
     public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
 
@@ -29,18 +29,11 @@ public sealed class PhoneAssistantDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        //modelBuilder.Entity<StateDTO>()
-        //    .HasKey(s => s.Status);                
-
-        //StateDTO[] states = new StateDTO[]{
-        //        new StateDTO { Status = "In Stock" },
-        //        new StateDTO { Status = "In Repair" },
-        //        new StateDTO { Status = "Production" }
-        //};
-        //modelBuilder.Entity<StateDTO>().HasData(states);
-
         modelBuilder.Entity<PhoneEntity>()
             .HasIndex(p => p.IMEI).IsUnique();        
+
+        modelBuilder.Entity<StateEntity>()
+            .HasKey(s => s.Status);                
 
         //modelBuilder.Entity<SmartCard>()
         //    .HasIndex(sc => sc.SimNumber).IsUnique();

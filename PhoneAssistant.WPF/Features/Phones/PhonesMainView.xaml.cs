@@ -30,5 +30,10 @@ public partial class PhonesMainView : UserControl
         }
 
         row.IsSelected = true;        
-    }   
+    }
+
+    private void PhonesGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        SelectedIMEI.Focus();
+    }
 }

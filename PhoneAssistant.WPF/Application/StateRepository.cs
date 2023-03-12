@@ -1,9 +1,9 @@
 ﻿using PhoneAssistant.WPF.Models;
 
 namespace PhoneAssistant.WPF.Application;
-public sealed class StateRepository
+public sealed class StateRepository : IStateRepository
 {
-    public async Task<IEnumerable<State>?> AllAsync()
+    public async Task<IEnumerable<State>?> GetStatesAsync()
     {
         await Task.CompletedTask;
         return AllStates();

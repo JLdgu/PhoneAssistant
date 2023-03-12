@@ -2,9 +2,9 @@
 
 namespace PhoneAssistant.WPF.Features.Sims;
 
-public sealed class SimsRepository
+public sealed class SimsRepository : ISimsRepository
 {
-    public async Task<IEnumerable<Sim>?> AllAsync()
+    public async Task<IEnumerable<Sim>?> GetSimsAsync()
     {
         await Task.CompletedTask;
         return AllSimCards();

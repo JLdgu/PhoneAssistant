@@ -63,9 +63,9 @@ public partial class App : System.Windows.Application
         dbContext.Database.EnsureCreated();
         //dbContext.Database.Migrate();
 
-        if (dbContext.MobilePhones.Count() > 0) return;
+        if (dbContext.Phones.Count() > 0) return;
 
-        PhoneEntity[] testdata = new PhoneEntity[]
+        PhoneEntity[] testPhones = new PhoneEntity[]
         {
         new PhoneEntity() {Id = 1, IMEI = "353427866717729", FormerUser = "Rehana Kausar", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null  },
         new PhoneEntity() {Id = 2, IMEI = "355808981132845", FormerUser = null, Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00017", Note = "Replacement"},
@@ -75,7 +75,15 @@ public partial class App : System.Windows.Application
         new PhoneEntity() {Id = 6, IMEI = "351554742085336", FormerUser = "Unknown", Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00016", Note = "Replacement"}
         };
 
-        dbContext.MobilePhones.AddRange(testdata);
+        dbContext.Phones.AddRange(testPhones);
+
+        StateEntity[] testStates = new StateEntity[]{
+                new StateEntity { Status = "In Stock" },
+                new StateEntity { Status = "In Repair" },
+                new StateEntity { Status = "Production" }
+        };
+        dbContext.States.AddRange(testStates);
+
         dbContext.SaveChanges();
     }
 
@@ -85,9 +93,9 @@ public partial class App : System.Windows.Application
 
         services.AddSingleton<IAppRepository, AppRepository>();
         services.AddTransient<IPhonesRepository, PhonesRepository>();
-        services.AddTransient<SimsRepository>();
+        services.AddTransient<ISimsRepository,SimsRepository>();
         services.AddTransient<ISettingsRepository, SettingsRepository>();
-        services.AddTransient<StateRepository>();
+        services.AddTransient<IStateRepository,StateRepository>();
 
         services.AddTransient<IPhonesMainViewModel,PhonesMainViewModel>();
         services.AddTransient<ISimsMainViewModel,SimsMainViewModel>();

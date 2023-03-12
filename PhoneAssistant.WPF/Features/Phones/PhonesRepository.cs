@@ -15,20 +15,20 @@ public sealed class PhonesRepository : IPhonesRepository
         _dbContext = dbContext;
     }
 
-    public async Task<IEnumerable<Phone>> AllAsync()
+    public async Task<IEnumerable<Phone>> GetPhonesAsync()
     {
-        List<PhoneEntity> MobilePhones = await _dbContext.MobilePhones.ToListAsync();
+        List<PhoneEntity> PhoneEntities = await _dbContext.Phones.ToListAsync();
         List<Phone> phones = new List<Phone>();
-        foreach (PhoneEntity mobile in MobilePhones)
+        foreach (PhoneEntity entity in PhoneEntities)
         {
-            phones.Add(Phone.ToPhone(mobile));
+            phones.Add(Phone.ToPhone(entity));
         }
         return phones;
     }
 
     public async Task<IEnumerable<Phone>> SearchAsync(string search)
     {
-        List<PhoneEntity> MobilePhones = await _dbContext.MobilePhones
+        List<PhoneEntity> MobilePhones = await _dbContext.Phones
             .Where(p => p.IMEI.Contains(search) || p.AssetTag.Contains(search))
             .ToListAsync();
         List<Phone> phones = new List<Phone>();
@@ -41,7 +41,7 @@ public sealed class PhonesRepository : IPhonesRepository
 
     public async Task UpdateAsync(Phone phoneToUpdate)
     {
-        PhoneEntity phone = _dbContext.MobilePhones.Where(mp => mp.Id == phoneToUpdate.Id).First();
+        PhoneEntity phone = _dbContext.Phones.Where(mp => mp.Id == phoneToUpdate.Id).First();
         
         phone.IMEI = phoneToUpdate.IMEI;
         phone.FormerUser = phoneToUpdate.FormerUser;
@@ -51,7 +51,7 @@ public sealed class PhonesRepository : IPhonesRepository
         phone.AssetTag = phoneToUpdate.AssetTag;
         phone.Note = phoneToUpdate.Note;
 
-        _dbContext.MobilePhones.Update(phone);
+        _dbContext.Phones.Update(phone);
         await _dbContext.SaveChangesAsync();
         return;
     }

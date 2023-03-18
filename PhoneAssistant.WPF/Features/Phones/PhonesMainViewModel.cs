@@ -22,7 +22,8 @@ public sealed partial class PhonesMainViewModel : ObservableObject, IPhonesMainV
 
     public ObservableCollection<Phone> Phones { get; } = new();
 
-    public ListCollectionView PhonesView;
+    [ObservableProperty]
+    private ListCollectionView phonesView;
 
     public List<string> States { get; } = new();
 
@@ -32,7 +33,25 @@ public sealed partial class PhonesMainViewModel : ObservableObject, IPhonesMainV
     async partial void OnSelectedPhoneChanging(Phone value)
     {
         if (SelectedPhone is null) return;
+
         await _phoneRepository.UpdateAsync(SelectedPhone);        
+    }
+
+    [ObservableProperty]
+    private string _filterPhones;
+
+    partial void OnFilterPhonesChanged(string value)
+    {
+//        wipedFilter = !wipedFilter;
+        PhonesView.Filter = ApplyPhonesFilter;
+        PhonesView.Refresh();
+    }
+
+    private bool ApplyPhonesFilter(object obj)
+    {
+        Phone? phone = obj as Phone;
+        if (phone == null) return true;
+        return true; // phone.Wiped == wipedFilter;
     }
 
     public async Task LoadAsync()
@@ -53,6 +72,7 @@ public sealed partial class PhonesMainViewModel : ObservableObject, IPhonesMainV
                 Phones.Add(phone);
             }
             PhonesView = new ListCollectionView(Phones);
+            //PhonesView.Filter = p => ((Phone)p).Wiped == wipedFilter;
         }
 
         if (States.Any())

@@ -11,12 +11,6 @@
     d:DesignHeight="200"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <UserControl.Resources>
-        <CollectionViewSource
-            x:Key="cvsPhones"
-            Filter="CollectionViewSource_Filter"
-            Source="{Binding Phones}" />
-    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -35,7 +29,7 @@
                 <ColumnDefinition Width="{Binding ElementName=gridWiped, Path=ActualWidth}" />
                 <ColumnDefinition Width="{Binding ElementName=gridStatus, Path=ActualWidth}" />
                 <ColumnDefinition Width="{Binding ElementName=gridOEM, Path=ActualWidth}" />
-                <ColumnDefinition Width="{Binding ElementName=gridAssesTag, Path=ActualWidth}" />
+                <ColumnDefinition Width="{Binding ElementName=gridAssetTag, Path=ActualWidth}" />
             </Grid.ColumnDefinitions>
             <TextBox
                 Name="SelectedIMEI"
@@ -76,7 +70,7 @@
                 materialDesign:HintAssist.IsFloating="True"
                 Text="{Binding SelectedPhone.AssetTag}" />
         </Grid>
-        <!--<materialDesign:ColorZone
+        <materialDesign:ColorZone
             Grid.Row="2"
             Margin="0,0,0,0"
             Padding="8,4,8,4"
@@ -100,15 +94,15 @@
                     MinWidth="250"
                     Margin="16,4"
                     Padding="10,5"
-                    materialDesign:HintAssist.Hint="Search"
+                    materialDesign:HintAssist.Hint="Filter"
                     materialDesign:HintAssist.IsFloating="True"
                     materialDesign:TextFieldAssist.DecorationVisibility="Collapsed"
                     materialDesign:TextFieldAssist.HasClearButton="True"
                     materialDesign:TextFieldAssist.HasOutlinedTextField="True"
                     materialDesign:TextFieldAssist.TextFieldCornerRadius="4"
-                    Text="{Binding SearchPhones, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{Binding FilterPhones, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
-        </materialDesign:ColorZone>-->
+        </materialDesign:ColorZone>
 
         <DataGrid
             Name="PhonesGrid"
@@ -120,7 +114,7 @@
             CanUserResizeRows="True"
             CanUserSortColumns="True"
             IsReadOnly="true"
-            ItemsSource="{Binding Source={StaticResource cvsPhones}}"
+            ItemsSource="{Binding Phones}"
             MouseDown="PhonesGrid_MouseDown"
             SelectedItem="{Binding SelectedPhone}"
             SelectionChanged="PhonesGrid_SelectionChanged"
@@ -153,7 +147,7 @@
                     Binding="{Binding OEM}"
                     Header="OEM" />
                 <DataGridTextColumn
-                    x:Name="gridAssesTag"
+                    x:Name="gridAssetTag"
                     Width="auto"
                     Binding="{Binding AssetTag}"
                     Header="Asset Tag" />

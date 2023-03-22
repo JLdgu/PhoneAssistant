@@ -19,9 +19,9 @@ public sealed class StateRepositoryTests
         dbContext.Database.EnsureCreated();
 
         StateEntity[] testStates = new StateEntity[]{
-                new StateEntity { Status = "S1" },
-                new StateEntity { Status = "S2" },
-                new StateEntity { Status = "S3" }
+                new StateEntity ( "S1" ),
+                new StateEntity ( "S2" ),
+                new StateEntity ( "S3" )
         };
         dbContext.States.AddRange(testStates);
         dbContext.SaveChanges();

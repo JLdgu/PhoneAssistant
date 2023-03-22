@@ -4,20 +4,13 @@ namespace PhoneAssistant.WPF.Models;
 public sealed class State
 {
     public string Status { get; init; }
-    
-    public static State ToState(StateEntity entity)
-    {
-        return new State()
-        {
-            Status = entity.Status
-        };
-    }
 
-    public static implicit operator StateEntity(State state)
+    public State(string status)
     {
-        return new StateEntity
-        {
-            Status = state.Status
-        };
+        Status = status;
     }
+    
+    public static State ToState(StateEntity entity) => new State(entity.Status);    
+
+    public static implicit operator StateEntity(State state) => new StateEntity(state.Status);
 }

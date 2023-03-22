@@ -40,7 +40,7 @@ public sealed class PhoneAssistantDbContext : DbContext
         //modelBuilder.Entity<SmartCard>()
         //    .HasIndex(sc => sc.PhoneNumber).IsUnique();
 
-        modelBuilder.Entity<SettingEntity>().HasData(new SettingEntity { Id = 1, MinimumVersion = "0.0.0.1" });
+        modelBuilder.Entity<SettingEntity>().HasData(new SettingEntity ( 1, "0.0.0.1" ));
 
         base.OnModelCreating(modelBuilder);
     }

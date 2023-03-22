@@ -77,15 +77,15 @@ public sealed class PhonesRepositoryUpdateTests : DbTestHelper
     [TestMethod()]
     public async Task UpdateAsync()
     {
-        Phone phoneToUpdate = new();
-        phoneToUpdate.Id = 1;
-        phoneToUpdate.IMEI = "A";
-        phoneToUpdate.FormerUser = "A";
-        phoneToUpdate.Wiped = true;
-        phoneToUpdate.Status = "A";
-        phoneToUpdate.OEM = "A";
-        phoneToUpdate.AssetTag = "A";
-        phoneToUpdate.Note = "A";
+        Phone phoneToUpdate = new(
+            id: 1,
+            iMEI: "A",
+            formerUser: "A",
+            wiped: true,
+            status: "A",
+            oEM: "A",
+            assetTag: "A",
+            note: "A" );
 
         DbTestHelper helper = new();
         using SqliteConnection Connection = helper.CreateConnection();

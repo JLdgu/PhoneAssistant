@@ -77,9 +77,9 @@ public partial class App : System.Windows.Application
         dbContext.Phones.AddRange(testPhones);
 
         StateEntity[] testStates = new StateEntity[]{
-                new StateEntity { Status = "In Stock" },
-                new StateEntity { Status = "In Repair" },
-                new StateEntity { Status = "Production" }
+                new StateEntity ( "In Stock" ),
+                new StateEntity ( "In Repair" ),
+                new StateEntity ( "Production" )
         };
         dbContext.States.AddRange(testStates);
 

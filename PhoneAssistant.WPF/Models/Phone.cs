@@ -20,36 +20,27 @@ public sealed class Phone
 
     public string? Note { get; set; }
 
-    public Phone()
+    public Phone(int id, string iMEI, string? formerUser, bool wiped, string status, string oEM, string? assetTag, string? note)
     {
-
+        Id = id;
+        IMEI = iMEI;
+        FormerUser = formerUser;
+        Wiped = wiped;
+        Status = status;
+        OEM = oEM;
+        AssetTag = assetTag;
+        Note = note;
     }
-    //public Phone(int id, string iMEI, string? formerUser, bool wiped, string status, string oEM, string? assetTag, string? note)
-    //{
-    //    Id = id;
-    //    IMEI = iMEI;
-    //    FormerUser = formerUser;
-    //    Wiped = wiped;
-    //    Status = status;
-    //    OEM = oEM;
-    //    AssetTag = assetTag;
-    //    Note = note;
-    //}
-
-    public static Phone ToPhone(PhoneEntity entity)
-    {
-        return new Phone()
-        {
-            Id = entity.Id,
-            IMEI = entity.IMEI,
-            FormerUser = entity.FormerUser,
-            Wiped = entity.Wiped,
-            Status = entity.Status,
-            OEM = entity.OEM,
-            AssetTag = entity.AssetTag,
-            Note = entity.Note
-        };
-    }
+    
+    public static Phone ToPhone(PhoneEntity entity) => 
+        new Phone(id: entity.Id,
+                  iMEI: entity.IMEI,
+                  formerUser: entity.FormerUser,
+                  wiped: entity.Wiped,
+                  status: entity.Status,
+                  oEM: entity.OEM,
+                  assetTag: entity.AssetTag,
+                  note: entity.Note);
 
     public static implicit operator PhoneEntity(Phone phone)
     {

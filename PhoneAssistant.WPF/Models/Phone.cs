@@ -33,14 +33,14 @@ public sealed class Phone
     }
     
     public static Phone ToPhone(PhoneEntity entity) => 
-        new Phone(id: entity.Id,
-                  iMEI: entity.IMEI,
-                  formerUser: entity.FormerUser,
-                  wiped: entity.Wiped,
-                  status: entity.Status,
-                  oEM: entity.OEM,
-                  assetTag: entity.AssetTag,
-                  note: entity.Note);
+        new(id: entity.Id,
+            iMEI: entity.IMEI,
+            formerUser: entity.FormerUser,
+            wiped: entity.Wiped,
+            status: entity.Status,
+            oEM: entity.OEM,
+            assetTag: entity.AssetTag,
+            note: entity.Note);
 
     public static implicit operator PhoneEntity(Phone phone)
     {

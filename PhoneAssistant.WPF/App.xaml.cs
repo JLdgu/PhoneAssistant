@@ -22,7 +22,7 @@ namespace PhoneAssistant.WPF;
 /// </summary>
 public partial class App : System.Windows.Application
 {
-    private IHost _host;
+    private readonly IHost _host;
 
     public App()
     {
@@ -39,9 +39,9 @@ public partial class App : System.Windows.Application
 
         ConfigureDatabase();
 
-        var _appRepository = _host.Services.GetRequiredService<IAppRepository>();
-        bool InvalidVersion = _appRepository.InvalidVersionAsync().Result;
-        if (InvalidVersion)
+        var appRepository = _host.Services.GetRequiredService<IAppRepository>();
+        bool invalidVersion = appRepository.InvalidVersionAsync().Result;
+        if (invalidVersion)
         {
             MessageBox.Show("Invalid version, please update to the latest version", "Phone Assistant",
                 MessageBoxButton.OK, MessageBoxImage.Stop);
@@ -63,7 +63,7 @@ public partial class App : System.Windows.Application
         dbContext.Database.EnsureCreated();
         //dbContext.Database.Migrate();
 
-        if (dbContext.Phones.Count() > 0) return;
+        if (dbContext.Phones.Any()) return;
 
         PhoneEntity[] testPhones = new PhoneEntity[]
         {

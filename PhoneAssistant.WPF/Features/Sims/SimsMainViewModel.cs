@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -10,12 +11,13 @@ namespace PhoneAssistant.WPF.Features.Sims;
 
 public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewModel
 {
-    private readonly ISimsRepository _simCardRepository;
+    private readonly ISimsRepository _simRepository;
     private readonly IStateRepository _stateRepository;
 
-    public SimsMainViewModel(ISimsRepository simCardRepository, IStateRepository stateRepository)
+
+    public SimsMainViewModel(ISimsRepository simRepository, IStateRepository stateRepository)
     {
-        _simCardRepository = simCardRepository;
+        _simRepository = simRepository;
         _stateRepository = stateRepository;
     }
 
@@ -24,10 +26,34 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
     public ObservableCollection<string> States { get; } = new();
    
     [ObservableProperty]
-    private Sim? _selectedSimCard;
+    private Sim? _selectedSim;
 
-    partial void OnSelectedSimCardChanged(Sim? value)
+    private int _previousSimIndex = -1;
+    private Sim? _previousSim;
+
+    [ObservableProperty]
+    private int _id;
+
+    partial void OnIdChanged(int value)
     {
+        SelectedSim.Id = Id;    
+    }
+
+    partial void OnSelectedSimChanged(Sim? value)
+    {
+        if (SelectedSim is null) return;
+        if (value is null) return;
+
+        if (_previousSimIndex > -1)
+        {
+            Sims.RemoveAt(_previousSimIndex);
+            Sims.Insert(_previousSimIndex, _previousSim);            
+        }
+
+        Id = value.Id;
+
+        _previousSimIndex = Sims.IndexOf(value);
+        _previousSim = value;
     }
 
     public async Task LoadAsync()
@@ -37,7 +63,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
 
         if (!Sims.Any())
         {
-            var simCards = await _simCardRepository.GetSimsAsync();
+            var simCards = await _simRepository.GetSimsAsync();
             if (simCards == null)
             {
                 throw new ArgumentNullException(nameof(simCards));

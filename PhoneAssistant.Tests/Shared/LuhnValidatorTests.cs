@@ -8,33 +8,23 @@ public sealed class LuhnValidatorTests
     [TestMethod]
     [DataRow(0)]
     [DataRow(1)]
-    public void IsValid_ThrowsException_When_requiredLength_Invalid(int requiredLength)
+    public void IsValid_ReturnsFalse_When_requiredLength_Invalid(int requiredLength)
     {
-        const string input = "aaa";
+        const string luhn = "1234";
 
-        var actual = Assert.ThrowsException<ArgumentException>(() => LuhnValidator.IsValid(input, requiredLength));
+        var actual = LuhnValidator.IsValid(luhn, requiredLength);
 
-        Assert.AreEqual("length must be omitted or > 1", actual.Message);
+        Assert.IsFalse(actual);
     }
 
     [TestMethod]
-    public void IsValid_ThrowsException_When_luhnString_ShorterThan_RequiredLength()
-    {
-        const string input = "361568";
+    [DataRow("361568", 3)]
+    [DataRow("361568", 9)]
+    public void IsValid_ReturnFalse_When_luhnString_ShorterThan_RequiredLength(string luhn, int requiredLength)
+    {       
+        var actual = LuhnValidator.IsValid(luhn, requiredLength);
 
-        var actual = Assert.ThrowsException<ArgumentException>(() => LuhnValidator.IsValid(input, 99));
-
-        Assert.AreEqual("Length of luhnString != length", actual.Message);
-    }
-
-    [TestMethod]
-    public void IsValid_ThrowsException_When_luhnString_LongerThan_RequiredLength()
-    {
-        const string input = "361568";
-
-        var actual = Assert.ThrowsException<ArgumentException>(() => LuhnValidator.IsValid(input, 3));
-
-        Assert.AreEqual("Length of luhnString != length", actual.Message);
+        Assert.IsFalse(actual);
     }
 
     [TestMethod]

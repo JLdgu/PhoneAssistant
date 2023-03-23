@@ -18,10 +18,10 @@ public static  class LuhnValidator
             return false;
 
         if (length == 0 || length == 1)
-            throw new ArgumentException("length must be omitted or > 1");
+            return false;
         
         if (length > 1 && luhn.Length != length)
-            throw new ArgumentException("Length of luhnString != length");
+            return false;
 
         long result;
         if (!Int64.TryParse(luhn, out result))

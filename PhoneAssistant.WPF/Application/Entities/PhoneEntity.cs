@@ -4,7 +4,7 @@ public class PhoneEntity
 {
     public int Id { get; set; }
 
-    public string IMEI { get; set; }
+    public string Imei { get; set; }
 
     public string? FormerUser { get; set; }
 

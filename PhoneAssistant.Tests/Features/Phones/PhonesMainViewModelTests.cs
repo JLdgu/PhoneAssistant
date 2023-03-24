@@ -13,9 +13,10 @@ public sealed class PhonesMainViewModelTests
         IStateRepository stateRepository = Mock.Of<IStateRepository>();
         IPhonesRepository phonesRepository = Mock.Of<IPhonesRepository>();
 
-        PhonesMainViewModel viewModel = new(phonesRepository, stateRepository);
-
-        viewModel.IMEI = "351554747259670";
+        PhonesMainViewModel viewModel = new(phonesRepository, stateRepository)
+        {
+            Imei = "351554747259670"
+        };
 
         Assert.IsFalse(viewModel.HasErrors);
     }
@@ -29,8 +30,10 @@ public sealed class PhonesMainViewModelTests
         IStateRepository stateRepository = Mock.Of<IStateRepository>();
         IPhonesRepository phonesRepository = Mock.Of<IPhonesRepository>();
 
-        PhonesMainViewModel viewModel = new(phonesRepository, stateRepository);
-        viewModel.IMEI = imei;
+        PhonesMainViewModel viewModel = new(phonesRepository, stateRepository)
+        {
+            Imei = imei
+        };
 
         Assert.IsTrue(viewModel.HasErrors);
     }

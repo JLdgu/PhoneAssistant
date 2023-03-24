@@ -13,8 +13,8 @@ public class SettingsRepositoryTests : DbTestHelper
     public async Task GetAsync_ReturnsMinimumVersion()
     {
         DbTestHelper helper = new();
-        using SqliteConnection Connection = helper.CreateConnection();
-        using PhoneAssistantDbContext dbContext = new PhoneAssistantDbContext(helper.Options!);
+        using SqliteConnection connection = helper.CreateConnection();
+        using PhoneAssistantDbContext dbContext = new(helper.Options!);
         dbContext.Database.EnsureCreated();
 
         var repository = new SettingsRepository(dbContext);

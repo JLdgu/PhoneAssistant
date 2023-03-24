@@ -29,7 +29,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     public ObservableCollection<Phone> Phones { get; } = new();
 
     [ObservableProperty]
-    private ListCollectionView phonesView;
+    private ListCollectionView _phonesView;
 
     [ObservableProperty]
     private Phone? _selectedPhone;
@@ -48,7 +48,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
             Phones.Insert(_previousPhoneIndex, _previousPhone);
         }
 
-        IMEI = value.IMEI;
+        Imei = value.Imei;
 
         _previousPhoneIndex = Phones.IndexOf(value);
         _previousPhone = value;
@@ -57,19 +57,17 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     [ObservableProperty]
     [NotifyDataErrorInfo]
     [Required]
-    [CustomValidation(typeof(PhonesMainViewModel), nameof(ValidateIMEI))]
-    private string _IMEI;
+    [CustomValidation(typeof(PhonesMainViewModel), nameof(ValidateImei))]
+    private string _imei;
 
-    partial void OnIMEIChanged(string value)
+    partial void OnImeiChanged(string value)
     {
-        SelectedPhone.IMEI = value;
+        SelectedPhone.Imei = value;
     }
-    public static ValidationResult? ValidateIMEI(string imei, ValidationContext context)
+    public static ValidationResult? ValidateImei(string imei, ValidationContext context)
     {
 
-        if (LuhnValidator.IsValid(imei,15)) return ValidationResult.Success;
-
-        return new("IMEI format is invalid");
+        return LuhnValidator.IsValid(imei,15) ? ValidationResult.Success : new("IMEI format is invalid");
     }
 
     [RelayCommand]
@@ -94,8 +92,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     private bool ApplyPhonesFilter(object obj)
     {
-        Phone? phone = obj as Phone;
-        if (phone == null) return true;
+        if (obj is not Phone) return true;
         return true; // phone.Wiped == wipedFilter;
     }
     #endregion

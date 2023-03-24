@@ -13,11 +13,11 @@ public class DbTestHelper : IDisposable
 
     internal SqliteConnection CreateConnection(string datasource = "DataSource=:memory:;")
     {
-        var Connection = new SqliteConnection(datasource);
-        Connection.Open();
+        var connection = new SqliteConnection(datasource);
+        connection.Open();
         
-        Options = new DbContextOptionsBuilder<PhoneAssistantDbContext>().UseSqlite(Connection!).Options;
-        return Connection;
+        Options = new DbContextOptionsBuilder<PhoneAssistantDbContext>().UseSqlite(connection!).Options;
+        return connection;
     }
 
     protected virtual void Dispose(bool disposing)

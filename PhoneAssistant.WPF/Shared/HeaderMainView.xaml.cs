@@ -9,10 +9,10 @@ namespace PhoneAssistant.WPF.Shared
     public partial class HeaderMainView : UserControl
     {
         public static readonly DependencyProperty HeaderTextProperty = DependencyProperty.Register(
-            "HeaderText", typeof(string), typeof(HeaderMainView), new PropertyMetadata(default(string)));
+            nameof(HeaderText), typeof(string), typeof(HeaderMainView), new PropertyMetadata(default(string)));
 
         public static readonly DependencyProperty HeaderIconProperty = DependencyProperty.Register(
-            "HeaderIcon", typeof(string), typeof(HeaderMainView), new PropertyMetadata(default(string)));
+            nameof(HeaderIcon), typeof(string), typeof(HeaderMainView), new PropertyMetadata(default(string)));
 
         public string HeaderText
         {

@@ -30,7 +30,7 @@ public sealed class PhoneAssistantDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<PhoneEntity>()
-            .HasIndex(p => p.IMEI).IsUnique();        
+            .HasIndex(p => p.Imei).IsUnique();        
 
         modelBuilder.Entity<StateEntity>()
             .HasKey(s => s.Status);                

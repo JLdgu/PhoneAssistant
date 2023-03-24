@@ -6,7 +6,7 @@ public sealed class Phone
 {
     public int Id { get; set; }
 
-    public string IMEI { get; set; }
+    public string Imei { get; set; }
 
     public string? FormerUser { get; set; }
 
@@ -23,7 +23,7 @@ public sealed class Phone
     public Phone(int id, string iMEI, string? formerUser, bool wiped, string status, string oEM, string? assetTag, string? note)
     {
         Id = id;
-        IMEI = iMEI;
+        Imei = iMEI;
         FormerUser = formerUser;
         Wiped = wiped;
         Status = status;
@@ -34,7 +34,7 @@ public sealed class Phone
     
     public static Phone ToPhone(PhoneEntity entity) => 
         new(id: entity.Id,
-            iMEI: entity.IMEI,
+            iMEI: entity.Imei,
             formerUser: entity.FormerUser,
             wiped: entity.Wiped,
             status: entity.Status,
@@ -47,7 +47,7 @@ public sealed class Phone
         return new PhoneEntity
         {
             Id = phone.Id,
-            IMEI = phone.IMEI,
+            Imei = phone.Imei,
             FormerUser = phone.FormerUser,
             Wiped = phone.Wiped,
             Status = phone.Status,

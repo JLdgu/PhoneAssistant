@@ -29,7 +29,7 @@ public sealed class PhonesRepository : IPhonesRepository
     public async Task<IEnumerable<Phone>> SearchAsync(string search)
     {
         List<PhoneEntity> MobilePhones = await _dbContext.Phones
-            .Where(p => p.IMEI.Contains(search) || p.AssetTag.Contains(search))
+            .Where(p => p.Imei.Contains(search) || p.AssetTag.Contains(search))
             .ToListAsync();
         List<Phone> phones = new List<Phone>();
         foreach (PhoneEntity mobile in MobilePhones)
@@ -43,7 +43,7 @@ public sealed class PhonesRepository : IPhonesRepository
     {
         PhoneEntity phone = _dbContext.Phones.Where(mp => mp.Id == phoneToUpdate.Id).First();
         
-        phone.IMEI = phoneToUpdate.IMEI;
+        phone.Imei = phoneToUpdate.Imei;
         phone.FormerUser = phoneToUpdate.FormerUser;
         phone.Wiped = phoneToUpdate.Wiped;
         phone.Status = phoneToUpdate.Status;

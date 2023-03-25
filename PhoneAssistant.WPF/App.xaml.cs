@@ -76,6 +76,16 @@ public partial class App : System.Windows.Application
         };
         dbContext.Phones.AddRange(testPhones);
 
+        ServiceRequest[] testSRs = new ServiceRequest[]
+        {
+            new ServiceRequest() {Id = 1, ServiceRequestNumber = 101, NewUser= "Test User 101"},
+            new ServiceRequest() {Id = 2, ServiceRequestNumber = 202, NewUser= "Test User 202"},
+            new ServiceRequest() {Id = 3, ServiceRequestNumber = 303, NewUser= "Test User 303"},
+            new ServiceRequest() {Id = 4, ServiceRequestNumber = 404, NewUser= "Test User 404"},
+            new ServiceRequest() {Id = 5, ServiceRequestNumber = 505, NewUser= "Test User 505"}
+        };
+        dbContext.ServiceRequests.AddRange(testSRs);
+
         StateEntity[] testStates = new StateEntity[]{
                 new StateEntity ( "In Stock" ),
                 new StateEntity ( "In Repair" ),
@@ -93,6 +103,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IAppRepository, AppRepository>();
         services.AddTransient<IPhonesRepository, PhonesRepository>();
         services.AddTransient<ISimsRepository,SimsRepository>();
+        services.AddTransient<IServiceRequestsRepository, ServiceRequestsRepository>();
         services.AddTransient<ISettingsRepository, SettingsRepository>();
         services.AddTransient<IStateRepository,StateRepository>();
 

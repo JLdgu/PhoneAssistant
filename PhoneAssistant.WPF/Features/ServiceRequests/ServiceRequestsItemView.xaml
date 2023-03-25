@@ -1,0 +1,49 @@
+﻿<UserControl
+    x:Class="PhoneAssistant.WPF.Features.ServiceRequests.ServiceRequestsItemView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:PhoneAssistant.WPF.Features.ServiceRequests"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid d:Background="LightCoral">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBox
+            Grid.Column="0"
+            Margin="0,0,5,0"
+            materialDesign:HintAssist.Hint="Service Request"
+            materialDesign:HintAssist.IsFloating="True"
+            Text="{Binding ServiceRequestNumber}" />
+        <TextBox
+            Grid.Column="1"
+            Margin="0,0,5,0"
+            materialDesign:HintAssist.Hint="Former User"
+            materialDesign:HintAssist.IsFloating="True"
+            Text="{Binding NewUser}" />
+        <TextBox
+            Grid.Column="2"
+            Margin="0,0,5,0"
+            materialDesign:HintAssist.Hint="OEM"
+            materialDesign:HintAssist.IsFloating="True"
+            Text="{Binding DespatchDetails}" />
+        <Button
+            Grid.Column="3"
+            Width="Auto"
+            IsEnabled="{Binding ServiceRequestHasUpdates}"
+            Style="{StaticResource MaterialDesignPaperButton}">
+            <materialDesign:PackIcon
+                Width="20"
+                Height="Auto"
+                Kind="Alarm" />
+        </Button>
+
+
+    </Grid>
+</UserControl>

@@ -7,9 +7,9 @@ namespace PhoneAssistant.WPF.Features.Application;
 public sealed class PhoneAssistantDbContext : DbContext
 {
     public DbSet<PhoneEntity> Phones { get; set; }
-    //public DbSet<ServiceRequestEntity> ServiceRequests { get; set; }
-    public DbSet<SettingEntity> Setting { get; set; }
     //public DbSet<SimEntity> Sims { get; set; }
+    public DbSet<ServiceRequest> ServiceRequests { get; set; }
+    public DbSet<SettingEntity> Setting { get; set; }
     public DbSet<StateEntity> States { get; set; }
 
 

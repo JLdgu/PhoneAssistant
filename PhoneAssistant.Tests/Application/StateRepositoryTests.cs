@@ -14,8 +14,8 @@ public sealed class StateRepositoryTests
     public async Task GetStatesAsync_ReturnsAllStatesAsync()
     {
         DbTestHelper helper = new();
-        using SqliteConnection Connection = helper.CreateConnection();
-        using PhoneAssistantDbContext dbContext = new PhoneAssistantDbContext(helper.Options!);
+        using SqliteConnection connection = helper.CreateConnection();
+        using PhoneAssistantDbContext dbContext = new(helper.Options!);
         dbContext.Database.EnsureCreated();
 
         State[] testStates = new State[]{

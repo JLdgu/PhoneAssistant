@@ -79,9 +79,9 @@ public partial class App : System.Windows.Application
         ServiceRequest[] testSRs = new ServiceRequest[]
         {
             new ServiceRequest() {Id = 1, ServiceRequestNumber = 101, NewUser= "Test User 101"},
-            new ServiceRequest() {Id = 2, ServiceRequestNumber = 202, NewUser= "Test User 202"},
+            new ServiceRequest() {Id = 2, ServiceRequestNumber = 202, NewUser= "Test User 202", DespatchDetails="DD202"},
             new ServiceRequest() {Id = 3, ServiceRequestNumber = 303, NewUser= "Test User 303"},
-            new ServiceRequest() {Id = 4, ServiceRequestNumber = 404, NewUser= "Test User 404"},
+            new ServiceRequest() {Id = 4, ServiceRequestNumber = 404, NewUser= "Test User 404", DespatchDetails="DD404"},
             new ServiceRequest() {Id = 5, ServiceRequestNumber = 505, NewUser= "Test User 505"}
         };
         dbContext.ServiceRequests.AddRange(testSRs);

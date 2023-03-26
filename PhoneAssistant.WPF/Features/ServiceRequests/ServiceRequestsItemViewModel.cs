@@ -14,8 +14,6 @@ namespace PhoneAssistant.WPF.Features.ServiceRequests
         public ServiceRequestsItemViewModel(ServiceRequest serviceRequest)
         {
             SR = serviceRequest;
-            ServiceRequestNumber = serviceRequest.ServiceRequestNumber;
-            NewUser = serviceRequest.NewUser;
         }
 
         public int SRWidth { get; set; }
@@ -27,10 +25,10 @@ namespace PhoneAssistant.WPF.Features.ServiceRequests
         {
             ServiceRequestNumber = value.ServiceRequestNumber;
             NewUser = value.NewUser;
+            DespatchDetails = value.DespatchDetails;
         }
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(SR))]
         private int _serviceRequestNumber;
 
         partial void OnServiceRequestNumberChanged(int value)
@@ -39,7 +37,6 @@ namespace PhoneAssistant.WPF.Features.ServiceRequests
         }
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(SR))]
         private string _newUser;
 
         partial void OnNewUserChanged(string value)
@@ -48,7 +45,6 @@ namespace PhoneAssistant.WPF.Features.ServiceRequests
         }
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(SR))]
         private string? _despatchDetails;
 
         partial void OnDespatchDetailsChanged(string? value)
@@ -61,5 +57,7 @@ namespace PhoneAssistant.WPF.Features.ServiceRequests
         {
 
         }
+
+        //public bool SelectedPhoneHasUpdates { get; private set; }
     }
 }

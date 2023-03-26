@@ -23,8 +23,7 @@ public static  class LuhnValidator
         if (length > 1 && luhn.Length != length)
             return false;
 
-        long result;
-        if (!Int64.TryParse(luhn, out result))
+        if (!long.TryParse(luhn, out _))
             return false;
 
         int inputCheckDigit = int.Parse(luhn.Substring(luhn.Length -1 , 1));        

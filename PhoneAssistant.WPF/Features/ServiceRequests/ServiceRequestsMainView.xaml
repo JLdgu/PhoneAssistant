@@ -7,7 +7,6 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
-    d:DataContext="{d:DesignInstance Type=local:ServiceRequestsMainViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -19,37 +18,12 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <shared:HeaderMainView HeaderIcon="RoomServiceOutline" HeaderText="Service Requests" />
-        <!--<local:ServiceRequestsItemView Grid.Row="1"/>-->
-        <!--<ContentControl Grid.Row="1" Content="{Binding SelectedItemViewModel}" />-->
-        <Grid
+        <local:ServiceRequestsItemView
             Grid.Row="1"
             Margin="16,20,0,15"
-            d:Background="LightCoral">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{Binding ElementName=gridSRNumber, Path=ActualWidth}" />
-                <ColumnDefinition Width="{Binding ElementName=gridNewUser, Path=ActualWidth}" />
-                <ColumnDefinition Width="{Binding ElementName=gridDespatchDetails, Path=ActualWidth}" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBox
-                Grid.Column="0"
-                Margin="0,0,5,0"
-                materialDesign:HintAssist.Hint="SR"
-                materialDesign:HintAssist.IsFloating="True"
-                Text="{Binding SelectedServiceRequest.ServiceRequestNumber}" />
-            <TextBox
-                Grid.Column="1"
-                Margin="0,0,5,0"
-                materialDesign:HintAssist.Hint="New User"
-                materialDesign:HintAssist.IsFloating="True"
-                Text="{Binding SelectedServiceRequest.NewUser}" />
-            <TextBox
-                Grid.Column="2"
-                Margin="0,0,5,0"
-                materialDesign:HintAssist.Hint="Despatch Details"
-                materialDesign:HintAssist.IsFloating="True"
-                Text="{Binding SelectedServiceRequest.DespatchDetails}" />
-        </Grid>
+            DataContext="{Binding ServiceRequestsItemViewModel}" />
+        <!--  WidthSR="{Binding ElementName=gridSRNumber, Path=ActualWidth}"  -->
+        <!--<local:ServiceRequestsItemView Grid.Row="2" Margin="16,20,0,15" />-->
         <DataGrid
             Name="PhonesGrid"
             Grid.Row="3"

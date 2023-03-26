@@ -6,11 +6,13 @@
     xmlns:local="clr-namespace:PhoneAssistant.WPF.Features.ServiceRequests"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=local:ServiceRequestsItemViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
     <Grid d:Background="LightCoral">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="130" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
@@ -18,32 +20,30 @@
         <TextBox
             Grid.Column="0"
             Margin="0,0,5,0"
-            materialDesign:HintAssist.Hint="Service Request"
+            materialDesign:HintAssist.Hint="SR"
             materialDesign:HintAssist.IsFloating="True"
             Text="{Binding ServiceRequestNumber}" />
         <TextBox
             Grid.Column="1"
             Margin="0,0,5,0"
-            materialDesign:HintAssist.Hint="Former User"
+            materialDesign:HintAssist.Hint="New User"
             materialDesign:HintAssist.IsFloating="True"
             Text="{Binding NewUser}" />
         <TextBox
             Grid.Column="2"
             Margin="0,0,5,0"
-            materialDesign:HintAssist.Hint="OEM"
+            materialDesign:HintAssist.Hint="Despatch Details"
             materialDesign:HintAssist.IsFloating="True"
             Text="{Binding DespatchDetails}" />
         <Button
             Grid.Column="3"
             Width="Auto"
-            IsEnabled="{Binding ServiceRequestHasUpdates}"
+            Command="{Binding UpdateServiceRequestCommand}"
             Style="{StaticResource MaterialDesignPaperButton}">
             <materialDesign:PackIcon
                 Width="20"
                 Height="Auto"
-                Kind="Alarm" />
+                Kind="ContentSaveOutline" />
         </Button>
-
-
     </Grid>
 </UserControl>

@@ -12,17 +12,22 @@ public sealed partial class ServiceRequestsMainViewModel : ObservableObject, ISe
     public ServiceRequestsMainViewModel(IServiceRequestsRepository serviceRequestsRepository)
     {
         _serviceRequestsRepository = serviceRequestsRepository;
+        ServiceRequest newSR = new () { Id = 0, ServiceRequestNumber = 0, NewUser = "" };
+
+        ServiceRequestsItemViewModel = new ServiceRequestsItemViewModel(newSR);
     }
+
+    public ServiceRequestsItemViewModel ServiceRequestsItemViewModel { get; }
 
     public ObservableCollection<ServiceRequest> ServiceRequests { get; } = new();
 
     [ObservableProperty]
     private ServiceRequest? _selectedServiceRequest;
 
-    //partial void OnSelectedServiceRequestChanged(ServiceRequest? value)
-    //{
-    //    throw new NotImplementedException();
-    //}
+    partial void OnSelectedServiceRequestChanged(ServiceRequest? value)
+    {
+        if (value is not null) ServiceRequestsItemViewModel.ServiceRequest = value;
+    }
 
     [ObservableProperty]
     private ListCollectionView _serviceRequestsView;

@@ -12,6 +12,7 @@ namespace PhoneAssistant.WPF.Shared
 {
     public static class UI_Interactions
     {
+        // TODO: add this to Phones and Sims View events
         public static void SelectRowFromWhiteSpaceClick(MouseButtonEventArgs e)
         {
             var dependencyObject = (DependencyObject)e.OriginalSource;

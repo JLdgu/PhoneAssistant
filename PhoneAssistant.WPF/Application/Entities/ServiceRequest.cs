@@ -7,7 +7,7 @@ public class ServiceRequest
     public int? PhoneEntityId { get; set; }
     public virtual SimEntity? SimEntity { get; set; }
     public int? SimEntityId { get; set; }
-    public int? ServiceRequestNumber { get; set; }
+    public int ServiceRequestNumber { get; set; }
     public string NewUser { get; set; }
     public string? DespatchDetails { get; set; }
     public string? Analyst { get; set; }

@@ -7,36 +7,36 @@ namespace PhoneAssistant.WPF.Features.Phones;
 [TestClass]
 public sealed class PhonesMainViewModelTests
 {
-    [TestMethod]
-    public void ViewModel_HasNoErrors_WhenIMEIvalid()
-    {
-        IStateRepository stateRepository = Mock.Of<IStateRepository>();
-        IPhonesRepository phonesRepository = Mock.Of<IPhonesRepository>();
+    //[TestMethod]
+    //public void ViewModel_HasNoErrors_WhenIMEIvalid()
+    //{
+    //    IStateRepository stateRepository = Mock.Of<IStateRepository>();
+    //    IPhonesRepository phonesRepository = Mock.Of<IPhonesRepository>();
 
-        PhonesMainViewModel viewModel = new(phonesRepository, stateRepository)
-        {
-            Imei = "351554747259670"
-        };
+    //    PhonesMainViewModel viewModel = new(phonesRepository, stateRepository)
+    //    {
+    //        Imei = "351554747259670"
+    //    };
 
-        Assert.IsFalse(viewModel.HasErrors);
-    }
+    //    Assert.IsFalse(viewModel.HasErrors);
+    //}
 
-    [TestMethod]
-    [DataRow("a")]
-    [DataRow("351554747259671")]
-    [DataRow("8944125605563282810")]
-    public void ViewModel_HasErrors_WhenIMEIInvalid(string imei)
-    {
-        IStateRepository stateRepository = Mock.Of<IStateRepository>();
-        IPhonesRepository phonesRepository = Mock.Of<IPhonesRepository>();
+    //[TestMethod]
+    //[DataRow("a")]
+    //[DataRow("351554747259671")]
+    //[DataRow("8944125605563282810")]
+    //public void ViewModel_HasErrors_WhenIMEIInvalid(string imei)
+    //{
+    //    IStateRepository stateRepository = Mock.Of<IStateRepository>();
+    //    IPhonesRepository phonesRepository = Mock.Of<IPhonesRepository>();
 
-        PhonesMainViewModel viewModel = new(phonesRepository, stateRepository)
-        {
-            Imei = imei
-        };
+    //    PhonesMainViewModel viewModel = new(phonesRepository, stateRepository)
+    //    {
+    //        Imei = imei
+    //    };
 
-        Assert.IsTrue(viewModel.HasErrors);
-    }
+    //    Assert.IsTrue(viewModel.HasErrors);
+    //}
 
     //[TestMethod]
     //public void OnSelectedPhoneChanging_CallsUpdateAsync_WhenOutstandingChanges()

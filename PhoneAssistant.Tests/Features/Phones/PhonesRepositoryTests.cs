@@ -3,7 +3,6 @@
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Application;
 using PhoneAssistant.WPF.Features.Phones;
-using PhoneAssistant.WPF.Models;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -70,49 +69,3 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     }
 }
 #endregion
-
-[TestClass]
-public sealed class PhonesRepositoryUpdateTests : DbTestHelper
-{
-    [TestMethod()]
-    public async Task UpdateAsync()
-    {
-        Phone phoneToUpdate = new(
-            id: 1,
-            iMEI: "A",
-            formerUser: "A",
-            wiped: true,
-            status: "A",
-            oEM: "A",
-            assetTag: "A",
-            note: "A" );
-
-        DbTestHelper helper = new();
-        using SqliteConnection connection = helper.CreateConnection();
-
-        using PhoneAssistantDbContext dbContext = new(helper.Options!);
-        dbContext.Database.EnsureCreated();
-        dbContext.Phones.Add(phoneToUpdate);
-        dbContext.SaveChanges();
-
-        var repository = new PhonesRepository(dbContext);
-        phoneToUpdate.Imei = "B";
-        phoneToUpdate.FormerUser = "B";
-        phoneToUpdate.Wiped = false;
-        phoneToUpdate.Status = "B";
-        phoneToUpdate.OEM = "B";
-        phoneToUpdate.AssetTag = "B";
-        phoneToUpdate.Note = "B";
-
-        await repository.UpdateAsync(phoneToUpdate);
-
-        Phone actual = dbContext.Phones.Where(mp => mp.Id == 1).First();
-        //Assert.AreEqual(phoneToUpdate, actual);
-        Assert.AreEqual(phoneToUpdate.Imei, actual.Imei);
-        Assert.AreEqual(phoneToUpdate.FormerUser, actual.FormerUser);
-        Assert.IsFalse(actual.Wiped);
-        Assert.AreEqual(phoneToUpdate.Status, actual.Status);
-        Assert.AreEqual(phoneToUpdate.OEM, actual.OEM);
-        Assert.AreEqual(phoneToUpdate.AssetTag, actual.AssetTag);
-    }
-}

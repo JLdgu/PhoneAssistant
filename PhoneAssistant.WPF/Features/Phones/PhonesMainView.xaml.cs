@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 
 using PhoneAssistant.WPF.Models;
+using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 /// <summary>
@@ -16,24 +17,8 @@ public partial class PhonesMainView : UserControl
     }
 
     private void PhonesGrid_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-    {
-        var dependencyObject = (DependencyObject)e.OriginalSource;
-
-        //get clicked row from Visual Tree
-        while ((dependencyObject != null) && !(dependencyObject is DataGridRow))
-        {
-            dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
-        }
-
-        var row = dependencyObject as DataGridRow;
-        if (row == null)
-        {
-            return;
-        }
-
-        row.IsSelected = true;        
-    }
-
+        => UI_Interactions.SelectRowFromWhiteSpaceClick(e);
+    
     private void PhonesGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         //SelectedIMEI.Focus();

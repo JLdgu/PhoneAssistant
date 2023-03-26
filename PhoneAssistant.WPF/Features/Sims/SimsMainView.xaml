@@ -74,6 +74,7 @@
             CanUserSortColumns="True"
             IsReadOnly="true"
             ItemsSource="{Binding Sims}"
+            MouseDown="SimsGrid_MouseDown"
             SelectedItem="{Binding SelectedSim}"
             SelectionMode="Single"
             SelectionUnit="FullRow">

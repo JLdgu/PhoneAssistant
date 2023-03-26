@@ -2,7 +2,7 @@
 
 public sealed class Sim
 {
-    public int Id { get; init; }
+    public int Id { get; set; }
 
     public string PhoneNumber { get; init; }
 

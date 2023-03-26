@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows;
+using System.Runtime.Versioning;
 
 namespace PhoneAssistant.WPF.Shared
 {
@@ -12,13 +13,13 @@ namespace PhoneAssistant.WPF.Shared
             var dependencyObject = (DependencyObject)e.OriginalSource;
 
             //get clicked row from Visual Tree
-            while ((dependencyObject != null) && !(dependencyObject is DataGridRow))
+            while ((dependencyObject != null) && (dependencyObject is not DataGridRow))
             {
                 dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
             }
 
-            var row = dependencyObject as DataGridRow;
-            if (row == null)
+            
+            if (dependencyObject is not DataGridRow row)
             {
                 return;
             }

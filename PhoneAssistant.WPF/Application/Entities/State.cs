@@ -1,10 +1,10 @@
 namespace PhoneAssistant.WPF.Application.Entities;
 
-public class StateEntity
+public class State
 {
     public string Status { get; set; }
     
-    public StateEntity(string status)
+    public State(string status)
     {
         Status = status;
     }

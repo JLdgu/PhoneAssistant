@@ -1,12 +1,12 @@
 ﻿namespace PhoneAssistant.WPF.Application.Entities;
 
-public class SettingEntity
+public class Setting
 {
     public int Id { get; set; }
 
     public string MinimumVersion { get; set; }
 
-    public SettingEntity(int id, string minimumVersion)
+    public Setting(int id, string minimumVersion)
     {
         Id = id;
         MinimumVersion = minimumVersion;

@@ -14,7 +14,7 @@ public sealed class SettingsRepository : ISettingsRepository
 
     public async Task<string> GetAsync()
     {
-        SettingEntity? setting = await _dbContext.Setting.FindAsync(1);
+        Setting? setting = await _dbContext.Setting.FindAsync(1);
         string minVersion = string.Empty;
         if (setting is not null && setting.MinimumVersion is not null)
             minVersion = setting.MinimumVersion;

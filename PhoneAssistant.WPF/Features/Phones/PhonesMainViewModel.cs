@@ -1,15 +1,13 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
+using System.Runtime.Versioning;
 using System.Windows.Data;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-
 using PhoneAssistant.WPF.Application;
-using PhoneAssistant.WPF.Models;
+using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.Phones;

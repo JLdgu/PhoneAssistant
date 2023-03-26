@@ -6,11 +6,11 @@ namespace PhoneAssistant.WPF.Features.Application;
 
 public sealed class PhoneAssistantDbContext : DbContext
 {
-    public DbSet<PhoneEntity> Phones { get; set; }
+    public DbSet<Phone> Phones { get; set; }
     //public DbSet<SimEntity> Sims { get; set; }
     public DbSet<ServiceRequest> ServiceRequests { get; set; }
-    public DbSet<SettingEntity> Setting { get; set; }
-    public DbSet<StateEntity> States { get; set; }
+    public DbSet<Setting> Setting { get; set; }
+    public DbSet<State> States { get; set; }
 
 
     public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
@@ -29,10 +29,10 @@ public sealed class PhoneAssistantDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<PhoneEntity>()
+        modelBuilder.Entity<Phone>()
             .HasIndex(p => p.Imei).IsUnique();        
 
-        modelBuilder.Entity<StateEntity>()
+        modelBuilder.Entity<State>()
             .HasKey(s => s.Status);                
 
         //modelBuilder.Entity<SmartCard>()
@@ -40,7 +40,7 @@ public sealed class PhoneAssistantDbContext : DbContext
         //modelBuilder.Entity<SmartCard>()
         //    .HasIndex(sc => sc.PhoneNumber).IsUnique();
 
-        modelBuilder.Entity<SettingEntity>().HasData(new SettingEntity ( 1, "0.0.0.1" ));
+        modelBuilder.Entity<Setting>().HasData(new Setting ( 1, "0.0.0.1" ));
 
         base.OnModelCreating(modelBuilder);
     }

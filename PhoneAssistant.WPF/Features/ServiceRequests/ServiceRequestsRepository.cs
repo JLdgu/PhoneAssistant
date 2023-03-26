@@ -2,8 +2,6 @@
 
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Application;
-using PhoneAssistant.WPF.Features.ServiceRequests;
-using PhoneAssistant.WPF.Models;
 
 namespace PhoneAssistant.WPF.Features.ServiceRequests;
 

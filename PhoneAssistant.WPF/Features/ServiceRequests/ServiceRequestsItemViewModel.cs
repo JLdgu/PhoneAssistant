@@ -13,55 +13,47 @@ namespace PhoneAssistant.WPF.Features.ServiceRequests
 
         public ServiceRequestsItemViewModel(ServiceRequest serviceRequest)
         {
-            ServiceRequest = serviceRequest;
-            ServiceRequestNumber = ServiceRequest.ServiceRequestNumber;
-            NewUser = ServiceRequest.NewUser;
+            SR = serviceRequest;
+            ServiceRequestNumber = serviceRequest.ServiceRequestNumber;
+            NewUser = serviceRequest.NewUser;
         }
 
         public int SRWidth { get; set; }
 
         [ObservableProperty]
-        private ServiceRequest _serviceRequest;
-        //public ServiceRequest ServiceRequest
-        //{
-        //    get => _serviceRequest;
-        //    set
-        //    {
-        //        _serviceRequest = value;
-        //    }
-        //}
+        private ServiceRequest _sR;
 
-        partial void OnServiceRequestChanged(ServiceRequest value)
+        partial void OnSRChanged(ServiceRequest value)
         {
             ServiceRequestNumber = value.ServiceRequestNumber;
             NewUser = value.NewUser;
         }
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(ServiceRequest))]
+        [NotifyPropertyChangedFor(nameof(SR))]
         private int _serviceRequestNumber;
 
         partial void OnServiceRequestNumberChanged(int value)
         {
-            ServiceRequest.ServiceRequestNumber = value;
+            SR.ServiceRequestNumber = value;
         }
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(ServiceRequest))]
+        [NotifyPropertyChangedFor(nameof(SR))]
         private string _newUser;
 
         partial void OnNewUserChanged(string value)
         {
-            ServiceRequest.NewUser = value;
+            SR.NewUser = value;
         }
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(ServiceRequest))]
+        [NotifyPropertyChangedFor(nameof(SR))]
         private string? _despatchDetails;
 
         partial void OnDespatchDetailsChanged(string? value)
         {
-            ServiceRequest.DespatchDetails = value;
+            SR.DespatchDetails = value;
         }
 
         [RelayCommand]

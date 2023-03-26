@@ -2,7 +2,6 @@
 
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Application;
-using PhoneAssistant.WPF.Models;
 
 namespace PhoneAssistant.WPF.Application;
 public sealed class StateRepository : IStateRepository
@@ -16,12 +15,7 @@ public sealed class StateRepository : IStateRepository
 
     public async Task<IEnumerable<State>?> GetStatesAsync()
     {
-        List<StateEntity> allStates = await _dbContext.States.ToListAsync();
-        List<State> states = new List<State>();
-        foreach (StateEntity entity in allStates)
-        {
-            states.Add(State.ToState(entity));
-        }
+        List<State> states = await _dbContext.States.ToListAsync();
         return states;
     }
 }

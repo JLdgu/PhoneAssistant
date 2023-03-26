@@ -1,6 +1,7 @@
-﻿using PhoneAssistant.WPF.Models;
+﻿using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Features.Phones;
+
 public interface IPhonesRepository
 {
     Task<IEnumerable<Phone>> GetPhonesAsync();

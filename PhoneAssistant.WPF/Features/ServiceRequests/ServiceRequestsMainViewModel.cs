@@ -26,7 +26,7 @@ public sealed partial class ServiceRequestsMainViewModel : ObservableObject, ISe
 
     partial void OnSelectedServiceRequestChanged(ServiceRequest? value)
     {
-        if (value is not null) ServiceRequestsItemViewModel.ServiceRequest = value;
+        if (value is not null) ServiceRequestsItemViewModel.SR = value;
     }
 
     [ObservableProperty]

@@ -1,6 +1,6 @@
 ﻿namespace PhoneAssistant.WPF.Application.Entities;
 
-public class PhoneEntity
+public class Phone
 {
     public int Id { get; set; }
 

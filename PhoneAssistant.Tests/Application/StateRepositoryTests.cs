@@ -18,17 +18,17 @@ public sealed class StateRepositoryTests
         using PhoneAssistantDbContext dbContext = new PhoneAssistantDbContext(helper.Options!);
         dbContext.Database.EnsureCreated();
 
-        StateEntity[] testStates = new StateEntity[]{
-                new StateEntity ( "S1" ),
-                new StateEntity ( "S2" ),
-                new StateEntity ( "S3" )
+        State[] testStates = new State[]{
+                new State ( "S1" ),
+                new State ( "S2" ),
+                new State ( "S3" )
         };
         dbContext.States.AddRange(testStates);
         dbContext.SaveChanges();
 
         StateRepository repository = new (dbContext);
 
-        IEnumerable<WPF.Models.State>? actual = await repository.GetStatesAsync();
+        IEnumerable<State>? actual = await repository.GetStatesAsync();
 
         Assert.IsNotNull(actual);
         Assert.AreEqual(3, actual.Count());

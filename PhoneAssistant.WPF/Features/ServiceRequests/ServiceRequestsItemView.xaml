@@ -13,8 +13,8 @@
     <Grid d:Background="LightCoral">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" MinWidth="130" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" MinWidth="130" />
+            <ColumnDefinition Width="Auto" MinWidth="200" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <TextBox

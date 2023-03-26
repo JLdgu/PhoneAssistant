@@ -1,11 +1,9 @@
 ﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using PhoneAssistant.WPF.Application;
-using PhoneAssistant.WPF.Models;
-using PhoneAssistant.WPF.Shared;
+using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Features.Sims;
 

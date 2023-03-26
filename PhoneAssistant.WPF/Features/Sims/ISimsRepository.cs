@@ -1,4 +1,4 @@
-﻿using PhoneAssistant.WPF.Models;
+﻿using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Features.Sims;
 public interface ISimsRepository

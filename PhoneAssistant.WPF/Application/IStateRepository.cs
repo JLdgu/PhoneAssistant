@@ -1,4 +1,4 @@
-﻿using PhoneAssistant.WPF.Models;
+﻿using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Application;
 public interface IStateRepository

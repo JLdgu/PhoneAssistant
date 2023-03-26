@@ -1,7 +1,7 @@
-﻿using PhoneAssistant.WPF.Models;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 
 using PhoneAssistant.WPF.Shared;
+using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Features.Phones
 {

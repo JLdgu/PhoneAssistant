@@ -65,14 +65,14 @@ public partial class App : System.Windows.Application
 
         if (dbContext.Phones.Any()) return;
 
-        PhoneEntity[] testPhones = new PhoneEntity[]
+        Phone[] testPhones = new Phone[]
         {
-        new PhoneEntity() {Id = 1, Imei = "353427866717729", FormerUser = "Rehana Kausar", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null  },
-        new PhoneEntity() {Id = 2, Imei = "355808981132845", FormerUser = null, Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00017", Note = "Replacement"},
-        new PhoneEntity() {Id = 3, Imei = "355808983976082", FormerUser = "Charlie Baker", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
-        new PhoneEntity() {Id = 4, Imei = "355808981101899", FormerUser = "Olatunji Okedeyi", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
-        new PhoneEntity() {Id = 5, Imei = "353427861419768", FormerUser = "James Tisshaw", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
-        new PhoneEntity() {Id = 6, Imei = "351554742085336", FormerUser = "Unknown", Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00016", Note = "Replacement"}
+        new Phone() {Id = 1, Imei = "353427866717729", FormerUser = "Rehana Kausar", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null  },
+        new Phone() {Id = 2, Imei = "355808981132845", FormerUser = null, Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00017", Note = "Replacement"},
+        new Phone() {Id = 3, Imei = "355808983976082", FormerUser = "Charlie Baker", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
+        new Phone() {Id = 4, Imei = "355808981101899", FormerUser = "Olatunji Okedeyi", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
+        new Phone() {Id = 5, Imei = "353427861419768", FormerUser = "James Tisshaw", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
+        new Phone() {Id = 6, Imei = "351554742085336", FormerUser = "Unknown", Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00016", Note = "Replacement"}
         };
         dbContext.Phones.AddRange(testPhones);
 
@@ -86,10 +86,10 @@ public partial class App : System.Windows.Application
         };
         dbContext.ServiceRequests.AddRange(testSRs);
 
-        StateEntity[] testStates = new StateEntity[]{
-                new StateEntity ( "In Stock" ),
-                new StateEntity ( "In Repair" ),
-                new StateEntity ( "Production" )
+        State[] testStates = new State[]{
+                new State ( "In Stock" ),
+                new State ( "In Repair" ),
+                new State ( "Production" )
         };
         dbContext.States.AddRange(testStates);
 

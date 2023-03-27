@@ -1,4 +1,5 @@
-﻿using System.Reflection.Emit;
+﻿using System.IO;
+using System.Reflection.Emit;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -128,7 +129,31 @@ public partial class App : System.Windows.Application
 
     private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
-        // TODO: Please log and handle the exception as appropriate to your scenario
-        // For more info see https://docs.microsoft.com/dotnet/api/system.windows.application.dispatcherunhandledexception?view=netcore-3.0
+        StreamWriter writer = new( "PhoneAssistant.ErrorLog.txt", true );
+        writer.WriteLine( DateTime.Now.ToString() );
+
+        Exception? ex = e.Exception;
+
+        while( ex is not null )
+        {
+            writer.WriteLine(ex.GetType().FullName );
+            writer.WriteLine("HResult=" + ex.HResult);
+            writer.WriteLine("Message=" + ex.Message );
+            writer.WriteLine("StackTrace:");
+            writer.WriteLine(ex.StackTrace);
+
+            ex = ex.InnerException;
+        }
+        writer.WriteLine( "-----------------------------------------------------------------------------" );
+        writer.WriteLine();
+        
+        writer.Close();
+        
+        e.Handled = true;
+
+        MessageBox.Show($"An unexpected exception has occured {Environment.NewLine}See PhoneAssistant.ErrorLog.txt for more details.", 
+            "Phone Assistant", MessageBoxButton.OK, MessageBoxImage.Stop);
+
+        App.Current.Shutdown();
     }
 }

@@ -16,6 +16,8 @@
             <ColumnDefinition Width="Auto" MinWidth="130" />
             <ColumnDefinition Width="Auto" MinWidth="200" />
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <TextBox
             Grid.Column="0"
@@ -38,12 +40,29 @@
         <Button
             Grid.Column="3"
             Width="Auto"
-            Command="{Binding UpdateServiceRequestCommand}"
-            Style="{StaticResource MaterialDesignPaperButton}">
-            <materialDesign:PackIcon
-                Width="20"
-                Height="Auto"
-                Kind="ContentSaveOutline" />
-        </Button>
+            Margin="5,0"
+            Command="{Binding SaveSRChangesCommand}"
+            Content="{materialDesign:PackIcon ContentSaveOutline}"
+            IsEnabled="{Binding CanSaveSRChanges}"
+            Style="{StaticResource MaterialDesignPaperButton}"
+            ToolTip="Save changes" />
+        <Button
+            Grid.Column="4"
+            Width="Auto"
+            Margin="5,0"
+            Command="{Binding CancelSRChangesCommand}"
+            Content="{materialDesign:PackIcon BackspaceOutline}"
+            IsEnabled="{Binding CanCancelSRChanges}"
+            Style="{StaticResource MaterialDesignPaperButton}"
+            ToolTip="Cancel changes" />
+        <Button
+            Grid.Column="5"
+            Width="Auto"
+            Margin="5,0"
+            Command="{Binding CreateNewSRCommand}"
+            Content="{materialDesign:PackIcon RoomServiceOutline}"
+            IsEnabled="{Binding CanCreateNewSR}"
+            Style="{StaticResource MaterialDesignPaperButton}"
+            ToolTip="New Service Request" />
     </Grid>
 </UserControl>

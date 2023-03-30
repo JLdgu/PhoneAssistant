@@ -10,5 +10,4 @@ public class ServiceRequest
     public int ServiceRequestNumber { get; set; }
     public string NewUser { get; set; }
     public string? DespatchDetails { get; set; }
-    public string? Analyst { get; set; }
 }

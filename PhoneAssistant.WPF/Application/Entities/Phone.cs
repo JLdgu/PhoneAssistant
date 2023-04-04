@@ -19,5 +19,5 @@ public class Phone
     public string? Note { get; set; }
 
     // Navigation properties
-    //public virtual LinkDTO? Link { get; set; }
+    public virtual ICollection<Link> Links { get; set; }
 }

@@ -6,10 +6,16 @@ namespace PhoneAssistant.WPF.Features.Application;
 
 public sealed class PhoneAssistantDbContext : DbContext
 {
+    public DbSet<Link> Links {get; set; }
+
     public DbSet<Phone> Phones { get; set; }
-    //public DbSet<SimEntity> Sims { get; set; }
+
+    public DbSet<Sim> Sims { get; set; }
+
     public DbSet<ServiceRequest> ServiceRequests { get; set; }
+    
     public DbSet<Setting> Setting { get; set; }
+    
     public DbSet<State> States { get; set; }
 
 
@@ -31,14 +37,19 @@ public sealed class PhoneAssistantDbContext : DbContext
     {
         modelBuilder.Entity<Phone>()
             .HasIndex(p => p.Imei).IsUnique();        
+        modelBuilder.Entity<Phone>()
+            .HasIndex(p => p.AssetTag).IsUnique();        
 
         modelBuilder.Entity<State>()
             .HasKey(s => s.Status);                
 
-        //modelBuilder.Entity<SmartCard>()
-        //    .HasIndex(sc => sc.SimNumber).IsUnique();
-        //modelBuilder.Entity<SmartCard>()
-        //    .HasIndex(sc => sc.PhoneNumber).IsUnique();
+        modelBuilder.Entity<Sim>()
+            .HasIndex(sc => sc.PhoneNumber).IsUnique();
+        modelBuilder.Entity<Sim>()
+            .HasIndex(sc => sc.SimNumber).IsUnique();
+
+        modelBuilder.Entity<ServiceRequest>()
+            .HasIndex(sr => sr.ServiceRequestNumber).IsUnique();        
 
         modelBuilder.Entity<Setting>().HasData(new Setting ( 1, "0.0.0.1" ));
 

@@ -9,72 +9,66 @@ namespace PhoneAssistant.WPF.Features.ServiceRequests
 {
     public sealed partial class ServiceRequestsItemViewModel : ObservableValidator
     {
-        public ServiceRequestsItemViewModel()
-        {
-            SR = new() { Id = 0, ServiceRequestNumber = 0, NewUser = "", DespatchDetails = null };
-            ClearErrors();
-        }
+        private ServiceRequest _srPreAmendments;
+        private readonly IServiceRequestsRepository _srRepository;
 
-        public ServiceRequestsItemViewModel(ServiceRequest serviceRequest)
+        public ServiceRequestsItemViewModel(IServiceRequestsRepository serviceRequestsRepository)
         {
-            SR = serviceRequest;
+            _srRepository = serviceRequestsRepository;
+            SR = new() { NewUser = "" };
         }
 
         [ObservableProperty]
         private ServiceRequest _sR;
 
-        private bool _srUnchanged
+        private bool ValidChanges()
         {
-            get 
-            { 
-                if (ServiceRequestNumber != SR.ServiceRequestNumber)
-                    return false;
-                if (NewUser != SR.NewUser)
-                    return false;
-                if (DespatchDetails != SR.DespatchDetails)
-                    return false;
-                return true;
-            }
-        }
+            CanCancelSRChanges = true;
+            CanCreateNewSR = false;
 
-        partial void OnSRChanged(ServiceRequest value)
+            if (HasErrors || ServiceRequestNumber == 0 || NewUser == string.Empty)
+                CanSaveSRChanges = false;
+            else
+                CanSaveSRChanges = true;
+
+            return true;
+        }
+        private void SRChanged(ServiceRequest value)
         {
+            _srPreAmendments = new()
+            {
+                Id = value.Id,
+                ServiceRequestNumber = value.ServiceRequestNumber,
+                NewUser = value.NewUser,
+                DespatchDetails = value.DespatchDetails
+            };
             ServiceRequestNumber = value.ServiceRequestNumber;
             NewUser = value.NewUser;
             DespatchDetails = value.DespatchDetails;
 
             if (value.Id != 0)
                 CanCreateNewSR = true;
+
+            ClearErrors();
+        }
+
+        partial void OnSRChanged(ServiceRequest value)
+        {
+            SRChanged(value);
         }
 
         [ObservableProperty]
         [NotifyDataErrorInfo]
         [Required]
-        [Range(150000,999999, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+        [Range(150000,999999, ErrorMessage = "Value must be between {1} and {2}.")]
         private int _serviceRequestNumber;
 
         partial void OnServiceRequestNumberChanged(int value)
         {
             if (value == SR.ServiceRequestNumber) return;
 
-            if (_srUnchanged)
-            {
-                CanCancelSRChanges = false;
-            }
-            else
-            {
-                CanCancelSRChanges = true;
-                CanCreateNewSR = false;
-            }
-
-            if (HasErrors)
-            {
-                CanSaveSRChanges = false;
-                return;
-            }
-
-            CanSaveSRChanges = true;
-            SR.ServiceRequestNumber = value;
+            if (ValidChanges())
+                SR.ServiceRequestNumber = value;
         }
 
         [ObservableProperty]
@@ -87,24 +81,8 @@ namespace PhoneAssistant.WPF.Features.ServiceRequests
         {
             if (value == SR.NewUser) return;
 
-            if (_srUnchanged)
-            {
-                CanCancelSRChanges = false;
-            }
-            else
-            {
-                CanCancelSRChanges = true;
-                CanCreateNewSR = false;
-            }
-
-            if (HasErrors)
-            {
-                CanSaveSRChanges = false;
-                return;
-            }
-
-            CanSaveSRChanges = true;
-            SR.NewUser = value;
+            if (ValidChanges())
+                SR.NewUser = value;
         }
 
         [ObservableProperty]
@@ -114,43 +92,37 @@ namespace PhoneAssistant.WPF.Features.ServiceRequests
         {            
             if (value == SR.DespatchDetails) return;
 
-            if (_srUnchanged)
-            {
-                CanCancelSRChanges = false;
-            }
-            else
-            {
-                CanCancelSRChanges = true;
-                CanCreateNewSR = false;
-            }
-
-            if (HasErrors)
-            {
-                CanSaveSRChanges = false;
-                return;
-            }
-
-            CanSaveSRChanges = true;
-            SR.DespatchDetails = value;
+            if (ValidChanges())
+                SR.DespatchDetails = value;
         }
 
-        public bool CanSaveSRChanges { get; private set; }
+        [ObservableProperty]
+        private bool canSaveSRChanges;
 
         [RelayCommand]
-        private void SaveSRChanges()
+        private async Task SaveSRChangesAsync()
         {
+            await _srRepository.UpdateAsync(SR);
 
+            CanCancelSRChanges = false;
+            CanSaveSRChanges = false;
+            CanCreateNewSR = true;
         }
 
-        public bool CanCancelSRChanges { get; private set; }
+        [ObservableProperty]
+        private bool canCancelSRChanges;
 
         [RelayCommand]
         private void CancelSRChanges()
         {
+            SRChanged(_srPreAmendments);
 
+            CanSaveSRChanges = false;
+            CanCancelSRChanges = false;
         }
 
-        public bool CanCreateNewSR { get; private set; }
+        [ObservableProperty]
+        private bool canCreateNewSR;
 
         [RelayCommand]
         private void CreateNewSR()

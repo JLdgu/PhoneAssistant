@@ -12,9 +12,8 @@ public sealed partial class ServiceRequestsMainViewModel : ObservableObject, ISe
     public ServiceRequestsMainViewModel(IServiceRequestsRepository serviceRequestsRepository)
     {
         _serviceRequestsRepository = serviceRequestsRepository;
-        ServiceRequest newSR = new () { Id = 0, ServiceRequestNumber = 0, NewUser = "" };
 
-        ServiceRequestsItemViewModel = new ServiceRequestsItemViewModel(newSR);
+        ServiceRequestsItemViewModel = new ServiceRequestsItemViewModel(serviceRequestsRepository);
     }
 
     public ServiceRequestsItemViewModel ServiceRequestsItemViewModel { get; }

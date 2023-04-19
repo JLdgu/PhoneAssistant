@@ -129,7 +129,7 @@ public partial class App : System.Windows.Application
 
     private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
-        StreamWriter writer = new( "PhoneAssistant.ErrorLog.txt", true );
+        using StreamWriter writer = new( "PhoneAssistant.ErrorLog.txt", true );
         writer.WriteLine( DateTime.Now.ToString() );
 
         Exception? ex = e.Exception;

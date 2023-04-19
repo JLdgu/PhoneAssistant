@@ -38,29 +38,26 @@
             materialDesign:HintAssist.IsFloating="True"
             Text="{Binding DespatchDetails}" />
         <Button
-            Grid.Column="3"
-            Width="Auto"
+            Grid.Column="3"            
             Margin="5,0"
             Command="{Binding SaveSRChangesCommand}"
-            Content="{materialDesign:PackIcon ContentSaveOutline}"
+            Content="{materialDesign:PackIcon Kind=ContentSaveOutline, Size=25}"
             IsEnabled="{Binding CanSaveSRChanges}"
             Style="{StaticResource MaterialDesignPaperButton}"
             ToolTip="Save changes" />
         <Button
-            Grid.Column="4"
-            Width="Auto"
+            Grid.Column="4"            
             Margin="5,0"
             Command="{Binding CancelSRChangesCommand}"
-            Content="{materialDesign:PackIcon BackspaceOutline}"
+            Content="{materialDesign:PackIcon Kind=ArrowULeftTop, Size=25}"
             IsEnabled="{Binding CanCancelSRChanges}"
             Style="{StaticResource MaterialDesignPaperButton}"
-            ToolTip="Cancel changes" />
+            ToolTip="Cancel changes" />        
         <Button
             Grid.Column="5"
-            Width="Auto"
             Margin="5,0"
             Command="{Binding CreateNewSRCommand}"
-            Content="{materialDesign:PackIcon RoomServiceOutline}"
+            Content="{materialDesign:PackIcon Kind=RoomServiceOutline, Size=25}"
             IsEnabled="{Binding CanCreateNewSR}"
             Style="{StaticResource MaterialDesignPaperButton}"
             ToolTip="New Service Request" />

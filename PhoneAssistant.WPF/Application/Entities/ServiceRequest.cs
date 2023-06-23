@@ -6,10 +6,10 @@ public class ServiceRequest
     
     public int ServiceRequestNumber { get; set; }
     
-    public string NewUser { get; set; }
+    public required string NewUser { get; set; }
     
     public string? DespatchDetails { get; set; }
 
     // Navigation properties
-    public virtual ICollection<Link> Links { get; set; }
+    public virtual ICollection<Link> Links { get; set; }  = null!;
 }

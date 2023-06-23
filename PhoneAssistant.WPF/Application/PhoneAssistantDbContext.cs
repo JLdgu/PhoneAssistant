@@ -6,18 +6,17 @@ namespace PhoneAssistant.WPF.Features.Application;
 
 public sealed class PhoneAssistantDbContext : DbContext
 {
-    public DbSet<Link> Links {get; set; }
+    public DbSet<Link> Links => Set<Link>();
 
-    public DbSet<Phone> Phones { get; set; }
+    public DbSet<Phone> Phones => Set<Phone>();
 
-    public DbSet<Sim> Sims { get; set; }
+    public DbSet<Sim> Sims => Set<Sim>();
 
-    public DbSet<ServiceRequest> ServiceRequests { get; set; }
+    public DbSet<ServiceRequest> ServiceRequests => Set<ServiceRequest>();
     
-    public DbSet<Setting> Setting { get; set; }
+    public DbSet<Setting> Setting => Set<Setting>();
     
-    public DbSet<State> States { get; set; }
-
+    public DbSet<State> States => Set<State>();
 
     public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
 

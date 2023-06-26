@@ -38,6 +38,7 @@ CREATE TABLE Disposals
     "SR Number" INTEGER,
     "Certificate" INTEGER,
 	LastUpdate TEXT DEFAULT CURRENT_TIMESTAMP,
+    "AssetTag"	TEXT,
     PRIMARY KEY("IMEI")
 );
 

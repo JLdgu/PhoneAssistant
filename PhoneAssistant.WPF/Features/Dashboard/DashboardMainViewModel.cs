@@ -5,23 +5,21 @@ using CommunityToolkit.Mvvm.Input;
 
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Features.Dashboard;
 
-namespace PhoneAssistant.WPF.Features.Phones;
-
-public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMainViewModel
+namespace PhoneAssistant.WPF.Features.Dashboard;
+public partial class DashboardMainViewModel : ObservableObject, IDashboardMainViewModel
 {
     private readonly v1PhoneAssistantDbContext _dbContext;
     private readonly IPrintEnvelope _printEnvelope;
 
     public ObservableCollection<v1Phone> Phones { get; } = new();
 
-    public PhonesMainViewModel(v1PhoneAssistantDbContext dbContext, IPrintEnvelope printEnvelope)
+    public DashboardMainViewModel(v1PhoneAssistantDbContext dbContext, IPrintEnvelope printEnvelope)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
     }
-
+    
     [ObservableProperty]
     private v1Phone? _selectedPhone;
 
@@ -55,11 +53,12 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
         await foreach (var phone in _dbContext.Phones.AsAsyncEnumerable())
         {
             Phones.Add(phone);
-        }
+        }        
     }
 
     public Task WindowClosingAsync()
     {
         throw new NotImplementedException();
     }
+
 }

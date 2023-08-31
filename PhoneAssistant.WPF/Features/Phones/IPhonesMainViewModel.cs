@@ -7,6 +7,6 @@ namespace PhoneAssistant.WPF.Features.Phones
 {
     public interface IPhonesMainViewModel : IViewModel
     {
-        ObservableCollection<Phone> Phones { get; }
+        ObservableCollection<v1Phone> Phones { get; }
     }
 }

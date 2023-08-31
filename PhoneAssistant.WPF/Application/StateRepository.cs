@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Features.Application;
+using PhoneAssistant.WPF.Application;
 
 namespace PhoneAssistant.WPF.Application;
 public sealed class StateRepository : IStateRepository

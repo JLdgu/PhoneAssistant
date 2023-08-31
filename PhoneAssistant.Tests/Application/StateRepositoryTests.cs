@@ -2,8 +2,6 @@
 
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Features.Application;
-using PhoneAssistant.WPF.Features.Phones;
 
 namespace PhoneAssistant.Tests.Application;
 

@@ -35,13 +35,13 @@
         </Grid.ColumnDefinitions>
 
         <DockPanel Grid.Column="0" LastChildFill="False">
-            <!--<RadioButton
-                d:Visibility="Visible"
+            <RadioButton
+                Margin="0,10,0,0"
                 Command="{Binding UpdateViewCommand}"
-                CommandParameter="{x:Static viewmodel:ViewType.Dashboard}"
+                CommandParameter="{x:Static viewmodel:ViewModelType.Dashboard}"
                 DockPanel.Dock="Top"
-                Style="{StaticResource MaterialDesignTabRadioButton}"
-                Visibility="Hidden">
+                IsEnabled="False"
+                Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon
                         Width="24"
@@ -50,12 +50,13 @@
                         Kind="ViewDashboardOutline" />
                     <TextBlock Text="Dashboard" />
                 </StackPanel>
-            </RadioButton>-->
+            </RadioButton>
             <RadioButton
                 Margin="0,10,0,0"
                 Command="{Binding UpdateViewCommand}"
                 CommandParameter="{x:Static viewmodel:ViewModelType.Phones}"
                 DockPanel.Dock="Top"
+                IsEnabled="True"
                 Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon
@@ -70,6 +71,7 @@
                 Command="{Binding UpdateViewCommand}"
                 CommandParameter="{x:Static viewmodel:ViewModelType.Sims}"
                 DockPanel.Dock="Top"
+                IsEnabled="False"
                 Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon
@@ -84,6 +86,7 @@
                 Command="{Binding UpdateViewCommand}"
                 CommandParameter="{x:Static viewmodel:ViewModelType.ServiceRequests}"
                 DockPanel.Dock="Top"
+                IsEnabled="False"
                 Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel HorizontalAlignment="Center">
                     <materialDesign:PackIcon

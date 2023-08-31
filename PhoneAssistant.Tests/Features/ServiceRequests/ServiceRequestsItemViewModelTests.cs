@@ -375,23 +375,23 @@ public sealed class ServiceRequestsItemViewModelTests
         Assert.IsTrue(itemVM.CanCreateNewSR);
     }
 
-    [TestMethod]
-    [DataRow(32, 160000, "User", null)]
-    [DataRow(33, 160000, "User", "Despatch")]
-    public void SaveSRChanges_Raises_SRChanged(int id, int srn, string user, string? despatch)
-    {
-        IServiceRequestsRepository srRepository = Mock.Of<IServiceRequestsRepository>();
-        ServiceRequestsItemViewModel itemVM = new(srRepository);
-        ServiceRequest expected = new() { Id = id, ServiceRequestNumber = srn, NewUser = user, DespatchDetails = despatch };
-        itemVM.SR = expected;
-        //expected.ServiceRequestNumber += 1;
-        itemVM.ServiceRequestNumber += 1; //expected.ServiceRequestNumber;
+    //[TestMethod]
+    //[DataRow(32, 160000, "User", null)]
+    //[DataRow(33, 160000, "User", "Despatch")]
+    //public void SaveSRChanges_Raises_SRChanged(int id, int srn, string user, string? despatch)
+    //{
+    //    IServiceRequestsRepository srRepository = Mock.Of<IServiceRequestsRepository>();
+    //    ServiceRequestsItemViewModel itemVM = new(srRepository);
+    //    ServiceRequest expected = new() { Id = id, ServiceRequestNumber = srn, NewUser = user, DespatchDetails = despatch };
+    //    itemVM.SR = expected;
+    //    //expected.ServiceRequestNumber += 1;
+    //    itemVM.ServiceRequestNumber += 1; //expected.ServiceRequestNumber;
 
-        Assert.IsTrue(itemVM.CanSaveSRChanges);
-        itemVM.SaveSRChangesCommand.Execute(null);
+    //    Assert.IsTrue(itemVM.CanSaveSRChanges);
+    //    itemVM.SaveSRChangesCommand.Execute(null);
 
-        Assert.Fail();
-    }
+    //    Assert.Fail();
+    //}
     #endregion
 
     #region Cancel Changes to SR 

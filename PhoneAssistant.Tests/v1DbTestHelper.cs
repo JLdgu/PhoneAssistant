@@ -5,10 +5,10 @@ using PhoneAssistant.WPF.Application;
 
 namespace PhoneAssistant.Tests;
 
-public class DbTestHelper : IDisposable
+public class v1DbTestHelper : IDisposable
 {
     //internal SqliteConnection? Connection;
-    public DbContextOptions<PhoneAssistantDbContext>? Options;
+    public DbContextOptions<v1PhoneAssistantDbContext>? Options;
     private bool _disposedValue;
 
     internal SqliteConnection CreateConnection(string datasource = "DataSource=:memory:;")
@@ -16,7 +16,7 @@ public class DbTestHelper : IDisposable
         var connection = new SqliteConnection(datasource);
         connection.Open();
         
-        Options = new DbContextOptionsBuilder<PhoneAssistantDbContext>().UseSqlite(connection!).Options;
+        Options = new DbContextOptionsBuilder<v1PhoneAssistantDbContext>().UseSqlite(connection!).Options;
         return connection;
     }
 

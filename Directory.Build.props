@@ -2,6 +2,6 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	<AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
   </PropertyGroup>
 </Project>

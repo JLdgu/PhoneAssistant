@@ -1,3 +1,27 @@
+CREATE TABLE BaseReport (
+    [Telephone Number], 
+    [User Name], 
+    [Contract End Date], 
+    [Current Talkplan Name], 
+    [Handset Manufacturer], 
+    [Sim Number], 
+    [Connected IMEI], 
+    [Last Used IMEI]
+);
+
+CREATE TABLE Disposals
+(
+ 	"IMEI" TEXT UNIQUE,
+    "Former User" TEXT,
+    OEM TEXT,
+    Status TEXT,
+    "SR Number" INTEGER,
+    "Certificate" INTEGER,
+    "AssetTag"	TEXT,
+	LastUpdate TEXT DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY("IMEI")
+);
+
 CREATE TABLE Phones
 (
     IMEI TEXT NOT NULL,
@@ -28,19 +52,6 @@ CREATE TABLE SIMs
 	LastUpdate TEXT DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY("Phone number")
  );
-
-CREATE TABLE Disposals
-(
- 	"IMEI" TEXT UNIQUE,
-    "Former User" TEXT,
-    OEM TEXT,
-    Status TEXT,
-    "SR Number" INTEGER,
-    "Certificate" INTEGER,
-	LastUpdate TEXT DEFAULT CURRENT_TIMESTAMP,
-    "AssetTag"	TEXT,
-    PRIMARY KEY("IMEI")
-);
 
 CREATE TABLE UpdateHistoryPhones
 (

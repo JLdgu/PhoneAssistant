@@ -30,13 +30,13 @@ public sealed class v1PhoneAssistantDbContext : DbContext
             p => 
             {
                 p.HasKey(x => x.Imei);
-                p.Property(x => x.Imei).HasColumnName("IMEI");
-                p.Property(x => x.PhoneNumber).HasColumnName("Phone Number");
-                p.Property(x => x.SimNumber).HasColumnName("SIM Number");
-                p.Property(x => x.FormerUser).HasColumnName("Former User");
-                p.Property(x => x.SR).HasColumnName("SR Number");
-                p.Property(x => x.AssetTag).HasColumnName("Asset Tag");
-                p.Property(x => x.NewUser).HasColumnName("New user");
+                //p.Property(x => x.Imei).HasColumnName("IMEI");
+                //p.Property(x => x.PhoneNumber).HasColumnName("PhoneNumber");
+                //p.Property(x => x.SimNumber).HasColumnName("SIMNumber");
+                //p.Property(x => x.FormerUser).HasColumnName("FormerUser");
+                p.Property(x => x.SR).HasColumnName("SRNumber");
+                //p.Property(x => x.AssetTag).HasColumnName("AssetTag");
+                //p.Property(x => x.NewUser).HasColumnName("NewUser");
                 p.Property(x => x.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             }
         );

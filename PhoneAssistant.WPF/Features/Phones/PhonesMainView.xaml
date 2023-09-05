@@ -38,8 +38,9 @@
             Margin="16,20,0,15"
             d:Background="LightCoral"
             d:Visibility="Visible"
-            Visibility="Collapsed">
+            Visibility="Visible">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{Binding ElementName=gridNorR, Path=ActualWidth}" />
                 <ColumnDefinition Width="{Binding ElementName=gridStatus, Path=ActualWidth}" />
                 <ColumnDefinition Width="{Binding ElementName=gridSR, Path=ActualWidth}" />
                 <ColumnDefinition Width="{Binding ElementName=gridIMEI, Path=ActualWidth}" />
@@ -53,45 +54,51 @@
             <TextBox
                 Grid.Column="0"
                 Margin="0,0,5,0"
+                materialDesign:HintAssist.Hint="N or R"
+                materialDesign:HintAssist.IsFloating="True"
+                Text="{Binding FilterNorR}" />
+            <TextBox
+                Grid.Column="1"
+                Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="Status"
                 materialDesign:HintAssist.IsFloating="True"
                 Text="{Binding FilterStatus}" />
             <TextBox
-                Grid.Column="1"
+                Grid.Column="2"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="SR"
                 materialDesign:HintAssist.IsFloating="True"
                 Text="{Binding FilterSR}" />
             <TextBox
-                Grid.Column="2"
+                Grid.Column="3"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="IMEI"
                 materialDesign:HintAssist.IsFloating="True"
                 Text="{Binding FilterImei}" />
             <TextBox
-                Grid.Column="3"
+                Grid.Column="4"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="Phone Number"
                 materialDesign:HintAssist.IsFloating="True" />
             <TextBox
-                Grid.Column="4"
+                Grid.Column="5"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="SIM Number"
                 materialDesign:HintAssist.IsFloating="True" />
             <TextBox
-                Grid.Column="5"
+                Grid.Column="6"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="New User"
                 materialDesign:HintAssist.IsFloating="True" />
             <TextBox
                 Grid.Column="7"
                 Margin="0,0,5,0"
-                materialDesign:HintAssist.Hint="OEM"
+                materialDesign:HintAssist.Hint="Asset Tag"
                 materialDesign:HintAssist.IsFloating="True" />
             <TextBox
-                Grid.Column="6"
+                Grid.Column="8"
                 Margin="0,0,5,0"
-                materialDesign:HintAssist.Hint="Asset Tag"
+                materialDesign:HintAssist.Hint="OEM"
                 materialDesign:HintAssist.IsFloating="True" />
         </Grid>
 
@@ -109,6 +116,11 @@
             SelectionMode="Extended">
 
             <DataGrid.Columns>
+                <DataGridTextColumn
+                    x:Name="gridNorR"
+                    Width="auto"
+                    Binding="{Binding NorR}"
+                    Header="N or R" />
                 <DataGridTextColumn
                     x:Name="gridStatus"
                     Width="auto"

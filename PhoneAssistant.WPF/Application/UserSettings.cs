@@ -34,6 +34,14 @@ public sealed class UserSettings : ApplicationSettingsBase, IUserSettings
         set => this[nameof(PrintFile)] = value;
     }
 
+    [UserScopedSetting()]
+    [DefaultSettingValue("true")]
+    public bool UpdateUserSettingsRequired
+    {
+        get => (bool)this[nameof(UpdateUserSettingsRequired)];
+        set => this[nameof(UpdateUserSettingsRequired)] = value;
+    }
+
     public override void Save()
     {
         base.Save();

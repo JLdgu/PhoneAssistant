@@ -1,16 +1,11 @@
 ﻿using System.IO;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Threading;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 
 using PhoneAssistant.WPF.Application;
-using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Features.MainWindow;
 
 namespace PhoneAssistant.WPF;
 /// <summary>
@@ -22,6 +17,7 @@ public partial class App : System.Windows.Application
 
     public App()
     {
+
         _host = Host.CreateDefaultBuilder()
             .ConfigureApplicationServices()
             .Build();

@@ -6,7 +6,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\Phone.ico</ApplicationIcon>
     <AssemblyName>PhoneAssistant</AssemblyName>
-    <AssemblyVersion>0.2.8.3100</AssemblyVersion>
+    <AssemblyVersion>0.2.9.500</AssemblyVersion>
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
   </PropertyGroup>
 

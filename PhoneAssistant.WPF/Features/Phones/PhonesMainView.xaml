@@ -23,7 +23,6 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <Button
-                Grid.Column="3"
                 Margin="5,0"
                 Command="{Binding PrintEnvelopeCommand}"
                 Content="{materialDesign:PackIcon Kind=EmailOutline,
@@ -31,23 +30,21 @@
                 IsEnabled="{Binding CanPrintEnvelope}"
                 Style="{StaticResource MaterialDesignOutlinedLightButton}"
                 ToolTip="Print Envelope" />
-
         </StackPanel>
         <Grid
             Grid.Row="2"
             Margin="16,20,0,15"
-            d:Background="LightCoral"
-            d:Visibility="Visible"
-            Visibility="Collapsed">
+            d:Background="LightCoral">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{Binding ElementName=gridStatus, Path=ActualWidth}" />
-                <ColumnDefinition Width="{Binding ElementName=gridSR, Path=ActualWidth}" />
-                <ColumnDefinition Width="{Binding ElementName=gridIMEI, Path=ActualWidth}" />
-                <ColumnDefinition Width="{Binding ElementName=gridPhoneNumber, Path=ActualWidth}" />
-                <ColumnDefinition Width="{Binding ElementName=gridSIM, Path=ActualWidth}" />
-                <ColumnDefinition Width="{Binding ElementName=gridNewUser, Path=ActualWidth}" />
-                <ColumnDefinition Width="{Binding ElementName=gridAssetTag, Path=ActualWidth}" />
-                <ColumnDefinition Width="{Binding ElementName=gridOEM, Path=ActualWidth}" />
+                <ColumnDefinition Width="{Binding ElementName=gridStatus, Path=ActualWidth}" d:Width="70" />
+                <ColumnDefinition Width="{Binding ElementName=gridSR, Path=ActualWidth}" d:Width="45" />
+                <ColumnDefinition Width="{Binding ElementName=gridImei, Path=ActualWidth}" d:Width="60" />
+                <ColumnDefinition Width="{Binding ElementName=gridPhoneNumber, Path=ActualWidth}" d:Width="120" />
+                <ColumnDefinition Width="{Binding ElementName=gridSim, Path=ActualWidth}" d:Width="110" />
+                <ColumnDefinition Width="{Binding ElementName=gridNewUser, Path=ActualWidth}" d:Width="90" />
+                <ColumnDefinition Width="{Binding ElementName=gridAssetTag, Path=ActualWidth}" d:Width="85" />
+                <ColumnDefinition Width="{Binding ElementName=gridOEM, Path=ActualWidth}" d:Width="60" />
+                <ColumnDefinition Width="{Binding ElementName=gridLastUpdate, Path=ActualWidth}" d:Width="100" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBox
@@ -72,27 +69,39 @@
                 Grid.Column="3"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="Phone Number"
-                materialDesign:HintAssist.IsFloating="True" />
+                materialDesign:HintAssist.IsFloating="True"
+                Text="{Binding FilterPhoneNumber}" />
             <TextBox
                 Grid.Column="4"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="SIM Number"
-                materialDesign:HintAssist.IsFloating="True" />
+                materialDesign:HintAssist.IsFloating="True"
+                Text="{Binding FilterSimNumber}" />
             <TextBox
                 Grid.Column="5"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="New User"
-                materialDesign:HintAssist.IsFloating="True" />
-            <TextBox
-                Grid.Column="7"
-                Margin="0,0,5,0"
-                materialDesign:HintAssist.Hint="OEM"
-                materialDesign:HintAssist.IsFloating="True" />
+                materialDesign:HintAssist.IsFloating="True"
+                Text="{Binding FilterNewUser}" />
             <TextBox
                 Grid.Column="6"
                 Margin="0,0,5,0"
                 materialDesign:HintAssist.Hint="Asset Tag"
-                materialDesign:HintAssist.IsFloating="True" />
+                materialDesign:HintAssist.IsFloating="True"
+                Text="{Binding FilterAssetTag}" />
+            <TextBox
+                Grid.Column="7"
+                Margin="0,0,5,0"
+                materialDesign:HintAssist.Hint="OEM"
+                materialDesign:HintAssist.IsFloating="True"
+                Text="{Binding FilterOEM}" />
+            <TextBox
+                Grid.Column="8"
+                Margin="0,0,5,0"
+                materialDesign:HintAssist.Hint="Last Update"
+                materialDesign:HintAssist.IsFloating="True"
+                Visibility="Hidden" />
+
         </Grid>
 
         <DataGrid
@@ -101,7 +110,7 @@
             EnableRowVirtualization="True"
             HeadersVisibility="Column"
             IsReadOnly="True"
-            ItemsSource="{Binding Phones, Mode=OneWay}"
+            ItemsSource="{Binding Phones}"
             ScrollViewer.CanContentScroll="True"
             ScrollViewer.HorizontalScrollBarVisibility="Hidden"
             ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -120,7 +129,7 @@
                     Binding="{Binding SR}"
                     Header="SR" />
                 <DataGridTextColumn
-                    x:Name="gridIMEI"
+                    x:Name="gridImei"
                     Width="auto"
                     Binding="{Binding Imei}"
                     Header="IMEI" />
@@ -130,7 +139,7 @@
                     Binding="{Binding PhoneNumber}"
                     Header="Phone Number" />
                 <DataGridTextColumn
-                    x:Name="gridSIM"
+                    x:Name="gridSim"
                     Width="auto"
                     Binding="{Binding SimNumber}"
                     Header="SIM Number" />
@@ -149,6 +158,11 @@
                     Width="auto"
                     Binding="{Binding OEM}"
                     Header="OEM" />
+                <DataGridTextColumn
+                    x:Name="gridLastUpdate"
+                    Width="auto"
+                    Binding="{Binding LastUpdate}"
+                    Header="Last Update" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

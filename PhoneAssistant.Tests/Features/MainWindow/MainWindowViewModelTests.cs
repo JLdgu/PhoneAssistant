@@ -19,15 +19,13 @@ public sealed class MainWindowViewModelTests
         var simsVM = Mock.Of<ISimsMainViewModel>();
         var srsVM = Mock.Of<IServiceRequestsMainViewModel>();
         var settingsVM = Mock.Of<ISettingsMainViewModel>();
-        //var viewModel = new MainWindowViewModel(phonesVM, simsVM, srsVM, settingsVM);
-        var viewModel = new MainWindowViewModel(dashboardVM, settingsVM);
+        var viewModel = new MainWindowViewModel(dashboardVM,phonesVM, settingsVM);
         var command = viewModel.UpdateViewCommand;
 
         var actual = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => command.ExecuteAsync(null));
 
         Assert.AreEqual("selectedViewModelType", actual.ParamName);
     }
-
 
     [TestMethod]
     public async Task UpdateViewAsync_StringViewModelType_ThrowsArgumenException()
@@ -37,8 +35,7 @@ public sealed class MainWindowViewModelTests
         var simsVM = Mock.Of<ISimsMainViewModel>();
         var srsVM = Mock.Of<IServiceRequestsMainViewModel>();
         var settingsVM = Mock.Of<ISettingsMainViewModel>();
-        //var viewModel = new MainWindowViewModel(phonesVM, simsVM, srsVM, settingsVM);
-        var viewModel = new MainWindowViewModel(dashboardVM, settingsVM);
+        var viewModel = new MainWindowViewModel(dashboardVM, phonesVM, settingsVM);
         var command = viewModel.UpdateViewCommand;
 
         var actual = await Assert.ThrowsExceptionAsync<ArgumentException>(() => command.ExecuteAsync("Wrong Type"));
@@ -56,8 +53,7 @@ public sealed class MainWindowViewModelTests
         var simsVM = Mock.Of<ISimsMainViewModel>();
         var srsVM = Mock.Of<IServiceRequestsMainViewModel>();
         var settingsVM = Mock.Of<ISettingsMainViewModel>();
-        //var viewModel = new MainWindowViewModel(phonesVM, simsVM, srsVM, settingsVM);
-        var viewModel = new MainWindowViewModel(dashboardVM, settingsVM);
+        var viewModel = new MainWindowViewModel(dashboardVM, phonesVM, settingsVM);
 
         var command = viewModel.UpdateViewCommand;
 
@@ -68,7 +64,7 @@ public sealed class MainWindowViewModelTests
 
     [TestMethod]
     [DataRow(ViewModelType.Dashboard)]
-    //[DataRow(ViewModelType.Phones)]
+    [DataRow(ViewModelType.Phones)]
     //[DataRow(ViewModelType.Sims)]
     //[DataRow(ViewModelType.ServiceRequests)]
     [DataRow(ViewModelType.Settings)]
@@ -84,7 +80,7 @@ public sealed class MainWindowViewModelTests
         srsVM.Setup(vm => vm.LoadAsync());
         var settingsVM = new Mock<ISettingsMainViewModel>();
         settingsVM.Setup(vm => vm.LoadAsync());
-        var viewModel = new MainWindowViewModel(dashboardVM.Object, settingsVM.Object);
+        var viewModel = new MainWindowViewModel(dashboardVM.Object, phonesVM.Object, settingsVM.Object);
         var command = viewModel.UpdateViewCommand;
 
         await command.ExecuteAsync(viewModelType);

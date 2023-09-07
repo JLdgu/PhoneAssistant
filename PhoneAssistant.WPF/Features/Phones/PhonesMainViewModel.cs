@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Data;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -16,11 +18,119 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     public ObservableCollection<v1Phone> Phones { get; } = new();
 
+    readonly ICollectionView _filterView;
+
     public PhonesMainViewModel(v1PhoneAssistantDbContext dbContext, IPrintEnvelope printEnvelope)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
+
+        _filterView = CollectionViewSource.GetDefaultView(Phones);
+        _filterView.Filter = new Predicate<object>(FilterView);
     }
+
+    #region Filtering View
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterStatus;
+
+    partial void OnFilterStatusChanged(string value)
+    {
+        if (value is null) return;
+
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterSR;
+
+    partial void OnFilterSRChanged(string value)
+    {
+        if (value is null) return;
+
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterImei;
+
+    partial void OnFilterImeiChanged(string value)
+    {
+        if (value is null) return;
+
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterPhoneNumber;
+
+    partial void OnFilterPhoneNumberChanged(string value)
+    {
+        if (value is null) return;
+
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterSimNumber;
+
+    partial void OnFilterSimNumberChanged(string value)
+    {
+        if (value is null) return;
+
+        _filterView.Refresh();
+    }
+
+    public bool FilterView(object item)
+    {
+        if (item is not v1Phone phone) return false;
+
+        if (FilterStatus is not null && FilterStatus.Length > 0)
+            if (phone.Status is not null && !phone.Status.Contains(FilterStatus))
+                return false;
+
+        if (FilterSR is not null && FilterSR.Length > 0)
+            if (phone.SR is null)
+                return false;
+            else if (!phone.SR.ToString()!.Contains(FilterSR))
+                return false;        
+
+        if (FilterImei is not null && FilterImei.Length > 0)
+            if (phone.Imei is not null && !phone.Imei.Contains(FilterImei))
+                return false;
+
+        if (FilterPhoneNumber is not null && FilterPhoneNumber.Length > 0)
+            if (phone.PhoneNumber is null)
+                return false;
+            else if (!phone.PhoneNumber.Contains(FilterPhoneNumber))
+                return false;
+
+        if (FilterSimNumber is not null && FilterSimNumber.Length > 0)
+            if (phone.SimNumber is null)
+                return false;
+            else if (!phone.SimNumber.Contains(FilterSimNumber))
+                return false;
+
+        return true;
+    }
+    #endregion
+
+    [RelayCommand]
+    private void PrintEnvelope()
+    {
+        if (SelectedPhone is null) return;
+
+        CanPrintEnvelope = false;
+        _printEnvelope.Execute(SelectedPhone);
+    }
+
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private bool canPrintEnvelope;
 
     [ObservableProperty]
     private v1Phone? _selectedPhone;
@@ -36,18 +146,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
             CanPrintEnvelope = true;
         }
     }
-
-    [RelayCommand]
-    private void PrintEnvelope()
-    {
-        if (SelectedPhone is null) return;
-
-        CanPrintEnvelope = false;
-        _printEnvelope.Execute(SelectedPhone);
-    }
-
-    [ObservableProperty]
-    private bool canPrintEnvelope;
 
     public async Task LoadAsync()
     {

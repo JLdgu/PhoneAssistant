@@ -5,6 +5,8 @@ using System.Windows.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using Microsoft.EntityFrameworkCore;
+
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Dashboard;
@@ -18,7 +20,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     public ObservableCollection<v1Phone> Phones { get; } = new();
 
-    readonly ICollectionView _filterView;
+    ICollectionView _filterView;
 
     public PhonesMainViewModel(v1PhoneAssistantDbContext dbContext, IPrintEnvelope printEnvelope)
     {
@@ -28,6 +30,24 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
         _filterView = CollectionViewSource.GetDefaultView(Phones);
         _filterView.Filter = new Predicate<object>(FilterView);
     }
+
+    #region Buttons
+    [RelayCommand]
+    private async Task RefreshPhones()
+    {
+        await LoadAsync();
+        _filterView.Refresh();
+    }
+
+    [RelayCommand]
+    private void PrintEnvelope()
+    {
+        if (SelectedPhone is null) return;
+
+        CanPrintEnvelope = false;
+        _printEnvelope.Execute(SelectedPhone);
+    }
+    #endregion
 
     #region Filtering View
     [ObservableProperty]
@@ -155,15 +175,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     }
     #endregion
 
-    [RelayCommand]
-    private void PrintEnvelope()
-    {
-        if (SelectedPhone is null) return;
-
-        CanPrintEnvelope = false;
-        _printEnvelope.Execute(SelectedPhone);
-    }
-
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
     private bool canPrintEnvelope;
@@ -186,6 +197,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     public async Task LoadAsync()
     {
         Phones.Clear();
+        _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         await foreach (var phone in _dbContext.Phones.AsAsyncEnumerable())
         {
             Phones.Add(phone);

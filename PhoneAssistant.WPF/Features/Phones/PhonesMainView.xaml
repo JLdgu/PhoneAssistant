@@ -21,7 +21,13 @@
         <shared:HeaderMainView HeaderIcon="CellphoneScreenshot" HeaderText="Phones" />
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Margin="5,0"
+            <Button Margin="5,5"
+                    Command="{Binding RefreshPhonesCommand}"
+                    Content="{materialDesign:PackIcon Kind=Refresh,
+                                                      Size=25}"
+                    Style="{StaticResource MaterialDesignOutlinedLightButton}"
+                    ToolTip="Refresh" />
+            <Button Margin="5,5"
                     Command="{Binding PrintEnvelopeCommand}"
                     Content="{materialDesign:PackIcon Kind=EmailOutline,
                                                       Size=25}"
@@ -30,7 +36,7 @@
                     ToolTip="Print Envelope" />
         </StackPanel>
         <Grid Grid.Row="2"
-              Margin="16,20,0,15"
+              Margin="16,10,0,5"
               d:Background="LightCoral">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding ElementName=gridStatus, Path=ActualWidth}" d:Width="70" />
@@ -101,6 +107,9 @@
         </Grid>
 
         <DataGrid Grid.Row="3"
+                  Margin="10,0,0,0"
+                  materialDesign:DataGridAssist.CellPadding="4 3 2 3"
+                  materialDesign:DataGridAssist.ColumnHeaderPadding="4 5 2 5"
                   AutoGenerateColumns="False"
                   EnableRowVirtualization="True"
                   HeadersVisibility="Column"

@@ -18,9 +18,12 @@ public sealed class v1PhoneAssistantDbContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
             throw new ArgumentException("DbContextOptionsBuilder has not been configured");
+
 #if DEBUG
         optionsBuilder.EnableSensitiveDataLogging();
 #endif
+      
+        //optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         base.OnConfiguring(optionsBuilder);
     }
 

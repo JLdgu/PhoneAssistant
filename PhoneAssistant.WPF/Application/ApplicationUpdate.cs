@@ -7,7 +7,7 @@ namespace PhoneAssistant.WPF.Application;
 
 public static class ApplicationUpdate
 {
-    public static bool FirstRun()
+    public static void UpdateUserSettings()
     {
         UserSettings userSettings = new();
         if (userSettings.UpdateUserSettingsRequired)
@@ -16,7 +16,11 @@ public static class ApplicationUpdate
             userSettings.UpdateUserSettingsRequired = false;
             userSettings.Save();
         }
+    }
 
+    public static bool FirstRun()
+    {
+        UserSettings userSettings = new();
         if (userSettings.Database is not null && File.Exists(userSettings.Database))
             return false;
 

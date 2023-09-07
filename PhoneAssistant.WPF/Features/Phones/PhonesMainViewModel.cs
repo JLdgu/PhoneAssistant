@@ -36,8 +36,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     partial void OnFilterStatusChanged(string value)
     {
-        if (value is null) return;
-
         _filterView.Refresh();
     }
 
@@ -47,8 +45,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     partial void OnFilterSRChanged(string value)
     {
-        if (value is null) return;
-
         _filterView.Refresh();
     }
 
@@ -58,8 +54,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     partial void OnFilterImeiChanged(string value)
     {
-        if (value is null) return;
-
         _filterView.Refresh();
     }
 
@@ -69,8 +63,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     partial void OnFilterPhoneNumberChanged(string value)
     {
-        if (value is null) return;
-
         _filterView.Refresh();
     }
 
@@ -80,8 +72,33 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     partial void OnFilterSimNumberChanged(string value)
     {
-        if (value is null) return;
+        _filterView.Refresh();
+    }
 
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterNewUser;
+
+    partial void OnFilterNewUserChanged(string value)
+    {
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterAssetTag;
+
+    partial void OnFilterAssetTagChanged(string value)
+    {
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterOEM;
+
+    partial void OnFilterOEMChanged(string value)
+    {
         _filterView.Refresh();
     }
 
@@ -90,7 +107,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
         if (item is not v1Phone phone) return false;
 
         if (FilterStatus is not null && FilterStatus.Length > 0)
-            if (phone.Status is not null && !phone.Status.Contains(FilterStatus))
+            if (phone.Status is not null && !phone.Status.Contains(FilterStatus,StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         if (FilterSR is not null && FilterSR.Length > 0)
@@ -113,6 +130,25 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
             if (phone.SimNumber is null)
                 return false;
             else if (!phone.SimNumber.Contains(FilterSimNumber))
+                return false;
+
+        if (FilterNewUser is not null && FilterNewUser.Length > 0)
+            if (phone.NewUser is null)
+                return false;
+            else if (!phone.NewUser.Contains(FilterNewUser, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        //AssetTag
+        if (FilterAssetTag is not null && FilterAssetTag.Length > 0)
+            if (phone.AssetTag is null)
+                return false;
+            else if (!phone.AssetTag.Contains(FilterAssetTag, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+        //OEM
+        if (FilterOEM is not null && FilterOEM.Length > 0)
+            if (phone.OEM is null)
+                return false;
+            else if (!phone.OEM.Contains(FilterOEM, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         return true;

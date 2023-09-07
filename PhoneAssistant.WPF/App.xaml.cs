@@ -18,6 +18,8 @@ public partial class App : System.Windows.Application
     public App()
     {
 
+        ApplicationUpdate.UpdateUserSettings();
+
         _host = Host.CreateDefaultBuilder()
             .ConfigureApplicationServices()
             .Build();

@@ -13,7 +13,7 @@ public class v1Phone
     public string? AssetTag { get; set; }
     public string? NewUser { get; set; }
     public string? Notes { get; set; }
-    public string? Jobtitle { get; set; }
-    public string? Department { get; set; }
+    //public string? Jobtitle { get; set; }
+    //public string? Department { get; set; }
     public string? LastUpdate { get; }
 }

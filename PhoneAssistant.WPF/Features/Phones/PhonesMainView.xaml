@@ -39,7 +39,7 @@
               Margin="16,10,0,5"
               d:Background="LightCoral">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{Binding ElementName=gridNorR, Path=ActualWidth}" />
+                <ColumnDefinition Width="{Binding ElementName=gridNorR, Path=ActualWidth}" d:Width="60" />
                 <ColumnDefinition Width="{Binding ElementName=gridStatus, Path=ActualWidth}" d:Width="70" />
                 <ColumnDefinition Width="{Binding ElementName=gridSR, Path=ActualWidth}" d:Width="45" />
                 <ColumnDefinition Width="{Binding ElementName=gridImei, Path=ActualWidth}" d:Width="60" />
@@ -53,53 +53,62 @@
             </Grid.ColumnDefinitions>
             <TextBox Grid.Column="0"
                      Margin="0,0,5,0"
+                     materialDesign:HintAssist.Hint="N/R"
+                     materialDesign:HintAssist.IsFloating="True"
+                     materialDesign:TextFieldAssist.HasClearButton="True"
+                     MaxLength="1"
+                     Text="{Binding FilterNorR, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+            <TextBox Grid.Column="1"
+                     Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="Status"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterStatus, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="1"
+            <TextBox Grid.Column="2"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="SR"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
+                     MaxLength="6"
                      Text="{Binding FilterSR, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="2"
+            <TextBox Grid.Column="3"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="IMEI"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterImei, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="3"
+            <TextBox Grid.Column="4"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="Phone Number"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterPhoneNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="4"
+            <TextBox Grid.Column="5"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="SIM Number"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterSimNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="5"
+            <TextBox Grid.Column="6"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="New User"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterNewUser, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="6"
+            <TextBox Grid.Column="7"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="Asset Tag"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
+                     MaxLength="7"
                      Text="{Binding FilterAssetTag, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="7"
+            <TextBox Grid.Column="8"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="OEM"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterOEM, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="8"
+            <TextBox Grid.Column="9"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="Last Update"
                      materialDesign:HintAssist.IsFloating="True"
@@ -123,51 +132,47 @@
                   SelectionMode="Extended">
 
             <DataGrid.Columns>
-                <DataGridTextColumn
-                    x:Name="gridNorR"
-                    Width="auto"
-                    Binding="{Binding NorR}"
-                    Header="N or R" />
-                <DataGridTextColumn
-                    x:Name="gridStatus"
-                    Width="auto"
-                    Binding="{Binding Status}"
-                    Header="Status" />
-                <DataGridTextColumn
-                    x:Name="gridSR"
-                    Width="auto"
-                    Binding="{Binding SR}"
-                    Header="SR" />
-                <DataGridTextColumn
-                    x:Name="gridIMEI"
-                    Width="auto"
-                    Binding="{Binding Imei}"
-                    Header="IMEI" />
-                <DataGridTextColumn
-                    x:Name="gridPhoneNumber"
-                    Width="auto"
-                    Binding="{Binding PhoneNumber}"
-                    Header="Phone Number" />
-                <DataGridTextColumn
-                    x:Name="gridSIM"
-                    Width="auto"
-                    Binding="{Binding SimNumber}"
-                    Header="SIM Number" />
-                <DataGridTextColumn
-                    x:Name="gridNewUser"
-                    Width="auto"
-                    Binding="{Binding NewUser}"
-                    Header="New User" />
-                <DataGridTextColumn
-                    x:Name="gridAssetTag"
-                    Width="auto"
-                    Binding="{Binding AssetTag}"
-                    Header="Asset Tag" />
-                <DataGridTextColumn
-                    x:Name="gridOEM"
-                    Width="auto"
-                    Binding="{Binding OEM}"
-                    Header="OEM" />
+                <DataGridTextColumn x:Name="gridNorR"
+                                    Width="auto"
+                                    MinWidth="45"
+                                    Binding="{Binding NorR}"
+                                    Header="N or R" />
+                <DataGridTextColumn x:Name="gridStatus"
+                                    Width="auto"
+                                    Binding="{Binding Status}"
+                                    Header="Status" />
+                <DataGridTextColumn x:Name="gridSR"
+                                    Width="auto"
+                                    Binding="{Binding SR}"
+                                    Header="SR" />
+                <DataGridTextColumn x:Name="gridImei"
+                                    Width="auto"
+                                    Binding="{Binding Imei}"
+                                    Header="IMEI" />
+                <DataGridTextColumn x:Name="gridPhoneNumber"
+                                    Width="auto"
+                                    Binding="{Binding PhoneNumber}"
+                                    Header="Phone Number" />
+                <DataGridTextColumn x:Name="gridSim"
+                                    Width="auto"
+                                    Binding="{Binding SimNumber}"
+                                    Header="SIM Number" />
+                <DataGridTextColumn x:Name="gridNewUser"
+                                    Width="auto"
+                                    Binding="{Binding NewUser}"
+                                    Header="New User" />
+                <DataGridTextColumn x:Name="gridAssetTag"
+                                    Width="auto"
+                                    Binding="{Binding AssetTag}"
+                                    Header="Asset Tag" />
+                <DataGridTextColumn x:Name="gridOEM"
+                                    Width="auto"
+                                    Binding="{Binding OEM}"
+                                    Header="OEM" />
+                <DataGridTextColumn x:Name="gridLastUpdate"
+                                    Width="auto"
+                                    Binding="{Binding LastUpdate}"
+                                    Header="Last Update" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

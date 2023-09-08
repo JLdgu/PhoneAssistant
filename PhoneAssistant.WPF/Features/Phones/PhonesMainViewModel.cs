@@ -52,6 +52,15 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     #region Filtering View
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterNorR;
+
+    partial void OnFilterNorRChanged(string value)
+    {
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
     private string filterStatus;
 
     partial void OnFilterStatusChanged(string value)
@@ -125,6 +134,10 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     public bool FilterView(object item)
     {
         if (item is not v1Phone phone) return false;
+
+        if (FilterNorR is not null && FilterNorR.Length == 1)
+            if (phone.NorR is not null && !phone.NorR.StartsWith(FilterNorR, StringComparison.InvariantCultureIgnoreCase))
+                return false;
 
         if (FilterStatus is not null && FilterStatus.Length > 0)
             if (phone.Status is not null && !phone.Status.Contains(FilterStatus,StringComparison.InvariantCultureIgnoreCase))

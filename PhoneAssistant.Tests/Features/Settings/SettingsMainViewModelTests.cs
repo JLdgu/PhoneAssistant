@@ -19,12 +19,16 @@ public sealed class SettingsMainViewModelTests
         mock.Setup(s => s.PrintToFile).Returns(false);
         mock.Setup(s => s.Printer).Returns("Printer");
         mock.Setup(s => s.PrintFile).Returns("PrintFile");
+        mock.Setup(s => s.DarkMode).Returns(true);
         var vm = new SettingsMainViewModel(mock.Object);
 
         Assert.IsTrue(vm.PrintToPrinter);
         Assert.IsFalse(vm.PrintToFile);
         Assert.AreEqual("Printer", vm.Printer);
         Assert.AreEqual("PrintFile", vm.PrintFile);
+
+        Assert.IsFalse(vm.ColourThemeLight);
+        Assert.IsTrue(vm.ColourThemeDark);
 
         Assert.AreEqual(VERSION, vm.VersionDescription);
 
@@ -54,12 +58,12 @@ public sealed class SettingsMainViewModelTests
         Assert.IsTrue(vm.PrintToFile);
         Assert.IsFalse(vm.PrintToPrinter);
     }
-    
+
     [TestMethod]
     public void Database_PropertyChanged_SavesUpdatedSettings()
     {
         var mock = new Mock<IUserSettings>();
-        mock.Setup(s => s.Database).Returns("Database");              
+        mock.Setup(s => s.Database).Returns("Database");
         var vm = new SettingsMainViewModel(mock.Object);
         const string NEW_VALUE = "Database Changed";
 
@@ -95,5 +99,19 @@ public sealed class SettingsMainViewModelTests
 
         mock.VerifySet(s => s.PrintFile = NEW_VALUE);
         mock.Verify(s => s.Save(), Times.Once());
+    }
+
+    [TestMethod]
+    public void ColourThemeDark_PropertyChanged_SavesUpdatedSettings()
+    {
+        var mock = new Mock<IUserSettings>();
+        mock.Setup(s => s.DarkMode).Returns(false);
+        var vm = new SettingsMainViewModel(mock.Object);
+
+        vm.ColourThemeDark = true;
+
+        mock.VerifySet(s => s.DarkMode = true);
+        mock.Verify(s => s.Save(), Times.Once());
+
     }
 }

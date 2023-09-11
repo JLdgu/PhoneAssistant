@@ -10,6 +10,8 @@ public interface IUserSettings
 
     string PrintFile { get; set; }
     
+    bool DarkMode { get; set; }
+
     void Save() { }
 
     Version? AssemblyVersion { get; }

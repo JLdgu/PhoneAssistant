@@ -35,6 +35,14 @@ public sealed class UserSettings : ApplicationSettingsBase, IUserSettings
     }
 
     [UserScopedSetting()]
+    [DefaultSettingValue("false")]
+    public bool DarkMode
+    {
+        get => (bool)this[nameof(DarkMode)];
+        set => this[nameof(DarkMode)] = value;
+    }
+
+    [UserScopedSetting()]
     [DefaultSettingValue("true")]
     public bool UpdateUserSettingsRequired
     {
@@ -56,5 +64,6 @@ public sealed class UserSettings : ApplicationSettingsBase, IUserSettings
             return assemblyName.Version;
         }
     }
+
 }
 

@@ -3,6 +3,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using MaterialDesignThemes.Wpf;
+
 using Microsoft.Win32;
 
 using PhoneAssistant.WPF.Application;
@@ -22,10 +24,15 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
         PrintToPrinter = !PrintToFile;
         Printer = _userSettings.Printer;
         PrintFile = _userSettings.PrintFile;
+        ColourThemeDark = _userSettings.DarkMode;
+        ColourThemeLight = !_userSettings.DarkMode;
+
         VersionDescription = _userSettings.AssemblyVersion?.ToString();
+
     }
 #pragma warning restore CS8618
 
+    #region Database Settings
     [ObservableProperty]
     private string _database;
 
@@ -56,7 +63,9 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
             App.Current.Shutdown();
         }
     }
+    #endregion
 
+    #region Printer Settings
     [ObservableProperty]
     private bool _printToPrinter;
 
@@ -78,13 +87,6 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
         _userSettings.Printer = value;
         _userSettings.Save();
     }
-    [RelayCommand]
-    private void SavePrinter()
-    {
-    }
-
-    [ObservableProperty]
-    private bool canSavePrinter;
 
     [ObservableProperty]
     private string _printFile;
@@ -98,13 +100,26 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
 
     }
 
-    [RelayCommand]
-    private void SavePrintFile()
+    [ObservableProperty]
+    private bool canSavePrintFile;
+    #endregion
+
+    #region Mode Setting
+
+    [ObservableProperty]
+    private bool colourThemeDark;
+
+    partial void OnColourThemeDarkChanged(bool value)
     {
+        _userSettings.DarkMode = value;
+        _userSettings.Save();
+
+        ModifyTheme(value);
     }
 
     [ObservableProperty]
-    private bool canSavePrintFile;
+    private bool colourThemeLight;
+    #endregion
 
     [ObservableProperty]
     private string? _versionDescription;
@@ -119,4 +134,12 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
         return Task.CompletedTask;
     }
 
+    private static void ModifyTheme(bool isDarkTheme)
+    {
+        var paletteHelper = new PaletteHelper();
+        var theme = paletteHelper.GetTheme();
+
+        theme.SetBaseTheme(isDarkTheme ? Theme.Dark : Theme.Light);
+        paletteHelper.SetTheme(theme);
+    }
 }

@@ -1,0 +1,9 @@
+﻿using PhoneAssistant.WPF.Shared;
+
+namespace PhoneAssistant.WPF.Features.Users;
+
+public interface IUsersMainViewModel : IViewModel
+{
+    Task LoadAsync();
+    Task WindowClosingAsync();
+}

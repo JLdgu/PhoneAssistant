@@ -10,6 +10,7 @@ using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.ServiceRequests;
 using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Features.Sims;
+using PhoneAssistant.WPF.Features.Users;
 
 namespace PhoneAssistant.WPF.Application;
 
@@ -31,6 +32,7 @@ public static class ApplicationServicesExtensions
             //services.AddTransient<ISimsMainViewModel, SimsMainViewModel>();
             //services.AddTransient<IServiceRequestsMainViewModel, ServiceRequestsMainViewModel>();
             services.AddTransient<ISettingsMainViewModel, SettingsMainViewModel>();
+            services.AddTransient<IUsersMainViewModel, UsersMainViewModel>();
 
             UserSettings settings = new();
             string database = settings.Database;

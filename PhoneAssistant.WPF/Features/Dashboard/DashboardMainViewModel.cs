@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
+using PhoneAssistant.WPF.Features.Phones;
 
 namespace PhoneAssistant.WPF.Features.Dashboard;
 public partial class DashboardMainViewModel : ObservableObject, IDashboardMainViewModel

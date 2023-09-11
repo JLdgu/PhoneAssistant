@@ -8,7 +8,7 @@ using Microsoft.Extensions.FileProviders;
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 
-namespace PhoneAssistant.WPF.Features.Dashboard;
+namespace PhoneAssistant.WPF.Features.Phones;
 internal sealed class PrintEnvelope : IPrintEnvelope
 {
     const int A4_PAGE_HEIGHT = 1169;
@@ -83,7 +83,7 @@ internal sealed class PrintEnvelope : IPrintEnvelope
 
         using (var reader = embeddedProvider.GetFileInfo("Resources/EUC.png").CreateReadStream())
         {
-            graphics.DrawImage(Image.FromStream(reader), (A4_PAGE_WIDTH / 2) - (EUC_IMAGE_WIDTH / 2), _vertialPostion, EUC_IMAGE_WIDTH, EUC_IMAGE_HEIGHT);
+            graphics.DrawImage(Image.FromStream(reader), A4_PAGE_WIDTH / 2 - EUC_IMAGE_WIDTH / 2, _vertialPostion, EUC_IMAGE_WIDTH, EUC_IMAGE_HEIGHT);
         }
         _vertialPostion += EUC_IMAGE_HEIGHT;
 

@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Features.Dashboard;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 

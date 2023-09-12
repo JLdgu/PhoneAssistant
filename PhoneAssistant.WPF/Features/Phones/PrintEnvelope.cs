@@ -42,7 +42,7 @@ internal sealed class PrintEnvelope : IPrintEnvelope
         _linePen = new Pen(_lineBrush, 2);
     }
 
-    public void Execute(v1Phone phone)
+    public void Execute(v1Phone? phone)
     {
         if (phone is null)
         {

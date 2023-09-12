@@ -4,6 +4,5 @@ namespace PhoneAssistant.WPF.Features.Users;
 
 public interface IUsersMainViewModel : IViewModel
 {
-    Task LoadAsync();
-    Task WindowClosingAsync();
+    public string SearchUser { get; set; }
 }

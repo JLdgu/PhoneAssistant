@@ -42,6 +42,9 @@ public  sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVi
             user.LastLogonDate = ParsePropertyDateTime(sr.Properties["lastLogon"]);
             user.WhenCreated = ParsePropertyString(sr.Properties["whenCreated"]);
             user.PasswordLastSet = ParsePropertyDateTime(sr.Properties["pwdLastSet"]);
+            int flags = (int)sr.Properties["userAccountControl"][0];
+            UserAccountControl userAccountControl = (UserAccountControl)flags;
+            user.Enabled = (userAccountControl & UserAccountControl.ACCOUNTDISABLE) != UserAccountControl.ACCOUNTDISABLE;            
             Users.Add(user);
         }
 

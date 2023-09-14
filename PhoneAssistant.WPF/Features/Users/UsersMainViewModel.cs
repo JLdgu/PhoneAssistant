@@ -4,9 +4,16 @@ using System.DirectoryServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace PhoneAssistant.WPF.Features.Users;
-public  sealed partial class UsersMainViewModel : ObservableObject, IUsersMainViewModel
+public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainViewModel
 {
+    private Func<User, UsersItemViewModel> UsersItemViewModelFactory { get; }
+    public ObservableCollection<UsersItemViewModel> ItemUsers { get; } = new();
     public ObservableCollection<User> Users { get; } = new();
+
+    public UsersMainViewModel(Func<User, UsersItemViewModel> usersItemViewModelFactory)
+    {
+        UsersItemViewModelFactory = usersItemViewModelFactory;
+    }
 
     [ObservableProperty]
     private string? _searchUser;
@@ -46,6 +53,8 @@ public  sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVi
             UserAccountControl userAccountControl = (UserAccountControl)flags;
             user.Enabled = (userAccountControl & UserAccountControl.ACCOUNTDISABLE) != UserAccountControl.ACCOUNTDISABLE;            
             Users.Add(user);
+
+            ItemUsers.Add(UsersItemViewModelFactory(user));
         }
 
     }

@@ -35,6 +35,7 @@
                     Style="{StaticResource MaterialDesignOutlinedLightButton}"
                     ToolTip="Print Envelope" />
         </StackPanel>
+
         <Grid Grid.Row="2"
               Margin="16,10,0,5"
               d:Background="LightCoral">
@@ -118,8 +119,9 @@
 
         <DataGrid Grid.Row="3"
                   Margin="10,0,0,0"
-                  materialDesign:DataGridAssist.CellPadding="4 3 2 3"
+                  materialDesign:DataGridAssist.CellPadding="4 5 2 5"
                   materialDesign:DataGridAssist.ColumnHeaderPadding="4 5 2 5"
+                  AlternatingRowBackground="MintCream"
                   AutoGenerateColumns="False"
                   EnableRowVirtualization="True"
                   HeadersVisibility="Column"
@@ -136,7 +138,18 @@
                                     Width="auto"
                                     MinWidth="45"
                                     Binding="{Binding NorR}"
-                                    Header="N or R" />
+                                    Header="N(ew)&#x0a;or&#x0a;R(epurposed)">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}" TargetType="DataGridColumnHeader">
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn x:Name="gridStatus"
                                     Width="auto"
                                     Binding="{Binding Status}"
@@ -151,6 +164,7 @@
                                     Header="IMEI" />
                 <DataGridTextColumn x:Name="gridPhoneNumber"
                                     Width="auto"
+                                    MinWidth="110"
                                     Binding="{Binding PhoneNumber}"
                                     Header="Phone Number" />
                 <DataGridTextColumn x:Name="gridSim"
@@ -163,6 +177,7 @@
                                     Header="New User" />
                 <DataGridTextColumn x:Name="gridAssetTag"
                                     Width="auto"
+                                    MinWidth="75"
                                     Binding="{Binding AssetTag}"
                                     Header="Asset Tag" />
                 <DataGridTextColumn x:Name="gridOEM"

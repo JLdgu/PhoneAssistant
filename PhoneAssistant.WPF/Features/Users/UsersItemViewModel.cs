@@ -9,10 +9,22 @@ public sealed partial class UsersItemViewModel
 
     public string? Email { get; }
 
+    public string LastLogonDate { get; set; }
+
+    public string PasswordLastSet { get; set; }
+
+    public string WhenCreated { get; set; }
+
+    public bool Enabled { get; set; } = false;
+
     public UsersItemViewModel(User user)
     {
         Name = user.Name;
         Email = user.Email;
+        LastLogonDate = user.Email;
+        PasswordLastSet = user.PasswordLastSet;
+        WhenCreated = user.WhenCreated;
+        Enabled = user.Enabled;
     }
 
     [RelayCommand]

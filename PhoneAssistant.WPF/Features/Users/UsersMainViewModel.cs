@@ -24,6 +24,7 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
         if (value.Length < 3) return;
 
         Users.Clear();
+        ItemUsers.Clear();
 
         using DirectoryEntry entry = new DirectoryEntry("LDAP://DC=ds2,DC=devon,DC=gov,DC=uk");
         DirectorySearcher searcher = new DirectorySearcher(entry);

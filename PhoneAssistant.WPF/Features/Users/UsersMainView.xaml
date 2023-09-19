@@ -32,7 +32,7 @@
                 <TextBox MinWidth="250"
                          materialDesign:TextFieldAssist.HasClearButton="True"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding SearchUser, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource, Delay=300}" />
+                         Text="{Binding SearchUser, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource, Delay=500}" />
             </StackPanel>
         </materialDesign:Card>
         <DataGrid Grid.Row="3"
@@ -99,10 +99,13 @@
                     </DataGridTemplateColumn.CellStyle>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="{x:Type viewmodel:UsersItemViewModel}">
-                            <Button Command="{Binding CopyToClipbaordCommand}"
+                            <Button Height="20"
+                                    Margin="0"
+                                    Padding="0"
+                                    Command="{Binding CopyToClipbaordCommand}"
                                     Content="{materialDesign:PackIcon Kind=ClipboardMultipleOutline,
                                                                       Size=15}"
-                                    Style="{StaticResource MaterialDesignOutlinedLightButton}"
+                                    Style="{StaticResource MaterialDesignFlatLightButton}"
                                     ToolTip="Copy to Clipboard" />
 
                         </DataTemplate>

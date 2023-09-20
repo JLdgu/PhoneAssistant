@@ -7,6 +7,8 @@ public sealed partial class UsersItemViewModel
 {
     public string Name { get; }
 
+    public string? Description { get; }
+
     public string? Email { get; }
 
     public string LastLogonDate { get; set; }
@@ -20,17 +22,23 @@ public sealed partial class UsersItemViewModel
     public UsersItemViewModel(User user)
     {
         Name = user.Name;
+        Description = user.Description;
         Email = user.Email;
-        LastLogonDate = user.Email;
+        LastLogonDate = user.LastLogonDate;
         PasswordLastSet = user.PasswordLastSet;
         WhenCreated = user.WhenCreated;
         Enabled = user.Enabled;
     }
 
     [RelayCommand]
-    public void CopyToClipbaord()
+    public void CopyNameToClipboard()
+    {
+        Clipboard.SetText(Name);
+    }
+
+    [RelayCommand]
+    public void CopyEmailToClipboard()
     {
         Clipboard.SetText(Email);
     }
-
 }

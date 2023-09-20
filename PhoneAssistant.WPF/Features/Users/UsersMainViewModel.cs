@@ -30,6 +30,7 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
         DirectorySearcher searcher = new DirectorySearcher(entry);
         searcher.Filter = $"(&(objectClass=user)(objectCategory=person)(CN=*{value}*))";
         searcher.PropertiesToLoad.Add("displayName");
+        searcher.PropertiesToLoad.Add("description");
         searcher.PropertiesToLoad.Add("lastLogon");
         searcher.PropertiesToLoad.Add("mail");
         searcher.PropertiesToLoad.Add("whenCreated");
@@ -44,7 +45,8 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
 
             User user = new User()
             {
-                Name = ParsePropertyString(sr.Properties["displayName"])
+                Name = ParsePropertyString(sr.Properties["displayName"]),
+                Description = ParsePropertyString(sr.Properties["description"])
             };
             user.Email = ParsePropertyString(sr.Properties["mail"]);
             user.LastLogonDate = ParsePropertyDateTime(sr.Properties["lastLogon"]);

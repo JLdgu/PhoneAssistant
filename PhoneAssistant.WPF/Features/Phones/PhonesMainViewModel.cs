@@ -212,6 +212,10 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
         _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         await foreach (var phone in _dbContext.Phones.AsAsyncEnumerable())
         {
+            if (phone.NorR == "N")
+                phone.NorR = "New";
+            else
+                phone.NorR = "Repurposed";
             Phones.Add(phone);
         }
     }

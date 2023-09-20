@@ -54,7 +54,7 @@
             </Grid.ColumnDefinitions>
             <TextBox Grid.Column="0"
                      Margin="0,0,5,0"
-                     materialDesign:HintAssist.Hint="N/R"
+                     materialDesign:HintAssist.Hint="Age (N/R)"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      MaxLength="1"
@@ -117,7 +117,7 @@
 
         </Grid>
 
-        <!--AlternatingRowBackground="MintCream"-->
+        <!--  AlternatingRowBackground="MintCream"  -->
         <DataGrid Grid.Row="3"
                   Margin="10,0,0,0"
                   materialDesign:DataGridAssist.CellPadding="4 5 2 5"
@@ -139,8 +139,8 @@
                                     Width="auto"
                                     MinWidth="45"
                                     Binding="{Binding NorR}"
-                                    Header="N(ew)&#x0a;or&#x0a;R(epurposed)">
-                    <DataGridTextColumn.HeaderStyle>
+                                    Header="Age">
+                    <!--<DataGridTextColumn.HeaderStyle>
                         <Style BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}" TargetType="DataGridColumnHeader">
                             <Setter Property="HorizontalContentAlignment" Value="Center" />
                         </Style>
@@ -149,7 +149,7 @@
                         <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="DataGridCell">
                             <Setter Property="HorizontalAlignment" Value="Center" />
                         </Style>
-                    </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn.CellStyle>-->
                 </DataGridTextColumn>
                 <DataGridTextColumn x:Name="gridStatus"
                                     Width="auto"

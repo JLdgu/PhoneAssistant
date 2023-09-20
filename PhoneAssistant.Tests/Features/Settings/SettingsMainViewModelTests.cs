@@ -1,16 +1,15 @@
-﻿using System;
-
-using Moq;
+﻿using Moq;
 
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.Settings;
 
+using Xunit;
+
 namespace PhoneAssistant.Tests.Features.Settings;
 
-[TestClass]
 public sealed class SettingsMainViewModelTests
 {
-    [TestMethod]
+    [Fact]
     public void Constructor_SetsVMProperties()
     {
         const string VERSION = "0.0.0.1";
@@ -22,20 +21,20 @@ public sealed class SettingsMainViewModelTests
         mock.Setup(s => s.DarkMode).Returns(true);
         var vm = new SettingsMainViewModel(mock.Object);
 
-        Assert.IsTrue(vm.PrintToPrinter);
-        Assert.IsFalse(vm.PrintToFile);
-        Assert.AreEqual("Printer", vm.Printer);
-        Assert.AreEqual("PrintFile", vm.PrintFile);
+        Xunit.Assert.True(vm.PrintToPrinter);
+        Xunit.Assert.False(vm.PrintToFile);
+        Xunit.Assert.Equal("Printer", vm.Printer);
+        Xunit.Assert.Equal("PrintFile", vm.PrintFile);
 
-        Assert.IsFalse(vm.ColourThemeLight);
-        Assert.IsTrue(vm.ColourThemeDark);
+        Xunit.Assert.False(vm.ColourThemeLight);
+        Xunit.Assert.True(vm.ColourThemeDark);
 
-        Assert.AreEqual(VERSION, vm.VersionDescription);
+        Xunit.Assert.Equal(VERSION, vm.VersionDescription);
 
         mock.VerifyGet(s => s.AssemblyVersion);
     }
 
-    [TestMethod]
+    [Fact]
     public void Constructor_SettingPrintToFileFalse_SetsPrintToPrinterTrue()
     {
         var mock = new Mock<IUserSettings>();
@@ -43,11 +42,11 @@ public sealed class SettingsMainViewModelTests
 
         var vm = new SettingsMainViewModel(mock.Object);
 
-        Assert.IsTrue(vm.PrintToPrinter);
-        Assert.IsFalse(vm.PrintToFile);
+        Xunit.Assert.True(vm.PrintToPrinter);
+        Xunit.Assert.False(vm.PrintToFile);
     }
 
-    [TestMethod]
+    [Fact]
     public void Constructor_SettingPrintToFileTrue_SetsPrintToFileTrue()
     {
         var mock = new Mock<IUserSettings>();
@@ -55,11 +54,11 @@ public sealed class SettingsMainViewModelTests
 
         var vm = new SettingsMainViewModel(mock.Object);
 
-        Assert.IsTrue(vm.PrintToFile);
-        Assert.IsFalse(vm.PrintToPrinter);
+        Xunit.Assert.True(vm.PrintToFile);
+        Xunit.Assert.False(vm.PrintToPrinter);
     }
 
-    [TestMethod]
+    [Fact]
     public void Database_PropertyChanged_SavesUpdatedSettings()
     {
         var mock = new Mock<IUserSettings>();
@@ -73,7 +72,7 @@ public sealed class SettingsMainViewModelTests
         mock.Verify(s => s.Save(), Times.Once());
     }
 
-    [TestMethod]
+    [Fact]
     public void Printer_PropertyChanged_SavesUpdatedSettings()
     {
         var mock = new Mock<IUserSettings>();
@@ -87,7 +86,7 @@ public sealed class SettingsMainViewModelTests
         mock.Verify(s => s.Save(), Times.Once());
     }
 
-    [TestMethod]
+    [Fact]
     public void PrinterFile_PropertyChanged_SavesUpdatedSettings()
     {
         var mock = new Mock<IUserSettings>();
@@ -101,7 +100,7 @@ public sealed class SettingsMainViewModelTests
         mock.Verify(s => s.Save(), Times.Once());
     }
 
-    [TestMethod]
+    [Fact]
     public void ColourThemeDark_PropertyChanged_SavesUpdatedSettings()
     {
         var mock = new Mock<IUserSettings>();

@@ -4,13 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 
+using Xunit;
+
 namespace PhoneAssistant.Tests.Application;
 
-[TestClass]
 public class ScriptDBContext
 {
-    [TestMethod]
-    [TestCategory("SQLScript")]
+    [Fact]    
+    [Trait("DBContext","Script")]
     public void GenerateSQLScript()
     {
         DbTestHelper helper = new();
@@ -24,8 +25,8 @@ public class ScriptDBContext
         File.WriteAllText("c:/temp/DbCreate.sql", sql);
     }
 
-    [TestMethod]
-    [TestCategory("SQLScript")]
+    [Fact]
+    [Trait("DBContext", "Script")]
     public void GenerateV1SQLScript()
     {
         v1DbTestHelper helper = new();
@@ -39,7 +40,7 @@ public class ScriptDBContext
         File.WriteAllText("c:/temp/DbCreateV1.sql", sql);
     }
 
-    //[TestMethod]
+    //[Fact]
     //public void DbSchemaTest()
     //{
     //    v1DbTestHelper helper = new();

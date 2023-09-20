@@ -6,7 +6,6 @@ using PhoneAssistant.WPF.Features.Phones;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
-[TestClass]
 public sealed class PhonesRepositoryTests : DbTestHelper
 {
     #region Search

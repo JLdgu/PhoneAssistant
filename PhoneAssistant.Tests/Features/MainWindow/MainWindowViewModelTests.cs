@@ -6,13 +6,13 @@ using PhoneAssistant.WPF.Features.ServiceRequests;
 using PhoneAssistant.WPF.Features.Sims;
 using PhoneAssistant.WPF.Features.Dashboard;
 using PhoneAssistant.WPF.Features.Users;
+using Xunit;
 
 namespace PhoneAssistant.Tests.Features.MainWindow;
 
-[TestClass]
 public sealed class MainWindowViewModelTests
 {
-    [TestMethod]
+    [Fact]
     public async Task UpdateViewAsync_NullViewModelType_ThrowsArgumentNullException()
     {
         var dashboardVM = Mock.Of<IDashboardMainViewModel>();
@@ -24,12 +24,12 @@ public sealed class MainWindowViewModelTests
         var viewModel = new MainWindowViewModel(dashboardVM,phonesVM, settingsVM,usersVM);
         var command = viewModel.UpdateViewCommand;
 
-        var actual = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => command.ExecuteAsync(null));
+        var actual = await Xunit.Assert.ThrowsAsync<ArgumentNullException>(() => command.ExecuteAsync(null));        
 
-        Assert.AreEqual("selectedViewModelType", actual.ParamName);
+        Xunit.Assert.Equal("selectedViewModelType", actual.ParamName);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task UpdateViewAsync_StringViewModelType_ThrowsArgumenException()
     {
         var dashboardVM = Mock.Of<IDashboardMainViewModel>();
@@ -41,14 +41,14 @@ public sealed class MainWindowViewModelTests
         var viewModel = new MainWindowViewModel(dashboardVM, phonesVM, settingsVM, usersVM);
         var command = viewModel.UpdateViewCommand;
 
-        var actual = await Assert.ThrowsExceptionAsync<ArgumentException>(() => command.ExecuteAsync("Wrong Type"));
+        var actual = await Xunit.Assert.ThrowsAsync<ArgumentException>(() => command.ExecuteAsync("Wrong Type"));
 
-        Assert.AreEqual("Type System.String is not handled.", actual.Message);
+        Xunit.Assert.Equal("Type System.String is not handled.", actual.Message);
     }
 
-    [TestMethod]
-    //[DataRow(ViewModelType.Dashboard)]
-    [DataRow(ViewModelType.None)]
+    [Theory]
+    //[InlineData(ViewModelType.Dashboard)]
+    [InlineData(ViewModelType.None)]
     public async Task UpdateViewAsync_InvalidViewModelType_ThrowsNotImplementedException(ViewModelType viewModelType)
     {
         var dashboardVM = Mock.Of<IDashboardMainViewModel>();
@@ -61,18 +61,18 @@ public sealed class MainWindowViewModelTests
 
         var command = viewModel.UpdateViewCommand;
 
-        var actual = await Assert.ThrowsExceptionAsync<NotImplementedException>(() => command.ExecuteAsync(viewModelType));
+        var actual = await Xunit.Assert.ThrowsAsync<NotImplementedException>(() => command.ExecuteAsync(viewModelType));
 
-        Assert.AreEqual("The method or operation is not implemented.", actual.Message);
+        Xunit.Assert.Equal("The method or operation is not implemented.", actual.Message);
     }
 
-    [TestMethod]
-    [DataRow(ViewModelType.Dashboard)]
-    [DataRow(ViewModelType.Phones)]
-    //[DataRow(ViewModelType.Sims)]
-    //[DataRow(ViewModelType.ServiceRequests)]
-    [DataRow(ViewModelType.Settings)]
-    [DataRow(ViewModelType.Users)]
+    [Theory]
+    [InlineData(ViewModelType.Dashboard)]
+    [InlineData(ViewModelType.Phones)]
+    //[InlineData(ViewModelType.Sims)]
+    //[InlineData(ViewModelType.ServiceRequests)]
+    [InlineData(ViewModelType.Settings)]
+    [InlineData(ViewModelType.Users)]
     public async Task UpdateViewAsync_WithValidViewModelType_CallUpdateAsync(ViewModelType viewModelType)
     {
         IDashboardMainViewModel dashboard = Mock.Of<IDashboardMainViewModel>();
@@ -108,7 +108,7 @@ public sealed class MainWindowViewModelTests
                 Mock.Get(users).Verify(vm => vm.LoadAsync(), Times.Once);
                 break;
             default: 
-                Assert.Fail("Unexpected Type");
+                Xunit.Assert.Fail("Unexpected Type");
                 break;
         }
     }

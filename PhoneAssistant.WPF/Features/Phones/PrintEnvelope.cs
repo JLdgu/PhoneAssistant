@@ -106,10 +106,33 @@ internal sealed class PrintEnvelope : IPrintEnvelope
 
         float fontLineHeight = _bodyFont.GetHeight(graphics);
         RectangleF bodyRectangle = new(MARGIN_LEFT, _vertialPostion, A4_BODY_WIDTH, fontLineHeight * 9);
-        StringBuilder bodyText = new("Order type: Repurposed");
+        string NorR = "Repurposed";
+        string OEM = "Samsung";
+        string Model = "A32";
+
+        if (_phone.NorR == "N")
+        {
+            NorR = "New";
+            Model = "A33";
+        }
+
+        StringBuilder bodyText = new($"Order type: {NorR}");
         bodyText.AppendLine("");
         bodyText.AppendLine("");
-        bodyText.AppendLine("Mobile Phone Type: Samsung A32");
+        switch (_phone.OEM.ToLower())
+        {
+            case "apple":
+                OEM = "Apple";
+                Model = "iPhone SE 2020";
+                break;
+            case "nokia":
+                OEM = "Nokia";
+                Model = "105";
+                break;
+            default:
+                break;
+        }
+        bodyText.AppendLine($"Mobile Phone Type: {OEM} {Model}");
         bodyText.AppendLine("");
         bodyText.AppendLine($"Handset identifier: {_phone.Imei}");
         bodyText.AppendLine("");

@@ -4,7 +4,6 @@ using PhoneAssistant.WPF.Application;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
-[TestClass]
 public sealed class PhonesMainViewModelTests
 {
     //[TestMethod]

@@ -6,7 +6,6 @@ using PhoneAssistant.WPF.Features.Settings;
 
 namespace PhoneAssistant.Tests.Application;
 
-[TestClass]
 public sealed class AppRepositoryTests
 {
     //[TestMethod]

@@ -36,9 +36,11 @@ public sealed partial class UsersItemViewModel
         Clipboard.SetText(Name);
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute =nameof(CanCopyEmailToClipbaord))]
     public void CopyEmailToClipboard()
     {
         Clipboard.SetText(Email);
     }
+
+    private bool CanCopyEmailToClipbaord() => !string.IsNullOrEmpty(Email);
 }

@@ -7,8 +7,7 @@ namespace PhoneAssistant.WPF.Features.Users;
 public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainViewModel
 {
     private Func<User, UsersItemViewModel> UsersItemViewModelFactory { get; }
-    public ObservableCollection<UsersItemViewModel> ItemUsers { get; } = new();
-    public ObservableCollection<User> Users { get; } = new();
+    public ObservableCollection<UsersItemViewModel> UserItems { get; } = new();
 
     public UsersMainViewModel(Func<User, UsersItemViewModel> usersItemViewModelFactory)
     {
@@ -23,8 +22,7 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
         if (value == null) return;
         if (value.Length < 3) return;
 
-        Users.Clear();
-        ItemUsers.Clear();
+        UserItems.Clear();
 
         using DirectoryEntry entry = new DirectoryEntry("LDAP://DC=ds2,DC=devon,DC=gov,DC=uk");
         DirectorySearcher searcher = new DirectorySearcher(entry);
@@ -55,9 +53,8 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
             int flags = (int)sr.Properties["userAccountControl"][0];
             UserAccountControl userAccountControl = (UserAccountControl)flags;
             user.Enabled = (userAccountControl & UserAccountControl.ACCOUNTDISABLE) != UserAccountControl.ACCOUNTDISABLE;            
-            Users.Add(user);
 
-            ItemUsers.Add(UsersItemViewModelFactory(user));
+            UserItems.Add(UsersItemViewModelFactory(user));
         }
 
     }

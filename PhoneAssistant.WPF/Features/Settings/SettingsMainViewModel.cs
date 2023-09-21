@@ -3,8 +3,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using MaterialDesignThemes.Wpf;
-
 using Microsoft.Win32;
 
 using PhoneAssistant.WPF.Application;
@@ -14,11 +12,13 @@ namespace PhoneAssistant.WPF.Features.Settings;
 public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsMainViewModel
 {
     private readonly IUserSettings _userSettings;
+    private readonly IThemeWrapper _themeWrapper;
 
 #pragma warning disable CS8618
-    public SettingsMainViewModel(IUserSettings userSettings)
+    public SettingsMainViewModel(IUserSettings userSettings, IThemeWrapper themeWrapper)
     {
         _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
+        _themeWrapper = themeWrapper ?? throw new ArgumentNullException(nameof(themeWrapper));
         Database = _userSettings.Database;
         PrintToFile = _userSettings.PrintToFile;
         PrintToPrinter = !PrintToFile;
@@ -114,7 +114,7 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
         _userSettings.DarkMode = value;
         _userSettings.Save();
 
-        ModifyTheme(value);
+        _themeWrapper.ModifyTheme(value);
     }
 
     [ObservableProperty]
@@ -132,14 +132,5 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
     public Task WindowClosingAsync()
     {
         return Task.CompletedTask;
-    }
-
-    private static void ModifyTheme(bool isDarkTheme)
-    {
-        var paletteHelper = new PaletteHelper();
-        var theme = paletteHelper.GetTheme();
-
-        theme.SetBaseTheme(isDarkTheme ? Theme.Dark : Theme.Light);
-        paletteHelper.SetTheme(theme);
     }
 }

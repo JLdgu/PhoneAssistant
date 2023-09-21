@@ -110,7 +110,7 @@ internal sealed class PrintEnvelope : IPrintEnvelope
         string OEM = "Samsung";
         string Model = "A32";
 
-        if (_phone.NorR == "N")
+        if (_phone.NorR == "New")
         {
             NorR = "New";
             Model = "A33";

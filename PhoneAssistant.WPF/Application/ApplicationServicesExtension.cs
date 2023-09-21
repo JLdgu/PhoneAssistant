@@ -21,6 +21,7 @@ public static class ApplicationServicesExtensions
             {
                 return (Features.Users.User user)  => new UsersItemViewModel(user);
             });
+            services.AddTransient<IThemeWrapper, ThemeWrapper>();
 
             services.AddTransient<IDashboardMainViewModel, DashboardMainViewModel>();
             services.AddTransient<IPrintEnvelope, PrintEnvelope>();

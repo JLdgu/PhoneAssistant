@@ -13,13 +13,14 @@ public sealed class SettingsMainViewModelTests
     public void Constructor_SetsVMProperties()
     {
         const string VERSION = "0.0.0.1";
-        var mock = new Mock<IUserSettings>();
-        mock.Setup(s => s.AssemblyVersion).Returns(new Version(VERSION));
-        mock.Setup(s => s.PrintToFile).Returns(false);
-        mock.Setup(s => s.Printer).Returns("Printer");
-        mock.Setup(s => s.PrintFile).Returns("PrintFile");
-        mock.Setup(s => s.DarkMode).Returns(true);
-        var vm = new SettingsMainViewModel(mock.Object);
+        Mock<IUserSettings> userSettings = new();
+        userSettings.Setup(s => s.AssemblyVersion).Returns(new Version(VERSION));
+        userSettings.Setup(s => s.PrintToFile).Returns(false);
+        userSettings.Setup(s => s.Printer).Returns("Printer");
+        userSettings.Setup(s => s.PrintFile).Returns("PrintFile");
+        userSettings.Setup(s => s.DarkMode).Returns(true);
+        Mock<IThemeWrapper> themeWrapper = new();
+        var vm = new SettingsMainViewModel(userSettings.Object, themeWrapper.Object);
 
         Xunit.Assert.True(vm.PrintToPrinter);
         Xunit.Assert.False(vm.PrintToFile);
@@ -31,7 +32,7 @@ public sealed class SettingsMainViewModelTests
 
         Xunit.Assert.Equal(VERSION, vm.VersionDescription);
 
-        mock.VerifyGet(s => s.AssemblyVersion);
+        userSettings.VerifyGet(s => s.AssemblyVersion);
     }
 
     [Fact]
@@ -39,8 +40,9 @@ public sealed class SettingsMainViewModelTests
     {
         var mock = new Mock<IUserSettings>();
         mock.Setup(s => s.PrintToFile).Returns(false);
+        Mock<IThemeWrapper> themeWrapper = new();
+        var vm = new SettingsMainViewModel(mock.Object, themeWrapper.Object);
 
-        var vm = new SettingsMainViewModel(mock.Object);
 
         Xunit.Assert.True(vm.PrintToPrinter);
         Xunit.Assert.False(vm.PrintToFile);
@@ -52,7 +54,9 @@ public sealed class SettingsMainViewModelTests
         var mock = new Mock<IUserSettings>();
         mock.Setup(s => s.PrintToFile).Returns(true);
 
-        var vm = new SettingsMainViewModel(mock.Object);
+        Mock<IThemeWrapper> themeWrapper = new();
+        var vm = new SettingsMainViewModel(mock.Object, themeWrapper.Object);
+
 
         Xunit.Assert.True(vm.PrintToFile);
         Xunit.Assert.False(vm.PrintToPrinter);
@@ -63,7 +67,9 @@ public sealed class SettingsMainViewModelTests
     {
         var mock = new Mock<IUserSettings>();
         mock.Setup(s => s.Database).Returns("Database");
-        var vm = new SettingsMainViewModel(mock.Object);
+        Mock<IThemeWrapper> themeWrapper = new();
+        var vm = new SettingsMainViewModel(mock.Object, themeWrapper.Object);
+
         const string NEW_VALUE = "Database Changed";
 
         vm.Database = NEW_VALUE;
@@ -77,7 +83,9 @@ public sealed class SettingsMainViewModelTests
     {
         var mock = new Mock<IUserSettings>();
         mock.Setup(s => s.Printer).Returns("Printer");
-        var vm = new SettingsMainViewModel(mock.Object);
+        Mock<IThemeWrapper> themeWrapper = new();
+        var vm = new SettingsMainViewModel(mock.Object, themeWrapper.Object);
+
         const string NEW_VALUE = "Printer Changed";
 
         vm.Printer = NEW_VALUE;
@@ -91,7 +99,9 @@ public sealed class SettingsMainViewModelTests
     {
         var mock = new Mock<IUserSettings>();
         mock.Setup(s => s.PrintFile).Returns("PrintFile");
-        var vm = new SettingsMainViewModel(mock.Object);
+        Mock<IThemeWrapper> themeWrapper = new();
+        var vm = new SettingsMainViewModel(mock.Object, themeWrapper.Object);
+
         const string NEW_VALUE = "PrintFile Changed";
 
         vm.PrintFile = NEW_VALUE;
@@ -105,7 +115,8 @@ public sealed class SettingsMainViewModelTests
     {
         var mock = new Mock<IUserSettings>();
         mock.Setup(s => s.DarkMode).Returns(false);
-        var vm = new SettingsMainViewModel(mock.Object);
+        Mock<IThemeWrapper> themeWrapper = new();
+        var vm = new SettingsMainViewModel(mock.Object, themeWrapper.Object);
 
         vm.ColourThemeDark = true;
 

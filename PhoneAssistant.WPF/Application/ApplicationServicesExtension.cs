@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Dashboard;
 using PhoneAssistant.WPF.Features.MainWindow;
 using PhoneAssistant.WPF.Features.Phones;
@@ -29,23 +30,28 @@ public static class ApplicationServicesExtensions
             // Features
             services.AddTransient<IDashboardMainViewModel, DashboardMainViewModel>();
 
-            services.AddTransient<MainWindowViewModel>();
-            services.AddSingleton(s => new MainWindow(s.GetRequiredService<MainWindowViewModel>()));
-
             services.AddTransient<IPhonesMainViewModel, PhonesMainViewModel>();
             services.AddTransient<IPrintEnvelope, PrintEnvelope>();
 
-            services.AddTransient<IThemeWrapper, ThemeWrapper>();
             services.AddTransient<ISettingsMainViewModel, SettingsMainViewModel>();
+            services.AddTransient<IThemeWrapper, ThemeWrapper>();
 
-            services.AddTransient<ISimsRepository, SimsRepository>();
             services.AddTransient<ISimsMainViewModel, SimsMainViewModel>();
+            services.AddSingleton<ISimsRepository, SimsRepository>();
+            services.AddTransient<Func<v1Sim, SimsItemViewModel>>(serviceProvider =>
+            {
+                return (v1Sim sim) => new SimsItemViewModel(sim,
+                                      serviceProvider.GetRequiredService<ISimsRepository>());
+            });
 
             services.AddTransient<IUsersMainViewModel, UsersMainViewModel>();
             services.AddTransient<Func<User, UsersItemViewModel>>(serviceProvider =>
             {
                 return (Features.Users.User user)  => new UsersItemViewModel(user);
             });
+
+            services.AddTransient<MainWindowViewModel>();
+            services.AddSingleton(s => new MainWindow(s.GetRequiredService<MainWindowViewModel>()));
         });
         return host;
     }

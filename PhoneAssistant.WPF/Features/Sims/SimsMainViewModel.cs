@@ -4,21 +4,25 @@ using System.Windows.Data;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Features.Sims;
 
 public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewModel
 {
+    private Func<v1Sim, SimsItemViewModel> _simsItemViewModelFactory { get; }
+
     private readonly ISimsRepository _simRepository;
 
     public ObservableCollection<v1Sim> Sims { get; } = new();
 
+    public ObservableCollection<SimsItemViewModel> SimItems { get; } = new();
+
     ICollectionView _filterView;
 
-    public SimsMainViewModel(ISimsRepository simRepository)
+    public SimsMainViewModel(Func<v1Sim, SimsItemViewModel> simsItemViewModelFactory, ISimsRepository simRepository)
     {
+        _simsItemViewModelFactory = simsItemViewModelFactory ?? throw new ArgumentNullException(nameof(simsItemViewModelFactory));
         _simRepository = simRepository ?? throw new ArgumentNullException(nameof(simRepository));
 
         _filterView = CollectionViewSource.GetDefaultView(Sims);
@@ -123,22 +127,23 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
     #endregion
 
     [ObservableProperty]
-    private v1Sim? _selectedSim;
+    private SimsItemViewModel? _selectedSim;
 
     public async Task LoadAsync()
     {
         if (Sims.Any())
             return;
 
-        var simCards = await _simRepository.GetSimsAsync();
+        IEnumerable<v1Sim> simCards = await _simRepository.GetSimsAsync();
         if (simCards == null)
         {
             throw new ArgumentNullException(nameof(simCards));
         }
 
-        foreach (var simcard in simCards)
+        foreach (v1Sim simcard in simCards)
         {
             Sims.Add(simcard);
+            SimItems.Add(_simsItemViewModelFactory(simcard));            
         }
     }
 

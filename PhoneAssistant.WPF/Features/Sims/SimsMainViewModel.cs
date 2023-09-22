@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Data;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -10,81 +12,133 @@ namespace PhoneAssistant.WPF.Features.Sims;
 public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewModel
 {
     private readonly ISimsRepository _simRepository;
-    private readonly IStateRepository _stateRepository;
 
+    public ObservableCollection<v1Sim> Sims { get; } = new();
 
-    public SimsMainViewModel(ISimsRepository simRepository, IStateRepository stateRepository)
+    ICollectionView _filterView;
+
+    public SimsMainViewModel(ISimsRepository simRepository)
     {
-        _simRepository = simRepository;
-        _stateRepository = stateRepository;
+        _simRepository = simRepository ?? throw new ArgumentNullException(nameof(simRepository));
+
+        _filterView = CollectionViewSource.GetDefaultView(Sims);
+        _filterView.Filter = new Predicate<object>(FilterView);
+
     }
-
-    public ObservableCollection<Sim> Sims { get; } = new();
-
-    public ObservableCollection<string> States { get; } = new();
-   
+    #region Filter View
     [ObservableProperty]
-    private Sim? _selectedSim;
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterPhoneNumber;
 
-    private int _previousSimIndex = -1;
-    private Sim? _previousSim;
+    partial void OnFilterPhoneNumberChanged(string value)
+    {
+        _filterView.Refresh();
+    }
 
     [ObservableProperty]
-    private int _id;
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterSimNumber;
 
-    partial void OnIdChanged(int value)
+    partial void OnFilterSimNumberChanged(string value)
     {
-        SelectedSim.Id = Id;    
+        _filterView.Refresh();
     }
 
-    partial void OnSelectedSimChanged(Sim? value)
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterStatus;
+
+    partial void OnFilterStatusChanged(string value)
     {
-        if (SelectedSim is null) return;
-        if (value is null) return;
-
-        if (_previousSimIndex > -1)
-        {
-            Sims.RemoveAt(_previousSimIndex);
-            Sims.Insert(_previousSimIndex, _previousSim);            
-        }
-
-        Id = value.Id;
-
-        _previousSimIndex = Sims.IndexOf(value);
-        _previousSim = value;
+        _filterView.Refresh();
     }
+
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterAssetTag;
+
+    partial void OnFilterAssetTagChanged(string value)
+    {
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterNotes;
+
+    partial void OnFilterNotesChanged(string value)
+    {
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterLastUpdate;
+
+    partial void OnFilterLastUpdateChanged(string value)
+    {
+        _filterView.Refresh();
+    }
+
+    private bool FilterView(object item)
+    {
+        if (item is not v1Sim Sim) return false;
+
+        if (FilterPhoneNumber is not null && FilterPhoneNumber.Length > 0)
+            if (Sim.PhoneNumber is null)
+                return false;
+            else if (!Sim.PhoneNumber.Contains(FilterPhoneNumber))
+                return false;
+
+        if (FilterSimNumber is not null && FilterSimNumber.Length > 0)
+            if (Sim.SimNumber is null)
+                return false;
+            else if (!Sim.SimNumber.Contains(FilterSimNumber))
+                return false;
+
+        if (FilterStatus is not null && FilterStatus.Length > 0)
+            if (Sim.Status is not null && !Sim.Status.Contains(FilterStatus, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterAssetTag is not null && FilterAssetTag.Length > 0)
+            if (Sim.AssetTag is null)
+                return false;
+            else if (!Sim.AssetTag.Contains(FilterAssetTag, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterNotes is not null && FilterNotes.Length > 0)
+            if (Sim.Notes is null)
+                return false;
+            else if (!Sim.Notes.Contains(FilterNotes, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterLastUpdate is not null && FilterLastUpdate.Length > 0)
+            if (Sim.LastUpdate is null)
+                return false;
+            else if (!Sim.LastUpdate.Contains(FilterLastUpdate, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        return true;
+    }
+    #endregion
+
+    [ObservableProperty]
+    private v1Sim? _selectedSim;
 
     public async Task LoadAsync()
     {
-        if (Sims.Any() && States.Any())
+        if (Sims.Any())
             return;
 
-        if (!Sims.Any())
+        var simCards = await _simRepository.GetSimsAsync();
+        if (simCards == null)
         {
-            var simCards = await _simRepository.GetSimsAsync();
-            if (simCards == null)
-            {
-                throw new ArgumentNullException(nameof(simCards));
-            }
-
-            foreach (var simcard in simCards)
-            {
-                Sims.Add(simcard);
-            }
+            throw new ArgumentNullException(nameof(simCards));
         }
 
-        if (States.Any())
-            return;
-
-        var states = await _stateRepository.GetStatesAsync();
-        if (states == null)
+        foreach (var simcard in simCards)
         {
-            throw new ArgumentNullException(nameof(states));
-        }
-
-        foreach (var state in states)
-        {
-            States.Add(state.Status);
+            Sims.Add(simcard);
         }
     }
 

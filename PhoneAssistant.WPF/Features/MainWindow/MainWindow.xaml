@@ -64,7 +64,7 @@
             <RadioButton Command="{Binding UpdateViewCommand}"
                          CommandParameter="{x:Static viewmodel:ViewModelType.Sims}"
                          DockPanel.Dock="Top"
-                         IsEnabled="False"
+                         IsEnabled="True"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon Width="24"

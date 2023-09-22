@@ -37,7 +37,7 @@
         </StackPanel>
 
         <Grid Grid.Row="2"
-              Margin="16,10,0,5"
+              Margin="16,10,0,0"
               d:Background="LightCoral">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding ElementName=gridNorR, Path=ActualWidth}" d:Width="60" />

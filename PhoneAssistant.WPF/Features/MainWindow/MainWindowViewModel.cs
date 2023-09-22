@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using PhoneAssistant.WPF.Features.Dashboard;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.Settings;
+using PhoneAssistant.WPF.Features.Sims;
 using PhoneAssistant.WPF.Features.Users;
 using PhoneAssistant.WPF.Shared;
 
@@ -24,6 +25,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 {
     private readonly IDashboardMainViewModel _dashboardMainViewModel;
     private readonly IPhonesMainViewModel _phonesMainViewModel;
+    private readonly ISimsMainViewModel _simsMainViewModel;
     private readonly ISettingsMainViewModel _settingsMainViewModel;
     private readonly IUsersMainViewModel _usersMainViewModel;
     [ObservableProperty]
@@ -33,11 +35,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     public MainWindowViewModel(IDashboardMainViewModel dashboardMainViewModel,
                                IPhonesMainViewModel phonesMainViewModel,
+                               ISimsMainViewModel simsMainViewModel,
                                ISettingsMainViewModel settingsMainViewModel,
                                IUsersMainViewModel usersMainViewModel)
     {
         _dashboardMainViewModel = dashboardMainViewModel ?? throw new ArgumentNullException(nameof(dashboardMainViewModel));
         _phonesMainViewModel = phonesMainViewModel ?? throw new ArgumentNullException(nameof(phonesMainViewModel));
+        _simsMainViewModel = simsMainViewModel ?? throw new ArgumentNullException(nameof(simsMainViewModel));
         _settingsMainViewModel = settingsMainViewModel ?? throw new ArgumentNullException(nameof(settingsMainViewModel));
         _usersMainViewModel = usersMainViewModel ?? throw new ArgumentNullException(nameof(usersMainViewModel));
     }
@@ -56,7 +60,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         {
             ViewModelType.Dashboard => _dashboardMainViewModel,
             ViewModelType.Phones => _phonesMainViewModel,
-            //ViewModelType.Sims => _simCardMainViewModel,
+            ViewModelType.Sims => _simsMainViewModel,
             //ViewModelType.ServiceRequests => _serviceRequestMainViewModel,
             ViewModelType.Settings => _settingsMainViewModel,
             ViewModelType.Users => _usersMainViewModel,

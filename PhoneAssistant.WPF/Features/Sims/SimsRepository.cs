@@ -1,25 +1,23 @@
-﻿using PhoneAssistant.WPF.Application.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+
+using PhoneAssistant.WPF.Application;
+using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Features.Sims;
 
 public sealed class SimsRepository : ISimsRepository
 {
-    public async Task<IEnumerable<Sim>?> GetSimsAsync()
+    private readonly v1PhoneAssistantDbContext _dbContext;
+
+    public SimsRepository(v1PhoneAssistantDbContext dbContext)
     {
-        await Task.CompletedTask;
-        return AllSimCards();
+        _dbContext = dbContext;
     }
 
-    private static IEnumerable<Sim> AllSimCards()
+    public async Task<IEnumerable<v1Sim>> GetSimsAsync()
     {
-        return new List<Sim>()
-        {
-            new Sim () {Id = 11, PhoneNumber = "07967691765", SimNumber = "8944125605559639023"},
-            new Sim () {Id = 21, PhoneNumber = "07967691764", SimNumber = "8944125605559639133"},
-            new Sim () {Id = 31, PhoneNumber = "07967691763", SimNumber = "8944125605559639323"},
-            new Sim () {Id = 41, PhoneNumber = "07967691762", SimNumber = "8944125605559639453"},
-            new Sim () {Id = 51, PhoneNumber = "07967691761", SimNumber = "8944125605559639893"},
-            new Sim () {Id = 61, PhoneNumber = "07967691760", SimNumber = "8944125605559639999"}
-        };
-    }    
+        List<v1Sim> sims = await _dbContext.Sims.ToListAsync();
+        return sims;
+    }
+
 }

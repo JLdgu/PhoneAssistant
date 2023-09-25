@@ -14,16 +14,16 @@ namespace PhoneAssistant.WPF.Features.Phones;
 
 public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMainViewModel
 {
-    private readonly v1PhoneAssistantDbContext _dbContext;
+    private readonly IPhonesRepository _phonesRepository;
     private readonly IPrintEnvelope _printEnvelope;
 
     public ObservableCollection<v1Phone> Phones { get; } = new();
 
-    ICollectionView _filterView;
+    public ICollectionView _filterView;
 
-    public PhonesMainViewModel(v1PhoneAssistantDbContext dbContext, IPrintEnvelope printEnvelope)
+    public PhonesMainViewModel(IPhonesRepository phonesRepository, IPrintEnvelope printEnvelope)
     {
-        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
         _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
 
         _filterView = CollectionViewSource.GetDefaultView(Phones);
@@ -130,6 +130,15 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
         _filterView.Refresh();
     }
 
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string filterNotes;
+
+    partial void OnFilterNotesChanged(string value)
+    {
+        _filterView.Refresh();
+    }
+
     public bool FilterView(object item)
     {
         if (item is not v1Phone phone) return false;
@@ -170,17 +179,22 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
             else if (!phone.NewUser.Contains(FilterNewUser, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
-        //AssetTag
         if (FilterAssetTag is not null && FilterAssetTag.Length > 0)
             if (phone.AssetTag is null)
                 return false;
             else if (!phone.AssetTag.Contains(FilterAssetTag, StringComparison.InvariantCultureIgnoreCase))
                 return false;
-        //OEM
+
         if (FilterOEM is not null && FilterOEM.Length > 0)
             if (phone.OEM is null)
                 return false;
             else if (!phone.OEM.Contains(FilterOEM, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterNotes is not null && FilterNotes.Length > 0)
+            if (phone.Notes is null)
+                return false;
+            else if (!phone.Notes.Contains(FilterNotes, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         return true;
@@ -209,8 +223,9 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     public async Task LoadAsync()
     {
         Phones.Clear();
-        _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-        await foreach (var phone in _dbContext.Phones.AsAsyncEnumerable())
+        IEnumerable<v1Phone> phones = await _phonesRepository.GetPhonesAsync();
+
+        foreach (v1Phone phone in phones) 
         {
             if (phone.NorR == "N")
                 phone.NorR = "New";

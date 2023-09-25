@@ -16,7 +16,7 @@ public sealed class PhonesRepository : IPhonesRepository
 
     public async Task<IEnumerable<v1Phone>> GetPhonesAsync()
     {
-        List<v1Phone> phones = await _dbContext.Phones.ToListAsync();
+        List<v1Phone> phones = await _dbContext.Phones.AsNoTracking().ToListAsync();
         return phones;
     }
 

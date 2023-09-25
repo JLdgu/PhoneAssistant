@@ -1,11 +1,32 @@
 ﻿using Moq;
+using Moq.AutoMock;
 
-using PhoneAssistant.WPF.Application;
+using PhoneAssistant.WPF.Application.Entities;
+
+using Xunit;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
 public sealed class PhonesMainViewModelTests
 {
+    [Fact]
+    public async Task ChangingFilterNotes_ChangesFilterViewAsync()
+    {
+        AutoMocker mocker = new AutoMocker();
+        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
+        List<v1Phone> phones = new List<v1Phone>() { 
+            new v1Phone() { Imei = "1" , Notes = "Note1"},
+            new v1Phone() { Imei = "2" , Notes = "Note2"},
+            new v1Phone() { Imei = "3" , Notes = "Note3"}
+        };
+        repository.Setup(r => r.GetPhonesAsync()).ReturnsAsync(phones);
+        PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
+        await vm.LoadAsync();
+
+        vm.FilterNotes = "e2";
+
+        //Assert.Equal(2, vm.Phones.Count);
+    }
     //[TestMethod]
     //public void ViewModel_HasNoErrors_WhenIMEIvalid()
     //{

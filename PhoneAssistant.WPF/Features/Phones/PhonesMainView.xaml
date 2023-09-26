@@ -124,7 +124,6 @@
 
         </Grid>
 
-        <!--  AlternatingRowBackground="MintCream"  -->
         <DataGrid Grid.Row="3"
                   Margin="10,0,0,0"
                   materialDesign:DataGridAssist.CellPadding="4 5 2 5"
@@ -135,6 +134,7 @@
                   HeadersVisibility="Column"
                   IsReadOnly="True"
                   ItemsSource="{Binding Phones}"
+                  MouseDown="PhonesGrid_MouseDown"
                   ScrollViewer.CanContentScroll="True"
                   ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"

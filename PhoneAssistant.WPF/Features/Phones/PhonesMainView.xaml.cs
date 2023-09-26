@@ -14,10 +14,5 @@ public partial class PhonesMainView : UserControl
     }
 
     private void PhonesGrid_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        => UI_Interactions.SelectRowFromWhiteSpaceClick(e);
-    
-    private void PhonesGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        //SelectedIMEI.Focus();
-    }    
+        => UI_Interactions.SelectRowFromWhiteSpaceClick(e);    
 }

@@ -24,18 +24,14 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
 
         UserItems.Clear();
 
-        using DirectoryEntry entry = new DirectoryEntry("LDAP://DC=ds2,DC=devon,DC=gov,DC=uk");
-        DirectorySearcher searcher = new DirectorySearcher(entry);
-        searcher.Filter = $"(&(objectClass=user)(objectCategory=person)(CN=*{value}*))";
-        searcher.PropertiesToLoad.Add("displayName");
-        searcher.PropertiesToLoad.Add("description");
-        searcher.PropertiesToLoad.Add("lastLogon");
-        searcher.PropertiesToLoad.Add("mail");
-        searcher.PropertiesToLoad.Add("whenCreated");
-        searcher.PropertiesToLoad.Add("pwdLastSet");
-        searcher.PropertiesToLoad.Add("userAccountControl");
+        using SearchResultCollection results = PersonSearch(value);
 
-        SearchResultCollection results = searcher.FindAll();
+        if (results.Count == 0) 
+        {
+            NoResultsFound = true;
+            return;
+        }
+        NoResultsFound = false;
 
         foreach (SearchResult sr in results)
         {
@@ -56,8 +52,27 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
 
             UserItems.Add(UsersItemViewModelFactory(user));
         }
-
     }
+
+    private SearchResultCollection PersonSearch(string name)
+    {
+        using DirectoryEntry entry = new DirectoryEntry("LDAP://DC=ds2,DC=devon,DC=gov,DC=uk");
+        DirectorySearcher searcher = new DirectorySearcher(entry);
+        searcher.Filter = $"(&(objectClass=user)(objectCategory=person)(CN=*{name}*))";
+        searcher.PropertiesToLoad.Add("displayName");
+        searcher.PropertiesToLoad.Add("description");
+        searcher.PropertiesToLoad.Add("lastLogon");
+        searcher.PropertiesToLoad.Add("mail");
+        searcher.PropertiesToLoad.Add("whenCreated");
+        searcher.PropertiesToLoad.Add("pwdLastSet");
+        searcher.PropertiesToLoad.Add("userAccountControl");
+
+        return searcher.FindAll();
+    }
+
+
+    [ObservableProperty]
+    private bool _noResultsFound;
 
     private string ParsePropertyString(ResultPropertyValueCollection resultPropertyValueCollection)
     {

@@ -2,7 +2,7 @@ param (
     [string]$db = "test"
 )
 
-$script = "RenameColumns.sql"
+$script = "AddPhoneModel.sql"
 
 switch ($db.ToLower()) {
     "test" { $dbPath =  "c:/temp/paTest.db"  }

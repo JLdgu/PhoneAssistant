@@ -19,7 +19,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     public ObservableCollection<v1Phone> Phones { get; } = new();
 
-    public ICollectionView _filterView;
+    ICollectionView _filterView;
 
     public PhonesMainViewModel(IPhonesRepository phonesRepository, IPrintEnvelope printEnvelope)
     {
@@ -51,90 +51,99 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     #region Filtering View
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string filterNorR;
+    private string? filterNorR;
 
-    partial void OnFilterNorRChanged(string value)
+    partial void OnFilterNorRChanged(string? value)
     {
         _filterView.Refresh();
     }
 
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string filterStatus;
+    private string? filterStatus;
 
-    partial void OnFilterStatusChanged(string value)
+    partial void OnFilterStatusChanged(string? value)
     {
         _filterView.Refresh();
     }
 
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string filterSR;
+    private string? filterSR;
 
-    partial void OnFilterSRChanged(string value)
+    partial void OnFilterSRChanged(string? value)
     {
         _filterView.Refresh();
     }
 
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string filterImei;
+    private string? filterImei;
 
-    partial void OnFilterImeiChanged(string value)
+    partial void OnFilterImeiChanged(string? value)
     {
         _filterView.Refresh();
     }
 
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string filterPhoneNumber;
+    private string? filterPhoneNumber;
 
-    partial void OnFilterPhoneNumberChanged(string value)
+    partial void OnFilterPhoneNumberChanged(string? value)
     {
         _filterView.Refresh();
     }
 
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string filterSimNumber;
+    private string? filterSimNumber;
 
-    partial void OnFilterSimNumberChanged(string value)
+    partial void OnFilterSimNumberChanged(string? value)
     {
         _filterView.Refresh();
     }
 
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string filterNewUser;
+    private string? filterNewUser;
 
-    partial void OnFilterNewUserChanged(string value)
+    partial void OnFilterNewUserChanged(string? value)
     {
         _filterView.Refresh();
     }
 
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string filterAssetTag;
+    private string? filterAssetTag;
 
-    partial void OnFilterAssetTagChanged(string value)
+    partial void OnFilterAssetTagChanged(string? value)
     {
         _filterView.Refresh();
     }
 
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string filterOEM;
+    private string? filterOEM;
 
-    partial void OnFilterOEMChanged(string value)
+    partial void OnFilterOEMChanged(string? value)
     {
         _filterView.Refresh();
     }
 
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string filterNotes;
+    private string? filterNotes;
 
-    partial void OnFilterNotesChanged(string value)
+    partial void OnFilterNotesChanged(string? value)
+    {
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string? filterLastUpdate;
+
+    partial void OnFilterLastUpdateChanged(string? value)
     {
         _filterView.Refresh();
     }
@@ -195,6 +204,12 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
             if (phone.Notes is null)
                 return false;
             else if (!phone.Notes.Contains(FilterNotes, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterLastUpdate is not null && FilterLastUpdate.Length > 0)
+            if (phone.LastUpdate is null)
+                return false;
+            else if (!phone.LastUpdate.Contains(FilterLastUpdate, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         return true;

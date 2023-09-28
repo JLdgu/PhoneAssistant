@@ -1,31 +1,216 @@
-﻿using Moq;
+﻿using System.ComponentModel;
+using System.Windows.Data;
+
+using Moq;
 using Moq.AutoMock;
 
 using PhoneAssistant.WPF.Application.Entities;
+using PhoneAssistant.WPF.Features.Phones;
 
 using Xunit;
 
-namespace PhoneAssistant.WPF.Features.Phones;
+namespace PhoneAssistant.Tests.Features.Phones;
 
 public sealed class PhonesMainViewModelTests
 {
     [Fact]
+    public async Task ChangingFilterAssetTag_ChangesFilterViewAsync()
+    {
+        List<v1Phone> phones = new List<v1Phone>() {
+            new v1Phone() { Imei = "1" , AssetTag = "Tag A1"},
+            new v1Phone() { Imei = "2" , AssetTag = "Tag Bb2"},
+            new v1Phone() { Imei = "3" , AssetTag = "Tag Ccc3"}
+        };
+        PhonesMainViewModel vm = FilterSetup(phones);
+        await vm.LoadAsync();
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+
+        vm.FilterAssetTag = "B2";
+
+        var actual = view.OfType<v1Phone>().ToArray();
+        Assert.Single(actual);
+        Assert.Equal(new[] { phones[1] }, actual);
+    }
+
+    [Fact]
+    public async Task ChangingFilterImei_ChangesFilterViewAsync()
+    {
+        List<v1Phone> phones = new List<v1Phone>() {
+            new v1Phone() { Imei = "11"},
+            new v1Phone() { Imei = "22"},
+            new v1Phone() { Imei = "33"}
+        };
+        PhonesMainViewModel vm = FilterSetup(phones);
+        await vm.LoadAsync();
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+
+        vm.FilterImei = "22";
+
+        var actual = view.OfType<v1Phone>().ToArray();
+        Assert.Single(actual);
+        Assert.Equal(new[] { phones[1] }, actual);
+    }
+
+    [Fact]
+    public async Task ChangingFilterNorR_ChangesFilterViewAsync()
+    {
+        List<v1Phone> phones = new List<v1Phone>() {
+            new v1Phone() { Imei = "1", NorR="N"},
+            new v1Phone() { Imei = "2", NorR="R"},
+            new v1Phone() { Imei = "3", NorR="N"}
+        };
+        PhonesMainViewModel vm = FilterSetup(phones);
+        await vm.LoadAsync();
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+
+        vm.FilterNorR = "R";
+
+        var actual = view.OfType<v1Phone>().ToArray();
+        Assert.Single(actual);
+        Assert.Equal(new[] { phones[1] }, actual);
+    }
+
+    [Fact]
+    public async Task ChangingFilterNewUser_ChangesFilterViewAsync()
+    {
+        List<v1Phone> phones = new List<v1Phone>() {
+            new v1Phone() { Imei = "1" , NewUser = "User Aa"},
+            new v1Phone() { Imei = "2" , NewUser = "User Bbb"},
+            new v1Phone() { Imei = "3" , NewUser = "User Ccc"}
+        };
+        PhonesMainViewModel vm = FilterSetup(phones);
+        await vm.LoadAsync();
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+
+        vm.FilterNewUser = "BB";
+
+        var actual = view.OfType<v1Phone>().ToArray();
+        Assert.Single(actual);
+        Assert.Equal(new[] { phones[1] }, actual);
+    }
+
+    [Fact]
     public async Task ChangingFilterNotes_ChangesFilterViewAsync()
     {
-        AutoMocker mocker = new AutoMocker();
-        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
         List<v1Phone> phones = new List<v1Phone>() { 
             new v1Phone() { Imei = "1" , Notes = "Note1"},
             new v1Phone() { Imei = "2" , Notes = "Note2"},
             new v1Phone() { Imei = "3" , Notes = "Note3"}
         };
-        repository.Setup(r => r.GetPhonesAsync()).ReturnsAsync(phones);
-        PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
+        PhonesMainViewModel vm = FilterSetup(phones);
         await vm.LoadAsync();
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
 
         vm.FilterNotes = "e2";
 
-        //Assert.Equal(2, vm.Phones.Count);
+        var actual = view.OfType<v1Phone>().ToArray();
+        Assert.Single(actual);
+        Assert.Equal(new[] { phones[1] }, actual );
+    }
+
+    [Fact]
+    public async Task ChangingFilterOEM_ChangesFilterViewAsync()
+    {
+        List<v1Phone> phones = new List<v1Phone>() {
+            new v1Phone() { Imei = "1" , OEM = "Apple"},
+            new v1Phone() { Imei = "2" , OEM = "Nokia"},
+            new v1Phone() { Imei = "3" , OEM = "Samsung"}
+        };
+        PhonesMainViewModel vm = FilterSetup(phones);
+        await vm.LoadAsync();
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+
+        vm.FilterOEM = "kia";
+
+        var actual = view.OfType<v1Phone>().ToArray();
+        Assert.Single(actual);
+        Assert.Equal(new[] { phones[1] }, actual);
+    }
+
+    [Fact]
+    public async Task ChangingFilterPhoneNumber_ChangesFilterViewAsync()
+    {
+        List<v1Phone> phones = new List<v1Phone>() {
+            new v1Phone() { Imei = "1", PhoneNumber="01"},
+            new v1Phone() { Imei = "2", PhoneNumber="02"},
+            new v1Phone() { Imei = "3", PhoneNumber="03"}
+        };
+        PhonesMainViewModel vm = FilterSetup(phones);
+        await vm.LoadAsync();
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+
+        vm.FilterPhoneNumber = "02";
+
+        var actual = view.OfType<v1Phone>().ToArray();
+        Assert.Single(actual);
+        Assert.Equal(new[] { phones[1] }, actual);
+    }
+
+    [Fact]
+    public async Task ChangingFilterSimNumber_ChangesFilterViewAsync()
+    {
+        List<v1Phone> phones = new List<v1Phone>() {
+            new v1Phone() { Imei = "1", SimNumber="101"},
+            new v1Phone() { Imei = "2", SimNumber="202"},
+            new v1Phone() { Imei = "3", SimNumber="303"}
+        };
+        PhonesMainViewModel vm = FilterSetup(phones);
+        await vm.LoadAsync();
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+
+        vm.FilterSimNumber = "02";
+
+        var actual = view.OfType<v1Phone>().ToArray();
+        Assert.Single(actual);
+        Assert.Equal(new[] { phones[1] }, actual);
+    }
+
+    [Fact]
+    public async Task ChangingFilterSR_ChangesFilterViewAsync()
+    {
+        List<v1Phone> phones = new List<v1Phone>() {
+            new v1Phone() { Imei = "1", SR=111},
+            new v1Phone() { Imei = "2", SR=222},
+            new v1Phone() { Imei = "3", SR=333},
+            new v1Phone() { Imei = "4", SR=112233}
+        };
+        PhonesMainViewModel vm = FilterSetup(phones);
+        await vm.LoadAsync();
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+
+        vm.FilterSR = "22";
+
+        var actual = view.OfType<v1Phone>().ToArray();
+        Assert.Equal(2,actual.Count());
+        Assert.Equal(new[] { phones[1], phones[3] }, actual);
+    }
+
+    [Fact]
+    public async Task ChangingFilterStatus_ChangesFilterViewAsync()
+    {
+        List<v1Phone> phones = new List<v1Phone>() {
+            new v1Phone() { Imei = "1", Status="Production"},
+            new v1Phone() { Imei = "2", Status="In Stock"},
+            new v1Phone() { Imei = "3", Status="In Repair"}
+        };
+        PhonesMainViewModel vm = FilterSetup(phones);
+        await vm.LoadAsync();
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+
+        vm.FilterStatus = "stock";
+
+        var actual = view.OfType<v1Phone>().ToArray();
+        Assert.Single(actual);
+        Assert.Equal(new[] { phones[1] }, actual);
+    }
+
+    private PhonesMainViewModel FilterSetup(List<v1Phone> phones)
+    {
+        AutoMocker mocker = new AutoMocker();
+        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.GetPhonesAsync()).ReturnsAsync(phones);
+        PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
+        return vm;
     }
     //[TestMethod]
     //public void ViewModel_HasNoErrors_WhenIMEIvalid()

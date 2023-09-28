@@ -7,7 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.MainWindow"
         Title="Phone Assistant"
-        Width="1250"
+        Width="1350"
         Height="800"
         MinWidth="600"
         MinHeight="400"

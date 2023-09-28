@@ -9,7 +9,7 @@
              MaxHeight="1080"
              d:DataContext="{d:DesignInstance Type=viewmodel:PhonesMainViewModel}"
              d:DesignHeight="200"
-             d:DesignWidth="800"
+             d:DesignWidth="900"
              mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
@@ -55,6 +55,7 @@
             </Grid.ColumnDefinitions>
             <TextBox Grid.Column="0"
                      Margin="0,0,5,0"
+                     d:Width="80"
                      materialDesign:HintAssist.Hint="Age (N/R)"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
@@ -120,7 +121,8 @@
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="Last Update"
                      materialDesign:HintAssist.IsFloating="True"
-                     Visibility="Hidden" />
+                     materialDesign:TextFieldAssist.HasClearButton="True"
+                     Text="{Binding FilterLastUpdate, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
 
         </Grid>
 

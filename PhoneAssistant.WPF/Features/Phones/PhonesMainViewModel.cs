@@ -19,7 +19,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     public ObservableCollection<v1Phone> Phones { get; } = new();
 
-    ICollectionView _filterView;
+    readonly ICollectionView _filterView;
 
     public PhonesMainViewModel(IPhonesRepository phonesRepository, IPrintEnvelope printEnvelope)
     {

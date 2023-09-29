@@ -6,10 +6,10 @@ public class v1Phone
     public string? PhoneNumber { get; set; }
     public string? SimNumber { get; set; }
     public string? FormerUser { get; set; }
-    public string? NorR { get; set; }
-    public string? Status { get; set; }
-    public string? OEM { get; set; }
-    public string? Model { get; set; }
+    public required string NorR { get; set; }
+    public required string Status { get; set; }
+    public required string OEM { get; set; }
+    public required string Model { get; set; }
     public int? SR { get; set; }
     public string? AssetTag { get; set; }
     public string? NewUser { get; set; }

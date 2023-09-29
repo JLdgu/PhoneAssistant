@@ -132,6 +132,15 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string? filterModel;
+
+    partial void OnFilterModelChanged(string? value)
+    {
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
     private string? filterNotes;
 
     partial void OnFilterNotesChanged(string? value)
@@ -198,6 +207,12 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
             if (phone.OEM is null)
                 return false;
             else if (!phone.OEM.Contains(FilterOEM, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterModel is not null && FilterModel.Length > 0)
+            if (phone.Model is null)
+                return false;
+            else if (!phone.Model.Contains(FilterModel, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         if (FilterNotes is not null && FilterNotes.Length > 0)

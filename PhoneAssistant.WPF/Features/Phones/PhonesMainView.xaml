@@ -49,6 +49,7 @@
                 <ColumnDefinition Width="{Binding ElementName=gridNewUser, Path=ActualWidth}" d:Width="90" />
                 <ColumnDefinition Width="{Binding ElementName=gridAssetTag, Path=ActualWidth}" d:Width="85" />
                 <ColumnDefinition Width="{Binding ElementName=gridOEM, Path=ActualWidth}" d:Width="60" />
+                <ColumnDefinition Width="{Binding ElementName=gridModel, Path=ActualWidth}" d:Width="60" />
                 <ColumnDefinition Width="{Binding ElementName=gridNotes, Path=ActualWidth}" d:Width="60" />
                 <ColumnDefinition Width="{Binding ElementName=gridLastUpdate, Path=ActualWidth}" d:Width="100" />
                 <ColumnDefinition Width="Auto" />
@@ -113,11 +114,17 @@
                      Text="{Binding FilterOEM, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
             <TextBox Grid.Column="9"
                      Margin="0,0,5,0"
+                     materialDesign:HintAssist.Hint="Model"
+                     materialDesign:HintAssist.IsFloating="True"
+                     materialDesign:TextFieldAssist.HasClearButton="True"
+                     Text="{Binding FilterModel, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+            <TextBox Grid.Column="10"
+                     Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="Notes"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterNotes, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="10"
+            <TextBox Grid.Column="11"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="Last Update"
                      materialDesign:HintAssist.IsFloating="True"
@@ -183,8 +190,14 @@
                                     Width="auto"
                                     Binding="{Binding OEM}"
                                     Header="OEM" />
+                <DataGridTextColumn x:Name="gridModel"
+                                    Width="auto"
+                                    MinWidth="60"
+                                    Binding="{Binding Model}"
+                                    Header="Model" />
                 <DataGridTextColumn x:Name="gridNotes"
                                     Width="auto"
+                                    MaxWidth="400"
                                     Binding="{Binding Notes}"
                                     Header="Notes" />
                 <DataGridTextColumn x:Name="gridLastUpdate"

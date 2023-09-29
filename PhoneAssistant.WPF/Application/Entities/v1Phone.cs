@@ -9,6 +9,7 @@ public class v1Phone
     public string? NorR { get; set; }
     public string? Status { get; set; }
     public string? OEM { get; set; }
+    public string? Model { get; set; }
     public int? SR { get; set; }
     public string? AssetTag { get; set; }
     public string? NewUser { get; set; }

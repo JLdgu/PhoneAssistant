@@ -5,28 +5,30 @@ using System.Windows.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Microsoft.EntityFrameworkCore;
-
-using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
 public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMainViewModel
 {
+    private readonly IPhonesItemViewModelFactory _phonesItemViewModelFactory;
     private readonly IPhonesRepository _phonesRepository;
     private readonly IPrintEnvelope _printEnvelope;
 
-    public ObservableCollection<v1Phone> Phones { get; } = new();
+    public ObservableCollection<PhonesItemViewModel> PhoneItems { get; } = new();
+    //public ObservableCollection<v1Phone> Phones { get; } = new();
 
-    readonly ICollectionView _filterView;
+    private readonly ICollectionView _filterView;
 
-    public PhonesMainViewModel(IPhonesRepository phonesRepository, IPrintEnvelope printEnvelope)
+    public PhonesMainViewModel(IPhonesItemViewModelFactory phonesItemViewModelFactory,
+                               IPhonesRepository phonesRepository,
+                               IPrintEnvelope printEnvelope)
     {
+        _phonesItemViewModelFactory = phonesItemViewModelFactory ?? throw new ArgumentNullException(nameof(phonesItemViewModelFactory));
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
         _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
 
-        _filterView = CollectionViewSource.GetDefaultView(Phones);
+        _filterView = CollectionViewSource.GetDefaultView(PhoneItems);
         _filterView.Filter = new Predicate<object>(FilterView);
     }
 
@@ -44,7 +46,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
         if (SelectedPhone is null) return;
 
         CanPrintEnvelope = false;
-        _printEnvelope.Execute(SelectedPhone);
+        _printEnvelope.Execute(SelectedPhone.Phone);
     }
     #endregion
 
@@ -159,7 +161,9 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     public bool FilterView(object item)
     {
-        if (item is not v1Phone phone) return false;
+        if (item is not PhonesItemViewModel vm) return false;
+
+        v1Phone phone = vm.Phone;
 
         if (FilterNorR is not null && FilterNorR.Length == 1)
             if (phone.NorR is not null && !phone.NorR.StartsWith(FilterNorR, StringComparison.InvariantCultureIgnoreCase))
@@ -236,9 +240,9 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     private bool canPrintEnvelope;
 
     [ObservableProperty]
-    private v1Phone? _selectedPhone;
+    private PhonesItemViewModel? _selectedPhone;
 
-    partial void OnSelectedPhoneChanged(v1Phone? value)
+    partial void OnSelectedPhoneChanged(PhonesItemViewModel? value)
     {
         if (SelectedPhone is null)
         {
@@ -252,7 +256,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     public async Task LoadAsync()
     {
-        Phones.Clear();
+        PhoneItems.Clear();
         IEnumerable<v1Phone> phones = await _phonesRepository.GetPhonesAsync();
 
         foreach (v1Phone phone in phones) 
@@ -261,7 +265,8 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
                 phone.NorR = "New";
             else
                 phone.NorR = "Repurposed";
-            Phones.Add(phone);
+            //Phones.Add(phone);
+            PhoneItems.Add(_phonesItemViewModelFactory.Create(phone));
         }
     }
 

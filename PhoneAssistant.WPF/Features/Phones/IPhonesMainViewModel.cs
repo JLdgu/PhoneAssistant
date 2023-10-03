@@ -3,10 +3,10 @@
 using PhoneAssistant.WPF.Shared;
 using PhoneAssistant.WPF.Application.Entities;
 
-namespace PhoneAssistant.WPF.Features.Phones
+namespace PhoneAssistant.WPF.Features.Phones;
+
+public interface IPhonesMainViewModel : IViewModel
 {
-    public interface IPhonesMainViewModel : IViewModel
-    {
-        ObservableCollection<v1Phone> Phones { get; }
-    }
+    ObservableCollection<PhonesItemViewModel> PhoneItems { get; }
+    //ObservableCollection<v1Phone> Phones { get; }
 }

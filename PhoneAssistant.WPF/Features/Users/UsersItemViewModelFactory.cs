@@ -3,6 +3,6 @@ public sealed class UsersItemViewModelFactory : IUsersItemViewModelFactory
 {
     public UsersItemViewModel Create(User user)
     { 
-        return new UsersItemViewModel(user); ; 
+        return new UsersItemViewModel(user);
     }
 }

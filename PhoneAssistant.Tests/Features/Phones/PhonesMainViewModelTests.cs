@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Net.Sockets;
 using System.Windows.Data;
 
 using Moq;
@@ -23,13 +24,13 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = FilterSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
         vm.FilterAssetTag = "B2";
 
-        var actual = view.OfType<v1Phone>().ToArray();
+        var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(new[] { phones[1] }, actual);
+        Assert.Equal(phones[1] , actual[0].Phone);
     }
 
     [Fact]
@@ -42,13 +43,13 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = FilterSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
         vm.FilterImei = "22";
 
-        var actual = view.OfType<v1Phone>().ToArray();
+        var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(new[] { phones[1] }, actual);
+        Assert.Equal(phones[1], actual[0].Phone);
     }
 
     [Fact]
@@ -61,13 +62,13 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = FilterSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
         vm.FilterNorR = "R";
 
-        var actual = view.OfType<v1Phone>().ToArray();
+        var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(new[] { phones[1] }, actual);
+        Assert.Equal(phones[1], actual[0].Phone);
     }
 
     [Fact]
@@ -80,13 +81,13 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = FilterSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
         vm.FilterNewUser = "BB";
 
-        var actual = view.OfType<v1Phone>().ToArray();
+        var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(new[] { phones[1] }, actual);
+        Assert.Equal(phones[1], actual[0].Phone);
     }
 
     [Fact]
@@ -99,13 +100,13 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = FilterSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
         vm.FilterNotes = "e2";
 
-        var actual = view.OfType<v1Phone>().ToArray();
+        var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(new[] { phones[1] }, actual );
+        Assert.Equal(phones[1], actual[0].Phone);
     }
 
     [Fact]
@@ -118,13 +119,13 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = FilterSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
         vm.FilterOEM = "kia";
 
-        var actual = view.OfType<v1Phone>().ToArray();
+        var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(new[] { phones[1] }, actual);
+        Assert.Equal(phones[1], actual[0].Phone);
     }
 
     [Fact]
@@ -137,13 +138,13 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = FilterSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
         vm.FilterPhoneNumber = "02";
 
-        var actual = view.OfType<v1Phone>().ToArray();
+        var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(new[] { phones[1] }, actual);
+        Assert.Equal(phones[1], actual[0].Phone);
     }
 
     [Fact]
@@ -156,13 +157,13 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = FilterSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
         vm.FilterSimNumber = "02";
 
-        var actual = view.OfType<v1Phone>().ToArray();
+        var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(new[] { phones[1] }, actual);
+        Assert.Equal(phones[1], actual[0].Phone);
     }
 
     [Fact]
@@ -176,13 +177,14 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = FilterSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
         vm.FilterSR = "22";
 
-        var actual = view.OfType<v1Phone>().ToArray();
+        var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Equal(2,actual.Count());
-        Assert.Equal(new[] { phones[1], phones[3] }, actual);
+        Assert.Equal(phones[1], actual[0].Phone);
+        Assert.Equal(phones[3], actual[1].Phone);        
     }
 
     [Fact]
@@ -195,20 +197,28 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = FilterSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.Phones);
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
         vm.FilterStatus = "stock";
 
-        var actual = view.OfType<v1Phone>().ToArray();
+        var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(new[] { phones[1] }, actual);
+        Assert.Equal(phones[1], actual[0].Phone);
     }
 
     private PhonesMainViewModel FilterSetup(List<v1Phone> phones)
     {
         AutoMocker mocker = new AutoMocker();
+
         Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
         repository.Setup(r => r.GetPhonesAsync()).ReturnsAsync(phones);
+
+        var calls = 0;
+        Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
+        factory.Setup(r => r.Create(It.IsAny<v1Phone>()))
+                            .Returns(() => new PhonesItemViewModel(phones[calls]))
+                            .Callback(() => calls++);
+
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
         return vm;
     }

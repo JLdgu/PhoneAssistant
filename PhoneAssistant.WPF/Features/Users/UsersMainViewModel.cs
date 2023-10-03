@@ -6,12 +6,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace PhoneAssistant.WPF.Features.Users;
 public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainViewModel
 {
-    private Func<User, UsersItemViewModel> UsersItemViewModelFactory { get; }
+    private IUsersItemViewModelFactory _usersItemViewModelFactory { get; }
     public ObservableCollection<UsersItemViewModel> UserItems { get; } = new();
 
-    public UsersMainViewModel(Func<User, UsersItemViewModel> usersItemViewModelFactory)
+    public UsersMainViewModel(IUsersItemViewModelFactory usersItemViewModelFactory)
     {
-        UsersItemViewModelFactory = usersItemViewModelFactory;
+        _usersItemViewModelFactory = usersItemViewModelFactory;
     }
 
     [ObservableProperty]
@@ -50,7 +50,7 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
             UserAccountControl userAccountControl = (UserAccountControl)flags;
             user.Enabled = (userAccountControl & UserAccountControl.ACCOUNTDISABLE) != UserAccountControl.ACCOUNTDISABLE;            
 
-            UserItems.Add(UsersItemViewModelFactory(user));
+            UserItems.Add(_usersItemViewModelFactory.Create(user));
         }
     }
 

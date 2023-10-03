@@ -37,10 +37,7 @@ public static class ApplicationServicesExtensions
             services.AddTransient<IThemeWrapper, ThemeWrapper>();
 
             services.AddTransient<IUsersMainViewModel, UsersMainViewModel>();
-            services.AddTransient<Func<User, UsersItemViewModel>>(serviceProvider =>
-            {
-                return (Features.Users.User user)  => new UsersItemViewModel(user);
-            });
+            services.AddTransient<IUsersItemViewModelFactory, UsersItemViewModelFactory>();
 
             services.AddTransient<MainWindowViewModel>();
             services.AddSingleton(s => new MainWindow(s.GetRequiredService<MainWindowViewModel>()));

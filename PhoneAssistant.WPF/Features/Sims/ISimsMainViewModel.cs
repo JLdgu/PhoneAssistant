@@ -7,5 +7,5 @@ namespace PhoneAssistant.WPF.Features.Sims;
 
 public interface ISimsMainViewModel : IViewModel
 {
-    ObservableCollection<Sim> Sims { get; }
+    ObservableCollection<v1Sim> Sims { get; }
 }

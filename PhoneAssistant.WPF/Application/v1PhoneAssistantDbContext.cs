@@ -8,7 +8,7 @@ public sealed class v1PhoneAssistantDbContext : DbContext
 {
     public DbSet<v1Phone> Phones => Set<v1Phone>();
 
-    //public DbSet<Sim> Sims => Set<Sim>();
+    public DbSet<v1Sim> Sims => Set<v1Sim>();
 
     //public DbSet<Disposal> Disposals => Set<State>();
 
@@ -33,16 +33,16 @@ public sealed class v1PhoneAssistantDbContext : DbContext
             p => 
             {
                 p.HasKey(x => x.Imei);
-                //p.Property(x => x.Imei).HasColumnName("IMEI");
-                //p.Property(x => x.PhoneNumber).HasColumnName("PhoneNumber");
-                //p.Property(x => x.SimNumber).HasColumnName("SIMNumber");
-                //p.Property(x => x.FormerUser).HasColumnName("FormerUser");
                 p.Property(x => x.SR).HasColumnName("SRNumber");
-                //p.Property(x => x.AssetTag).HasColumnName("AssetTag");
-                //p.Property(x => x.NewUser).HasColumnName("NewUser");
                 p.Property(x => x.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            }
-        );
+            });
+
+        modelBuilder.Entity<v1Sim>(
+            s =>
+            {
+                s.HasKey(s => s.PhoneNumber);
+                s.Property(s => s.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            });
 
         base.OnModelCreating(modelBuilder);
     }

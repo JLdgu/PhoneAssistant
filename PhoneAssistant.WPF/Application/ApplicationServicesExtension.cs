@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Dashboard;
 using PhoneAssistant.WPF.Features.MainWindow;
 using PhoneAssistant.WPF.Features.Phones;
@@ -39,7 +40,15 @@ public static class ApplicationServicesExtensions
 
             services.AddTransient<IUsersMainViewModel, UsersMainViewModel>();
             services.AddTransient<IUsersItemViewModelFactory, UsersItemViewModelFactory>();
-
+            
+            services.AddTransient<ISimsMainViewModel, SimsMainViewModel>();
+            services.AddSingleton<ISimsRepository, SimsRepository>();
+            services.AddTransient<Func<v1Sim, SimsItemViewModel>>(serviceProvider =>
+            {
+                return (v1Sim sim) => new SimsItemViewModel(sim,
+                                      serviceProvider.GetRequiredService<ISimsRepository>());
+            });
+            
             services.AddTransient<MainWindowViewModel>();
             services.AddSingleton(s => new MainWindow(s.GetRequiredService<MainWindowViewModel>()));
         });

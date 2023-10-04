@@ -7,6 +7,8 @@ using PhoneAssistant.WPF.Features.Sims;
 using PhoneAssistant.WPF.Features.Dashboard;
 using PhoneAssistant.WPF.Features.Users;
 using Xunit;
+using Moq.AutoMock;
+using PhoneAssistant.WPF.Application;
 
 namespace PhoneAssistant.Tests.Features.MainWindow;
 
@@ -15,35 +17,25 @@ public sealed class MainWindowViewModelTests
     [Fact]
     public async Task UpdateViewAsync_NullViewModelType_ThrowsArgumentNullException()
     {
-        var dashboardVM = Mock.Of<IDashboardMainViewModel>();
-        var phonesVM = Mock.Of<IPhonesMainViewModel>();
-        //var simsVM = Mock.Of<ISimsMainViewModel>();
-        //var srsVM = Mock.Of<IServiceRequestsMainViewModel>();
-        var settingsVM = Mock.Of<ISettingsMainViewModel>();
-        var usersVM = Mock.Of<IUsersMainViewModel>();
-        var viewModel = new MainWindowViewModel(dashboardVM,phonesVM, settingsVM,usersVM);
-        var command = viewModel.UpdateViewCommand;
+        AutoMocker mocker = new AutoMocker();
+        MainWindowViewModel vm = mocker.CreateInstance<MainWindowViewModel>();
 
-        var actual = await Xunit.Assert.ThrowsAsync<ArgumentNullException>(() => command.ExecuteAsync(null));        
+        var command = vm.UpdateViewCommand;
+        var actual = await Assert.ThrowsAsync<ArgumentNullException>(() => command.ExecuteAsync(null));        
 
-        Xunit.Assert.Equal("selectedViewModelType", actual.ParamName);
+        Assert.Equal("selectedViewModelType", actual.ParamName);
     }
 
     [Fact]
     public async Task UpdateViewAsync_StringViewModelType_ThrowsArgumenException()
     {
-        var dashboardVM = Mock.Of<IDashboardMainViewModel>();
-        var phonesVM = Mock.Of<IPhonesMainViewModel>();
-        //var simsVM = Mock.Of<ISimsMainViewModel>();
-        //var srsVM = Mock.Of<IServiceRequestsMainViewModel>();
-        var settingsVM = Mock.Of<ISettingsMainViewModel>();
-        var usersVM = Mock.Of<IUsersMainViewModel>();
-        var viewModel = new MainWindowViewModel(dashboardVM, phonesVM, settingsVM, usersVM);
-        var command = viewModel.UpdateViewCommand;
+        AutoMocker mocker = new AutoMocker();
+        MainWindowViewModel vm = mocker.CreateInstance<MainWindowViewModel>();
 
-        var actual = await Xunit.Assert.ThrowsAsync<ArgumentException>(() => command.ExecuteAsync("Wrong Type"));
+        var command = vm.UpdateViewCommand;
+        var actual = await Assert.ThrowsAsync<ArgumentException>(() => command.ExecuteAsync("Wrong Type"));
 
-        Xunit.Assert.Equal("Type System.String is not handled.", actual.Message);
+        Assert.Equal("Type System.String is not handled.", actual.Message);
     }
 
     [Theory]
@@ -51,17 +43,11 @@ public sealed class MainWindowViewModelTests
     [InlineData(ViewModelType.None)]
     public async Task UpdateViewAsync_InvalidViewModelType_ThrowsNotImplementedException(ViewModelType viewModelType)
     {
-        var dashboardVM = Mock.Of<IDashboardMainViewModel>();
-        var phonesVM = Mock.Of<IPhonesMainViewModel>();
-        //var simsVM = Mock.Of<ISimsMainViewModel>();
-        //var srsVM = Mock.Of<IServiceRequestsMainViewModel>();
-        var settingsVM = Mock.Of<ISettingsMainViewModel>();
-        var usersVM = Mock.Of<IUsersMainViewModel>();
-        var viewModel = new MainWindowViewModel(dashboardVM, phonesVM, settingsVM, usersVM);
+        AutoMocker mocker = new AutoMocker();
+        MainWindowViewModel vm = mocker.CreateInstance<MainWindowViewModel>();
 
-        var command = viewModel.UpdateViewCommand;
-
-        var actual = await Xunit.Assert.ThrowsAsync<NotImplementedException>(() => command.ExecuteAsync(viewModelType));
+        var command = vm.UpdateViewCommand;
+        var actual = await Assert.ThrowsAsync<NotImplementedException>(() => command.ExecuteAsync(viewModelType));
 
         Xunit.Assert.Equal("The method or operation is not implemented.", actual.Message);
     }
@@ -69,46 +55,46 @@ public sealed class MainWindowViewModelTests
     [Theory]
     [InlineData(ViewModelType.Dashboard)]
     [InlineData(ViewModelType.Phones)]
-    //[InlineData(ViewModelType.Sims)]
+    [InlineData(ViewModelType.Sims)]
     //[InlineData(ViewModelType.ServiceRequests)]
     [InlineData(ViewModelType.Settings)]
     [InlineData(ViewModelType.Users)]
     public async Task UpdateViewAsync_WithValidViewModelType_CallUpdateAsync(ViewModelType viewModelType)
     {
-        IDashboardMainViewModel dashboard = Mock.Of<IDashboardMainViewModel>();
-        IPhonesMainViewModel phones = Mock.Of<IPhonesMainViewModel>();
-        ISimsMainViewModel sims =  Mock.Of<ISimsMainViewModel>();
-        IServiceRequestsMainViewModel srs = Mock.Of<IServiceRequestsMainViewModel>();
-        ISettingsMainViewModel settings = Mock.Of<ISettingsMainViewModel>();
-        IUsersMainViewModel users = Mock.Of<IUsersMainViewModel>();
+        AutoMocker mocker = new AutoMocker();
+        Mock<IDashboardMainViewModel> dashboard = mocker.GetMock<IDashboardMainViewModel>();
+        Mock<IPhonesMainViewModel> phones = mocker.GetMock<IPhonesMainViewModel>();
+        Mock<ISimsMainViewModel> sims =  mocker.GetMock<ISimsMainViewModel>();
+        Mock<IServiceRequestsMainViewModel> srs = mocker.GetMock<IServiceRequestsMainViewModel>();
+        Mock<ISettingsMainViewModel> settings = mocker.GetMock<ISettingsMainViewModel>();
+        Mock<IUsersMainViewModel> users = mocker.GetMock<IUsersMainViewModel>();
+        MainWindowViewModel vm = mocker.CreateInstance<MainWindowViewModel>();
 
-        var viewModel = new MainWindowViewModel(dashboard, phones, settings, users);
-        var command = viewModel.UpdateViewCommand;
-
+        var command = vm.UpdateViewCommand;
         await command.ExecuteAsync(viewModelType);
                 
         switch (viewModelType)
         {
             case ViewModelType.Dashboard:
-                Mock.Get(dashboard).Verify(vm => vm.LoadAsync(), Times.Once);
+                dashboard.Verify(vm => vm.LoadAsync(), Times.Once);
                 break;
             case ViewModelType.Phones:
-                Mock.Get(phones).Verify(vm => vm.LoadAsync(), Times.Once);
+                phones.Verify(vm => vm.LoadAsync(), Times.Once);
                 break;
-            //case ViewModelType.Sims:
-            //    Mock.Get(sims).Verify(vm => vm.LoadAsync(), Times.Once);
-            //    break;
+            case ViewModelType.Sims:
+                sims.Verify(vm => vm.LoadAsync(), Times.Once);
+                break;
             //case ViewModelType.ServiceRequests:
             //    Mock.Get(srs).Verify(vm => vm.LoadAsync(), Times.Once);
             //    break;
             case ViewModelType.Settings:
-                Mock.Get(settings).Verify(vm => vm.LoadAsync(), Times.Once);
+                settings.Verify(vm => vm.LoadAsync(), Times.Once);
                 break;
             case ViewModelType.Users:
-                Mock.Get(users).Verify(vm => vm.LoadAsync(), Times.Once);
+                users.Verify(vm => vm.LoadAsync(), Times.Once);
                 break;
             default: 
-                Xunit.Assert.Fail("Unexpected Type");
+                Assert.Fail("Unexpected Type");
                 break;
         }
     }

@@ -53,7 +53,6 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
             UserItems.Add(_usersItemViewModelFactory.Create(user));
         }
     }
-
     private SearchResultCollection PersonSearch(string name)
     {
         using DirectoryEntry entry = new DirectoryEntry("LDAP://DC=ds2,DC=devon,DC=gov,DC=uk");
@@ -67,6 +66,7 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
         searcher.PropertiesToLoad.Add("pwdLastSet");
         searcher.PropertiesToLoad.Add("userAccountControl");
 
+        searcher.Sort.PropertyName = "displayName";
         return searcher.FindAll();
     }
 

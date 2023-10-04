@@ -5,42 +5,28 @@ using CommunityToolkit.Mvvm.Input;
 namespace PhoneAssistant.WPF.Features.Users;
 public sealed partial class UsersItemViewModel
 {
-    public string Name { get; }
-
-    public string? Description { get; }
-
-    public string? Email { get; }
-
-    public string LastLogonDate { get; set; }
-
-    public string PasswordLastSet { get; set; }
-
-    public string WhenCreated { get; set; }
-
-    public bool Enabled { get; set; } = false;
+    public User User { get; }
 
     public UsersItemViewModel(User user)
     {
-        Name = user.Name;
-        Description = user.Description;
-        Email = user.Email;
-        LastLogonDate = user.LastLogonDate;
-        PasswordLastSet = user.PasswordLastSet;
-        WhenCreated = user.WhenCreated;
-        Enabled = user.Enabled;
+        if (user is null)
+        {
+            throw new ArgumentNullException(nameof(user));
+        }
+        User = user;
     }
 
     [RelayCommand]
     public void CopyNameToClipboard()
     {
-        Clipboard.SetText(Name);
+        Clipboard.SetText(User.Name);
     }
 
     [RelayCommand(CanExecute =nameof(CanCopyEmailToClipbaord))]
     public void CopyEmailToClipboard()
     {
-        Clipboard.SetText(Email);
+        Clipboard.SetText(User.Email);
     }
 
-    private bool CanCopyEmailToClipbaord() => !string.IsNullOrEmpty(Email);
+    private bool CanCopyEmailToClipbaord() => !string.IsNullOrEmpty(User.Email);
 }

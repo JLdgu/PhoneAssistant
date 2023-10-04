@@ -20,4 +20,22 @@ public sealed class SimsRepository : ISimsRepository
         return sims;
     }
 
+    public async Task MoveSimToPhone(string phoneNumber, string imei)
+    {
+        if (phoneNumber is null)
+        {
+            throw new ArgumentNullException(nameof(phoneNumber));
+        }
+
+        v1Sim sim = await _dbContext.Sims.SingleAsync(x => x.PhoneNumber == phoneNumber);
+        v1Phone phone = await _dbContext.Phones.SingleAsync(x => x.Imei == imei);
+
+        phone.PhoneNumber = phoneNumber;
+        phone.SimNumber = sim.SimNumber;
+        _dbContext.Phones.Update(phone);
+
+        _dbContext.Sims.Remove(sim);
+
+        await _dbContext.SaveChangesAsync();
+    }
 }

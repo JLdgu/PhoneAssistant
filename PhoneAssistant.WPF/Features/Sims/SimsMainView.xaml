@@ -74,7 +74,7 @@
                   AlternatingRowBackground="{DynamicResource MaterialDesignChipBackground}"
                   AutoGenerateColumns="False"
                   IsReadOnly="true"
-                  ItemsSource="{Binding Sims}"
+                  ItemsSource="{Binding SimItems}"
                   MouseDown="SimsGrid_MouseDown"
                   SelectedItem="{Binding SelectedSim}"
                   SelectionMode="Extended">
@@ -82,28 +82,28 @@
                 <DataGridTextColumn x:Name="PhoneNumber"
                                     Width="auto"
                                     MinWidth="110"
-                                    Binding="{Binding PhoneNumber}"
+                                    Binding="{Binding Sim.PhoneNumber}"
                                     Header="Phone Number" />
                 <DataGridTextColumn x:Name="SimNumber"
                                     Width="auto"
-                                    Binding="{Binding SimNumber}"
+                                    Binding="{Binding Sim.SimNumber}"
                                     Header="Sim Number" />
                 <DataGridTextColumn x:Name="Status"
                                     Width="auto"
-                                    Binding="{Binding Status}"
+                                    Binding="{Binding Sim.Status}"
                                     Header="Status" />
                 <DataGridTextColumn x:Name="AssetTag"
                                     Width="auto"
                                     MinWidth="75"
-                                    Binding="{Binding AssetTag}"
+                                    Binding="{Binding Sim.AssetTag}"
                                     Header="Asset Tag" />
                 <DataGridTextColumn x:Name="Notes"
                                     Width="auto"
-                                    Binding="{Binding Notes}"
+                                    Binding="{Binding Sim.Notes}"
                                     Header="Notes" />
                 <DataGridTextColumn x:Name="LastUpdate"
                                     Width="auto"
-                                    Binding="{Binding LastUpdate, Mode=OneWay}"
+                                    Binding="{Binding Sim.LastUpdate, Mode=OneWay}"
                                     Header="Last Update" />
             </DataGrid.Columns>
         </DataGrid>

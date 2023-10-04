@@ -42,12 +42,9 @@ public static class ApplicationServicesExtensions
             services.AddTransient<IUsersItemViewModelFactory, UsersItemViewModelFactory>();
             
             services.AddTransient<ISimsMainViewModel, SimsMainViewModel>();
+            services.AddTransient<ISimsItemViewModelFactory, SimsItemViewModelFactory>();
+            services.AddTransient<SimsItemViewModel>();
             services.AddSingleton<ISimsRepository, SimsRepository>();
-            services.AddTransient<Func<v1Sim, SimsItemViewModel>>(serviceProvider =>
-            {
-                return (v1Sim sim) => new SimsItemViewModel(sim,
-                                      serviceProvider.GetRequiredService<ISimsRepository>());
-            });
             
             services.AddTransient<MainWindowViewModel>();
             services.AddSingleton(s => new MainWindow(s.GetRequiredService<MainWindowViewModel>()));

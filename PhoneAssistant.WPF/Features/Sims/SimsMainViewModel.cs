@@ -10,26 +10,65 @@ namespace PhoneAssistant.WPF.Features.Sims;
 
 public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewModel
 {
-    private Func<v1Sim, SimsItemViewModel> _simsItemViewModelFactory { get; }
-
+    private readonly ISimsItemViewModelFactory _simsItemViewModelFactory;
     private readonly ISimsRepository _simRepository;
-
-    public ObservableCollection<v1Sim> Sims { get; } = new();
+    private readonly ICollectionView _filterView;
 
     public ObservableCollection<SimsItemViewModel> SimItems { get; } = new();
 
-    ICollectionView _filterView;
-
-    public SimsMainViewModel(Func<v1Sim, SimsItemViewModel> simsItemViewModelFactory, ISimsRepository simRepository)
+    public SimsMainViewModel(ISimsItemViewModelFactory simsItemViewModelFactory, ISimsRepository simRepository)
     {
         _simsItemViewModelFactory = simsItemViewModelFactory ?? throw new ArgumentNullException(nameof(simsItemViewModelFactory));
         _simRepository = simRepository ?? throw new ArgumentNullException(nameof(simRepository));
 
-        _filterView = CollectionViewSource.GetDefaultView(Sims);
+        _filterView = CollectionViewSource.GetDefaultView(SimItems);
         _filterView.Filter = new Predicate<object>(FilterView);
-
     }
+
     #region Filter View
+    private bool FilterView(object item)
+    {
+        if (item is not SimsItemViewModel vm) return false;
+
+        v1Sim sim = vm.Sim;
+
+        if (FilterPhoneNumber is not null && FilterPhoneNumber.Length > 0)
+            if (sim.PhoneNumber is null)
+                return false;
+            else if (!sim.PhoneNumber.Contains(FilterPhoneNumber))
+                return false;
+
+        if (FilterSimNumber is not null && FilterSimNumber.Length > 0)
+            if (sim.SimNumber is null)
+                return false;
+            else if (!sim.SimNumber.Contains(FilterSimNumber))
+                return false;
+
+        if (FilterStatus is not null && FilterStatus.Length > 0)
+            if (sim.Status is not null && !sim.Status.Contains(FilterStatus, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterAssetTag is not null && FilterAssetTag.Length > 0)
+            if (sim.AssetTag is null)
+                return false;
+            else if (!sim.AssetTag.Contains(FilterAssetTag, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterNotes is not null && FilterNotes.Length > 0)
+            if (sim.Notes is null)
+                return false;
+            else if (!sim.Notes.Contains(FilterNotes, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterLastUpdate is not null && FilterLastUpdate.Length > 0)
+            if (sim.LastUpdate is null)
+                return false;
+            else if (!sim.LastUpdate.Contains(FilterLastUpdate, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        return true;
+    }
+
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
     private string filterPhoneNumber;
@@ -83,47 +122,6 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
     {
         _filterView.Refresh();
     }
-
-    private bool FilterView(object item)
-    {
-        if (item is not v1Sim Sim) return false;
-
-        if (FilterPhoneNumber is not null && FilterPhoneNumber.Length > 0)
-            if (Sim.PhoneNumber is null)
-                return false;
-            else if (!Sim.PhoneNumber.Contains(FilterPhoneNumber))
-                return false;
-
-        if (FilterSimNumber is not null && FilterSimNumber.Length > 0)
-            if (Sim.SimNumber is null)
-                return false;
-            else if (!Sim.SimNumber.Contains(FilterSimNumber))
-                return false;
-
-        if (FilterStatus is not null && FilterStatus.Length > 0)
-            if (Sim.Status is not null && !Sim.Status.Contains(FilterStatus, StringComparison.InvariantCultureIgnoreCase))
-                return false;
-
-        if (FilterAssetTag is not null && FilterAssetTag.Length > 0)
-            if (Sim.AssetTag is null)
-                return false;
-            else if (!Sim.AssetTag.Contains(FilterAssetTag, StringComparison.InvariantCultureIgnoreCase))
-                return false;
-
-        if (FilterNotes is not null && FilterNotes.Length > 0)
-            if (Sim.Notes is null)
-                return false;
-            else if (!Sim.Notes.Contains(FilterNotes, StringComparison.InvariantCultureIgnoreCase))
-                return false;
-
-        if (FilterLastUpdate is not null && FilterLastUpdate.Length > 0)
-            if (Sim.LastUpdate is null)
-                return false;
-            else if (!Sim.LastUpdate.Contains(FilterLastUpdate, StringComparison.InvariantCultureIgnoreCase))
-                return false;
-
-        return true;
-    }
     #endregion
 
     [ObservableProperty]
@@ -131,8 +129,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
 
     public async Task LoadAsync()
     {
-        if (Sims.Any())
-            return;
+        SimItems.Clear();
 
         IEnumerable<v1Sim> simCards = await _simRepository.GetSimsAsync();
         if (simCards == null)
@@ -141,9 +138,8 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
         }
 
         foreach (v1Sim simcard in simCards)
-        {
-            Sims.Add(simcard);
-            SimItems.Add(_simsItemViewModelFactory(simcard));            
+        {            
+            SimItems.Add(_simsItemViewModelFactory.Create(simcard));
         }
     }
 

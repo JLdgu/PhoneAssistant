@@ -23,6 +23,36 @@ public sealed class PhonesRepository : IPhonesRepository
         return phones;
     }
 
+    public async Task RemoveSimFromPhone(v1Phone phone)
+    {
+        if (phone is null)
+        {
+            throw new ArgumentNullException(nameof(phone));
+        }
+        if (string.IsNullOrEmpty(phone.PhoneNumber))
+        {
+            throw new ArgumentException($"'{nameof(phone.PhoneNumber)}' cannot be null or empty.", nameof(phone.PhoneNumber));
+        }
+        if (string.IsNullOrEmpty(phone.SimNumber))
+        {
+            throw new ArgumentException($"'{nameof(phone.SimNumber)}' cannot be null or empty.", nameof(phone.SimNumber));
+        }
+
+        v1Phone dbPhone = await _dbContext.Phones.SingleAsync(x => x.Imei == phone.Imei);
+        v1Sim? sim = await _dbContext.Sims.FindAsync(phone.PhoneNumber);
+        if (sim is not null)
+        {
+            throw new InvalidOperationException($"'{nameof(phone.PhoneNumber)}' already exists.");
+        }
+        sim = new()
+        {
+            PhoneNumber = phone.PhoneNumber,
+            SimNumber = phone.SimNumber,
+            Status = "In Stock"
+        };
+        _dbContext.Sims.Add(sim);
+        await _dbContext.SaveChangesAsync();
+    }
     //public async Task<IEnumerable<v1Phone>> SearchAsync(string search)
     //{
     //    List<v1Phone> phones = await _dbContext.Phones
@@ -34,7 +64,7 @@ public sealed class PhonesRepository : IPhonesRepository
     //public async Task UpdateAsync(Phone phoneToUpdate)
     //{
     //    Phone phone = _dbContext.Phones.Where(mp => mp.Id == phoneToUpdate.Id).First();
-        
+
     //    phone.Imei = phoneToUpdate.Imei;
     //    phone.FormerUser = phoneToUpdate.FormerUser;
     //    phone.Wiped = phoneToUpdate.Wiped;

@@ -38,13 +38,10 @@ public sealed class SimsRepositoryTests
     public async Task MoveSimToPhone_WithNotFoundPhone_ThrowsException()
     {
         v1DbTestHelper helper = new();
-        using SqliteConnection connection = helper.CreateConnection();
-        using v1PhoneAssistantDbContext dbContext = new(helper.Options!);
-        await dbContext.Database.EnsureCreatedAsync();
-        SimsRepository repository = new(dbContext);
+        SimsRepository repository = new(helper.DbContext);
         v1Sim sim = new v1Sim() { PhoneNumber = "sim1", SimNumber = "simnumber" };
-        await dbContext.Sims.AddAsync(sim);
-        await dbContext.SaveChangesAsync();
+        await helper.DbContext.Sims.AddAsync(sim);
+        await helper.DbContext.SaveChangesAsync();
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => repository.MoveSimToPhone("sim1", "imei1"));
     }

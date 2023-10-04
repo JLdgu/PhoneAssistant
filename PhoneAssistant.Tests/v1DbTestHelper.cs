@@ -7,9 +7,18 @@ namespace PhoneAssistant.Tests;
 
 public class v1DbTestHelper : IDisposable
 {
-    //internal SqliteConnection? Connection;
+    private readonly SqliteConnection _connection;
+    public v1PhoneAssistantDbContext DbContext { get; }
+
+
     public DbContextOptions<v1PhoneAssistantDbContext>? Options;
     private bool _disposedValue;
+    public v1DbTestHelper(string datasource = "DataSource=:memory:;")
+    {
+        _connection = CreateConnection();
+        DbContext = new(Options!);
+        DbContext.Database.EnsureCreated();
+    }
 
     internal SqliteConnection CreateConnection(string datasource = "DataSource=:memory:;")
     {
@@ -26,7 +35,9 @@ public class v1DbTestHelper : IDisposable
         {
             if (disposing)
             {
-                // TO DO: dispose managed state (managed objects)
+                DbContext.Dispose();
+                _connection.Close();
+                _connection.Dispose();
             }
 
             // TO DO: free unmanaged resources (unmanaged objects) and override finalizer

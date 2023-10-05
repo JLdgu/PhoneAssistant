@@ -15,8 +15,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     private readonly IPhonesRepository _phonesRepository;
     private readonly IPrintEnvelope _printEnvelope;
 
-    public ObservableCollection<PhonesItemViewModel> PhoneItems { get; } = new();
-    //public ObservableCollection<v1Phone> Phones { get; } = new();
+    public ObservableCollection<PhonesItemViewModel> PhoneItems { get; } = new();    
 
     private readonly ICollectionView _filterView;
 

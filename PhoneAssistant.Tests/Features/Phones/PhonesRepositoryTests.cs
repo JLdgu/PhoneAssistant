@@ -108,11 +108,13 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     {
         using v1DbTestHelper helper = new();
         PhonesRepository repository = new(helper.DbContext);
-        v1Phone phone = new()
+        const string PHONE_NUMBER = "phone number";
+        const string SIM_NUMBER = "sim number";
+        v1Phone? phone = new()
         {
             Imei = "imei",
-            PhoneNumber = "phone number",
-            SimNumber = "sim number",
+            PhoneNumber = PHONE_NUMBER,
+            SimNumber = SIM_NUMBER,
             Model = "model",
             NorR = "norr",
             OEM = "oem",
@@ -123,11 +125,16 @@ public sealed class PhonesRepositoryTests : DbTestHelper
 
         await repository.RemoveSimFromPhone(phone);
 
-        v1Sim actual = await helper.DbContext.Sims.FindAsync(phone.PhoneNumber);
-        Assert.NotNull(actual);
-        Assert.Equal(phone.PhoneNumber, actual.PhoneNumber);
-        Assert.Equal(phone.SimNumber, actual.SimNumber);
-        Assert.Equal("In Stock", actual.Status);
+        v1Sim? sim = await helper.DbContext.Sims.FindAsync(PHONE_NUMBER);
+        Assert.NotNull(sim);
+        Assert.Equal(PHONE_NUMBER, sim.PhoneNumber);
+        Assert.Equal(SIM_NUMBER, sim.SimNumber);
+        Assert.Equal("In Stock", sim.Status);
+
+        phone = await helper.DbContext.Phones.FindAsync("imei");
+        Assert.NotNull(phone);
+        Assert.Null(phone.PhoneNumber);
+        Assert.Null(phone.SimNumber);
     }
 
     #region Search

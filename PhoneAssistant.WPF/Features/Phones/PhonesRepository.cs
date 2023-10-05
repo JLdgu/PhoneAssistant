@@ -51,8 +51,12 @@ public sealed class PhonesRepository : IPhonesRepository
             Status = "In Stock"
         };
         _dbContext.Sims.Add(sim);
+        dbPhone.PhoneNumber = null;
+        dbPhone.SimNumber = null;
+        _dbContext.Phones.Update(dbPhone);
         await _dbContext.SaveChangesAsync();
     }
+
     //public async Task<IEnumerable<v1Phone>> SearchAsync(string search)
     //{
     //    List<v1Phone> phones = await _dbContext.Phones

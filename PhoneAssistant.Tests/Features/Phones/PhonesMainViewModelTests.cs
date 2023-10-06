@@ -212,12 +212,12 @@ public sealed class PhonesMainViewModelTests
 
         Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
         repository.Setup(r => r.GetPhonesAsync()).ReturnsAsync(phones);
-
+        Mock<IPrintEnvelope> print = mocker.GetMock<IPrintEnvelope>();
         var calls = 0;
         Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
         factory.Setup(r => r.Create(It.IsAny<v1Phone>()))
                             .Returns(() => {
-                                PhonesItemViewModel vm = new(repository.Object);
+                                PhonesItemViewModel vm = new(repository.Object,print.Object);
                                 vm.Phone = phones[calls];
                                 return vm;
                                 }

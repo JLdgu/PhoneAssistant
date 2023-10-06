@@ -15,33 +15,27 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <shared:HeaderMainView HeaderIcon="CellphoneScreenshot" HeaderText="Phones" />
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
             <Button Margin="5,5"
                     Command="{Binding RefreshPhonesCommand}"
                     Content="{materialDesign:PackIcon Kind=Refresh,
                                                       Size=25}"
+                    IsEnabled="{Binding CanRefeshPhones}"
                     Style="{StaticResource MaterialDesignOutlinedLightButton}"
                     ToolTip="Refresh" />
-            <Button Margin="5,5"
-                    Command="{Binding PrintEnvelopeCommand}"
-                    Content="{materialDesign:PackIcon Kind=EmailOutline,
-                                                      Size=25}"
-                    IsEnabled="{Binding CanPrintEnvelope}"
-                    Style="{StaticResource MaterialDesignOutlinedLightButton}"
-                    ToolTip="Print Envelope" />
         </StackPanel>
 
-        <Grid Grid.Row="2"
+        <Grid Grid.Row="1"
               Margin="16,10,0,0"
               d:Background="LightCoral">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding ElementName=gridNorR, Path=ActualWidth}" d:Width="60" />
                 <ColumnDefinition Width="{Binding ElementName=gridStatus, Path=ActualWidth}" d:Width="70" />
+                <ColumnDefinition Width="{Binding ElementName=gridPrintEnvelope, Path=ActualWidth}" d:Width="25" />
                 <ColumnDefinition Width="{Binding ElementName=gridSR, Path=ActualWidth}" d:Width="45" />
                 <ColumnDefinition Width="{Binding ElementName=gridImei, Path=ActualWidth}" d:Width="60" />
                 <ColumnDefinition Width="{Binding ElementName=gridPhoneNumber, Path=ActualWidth}" d:Width="120" />
@@ -69,88 +63,89 @@
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterStatus, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="2"
+            <TextBlock Grid.Column="2"
+                       IsEnabled="False"
+                       Text=""
+                       Visibility="Hidden" />
+            <TextBox Grid.Column="3"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="SR"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      MaxLength="6"
                      Text="{Binding FilterSR, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="3"
+            <TextBox Grid.Column="4"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="IMEI"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterImei, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="4"
+            <TextBox Grid.Column="5"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="Phone Number"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterPhoneNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBlock Grid.Column="5" Text="" />
-            <TextBox Grid.Column="6"
+            <TextBlock Grid.Column="6"
+                       IsEnabled="False"
+                       Text=""
+                       Visibility="Hidden" />
+            <TextBox Grid.Column="7"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="SIM Number"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterSimNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="7"
+            <TextBox Grid.Column="8"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="New User"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterNewUser, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="8"
+            <TextBox Grid.Column="9"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="Asset Tag"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      MaxLength="7"
                      Text="{Binding FilterAssetTag, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="9"
+            <TextBox Grid.Column="10"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="OEM"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterOEM, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="10"
+            <TextBox Grid.Column="11"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="Model"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterModel, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="11"
+            <TextBox Grid.Column="12"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="Notes"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterNotes, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="12"
+            <TextBox Grid.Column="13"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="Last Update"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterLastUpdate, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-
         </Grid>
 
-        <DataGrid Grid.Row="3"
+        <DataGrid Grid.Row="2"
                   Margin="10,0,0,0"
                   materialDesign:DataGridAssist.CellPadding="4 5 2 5"
                   materialDesign:DataGridAssist.ColumnHeaderPadding="4 5 2 5"
                   AlternatingRowBackground="{DynamicResource MaterialDesignChipBackground}"
                   AutoGenerateColumns="False"
-                  EnableRowVirtualization="True"
                   HeadersVisibility="Column"
                   IsReadOnly="False"
                   ItemsSource="{Binding PhoneItems}"
                   MouseDown="PhonesGrid_MouseDown"
-                  ScrollViewer.CanContentScroll="True"
-                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                  ScrollViewer.VerticalScrollBarVisibility="Auto"
-                  SelectedItem="{Binding SelectedPhone}"
-                  SelectionMode="Extended">
+                  SelectedItem="{Binding SelectedPhone}">
 
             <DataGrid.Columns>
                 <DataGridTextColumn x:Name="gridNorR"
@@ -162,6 +157,26 @@
                                     Width="auto"
                                     Binding="{Binding Phone.Status}"
                                     Header="Status" />
+                <DataGridTemplateColumn x:Name="gridPrintEnvelope" CanUserSort="False">
+                    <DataGridTemplateColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="materialDesign:DataGridAssist.CellPadding" Value="0" />
+                        </Style>
+                    </DataGridTemplateColumn.CellStyle>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="{x:Type viewmodel:PhonesItemViewModel}">
+                            <Button Height="20"
+                                    Margin="0"
+                                    Padding="0"
+                                    Command="{Binding PrintEnvelopeCommand}"
+                                    Content="{materialDesign:PackIcon Kind=EmailOutline,
+                                                                      Size=15}"
+                                    IsEnabled="{Binding CanPrintEnvelope}"
+                                    Style="{StaticResource MaterialDesignFlatLightButton}"
+                                    ToolTip="Print Envelope" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn x:Name="gridSR"
                                     Width="auto"
                                     Binding="{Binding Phone.SR}"
@@ -195,7 +210,6 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-
                 <DataGridTextColumn x:Name="gridSim"
                                     Width="auto"
                                     Binding="{Binding SimNumber}"

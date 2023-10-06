@@ -13,46 +13,36 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 {
     private readonly IPhonesItemViewModelFactory _phonesItemViewModelFactory;
     private readonly IPhonesRepository _phonesRepository;
-    private readonly IPrintEnvelope _printEnvelope;
 
     public ObservableCollection<PhonesItemViewModel> PhoneItems { get; } = new();    
 
     private readonly ICollectionView _filterView;
 
     public PhonesMainViewModel(IPhonesItemViewModelFactory phonesItemViewModelFactory,
-                               IPhonesRepository phonesRepository,
-                               IPrintEnvelope printEnvelope)
+                               IPhonesRepository phonesRepository)
     {
         _phonesItemViewModelFactory = phonesItemViewModelFactory ?? throw new ArgumentNullException(nameof(phonesItemViewModelFactory));
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
-        _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
 
         _filterView = CollectionViewSource.GetDefaultView(PhoneItems);
         _filterView.Filter = new Predicate<object>(FilterView);
+
+        CanRefeshPhones = true;
     }
 
-    #region Buttons
     [RelayCommand]
     private async Task RefreshPhones()
     {
+        CanRefeshPhones = false;
         await LoadAsync();
         _filterView.Refresh();
+        CanRefeshPhones = true;
     }
 
-    [RelayCommand]
-    private void PrintEnvelope()
-    {
-        if (SelectedPhone is null) return;
-
-        CanPrintEnvelope = false;
-        _printEnvelope.Execute(SelectedPhone.Phone);
-    }
-
+//    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private bool canPrintEnvelope;
+    private bool canRefeshPhones;
 
-    #endregion
 
     #region Filtering View
     [ObservableProperty]
@@ -241,18 +231,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     [ObservableProperty]
     private PhonesItemViewModel? _selectedPhone;
-
-    partial void OnSelectedPhoneChanged(PhonesItemViewModel? value)
-    {
-        if (SelectedPhone is null)
-        {
-            CanPrintEnvelope = false;
-        }
-        else
-        {
-            CanPrintEnvelope = true;
-        }
-    }
 
     public async Task LoadAsync()
     {

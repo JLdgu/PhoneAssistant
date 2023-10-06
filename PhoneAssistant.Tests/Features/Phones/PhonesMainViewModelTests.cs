@@ -216,7 +216,12 @@ public sealed class PhonesMainViewModelTests
         var calls = 0;
         Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
         factory.Setup(r => r.Create(It.IsAny<v1Phone>()))
-                            .Returns(() => new PhonesItemViewModel(phones[calls]))
+                            .Returns(() => {
+                                PhonesItemViewModel vm = new(repository.Object);
+                                vm.Phone = phones[calls];
+                                return vm;
+                                }
+                            )
                             .Callback(() => calls++);
 
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();

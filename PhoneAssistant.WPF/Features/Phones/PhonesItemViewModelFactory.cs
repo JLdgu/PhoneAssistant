@@ -1,5 +1,4 @@
 ﻿using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Features.Sims;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 public sealed class PhonesItemViewModelFactory : IPhonesItemViewModelFactory

@@ -47,6 +47,11 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
         CanPrintEnvelope = false;
         _printEnvelope.Execute(SelectedPhone.Phone);
     }
+
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private bool canPrintEnvelope;
+
     #endregion
 
     #region Filtering View
@@ -233,10 +238,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
         return true;
     }
     #endregion
-
-    [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private bool canPrintEnvelope;
 
     [ObservableProperty]
     private PhonesItemViewModel? _selectedPhone;

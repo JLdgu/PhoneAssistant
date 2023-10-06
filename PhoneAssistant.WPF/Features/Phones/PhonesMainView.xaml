@@ -143,7 +143,7 @@
                   AutoGenerateColumns="False"
                   EnableRowVirtualization="True"
                   HeadersVisibility="Column"
-                  IsReadOnly="True"
+                  IsReadOnly="False"
                   ItemsSource="{Binding PhoneItems}"
                   MouseDown="PhonesGrid_MouseDown"
                   ScrollViewer.CanContentScroll="True"
@@ -173,7 +173,7 @@
                 <DataGridTextColumn x:Name="gridPhoneNumber"
                                     Width="auto"
                                     MinWidth="110"
-                                    Binding="{Binding Phone.PhoneNumber}"
+                                    Binding="{Binding PhoneNumber}"
                                     Header="Phone Number" />
                 <DataGridTemplateColumn x:Name="gridRemoveSim" CanUserSort="False">
                     <DataGridTemplateColumn.CellStyle>
@@ -189,16 +189,16 @@
                                     Command="{Binding RemoveSimCommand}"
                                     Content="{materialDesign:PackIcon Kind=SimOutline,
                                                                       Size=15}"
+                                    IsEnabled="{Binding CanRemoveSim}"
                                     Style="{StaticResource MaterialDesignFlatLightButton}"
                                     ToolTip="Remove Sim" />
-
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
                 <DataGridTextColumn x:Name="gridSim"
                                     Width="auto"
-                                    Binding="{Binding Phone.SimNumber}"
+                                    Binding="{Binding SimNumber}"
                                     Header="SIM Number" />
                 <DataGridTextColumn x:Name="gridNewUser"
                                     Width="auto"

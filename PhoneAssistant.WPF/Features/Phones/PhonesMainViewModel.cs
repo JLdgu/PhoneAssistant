@@ -39,10 +39,9 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
         CanRefeshPhones = true;
     }
 
-//    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
     [ObservableProperty]
     private bool canRefeshPhones;
-
 
     #region Filtering View
     [ObservableProperty]
@@ -243,7 +242,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
                 phone.NorR = "New";
             else
                 phone.NorR = "Repurposed";
-            //Phones.Add(phone);
             PhoneItems.Add(_phonesItemViewModelFactory.Create(phone));
         }
     }

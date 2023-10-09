@@ -2,6 +2,8 @@
 using System.Net.Sockets;
 using System.Windows.Data;
 
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
 using Moq;
 using Moq.AutoMock;
 
@@ -15,6 +17,26 @@ namespace PhoneAssistant.Tests.Features.Phones;
 public sealed class PhonesMainViewModelTests
 {
     [Fact]
+    public async Task RefreshPhonesCommand_AfterCRUDChanges_UpdatesViewAsync()
+    {
+        List<v1Phone> phones = new List<v1Phone>() {
+            new v1Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", NorR = "", OEM = "", Status = ""},
+            new v1Phone() { Imei = "2" , AssetTag = "Tag Bb2", Model = "", NorR = "", OEM = "", Status = ""},
+            new v1Phone() {Imei = "3", AssetTag = "Tag Ccc3", Model = "", NorR = "", OEM = "", Status = ""}
+        };
+        PhonesMainViewModel vm = ViewModelMockSetup(phones);
+        await vm.LoadAsync();
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+        index = 0;
+        phones.Add(new v1Phone() { Imei = "4", AssetTag = "Tag ddd4", Model = "", NorR = "", OEM = "", Status = "" });
+
+        vm.RefreshPhonesCommand.Execute(null);
+
+        var actual = view.OfType<PhonesItemViewModel>().ToArray();
+        Assert.Equal(phones[3], actual[3].Phone);
+    }
+
+    [Fact]
     public async Task ChangingFilterAssetTag_ChangesFilterViewAsync()
     {
         List<v1Phone> phones = new List<v1Phone>() {
@@ -22,7 +44,7 @@ public sealed class PhonesMainViewModelTests
             new v1Phone() { Imei = "2" , AssetTag = "Tag Bb2", Model = "", NorR = "", OEM = "", Status = ""},
             new v1Phone() {Imei = "3", AssetTag = "Tag Ccc3", Model = "", NorR = "", OEM = "", Status = ""}
         };
-        PhonesMainViewModel vm = FilterSetup(phones);
+        PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
@@ -41,7 +63,7 @@ public sealed class PhonesMainViewModelTests
             new v1Phone() {Imei = "22", Model = "", NorR = "", OEM = "", Status = ""},
             new v1Phone() {Imei = "33", Model = "", NorR = "", OEM = "", Status = ""}
         };
-        PhonesMainViewModel vm = FilterSetup(phones);
+        PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
@@ -60,7 +82,7 @@ public sealed class PhonesMainViewModelTests
             new v1Phone() { Imei = "2", NorR="R", Model = "", OEM = "", Status = ""},
             new v1Phone() {Imei = "3", NorR = "N", Model = "", OEM = "", Status = ""}
         };
-        PhonesMainViewModel vm = FilterSetup(phones);
+        PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
@@ -79,7 +101,7 @@ public sealed class PhonesMainViewModelTests
             new v1Phone() {Imei = "2", NewUser = "User Bbb", Model = "", NorR = "", OEM = "", Status = ""},
             new v1Phone() {Imei = "3", NewUser = "User Ccc", Model = "", NorR = "", OEM = "", Status = ""}
         };
-        PhonesMainViewModel vm = FilterSetup(phones);
+        PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
@@ -98,7 +120,7 @@ public sealed class PhonesMainViewModelTests
             new v1Phone() { Imei = "2" , Notes = "Note2", Model = "", NorR = "", OEM = "", Status = ""},
             new v1Phone() {Imei = "3", Notes = "Note3", Model = "", NorR = "", OEM = "", Status = ""}
         };
-        PhonesMainViewModel vm = FilterSetup(phones);
+        PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
@@ -117,7 +139,7 @@ public sealed class PhonesMainViewModelTests
             new v1Phone() {Imei = "2", OEM = "Nokia", Model = "", NorR = "", Status = ""},
             new v1Phone() {Imei = "3", OEM = "Samsung", Model = "", NorR = "", Status = ""}
         };
-        PhonesMainViewModel vm = FilterSetup(phones);
+        PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
@@ -136,7 +158,7 @@ public sealed class PhonesMainViewModelTests
             new v1Phone() { Imei = "2", PhoneNumber="02", Model = "", NorR = "", OEM = "", Status = ""},
             new v1Phone() {Imei = "3", PhoneNumber = "03", Model = "", NorR = "", OEM = "", Status = ""}
         };
-        PhonesMainViewModel vm = FilterSetup(phones);
+        PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
@@ -155,7 +177,7 @@ public sealed class PhonesMainViewModelTests
             new v1Phone() { Imei = "2", SimNumber="202", Model = "", NorR = "", OEM = "", Status = ""},
             new v1Phone() {Imei = "3", SimNumber = "303", Model = "", NorR = "", OEM = "", Status = ""}
         };
-        PhonesMainViewModel vm = FilterSetup(phones);
+        PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
@@ -175,7 +197,7 @@ public sealed class PhonesMainViewModelTests
             new v1Phone() {Imei = "3", SR = 333, Model = "", NorR = "", OEM = "", Status = ""},
             new v1Phone() {Imei = "4", SR = 112233, Model = "", NorR = "", OEM = "", Status = ""}
         };
-        PhonesMainViewModel vm = FilterSetup(phones);
+        PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
@@ -195,7 +217,7 @@ public sealed class PhonesMainViewModelTests
             new v1Phone() { Imei = "2", Status="In Stock", Model = "", NorR = "", OEM = ""},
             new v1Phone() { Imei = "3", Status="In Repair", Model = "", NorR = "", OEM = ""}
         };
-        PhonesMainViewModel vm = FilterSetup(phones);
+        PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
@@ -206,23 +228,23 @@ public sealed class PhonesMainViewModelTests
         Assert.Equal(phones[1], actual[0].Phone);
     }
 
-    private PhonesMainViewModel FilterSetup(List<v1Phone> phones)
+    private int index = 0;
+    private PhonesMainViewModel ViewModelMockSetup(List<v1Phone> phones)
     {
         AutoMocker mocker = new AutoMocker();
 
         Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
         repository.Setup(r => r.GetPhonesAsync()).ReturnsAsync(phones);
         Mock<IPrintEnvelope> print = mocker.GetMock<IPrintEnvelope>();
-        var calls = 0;
         Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
         factory.Setup(r => r.Create(It.IsAny<v1Phone>()))
                             .Returns(() => {
                                 PhonesItemViewModel vm = new(repository.Object,print.Object);
-                                vm.Phone = phones[calls];
+                                vm.Phone = phones[index];
                                 return vm;
                                 }
                             )
-                            .Callback(() => calls++);
+                            .Callback(() => index++);
 
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
         return vm;

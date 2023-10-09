@@ -19,7 +19,9 @@ public sealed class SimsRepositoryTests
         await dbContext.Database.EnsureCreatedAsync();
         SimsRepository repository = new(dbContext);
 
-        await Assert.ThrowsAsync<ArgumentNullException>(() => repository.MoveSimToPhone(null,"ignored"));
+#pragma warning disable CS8625 // Possible null reference argument.
+        await Assert.ThrowsAsync<ArgumentNullException>(() => repository.MoveSimToPhone(null, "ignored"));
+#pragma warning restore CS8625 // Possible null reference argument.
     }
 
     [Fact]
@@ -46,9 +48,9 @@ public sealed class SimsRepositoryTests
         await Assert.ThrowsAsync<InvalidOperationException>(() => repository.MoveSimToPhone("sim1", "imei1"));
     }
 
-    [Fact]
-    public async Task MoveSimToPhone_WithFoundSimAndPhone_Succeeds()
-    {
+    //[Fact]
+    //public async Task MoveSimToPhone_WithFoundSimAndPhone_Succeeds()
+    //{
         //v1DbTestHelper helper = new();
         //using SqliteConnection connection = helper.CreateConnection();
         //using v1PhoneAssistantDbContext dbContext = new(helper.Options!);
@@ -68,5 +70,5 @@ public sealed class SimsRepositoryTests
         //Assert.Equal(sim.SimNumber, actualPhone.SimNumber);
         //v1Sim? actualSim = await dbContext.Sims.FindAsync(sim.PhoneNumber);
         //Assert.Null(actualSim);
-    }
+    //}
 }

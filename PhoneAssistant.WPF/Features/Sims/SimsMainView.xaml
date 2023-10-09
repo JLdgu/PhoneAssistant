@@ -18,6 +18,17 @@
 
         </Grid.RowDefinitions>
         <shared:HeaderMainView HeaderIcon="SimOutline" HeaderText="SIM Cards" />
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Button Margin="5,5"
+                    Command="{Binding RefreshSimsCommand}"
+                    Content="{materialDesign:PackIcon Kind=Refresh,
+                                                      Size=25}"
+                    IsEnabled="{Binding CanRefeshSims}"
+                    Style="{StaticResource MaterialDesignOutlinedLightButton}"
+                    ToolTip="Refresh" />
+        </StackPanel>
+
         <Grid Grid.Row="1"
               Margin="16,10,0,0"
               d:Background="LightCoral">

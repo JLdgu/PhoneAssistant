@@ -9,28 +9,70 @@ namespace PhoneAssistant.WPF.Features.Phones;
 
 public sealed partial class PhonesItemViewModel : ObservableObject
 {
+    private readonly v1Phone _phone;
+
     private readonly IPhonesRepository _repository;
     private readonly IPrintEnvelope _printEnvelope;
-    private v1Phone _phone;
 
-    public v1Phone Phone
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    public PhonesItemViewModel(IPhonesRepository repository, IPrintEnvelope printEnvelope, v1Phone phone)
     {
-        get { return _phone; }
-        set
-        {
-            _phone = value;
-            PhoneNumber = _phone.PhoneNumber ?? string.Empty;
-            SimNumber = _phone.SimNumber ?? string.Empty;
-            if (string.IsNullOrEmpty(PhoneNumber) || string.IsNullOrEmpty(SimNumber))
-                CanRemoveSim = false;
-            else
-                CanRemoveSim = true;
-            if (_phone.Status == "Production")
-                CanPrintEnvelope = true;
-            else
-                CanPrintEnvelope = false;
-        }
+    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
+
+        _phone = phone;
+        AssetTag = phone.AssetTag ?? string.Empty;
+        FormerUser = phone.FormerUser ?? string.Empty;
+        Imei = phone.Imei;
+        LastUpdate = phone.LastUpdate ?? string.Empty;
+        Model = phone.Model ?? string.Empty;
+        NewUser = phone.NewUser ?? string.Empty;
+        NorR = phone.NorR ?? string.Empty;
+        Notes = phone.Notes ?? string.Empty;
+        OEM = phone.OEM ?? string.Empty;
+        PhoneNumber = phone.PhoneNumber ?? string.Empty;
+        SimNumber = phone.SimNumber ?? string.Empty;
+        SR = phone.SR.ToString() ?? string.Empty;
+        Status = phone.Status ?? string.Empty;
+
+        if (string.IsNullOrEmpty(PhoneNumber) || string.IsNullOrEmpty(SimNumber))
+            CanRemoveSim = false;
+        else
+            CanRemoveSim = true;
+        if (_phone.Status == "Production")
+            CanPrintEnvelope = true;
+        else
+            CanPrintEnvelope = false;
     }
+
+    [ObservableProperty]
+    private string _assetTag;
+
+    [ObservableProperty]
+    private string _formerUser;
+
+    [ObservableProperty]
+    private string _imei;
+
+    [ObservableProperty]   
+    private string _lastUpdate;
+
+    [ObservableProperty]
+    private string _model;
+
+    [ObservableProperty]
+    private string _newUser;
+
+    [ObservableProperty]
+    private string _norR;
+
+    [ObservableProperty]
+    private string _notes;
+
+    [ObservableProperty]
+    private string _oEM;
 
     [ObservableProperty]
     private string _phoneNumber;
@@ -38,19 +80,17 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     [ObservableProperty]
     private string _simNumber;
 
-    public PhonesItemViewModel(IPhonesRepository repository, IPrintEnvelope printEnvelope)
-    {
-        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
-        
-        PhoneNumber = string.Empty;
-        SimNumber = string.Empty;
-    }
+    [ObservableProperty]
+    private string _sR;
+
+    [ObservableProperty]
+    private string _status;
+
 
     [RelayCommand]
     private void PrintEnvelope()
     {
-        _printEnvelope.Execute(Phone);
+        _printEnvelope.Execute(_phone);
         CanPrintEnvelope = false;
     }
 
@@ -61,7 +101,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     [RelayCommand]
     private void RemoveSim()
     {
-        _repository.RemoveSimFromPhone(Phone);
+        _repository.RemoveSimFromPhone(_phone);
         PhoneNumber = string.Empty;
         SimNumber = string.Empty;
         CanRemoveSim = false;

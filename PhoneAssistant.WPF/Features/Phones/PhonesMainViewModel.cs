@@ -156,72 +156,72 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     {
         if (item is not PhonesItemViewModel vm) return false;
 
-        v1Phone phone = vm.Phone;
+        //v1Phone phone = vm.Phone;
 
         if (FilterNorR is not null && FilterNorR.Length == 1)
-            if (phone.NorR is not null && !phone.NorR.StartsWith(FilterNorR, StringComparison.InvariantCultureIgnoreCase))
+            if (vm.NorR is not null && !vm.NorR.StartsWith(FilterNorR, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         if (FilterStatus is not null && FilterStatus.Length > 0)
-            if (phone.Status is not null && !phone.Status.Contains(FilterStatus,StringComparison.InvariantCultureIgnoreCase))
+            if (vm.Status is not null && !vm.Status.Contains(FilterStatus,StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         if (FilterSR is not null && FilterSR.Length > 0)
-            if (phone.SR is null)
+            if (vm.SR is null)
                 return false;
-            else if (!phone.SR.ToString()!.Contains(FilterSR))
+            else if (!vm.SR.ToString()!.Contains(FilterSR))
                 return false;        
 
         if (FilterImei is not null && FilterImei.Length > 0)
-            if (phone.Imei is not null && !phone.Imei.Contains(FilterImei))
+            if (vm.Imei is not null && !vm.Imei.Contains(FilterImei))
                 return false;
 
         if (FilterPhoneNumber is not null && FilterPhoneNumber.Length > 0)
-            if (phone.PhoneNumber is null)
+            if (vm.PhoneNumber is null)
                 return false;
-            else if (!phone.PhoneNumber.Contains(FilterPhoneNumber))
+            else if (!vm.PhoneNumber.Contains(FilterPhoneNumber))
                 return false;
 
         if (FilterSimNumber is not null && FilterSimNumber.Length > 0)
-            if (phone.SimNumber is null)
+            if (vm.SimNumber is null)
                 return false;
-            else if (!phone.SimNumber.Contains(FilterSimNumber))
+            else if (!vm.SimNumber.Contains(FilterSimNumber))
                 return false;
 
         if (FilterNewUser is not null && FilterNewUser.Length > 0)
-            if (phone.NewUser is null)
+            if (vm.NewUser is null)
                 return false;
-            else if (!phone.NewUser.Contains(FilterNewUser, StringComparison.InvariantCultureIgnoreCase))
+            else if (!vm.NewUser.Contains(FilterNewUser, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         if (FilterAssetTag is not null && FilterAssetTag.Length > 0)
-            if (phone.AssetTag is null)
+            if (vm.AssetTag is null)
                 return false;
-            else if (!phone.AssetTag.Contains(FilterAssetTag, StringComparison.InvariantCultureIgnoreCase))
+            else if (!vm.AssetTag.Contains(FilterAssetTag, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         if (FilterOEM is not null && FilterOEM.Length > 0)
-            if (phone.OEM is null)
+            if (vm.OEM is null)
                 return false;
-            else if (!phone.OEM.Contains(FilterOEM, StringComparison.InvariantCultureIgnoreCase))
+            else if (!vm.OEM.Contains(FilterOEM, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         if (FilterModel is not null && FilterModel.Length > 0)
-            if (phone.Model is null)
+            if (vm.Model is null)
                 return false;
-            else if (!phone.Model.Contains(FilterModel, StringComparison.InvariantCultureIgnoreCase))
+            else if (!vm.Model.Contains(FilterModel, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         if (FilterNotes is not null && FilterNotes.Length > 0)
-            if (phone.Notes is null)
+            if (vm.Notes is null)
                 return false;
-            else if (!phone.Notes.Contains(FilterNotes, StringComparison.InvariantCultureIgnoreCase))
+            else if (!vm.Notes.Contains(FilterNotes, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         if (FilterLastUpdate is not null && FilterLastUpdate.Length > 0)
-            if (phone.LastUpdate is null)
+            if (vm.LastUpdate is null)
                 return false;
-            else if (!phone.LastUpdate.Contains(FilterLastUpdate, StringComparison.InvariantCultureIgnoreCase))
+            else if (!vm.LastUpdate.Contains(FilterLastUpdate, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         return true;

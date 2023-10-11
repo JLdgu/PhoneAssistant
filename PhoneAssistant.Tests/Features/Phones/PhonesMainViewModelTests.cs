@@ -22,18 +22,18 @@ public sealed class PhonesMainViewModelTests
         List<v1Phone> phones = new List<v1Phone>() {
             new v1Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", NorR = "", OEM = "", Status = ""},
             new v1Phone() { Imei = "2" , AssetTag = "Tag Bb2", Model = "", NorR = "", OEM = "", Status = ""},
-            new v1Phone() {Imei = "3", AssetTag = "Tag Ccc3", Model = "", NorR = "", OEM = "", Status = ""}
+            new v1Phone() {Imei = "321", AssetTag = "Tag Ccc3", Model = "", NorR = "", OEM = "", Status = ""}
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
         index = 0;
-        phones.Add(new v1Phone() { Imei = "4", AssetTag = "Tag ddd4", Model = "", NorR = "", OEM = "", Status = "" });
+        phones.Add(new v1Phone() { Imei = "444", AssetTag = "Tag ddd4", Model = "", NorR = "", OEM = "", Status = "" });
 
         vm.RefreshPhonesCommand.Execute(null);
 
-        var actual = view.OfType<PhonesItemViewModel>().ToArray();
-        Assert.Equal(phones[3], actual[3].Phone);
+        PhonesItemViewModel[] actual = view.OfType<PhonesItemViewModel>().ToArray();
+        Assert.Equal(phones[3].Imei, actual[3].Imei);
     }
 
     [Fact]
@@ -50,9 +50,9 @@ public sealed class PhonesMainViewModelTests
 
         vm.FilterAssetTag = "B2";
 
-        var actual = view.OfType<PhonesItemViewModel>().ToArray();
+        PhonesItemViewModel[] actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(phones[1] , actual[0].Phone);
+        Assert.Equal(phones[1].AssetTag , actual[0].AssetTag);
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public sealed class PhonesMainViewModelTests
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(phones[1], actual[0].Phone);
+        Assert.Equal(phones[1].Imei, actual[0].Imei);
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public sealed class PhonesMainViewModelTests
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(phones[1], actual[0].Phone);
+        Assert.Equal(phones[1].NorR, actual[0].NorR);
     }
 
     [Fact]
@@ -109,13 +109,13 @@ public sealed class PhonesMainViewModelTests
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(phones[1], actual[0].Phone);
+        Assert.Equal(phones[1].NewUser, actual[0].NewUser);
     }
 
     [Fact]
     public async Task ChangingFilterNotes_ChangesFilterViewAsync()
     {
-        List<v1Phone> phones = new List<v1Phone>() { 
+        List<v1Phone> phones = new List<v1Phone>() {
             new v1Phone() { Imei = "1" , Notes = "Note1", Model = "", NorR = "", OEM = "", Status = ""},
             new v1Phone() { Imei = "2" , Notes = "Note2", Model = "", NorR = "", OEM = "", Status = ""},
             new v1Phone() {Imei = "3", Notes = "Note3", Model = "", NorR = "", OEM = "", Status = ""}
@@ -128,7 +128,7 @@ public sealed class PhonesMainViewModelTests
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(phones[1], actual[0].Phone);
+        Assert.Equal(phones[1].Notes, actual[0].Notes);
     }
 
     [Fact]
@@ -147,7 +147,7 @@ public sealed class PhonesMainViewModelTests
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(phones[1], actual[0].Phone);
+        Assert.Equal(phones[1].OEM, actual[0].OEM);
     }
 
     [Fact]
@@ -166,7 +166,7 @@ public sealed class PhonesMainViewModelTests
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(phones[1], actual[0].Phone);
+        Assert.Equal(phones[1].PhoneNumber, actual[0].PhoneNumber);
     }
 
     [Fact]
@@ -185,7 +185,7 @@ public sealed class PhonesMainViewModelTests
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(phones[1], actual[0].Phone);
+        Assert.Equal(phones[1].SimNumber, actual[0].SimNumber);
     }
 
     [Fact]
@@ -204,9 +204,9 @@ public sealed class PhonesMainViewModelTests
         vm.FilterSR = "22";
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
-        Assert.Equal(2,actual.Count());
-        Assert.Equal(phones[1], actual[0].Phone);
-        Assert.Equal(phones[3], actual[1].Phone);        
+        Assert.Equal(2, actual.Count());
+        Assert.Equal(phones[1].SR.ToString(), actual[0].SR);
+        Assert.Equal(phones[3].SR.ToString(), actual[1].SR);
     }
 
     [Fact]
@@ -225,7 +225,7 @@ public sealed class PhonesMainViewModelTests
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(phones[1], actual[0].Phone);
+        Assert.Equal(phones[1].Status, actual[0].Status);
     }
 
     private int index = 0;
@@ -239,9 +239,7 @@ public sealed class PhonesMainViewModelTests
         Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
         factory.Setup(r => r.Create(It.IsAny<v1Phone>()))
                             .Returns(() => {
-                                PhonesItemViewModel vm = new(repository.Object,print.Object);
-                                vm.Phone = phones[index];
-                                return vm;
+                                return new PhonesItemViewModel(repository.Object, print.Object, phones[index]);
                                 }
                             )
                             .Callback(() => index++);

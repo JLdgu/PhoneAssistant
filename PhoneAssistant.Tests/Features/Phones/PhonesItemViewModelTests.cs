@@ -19,33 +19,45 @@ public sealed class PhonesItemViewModelTests
     [InlineData(null, null, false, "Production", true)]
     private void PhonePropertySet_SetsBoundProperties(string? phoneNumber, string? simNumber, bool canRemoveSim, string status, bool canPrintEnvelope)
     {
-        AutoMocker mocker = new AutoMocker();
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
         v1Phone phone = new()
         {
-            Imei = "imei",
             PhoneNumber = phoneNumber,
             SimNumber = simNumber,
+            Status = status,
+            AssetTag = "at",
+            FormerUser = "fu",
+            Imei = "imei",
             Model = "model",
+            NewUser = "nu",
             NorR = "norr",
+            Notes = "note",
             OEM = "oem",
-            Status = status
+            SR = 123456
         };
+        AutoMocker mocker = new AutoMocker();
+        mocker.Use(phone);
+        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
 
-        vm.Phone = phone;
-
+        Assert.Equal(phone.AssetTag, vm.AssetTag);
+        Assert.Equal(phone.FormerUser, vm.FormerUser);
+        Assert.Equal(phone.Imei, vm.Imei);
+        Assert.Equal(phone.Model, vm.Model);
+        Assert.Equal(phone.NewUser, vm.NewUser);
+        Assert.Equal(phone.NorR, vm.NorR);
+        Assert.Equal(phone.Notes, vm.Notes);
+        Assert.Equal(phone.OEM, vm.OEM);
         Assert.Equal(phone.PhoneNumber ?? string.Empty, vm.PhoneNumber);
         Assert.Equal(phone.SimNumber ?? string.Empty, vm.SimNumber);
+        Assert.Equal(phone.SR.ToString(), vm.SR);
+        Assert.Equal(phone.Status, vm.Status);
         Assert.Equal(canRemoveSim, vm.CanRemoveSim);
         Assert.Equal(canPrintEnvelope, vm.CanPrintEnvelope);
     }
+
     #region RemoveSim
     [Fact]
     private void RemoveSim_CallsRepository_RemoveSimFromPhone()
     {
-        AutoMocker mocker = new AutoMocker();
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
-        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
         v1Phone phone = new()
         {
             Imei = "imei",
@@ -56,8 +68,11 @@ public sealed class PhonesItemViewModelTests
             OEM = "oem",
             Status = "status"
         };
+        AutoMocker mocker = new AutoMocker();
+        mocker.Use(phone);
+        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
+        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
 
-        vm.Phone = phone;
         vm.RemoveSimCommand.Execute(null);
 
         repository.Verify(r => r.RemoveSimFromPhone(phone),Times.Once);        
@@ -66,8 +81,6 @@ public sealed class PhonesItemViewModelTests
     [Fact]
     private void RemoveSim_ClearsBoundProperties()
     {
-        AutoMocker mocker = new AutoMocker();
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
         v1Phone phone = new()
         {
             Imei = "imei",
@@ -78,8 +91,10 @@ public sealed class PhonesItemViewModelTests
             OEM = "oem",
             Status = "status"
         };
+        AutoMocker mocker = new AutoMocker();
+        mocker.Use(phone);
+        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
 
-        vm.Phone = phone;
         vm.RemoveSimCommand.Execute(null);
 
         Assert.Equal(string.Empty, vm.PhoneNumber);
@@ -89,8 +104,6 @@ public sealed class PhonesItemViewModelTests
     [Fact]
     private void RemoveSim_SetsCanRemoveSim_False()
     {
-        AutoMocker mocker = new AutoMocker();
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
         v1Phone phone = new()
         {
             Imei = "imei",
@@ -101,8 +114,10 @@ public sealed class PhonesItemViewModelTests
             OEM = "oem",
             Status = "status"
         };
+        AutoMocker mocker = new AutoMocker();
+        mocker.Use(phone);
+        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
 
-        vm.Phone = phone;
         vm.RemoveSimCommand.Execute(null);
 
         Assert.False(vm.CanRemoveSim);
@@ -112,9 +127,6 @@ public sealed class PhonesItemViewModelTests
     [Fact]
     private void PrintEnvelopeCommand_CallsPrintEnvelope_Execute()
     {
-        AutoMocker mocker = new AutoMocker();
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
-        Mock<IPrintEnvelope> repository = mocker.GetMock<IPrintEnvelope>();
         v1Phone phone = new()
         {
             Imei = "imei",
@@ -125,8 +137,11 @@ public sealed class PhonesItemViewModelTests
             OEM = "oem",
             Status = "status"
         };
+        AutoMocker mocker = new AutoMocker();
+        mocker.Use(phone);
+        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
+        Mock<IPrintEnvelope> repository = mocker.GetMock<IPrintEnvelope>();
 
-        vm.Phone = phone;
         vm.PrintEnvelopeCommand.Execute(null);
 
         repository.Verify(p => p.Execute(phone), Times.Once);
@@ -135,8 +150,6 @@ public sealed class PhonesItemViewModelTests
     [Fact]
     private void PrintEnvelope_SetsCanPrintEnvelope_False()
     {
-        AutoMocker mocker = new AutoMocker();
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
         v1Phone phone = new()
         {
             Imei = "imei",
@@ -147,8 +160,10 @@ public sealed class PhonesItemViewModelTests
             OEM = "oem",
             Status = "Production"
         };
+        AutoMocker mocker = new AutoMocker();
+        mocker.Use(phone);
+        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
 
-        vm.Phone = phone;
         vm.PrintEnvelopeCommand.Execute(null);
 
         Assert.False(vm.CanPrintEnvelope);

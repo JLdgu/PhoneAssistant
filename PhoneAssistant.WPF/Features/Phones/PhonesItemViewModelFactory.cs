@@ -12,10 +12,5 @@ public sealed class PhonesItemViewModelFactory : IPhonesItemViewModelFactory
         _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
     }
 
-    public PhonesItemViewModel Create(v1Phone phone)
-    {
-        PhonesItemViewModel vm = new(_repository, _printEnvelope);
-        vm.Phone = phone;
-        return vm;
-    }
+    public PhonesItemViewModel Create(v1Phone phone) => new PhonesItemViewModel(_repository, _printEnvelope, phone);
 }

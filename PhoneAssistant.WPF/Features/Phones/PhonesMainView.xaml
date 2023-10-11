@@ -151,11 +151,11 @@
                 <DataGridTextColumn x:Name="gridNorR"
                                     Width="auto"
                                     MinWidth="45"
-                                    Binding="{Binding Phone.NorR}"
+                                    Binding="{Binding NorR}"
                                     Header="Age" />
                 <DataGridTextColumn x:Name="gridStatus"
                                     Width="auto"
-                                    Binding="{Binding Phone.Status}"
+                                    Binding="{Binding Status}"
                                     Header="Status" />
                 <DataGridTemplateColumn x:Name="gridPrintEnvelope" CanUserSort="False">
                     <DataGridTemplateColumn.CellStyle>
@@ -179,11 +179,11 @@
                 </DataGridTemplateColumn>
                 <DataGridTextColumn x:Name="gridSR"
                                     Width="auto"
-                                    Binding="{Binding Phone.SR}"
+                                    Binding="{Binding SR}"
                                     Header="SR" />
                 <DataGridTextColumn x:Name="gridImei"
                                     Width="auto"
-                                    Binding="{Binding Phone.Imei}"
+                                    Binding="{Binding Imei}"
                                     Header="IMEI" />
                 <DataGridTextColumn x:Name="gridPhoneNumber"
                                     Width="auto"
@@ -216,30 +216,30 @@
                                     Header="SIM Number" />
                 <DataGridTextColumn x:Name="gridNewUser"
                                     Width="auto"
-                                    Binding="{Binding Phone.NewUser}"
+                                    Binding="{Binding NewUser}"
                                     Header="New User" />
                 <DataGridTextColumn x:Name="gridAssetTag"
                                     Width="auto"
                                     MinWidth="75"
-                                    Binding="{Binding Phone.AssetTag}"
+                                    Binding="{Binding AssetTag}"
                                     Header="Asset Tag" />
                 <DataGridTextColumn x:Name="gridOEM"
                                     Width="auto"
-                                    Binding="{Binding Phone.OEM}"
+                                    Binding="{Binding OEM}"
                                     Header="OEM" />
                 <DataGridTextColumn x:Name="gridModel"
                                     Width="auto"
                                     MinWidth="60"
-                                    Binding="{Binding Phone.Model}"
+                                    Binding="{Binding Model}"
                                     Header="Model" />
                 <DataGridTextColumn x:Name="gridNotes"
                                     Width="auto"
                                     MaxWidth="400"
-                                    Binding="{Binding Phone.Notes}"
+                                    Binding="{Binding Notes}"
                                     Header="Notes" />
                 <DataGridTextColumn x:Name="gridLastUpdate"
                                     Width="auto"
-                                    Binding="{Binding Phone.LastUpdate}"
+                                    Binding="{Binding LastUpdate}"
                                     Header="Last Update" />
             </DataGrid.Columns>
         </DataGrid>

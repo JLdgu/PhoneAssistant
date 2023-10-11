@@ -28,7 +28,7 @@ public sealed class SimsMainViewModelTests
         vm.RefreshSimsCommand.Execute(null);
 
         var actual = view.OfType<SimsItemViewModel>().ToArray();
-        Assert.Equal(sims[3], actual[3].Sim);
+        Assert.Equal(sims[3].PhoneNumber, actual[3].PhoneNumber);
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public sealed class SimsMainViewModelTests
 
         var actual = view.OfType<SimsItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(sims[1], actual[0].Sim);
+        Assert.Equal(sims[1].AssetTag, actual[0].AssetTag);
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public sealed class SimsMainViewModelTests
 
         var actual = view.OfType<SimsItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(sims[1], actual[0].Sim);
+        Assert.Equal(sims[1].Notes, actual[0].Notes);
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public sealed class SimsMainViewModelTests
 
         var actual = view.OfType<SimsItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(sims[1], actual[0].Sim);
+        Assert.Equal(sims[1].PhoneNumber, actual[0].PhoneNumber);
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public sealed class SimsMainViewModelTests
 
         var actual = view.OfType<SimsItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(sims[1], actual[0].Sim);
+        Assert.Equal(sims[1].SimNumber, actual[0].SimNumber);
     }
 
     [Fact]
@@ -133,7 +133,7 @@ public sealed class SimsMainViewModelTests
 
         var actual = view.OfType<SimsItemViewModel>().ToArray();
         Assert.Single(actual);
-        Assert.Equal(sims[1], actual[0].Sim);
+        Assert.Equal(sims[1].Status, actual[0].Status);
     }
 
     private int index = 0;
@@ -146,9 +146,7 @@ public sealed class SimsMainViewModelTests
         Mock<ISimsItemViewModelFactory> factory = mocker.GetMock<ISimsItemViewModelFactory>();
         factory.Setup(r => r.Create(It.IsAny<v1Sim>()))
                             .Returns(() => {
-                                SimsItemViewModel vm = new(repository.Object);
-                                vm.Sim = sims[index];
-                                return vm;
+                                return new SimsItemViewModel(repository.Object, sims[index]);                                
                             }
                             )
                             .Callback(() => index++);

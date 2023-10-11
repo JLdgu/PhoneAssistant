@@ -46,42 +46,40 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
     {
         if (item is not SimsItemViewModel vm) return false;
 
-        v1Sim sim = vm.Sim;
-
         if (FilterPhoneNumber is not null && FilterPhoneNumber.Length > 0)
-            if (sim.PhoneNumber is null)
+            if (vm.PhoneNumber is null)
                 return false;
-            else if (!sim.PhoneNumber.Contains(FilterPhoneNumber))
+            else if (!vm.PhoneNumber.Contains(FilterPhoneNumber))
                 return false;
 
         if (FilterSimNumber is not null && FilterSimNumber.Length > 0)
-            if (sim.SimNumber is null)
+            if (vm.SimNumber is null)
                 return false;
-            else if (!sim.SimNumber.Contains(FilterSimNumber))
+            else if (!vm.SimNumber.Contains(FilterSimNumber))
                 return false;
 
         if (FilterStatus is not null && FilterStatus.Length > 0)
-            if (sim.Status is null)
+            if (vm.Status is null)
                 return false;
-            else if (!sim.Status.Contains(FilterStatus, StringComparison.InvariantCultureIgnoreCase))
+            else if (!vm.Status.Contains(FilterStatus, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         if (FilterAssetTag is not null && FilterAssetTag.Length > 0)
-            if (sim.AssetTag is null)
+            if (vm.AssetTag is null)
                 return false;
-            else if (!sim.AssetTag.Contains(FilterAssetTag, StringComparison.InvariantCultureIgnoreCase))
+            else if (!vm.AssetTag.Contains(FilterAssetTag, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         if (FilterNotes is not null && FilterNotes.Length > 0)
-            if (sim.Notes is null)
+            if (vm.Notes is null)
                 return false;
-            else if (!sim.Notes.Contains(FilterNotes, StringComparison.InvariantCultureIgnoreCase))
+            else if (!vm.Notes.Contains(FilterNotes, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         if (FilterLastUpdate is not null && FilterLastUpdate.Length > 0)
-            if (sim.LastUpdate is null)
+            if (vm.LastUpdate is null)
                 return false;
-            else if (!sim.LastUpdate.Contains(FilterLastUpdate, StringComparison.InvariantCultureIgnoreCase))
+            else if (!vm.LastUpdate.Contains(FilterLastUpdate, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         return true;

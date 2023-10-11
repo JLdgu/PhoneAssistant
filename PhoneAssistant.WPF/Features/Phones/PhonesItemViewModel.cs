@@ -9,20 +9,18 @@ namespace PhoneAssistant.WPF.Features.Phones;
 
 public sealed partial class PhonesItemViewModel : ObservableObject
 {
-    private readonly v1Phone _phone;
-
     private readonly IPhonesRepository _repository;
     private readonly IPrintEnvelope _printEnvelope;
-
+    private readonly v1Phone _phone;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public PhonesItemViewModel(IPhonesRepository repository, IPrintEnvelope printEnvelope, v1Phone phone)
     {
-    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
+        _phone = phone ?? throw new ArgumentNullException(nameof(phone));
 
-        _phone = phone;
         AssetTag = phone.AssetTag ?? string.Empty;
         FormerUser = phone.FormerUser ?? string.Empty;
         Imei = phone.Imei;

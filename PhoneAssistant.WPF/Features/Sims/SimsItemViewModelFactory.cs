@@ -11,10 +11,5 @@ public sealed class SimsItemViewModelFactory : ISimsItemViewModelFactory
         _simsRepository = simsRepository ?? throw new ArgumentNullException(nameof(simsRepository));
     }
 
-    public SimsItemViewModel Create(v1Sim sim)
-    {
-        SimsItemViewModel vm = new(_simsRepository);
-        vm.Sim = sim;
-        return vm;
-    }
+    public SimsItemViewModel Create(v1Sim sim) => new SimsItemViewModel(_simsRepository,sim);    
 }

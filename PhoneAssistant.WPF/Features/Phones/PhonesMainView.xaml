@@ -6,7 +6,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
              xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.Phones"
-             MaxHeight="1080"
+             MaxHeight="1000"
              d:DataContext="{d:DesignInstance Type=viewmodel:PhonesMainViewModel}"
              d:DesignHeight="200"
              d:DesignWidth="900"
@@ -141,17 +141,22 @@
                   materialDesign:DataGridAssist.ColumnHeaderPadding="4 5 2 5"
                   AlternatingRowBackground="{DynamicResource MaterialDesignChipBackground}"
                   AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
                   HeadersVisibility="Column"
                   IsReadOnly="False"
                   ItemsSource="{Binding PhoneItems}"
                   MouseDown="PhonesGrid_MouseDown"
                   SelectedItem="{Binding SelectedPhone}">
+            <DataGrid.Resources>
+                <viewmodel:NorRConverter x:Key="NorRConverter" />
+            </DataGrid.Resources>
 
             <DataGrid.Columns>
                 <DataGridTextColumn x:Name="gridNorR"
                                     Width="auto"
                                     MinWidth="45"
-                                    Binding="{Binding NorR}"
+                                    Binding="{Binding NorR, Converter={StaticResource NorRConverter}}"
                                     Header="Age" />
                 <DataGridTextColumn x:Name="gridStatus"
                                     Width="auto"

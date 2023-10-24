@@ -23,6 +23,61 @@ public sealed class PhonesRepository : IPhonesRepository
         return phones;
     }
 
+    public async Task UpdateAsync(v1Phone phone)
+    {
+        if (phone is null)
+        {
+            throw new ArgumentNullException(nameof(phone));
+        }
+        v1Phone? dbPhone = await _dbContext.Phones.FindAsync(phone.Imei);
+        if (dbPhone is null)
+        {
+            throw new ArgumentException($"IMEI {phone.Imei} not found.");
+        }
+        dbPhone.AssetTag = phone.AssetTag;
+        dbPhone.FormerUser = phone.FormerUser;
+        dbPhone.Imei = phone.Imei;
+        dbPhone.Model = phone.Model;
+        dbPhone.NewUser = phone.NewUser;
+        dbPhone.NorR = phone.NorR;
+        dbPhone.Notes = phone.Notes;
+        dbPhone.OEM = phone.OEM;
+        dbPhone.PhoneNumber = phone.PhoneNumber;
+        dbPhone.SimNumber = phone.SimNumber;
+        dbPhone.SR = phone.SR;
+        dbPhone.Status = phone.Status;
+
+        _dbContext.Phones.Update(dbPhone);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task UpdateKeyAsync(string oldImei, string newImei)
+    {
+        if (oldImei is null)
+        {
+            throw new ArgumentNullException(nameof(oldImei));
+        }
+
+        if (newImei is null)
+        {
+            throw new ArgumentNullException(nameof(newImei));
+        }
+
+        v1Phone? phone = await _dbContext.Phones.FindAsync(oldImei);
+        if (phone is null)
+        {
+            throw new ArgumentException($"IMEI {oldImei} not found.");
+        }
+
+        _dbContext.Phones.Remove(phone);
+        await _dbContext.SaveChangesAsync();
+
+        phone.Imei = newImei;
+
+        _dbContext.Phones.Add(phone);
+        await _dbContext.SaveChangesAsync();
+    }
+
     public async Task RemoveSimFromPhone(v1Phone phone)
     {
         if (phone is null)
@@ -53,6 +108,7 @@ public sealed class PhonesRepository : IPhonesRepository
         _dbContext.Sims.Add(sim);
         dbPhone.PhoneNumber = null;
         dbPhone.SimNumber = null;
+        dbPhone.NorR = "N";
         _dbContext.Phones.Update(dbPhone);
         await _dbContext.SaveChangesAsync();
     }

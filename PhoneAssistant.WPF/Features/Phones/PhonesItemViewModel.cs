@@ -48,6 +48,15 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     [ObservableProperty]
     private string _assetTag;
 
+    partial void OnAssetTagChanged(string value)
+    {
+        if ((value != _phone.AssetTag) || ((_phone.AssetTag is null) && !string.IsNullOrEmpty(value)))
+        {
+            _phone.AssetTag = value;
+            _repository.UpdateAsync(_phone);
+        }
+    }
+
     [ObservableProperty]
     private string _formerUser;
 
@@ -83,7 +92,6 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 
     [ObservableProperty]
     private string _status;
-
 
     [RelayCommand]
     private void PrintEnvelope()

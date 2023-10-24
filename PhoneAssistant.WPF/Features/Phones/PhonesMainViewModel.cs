@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Data;
 
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -44,6 +45,79 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     private bool canRefeshPhones;
 
     #region Filtering View
+    public bool FilterView(object item)
+    {
+        if (item is not PhonesItemViewModel vm) return false;
+
+        if (FilterNorR is not null && FilterNorR.Length == 1)
+            if (vm.NorR is not null && !vm.NorR.StartsWith(FilterNorR, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterStatus is not null && FilterStatus.Length > 0)
+            if (vm.Status is not null && !vm.Status.Contains(FilterStatus, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterSR is not null && FilterSR.Length > 0)
+            if (vm.SR is null)
+                return false;
+            else if (!vm.SR.ToString()!.Contains(FilterSR))
+                return false;
+
+        if (FilterImei is not null && FilterImei.Length > 0)
+            if (vm.Imei is not null && !vm.Imei.Contains(FilterImei))
+                return false;
+
+        if (FilterPhoneNumber is not null && FilterPhoneNumber.Length > 0)
+            if (vm.PhoneNumber is null)
+                return false;
+            else if (!vm.PhoneNumber.Contains(FilterPhoneNumber))
+                return false;
+
+        if (FilterSimNumber is not null && FilterSimNumber.Length > 0)
+            if (vm.SimNumber is null)
+                return false;
+            else if (!vm.SimNumber.Contains(FilterSimNumber))
+                return false;
+
+        if (FilterNewUser is not null && FilterNewUser.Length > 0)
+            if (vm.NewUser is null)
+                return false;
+            else if (!vm.NewUser.Contains(FilterNewUser, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterAssetTag is not null && FilterAssetTag.Length > 0)
+            if (vm.AssetTag is null)
+                return false;
+            else if (!vm.AssetTag.Contains(FilterAssetTag, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterOEM is not null && FilterOEM.Length > 0)
+            if (vm.OEM is null)
+                return false;
+            else if (!vm.OEM.Contains(FilterOEM, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterModel is not null && FilterModel.Length > 0)
+            if (vm.Model is null)
+                return false;
+            else if (!vm.Model.Contains(FilterModel, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterNotes is not null && FilterNotes.Length > 0)
+            if (vm.Notes is null)
+                return false;
+            else if (!vm.Notes.Contains(FilterNotes, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterLastUpdate is not null && FilterLastUpdate.Length > 0)
+            if (vm.LastUpdate is null)
+                return false;
+            else if (!vm.LastUpdate.Contains(FilterLastUpdate, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        return true;
+    }
+
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
     private string? filterNorR;
@@ -151,81 +225,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     {
         _filterView.Refresh();
     }
-
-    public bool FilterView(object item)
-    {
-        if (item is not PhonesItemViewModel vm) return false;
-
-        //v1Phone phone = vm.Phone;
-
-        if (FilterNorR is not null && FilterNorR.Length == 1)
-            if (vm.NorR is not null && !vm.NorR.StartsWith(FilterNorR, StringComparison.InvariantCultureIgnoreCase))
-                return false;
-
-        if (FilterStatus is not null && FilterStatus.Length > 0)
-            if (vm.Status is not null && !vm.Status.Contains(FilterStatus,StringComparison.InvariantCultureIgnoreCase))
-                return false;
-
-        if (FilterSR is not null && FilterSR.Length > 0)
-            if (vm.SR is null)
-                return false;
-            else if (!vm.SR.ToString()!.Contains(FilterSR))
-                return false;        
-
-        if (FilterImei is not null && FilterImei.Length > 0)
-            if (vm.Imei is not null && !vm.Imei.Contains(FilterImei))
-                return false;
-
-        if (FilterPhoneNumber is not null && FilterPhoneNumber.Length > 0)
-            if (vm.PhoneNumber is null)
-                return false;
-            else if (!vm.PhoneNumber.Contains(FilterPhoneNumber))
-                return false;
-
-        if (FilterSimNumber is not null && FilterSimNumber.Length > 0)
-            if (vm.SimNumber is null)
-                return false;
-            else if (!vm.SimNumber.Contains(FilterSimNumber))
-                return false;
-
-        if (FilterNewUser is not null && FilterNewUser.Length > 0)
-            if (vm.NewUser is null)
-                return false;
-            else if (!vm.NewUser.Contains(FilterNewUser, StringComparison.InvariantCultureIgnoreCase))
-                return false;
-
-        if (FilterAssetTag is not null && FilterAssetTag.Length > 0)
-            if (vm.AssetTag is null)
-                return false;
-            else if (!vm.AssetTag.Contains(FilterAssetTag, StringComparison.InvariantCultureIgnoreCase))
-                return false;
-
-        if (FilterOEM is not null && FilterOEM.Length > 0)
-            if (vm.OEM is null)
-                return false;
-            else if (!vm.OEM.Contains(FilterOEM, StringComparison.InvariantCultureIgnoreCase))
-                return false;
-
-        if (FilterModel is not null && FilterModel.Length > 0)
-            if (vm.Model is null)
-                return false;
-            else if (!vm.Model.Contains(FilterModel, StringComparison.InvariantCultureIgnoreCase))
-                return false;
-
-        if (FilterNotes is not null && FilterNotes.Length > 0)
-            if (vm.Notes is null)
-                return false;
-            else if (!vm.Notes.Contains(FilterNotes, StringComparison.InvariantCultureIgnoreCase))
-                return false;
-
-        if (FilterLastUpdate is not null && FilterLastUpdate.Length > 0)
-            if (vm.LastUpdate is null)
-                return false;
-            else if (!vm.LastUpdate.Contains(FilterLastUpdate, StringComparison.InvariantCultureIgnoreCase))
-                return false;
-
-        return true;
-    }
     #endregion
 
     [ObservableProperty]
@@ -238,10 +237,10 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
         foreach (v1Phone phone in phones) 
         {
-            if (phone.NorR == "N")
-                phone.NorR = "New";
-            else
-                phone.NorR = "Repurposed";
+            //if (phone.NorR == "N")
+            //    phone.NorR = "New";
+            //else
+            //    phone.NorR = "Repurposed";
             PhoneItems.Add(_phonesItemViewModelFactory.Create(phone));
         }
     }

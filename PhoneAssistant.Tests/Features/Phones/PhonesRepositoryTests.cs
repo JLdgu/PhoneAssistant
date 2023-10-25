@@ -121,7 +121,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         await helper.DbContext.Phones.AddAsync(phone);
         await helper.DbContext.SaveChangesAsync();
 
-        await repository.RemoveSimFromPhone(phone);
+        string lastUpdate = await repository.RemoveSimFromPhone(phone);
 
         v1Sim? sim = await helper.DbContext.Sims.FindAsync(PHONE_NUMBER);
         Assert.NotNull(sim);
@@ -133,6 +133,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Assert.NotNull(phone);
         Assert.Null(phone.PhoneNumber);
         Assert.Null(phone.SimNumber);
+        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", lastUpdate);
     }
 
     [Fact]
@@ -192,7 +193,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
             Status = "status2"
         };
 
-        await repository.UpdateAsync(expected);
+        string lastUpdate = await repository.UpdateAsync(expected);
 
         v1Phone? actual = await helper.DbContext.Phones.FindAsync("imei");
         Assert.NotNull(actual);                
@@ -208,6 +209,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Assert.Equal(expected.SimNumber, actual.SimNumber);
         Assert.Equal(expected.SR, actual.SR);
         Assert.Equal(expected.Status, actual.Status);
+        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", lastUpdate);
     }
 
     [Fact]
@@ -269,71 +271,13 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         await helper.DbContext.SaveChangesAsync();
         const string NEW_IMEI = "new IMEI";
 
-        await repository.UpdateKeyAsync(phone.Imei,NEW_IMEI);
+        string lastUpdate = await repository.UpdateKeyAsync(phone.Imei, NEW_IMEI);
 
         v1Phone? removed = await helper.DbContext.Phones.FindAsync(OLD_IMEI);
         Assert.Null(removed);
         v1Phone? actual = await helper.DbContext.Phones.FindAsync(NEW_IMEI);
         Assert.NotNull(actual);
         Assert.Equal(NEW_IMEI, actual.Imei);
+        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", lastUpdate);
     }
-
-    #region Search
-    //[TestMethod]
-    //public async Task SearchAsync_ReturnsEmptyList_WhenIMEINotFound()
-    //{
-    //    DbTestHelper helper = new();
-    //    using SqliteConnection connection = helper.CreateConnection();
-    //    using PhoneAssistantDbContext dbContext = new(helper.Options!);
-    //    dbContext.Database.EnsureCreated();
-
-    //    Phone[] testdata = new Phone[]
-    //    {
-    //        new Phone() {Id = 1, Imei = "353427866717729", FormerUser = "Rehana Kausar", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null  },
-    //        new Phone() {Id = 2, Imei = "355808981132845", FormerUser = null, Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00017", Note = "Replacement"},
-    //        new Phone() {Id = 3, Imei = "355808983976082", FormerUser = "Charlie Baker", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
-    //        new Phone() {Id = 4, Imei = "355808981101899", FormerUser = "Olatunji Okedeyi", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
-    //        new Phone() {Id = 5, Imei = "353427861419768", FormerUser = "James Tisshaw", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
-    //        new Phone() {Id = 6, Imei = "351554742085336", FormerUser = "Unknown", Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00016", Note = "Replacement"}
-    //    };
-    //    dbContext.Phones.AddRange(testdata);
-    //    dbContext.SaveChanges();
-
-    //    var repository = new PhonesRepository(dbContext);
-
-    //    // Act
-    //    var actual = await repository.SearchAsync("not found");
-
-    //    // Assert
-    //    Assert.AreEqual(0, actual.Count());
-    //}
-
-    //[TestMethod]
-    //public async Task SearchAsync_ReturnsList_WhenSearchTermFound()
-    //{
-    //    DbTestHelper helper = new();
-    //    using SqliteConnection connection = helper.CreateConnection();
-    //    using PhoneAssistantDbContext dbContext = new(helper.Options!);
-    //    dbContext.Database.EnsureCreated();
-
-    //    Phone[] testdata = new Phone[]
-    //    {
-    //        new Phone() {Id = 1, Imei = "353427866717729", FormerUser = "Rehana Kausar", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null  },
-    //        new Phone() {Id = 2, Imei = "355808981132845", FormerUser = null, Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00729", Note = "Replacement"},
-    //        new Phone() {Id = 3, Imei = "355808983976082", FormerUser = "Charlie Baker", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
-    //        new Phone() {Id = 4, Imei = "355808981101899", FormerUser = "Olatunji Okedeyi", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
-    //        new Phone() {Id = 5, Imei = "353427861419768", FormerUser = "James Tisshaw", Wiped = false, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null},
-    //        new Phone() {Id = 6, Imei = "351554742085336", FormerUser = "Unknown", Wiped = true, Status = "Production", OEM = "Samsung", AssetTag = "MP00768", Note = "Replacement"}
-    //    };
-    //    dbContext.Phones.AddRange(testdata);
-    //    dbContext.SaveChanges();
-
-    //    var repository = new PhonesRepository(dbContext);
-
-    //    var actual = await repository.SearchAsync("729");
-
-    //    var actualPhone = actual.First();
-    //    Assert.AreEqual(2, actual.Count());
-    //}
 }
-#endregion

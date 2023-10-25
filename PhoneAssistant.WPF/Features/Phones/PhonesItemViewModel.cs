@@ -50,11 +50,13 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 
     partial void OnAssetTagChanged(string value)
     {
-        if ((value != _phone.AssetTag) || ((_phone.AssetTag is null) && !string.IsNullOrEmpty(value)))
-        {
-            _phone.AssetTag = value;
-            _repository.UpdateAsync(_phone);
-        }
+        if (value == _phone.AssetTag) return;
+
+        if (string.IsNullOrEmpty(value) && _phone.AssetTag is null) return;
+
+        _phone.AssetTag = value;
+        var lastUpdate = _repository.UpdateAsync(_phone);
+        LastUpdate = lastUpdate.Result;
     }
 
     [ObservableProperty]
@@ -93,6 +95,11 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     [ObservableProperty]
     private string _status;
 
+    partial void OnStatusChanged(string value)
+    {
+        
+    }
+
     [RelayCommand]
     private void PrintEnvelope()
     {
@@ -105,12 +112,23 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     private bool canPrintEnvelope;
 
     [RelayCommand]
-    private void RemoveSim()
+    private async Task RemoveSimAsync()
     {
-        _repository.RemoveSimFromPhone(_phone);
+        string lastUpdate = await _repository.RemoveSimFromPhone(_phone);
         PhoneNumber = string.Empty;
         SimNumber = string.Empty;
         CanRemoveSim = false;
+        LastUpdate = lastUpdate;
+        FormerUser = string.Empty;
+
+        //AssetTag = string.Empty;
+        //FormerUser = string.Empty;
+        //Model = string.Empty;
+        //NewUser = string.Empty;
+        //Notes = string.Empty;
+        //OEM = string.Empty;
+        //SR = string.Empty;
+        //Status = string.Empty;
     }
 
     [ObservableProperty]

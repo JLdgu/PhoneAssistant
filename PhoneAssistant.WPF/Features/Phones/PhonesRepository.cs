@@ -23,7 +23,7 @@ public sealed class PhonesRepository : IPhonesRepository
         return phones;
     }
 
-    public async Task UpdateAsync(v1Phone phone)
+    public async Task<string> UpdateAsync(v1Phone phone)
     {
         if (phone is null)
         {
@@ -49,9 +49,12 @@ public sealed class PhonesRepository : IPhonesRepository
 
         _dbContext.Phones.Update(dbPhone);
         await _dbContext.SaveChangesAsync();
+
+        v1Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
+        return updatedPhone.LastUpdate;
     }
 
-    public async Task UpdateKeyAsync(string oldImei, string newImei)
+    public async Task<string> UpdateKeyAsync(string oldImei, string newImei)
     {
         if (oldImei is null)
         {
@@ -76,9 +79,12 @@ public sealed class PhonesRepository : IPhonesRepository
 
         _dbContext.Phones.Add(phone);
         await _dbContext.SaveChangesAsync();
+
+        v1Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
+        return updatedPhone.LastUpdate;        
     }
 
-    public async Task RemoveSimFromPhone(v1Phone phone)
+    public async Task<string> RemoveSimFromPhone(v1Phone phone)
     {
         if (phone is null)
         {
@@ -111,29 +117,8 @@ public sealed class PhonesRepository : IPhonesRepository
         dbPhone.NorR = "N";
         _dbContext.Phones.Update(dbPhone);
         await _dbContext.SaveChangesAsync();
+
+        v1Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
+        return updatedPhone.LastUpdate;        
     }
-
-    //public async Task<IEnumerable<v1Phone>> SearchAsync(string search)
-    //{
-    //    List<v1Phone> phones = await _dbContext.Phones
-    //        .Where(p => p.Imei.Contains(search) || p.AssetTag.Contains(search))
-    //        .ToListAsync();
-    //    return phones;
-    //}
-
-    //public async Task UpdateAsync(Phone phoneToUpdate)
-    //{
-    //    Phone phone = _dbContext.Phones.Where(mp => mp.Id == phoneToUpdate.Id).First();
-
-    //    phone.Imei = phoneToUpdate.Imei;
-    //    phone.FormerUser = phoneToUpdate.FormerUser;
-    //    phone.Wiped = phoneToUpdate.Wiped;
-    //    phone.Status = phoneToUpdate.Status;
-    //    phone.OEM = phoneToUpdate.OEM;
-    //    phone.AssetTag = phoneToUpdate.AssetTag;
-    //    phone.Note = phoneToUpdate.Note;
-
-    //    _dbContext.Phones.Update(phone);
-    //    await _dbContext.SaveChangesAsync();
-    //}
 }

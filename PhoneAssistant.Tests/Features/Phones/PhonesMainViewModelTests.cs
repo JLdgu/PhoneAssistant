@@ -1,8 +1,5 @@
 ﻿using System.ComponentModel;
-using System.Net.Sockets;
 using System.Windows.Data;
-
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 using Moq;
 using Moq.AutoMock;
@@ -53,6 +50,25 @@ public sealed class PhonesMainViewModelTests
         PhonesItemViewModel[] actual = view.OfType<PhonesItemViewModel>().ToArray();
         Assert.Single(actual);
         Assert.Equal(phones[1].AssetTag , actual[0].AssetTag);
+    }
+
+    [Fact]
+    public async Task ChangingFilterFormerUser_ChangesFilterViewAsync()
+    {
+        List<v1Phone> phones = new List<v1Phone>() {
+            new v1Phone() { Imei = "1" , FormerUser = "Aa", Model = "", NorR = "", OEM = "", Status = ""},
+            new v1Phone() {Imei = "2", FormerUser = "Bbb", Model = "", NorR = "", OEM = "", Status = ""},
+            new v1Phone() {Imei = "3", FormerUser = "Ccc", Model = "", NorR = "", OEM = "", Status = ""}
+        };
+        PhonesMainViewModel vm = ViewModelMockSetup(phones);
+        await vm.LoadAsync();
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+
+        vm.FilterFormerUser = "BB";
+
+        var actual = view.OfType<PhonesItemViewModel>().ToArray();
+        Assert.Single(actual);
+        Assert.Equal(phones[1].FormerUser, actual[0].FormerUser);
     }
 
     [Fact]

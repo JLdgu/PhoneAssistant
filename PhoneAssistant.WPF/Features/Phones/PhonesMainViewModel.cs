@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows;
 using System.Windows.Data;
 
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -101,6 +100,12 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
             if (vm.Model is null)
                 return false;
             else if (!vm.Model.Contains(FilterModel, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if (FilterFormerUser is not null && FilterFormerUser.Length > 0)
+            if (vm.FormerUser is null)
+                return false;
+            else if (!vm.FormerUser.Contains(FilterFormerUser, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         if (FilterNotes is not null && FilterNotes.Length > 0)
@@ -210,6 +215,16 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string? filterFormerUser;
+
+    partial void OnFilterFormerUserChanged(string? value)
+    {
+        _filterView.Refresh();
+    }
+
+
+    [ObservableProperty]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
     private string? filterNotes;
 
     partial void OnFilterNotesChanged(string? value)
@@ -227,8 +242,8 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     }
     #endregion
 
-    [ObservableProperty]
-    private PhonesItemViewModel? _selectedPhone;
+    //[ObservableProperty]
+    //private PhonesItemViewModel? _selectedPhone;
 
     public async Task LoadAsync()
     {
@@ -237,10 +252,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
         foreach (v1Phone phone in phones) 
         {
-            //if (phone.NorR == "N")
-            //    phone.NorR = "New";
-            //else
-            //    phone.NorR = "Repurposed";
             PhoneItems.Add(_phonesItemViewModelFactory.Create(phone));
         }
     }

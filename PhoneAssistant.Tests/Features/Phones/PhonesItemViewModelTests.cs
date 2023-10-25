@@ -3,6 +3,7 @@ using Moq.AutoMock;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Application.Entities;
 using Xunit;
+using System.Windows.Controls;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -54,6 +55,36 @@ public sealed class PhonesItemViewModelTests
         Assert.Equal(canPrintEnvelope, vm.CanPrintEnvelope);
     }
 
+    #region Update
+    [Fact]
+    private void OnAssetTagChanged_CallsUpdateAsync_WithChangedValue()
+    {
+        v1Phone phone = new()
+        {
+            Imei = "imei",
+            PhoneNumber = "phone number",
+            SimNumber = "sim number",
+            Model = "model",
+            NorR = "norr",
+            OEM = "oem",
+            Status = "status"
+        };
+        AutoMocker mocker = new AutoMocker();
+        mocker.Use(phone);
+        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
+        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.UpdateAsync(It.IsAny<v1Phone>()))
+            .Callback<v1Phone>((p) => phone = p)
+            .ReturnsAsync("LastUpdate");        
+
+        vm.AssetTag = "Updated";
+
+        repository.Verify(r => r.UpdateAsync(phone), Times.Once);
+        Assert.Equal("Updated", phone.AssetTag);
+        Assert.Equal("LastUpdate", vm.LastUpdate);
+    }
+    #endregion
+
     #region RemoveSim
     [Fact]
     private void RemoveSim_CallsRepository_RemoveSimFromPhone()
@@ -79,7 +110,7 @@ public sealed class PhonesItemViewModelTests
     }
 
     [Fact]
-    private void RemoveSim_ClearsBoundProperties()
+    private void RemoveSim_SetsBoundProperties()
     {
         v1Phone phone = new()
         {
@@ -93,12 +124,17 @@ public sealed class PhonesItemViewModelTests
         };
         AutoMocker mocker = new AutoMocker();
         mocker.Use(phone);
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
+        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>(); 
+        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.RemoveSimFromPhone(It.IsAny<v1Phone>()))
+            .Callback<v1Phone>((p) => phone = p)
+            .ReturnsAsync("LastUpdate");
 
         vm.RemoveSimCommand.Execute(null);
 
         Assert.Equal(string.Empty, vm.PhoneNumber);
         Assert.Equal(string.Empty, vm.SimNumber);
+        Assert.Equal("LastUpdate", vm.LastUpdate);
     }
 
     [Fact]

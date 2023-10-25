@@ -45,6 +45,7 @@
                 <ColumnDefinition Width="{Binding ElementName=gridAssetTag, Path=ActualWidth}" d:Width="85" />
                 <ColumnDefinition Width="{Binding ElementName=gridOEM, Path=ActualWidth}" d:Width="60" />
                 <ColumnDefinition Width="{Binding ElementName=gridModel, Path=ActualWidth}" d:Width="60" />
+                <ColumnDefinition Width="{Binding ElementName=gridFormerUser, Path=ActualWidth}" d:Width="90" />
                 <ColumnDefinition Width="{Binding ElementName=gridNotes, Path=ActualWidth}" d:Width="60" />
                 <ColumnDefinition Width="{Binding ElementName=gridLastUpdate, Path=ActualWidth}" d:Width="100" />
                 <ColumnDefinition Width="Auto" />
@@ -123,11 +124,17 @@
                      Text="{Binding FilterModel, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
             <TextBox Grid.Column="12"
                      Margin="0,0,5,0"
+                     materialDesign:HintAssist.Hint="Former User"
+                     materialDesign:HintAssist.IsFloating="True"
+                     materialDesign:TextFieldAssist.HasClearButton="True"
+                     Text="{Binding FilterFormerUser, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+            <TextBox Grid.Column="13"
+                     Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="Notes"
                      materialDesign:HintAssist.IsFloating="True"
                      materialDesign:TextFieldAssist.HasClearButton="True"
                      Text="{Binding FilterNotes, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-            <TextBox Grid.Column="13"
+            <TextBox Grid.Column="14"
                      Margin="0,0,5,0"
                      materialDesign:HintAssist.Hint="Last Update"
                      materialDesign:HintAssist.IsFloating="True"
@@ -146,8 +153,7 @@
                   HeadersVisibility="Column"
                   IsReadOnly="False"
                   ItemsSource="{Binding PhoneItems}"
-                  MouseDown="PhonesGrid_MouseDown"
-                  SelectedItem="{Binding SelectedPhone}">
+                  MouseDown="PhonesGrid_MouseDown">
             <DataGrid.Resources>
                 <viewmodel:NorRConverter x:Key="NorRConverter" />
             </DataGrid.Resources>
@@ -157,11 +163,13 @@
                                     Width="auto"
                                     MinWidth="45"
                                     Binding="{Binding NorR, Converter={StaticResource NorRConverter}}"
-                                    Header="Age" />
+                                    Header="Age"
+                                    IsReadOnly="True" />
                 <DataGridTextColumn x:Name="gridStatus"
                                     Width="auto"
                                     Binding="{Binding Status}"
-                                    Header="Status" />
+                                    Header="Status"
+                                    IsReadOnly="True" />
                 <DataGridTemplateColumn x:Name="gridPrintEnvelope" CanUserSort="False">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="DataGridCell">
@@ -237,6 +245,10 @@
                                     MinWidth="60"
                                     Binding="{Binding Model}"
                                     Header="Model" />
+                <DataGridTextColumn x:Name="gridFormerUser"
+                                    Width="auto"
+                                    Binding="{Binding FormerUser}"
+                                    Header="Former User" />
                 <DataGridTextColumn x:Name="gridNotes"
                                     Width="auto"
                                     MaxWidth="400"

@@ -48,15 +48,15 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     [ObservableProperty]
     private string _assetTag;
 
-    partial void OnAssetTagChanged(string value)
+    async partial void OnAssetTagChanged(string value)
     {
         if (value == _phone.AssetTag) return;
 
         if (string.IsNullOrEmpty(value) && _phone.AssetTag is null) return;
 
         _phone.AssetTag = value;
-        var lastUpdate = _repository.UpdateAsync(_phone);
-        LastUpdate = lastUpdate.Result;
+        var lastUpdate = await _repository.UpdateAsync(_phone);
+        LastUpdate = lastUpdate;
     }
 
     [ObservableProperty]

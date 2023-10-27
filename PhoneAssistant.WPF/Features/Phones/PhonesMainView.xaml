@@ -169,7 +169,7 @@
                                     Width="auto"
                                     Binding="{Binding Status}"
                                     Header="Status"
-                                    IsReadOnly="True" />
+                                    IsReadOnly="False" />
                 <DataGridTemplateColumn x:Name="gridPrintEnvelope" CanUserSort="False">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="DataGridCell">
@@ -257,7 +257,8 @@
                 <DataGridTextColumn x:Name="gridLastUpdate"
                                     Width="auto"
                                     Binding="{Binding LastUpdate}"
-                                    Header="Last Update" />
+                                    Header="Last Update"
+                                    IsReadOnly="True" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

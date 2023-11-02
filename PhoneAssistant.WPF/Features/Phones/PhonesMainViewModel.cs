@@ -18,6 +18,9 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     private readonly ICollectionView _filterView;
 
+    [ObservableProperty]
+    private PhonesItemViewModel? _selectedPhoneForEdit;
+
     public PhonesMainViewModel(IPhonesItemViewModelFactory phonesItemViewModelFactory,
                                IPhonesRepository phonesRepository)
     {
@@ -28,6 +31,12 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
         _filterView.Filter = new Predicate<object>(FilterView);
 
         CanRefeshPhones = true;
+    }
+
+    [RelayCommand]
+    private void EditPhone(PhonesItemViewModel? phone)
+    {
+        SelectedPhoneForEdit = phone;
     }
 
     [RelayCommand]
@@ -248,7 +257,13 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     public async Task LoadAsync()
     {
         PhoneItems.Clear();
-        IEnumerable<v1Phone> phones = await _phonesRepository.GetPhonesAsync();
+
+        IEnumerable<v1Phone> phones = new[]
+        {
+              new v1Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", NorR = "", OEM = "", Status = ""}
+        };
+
+        //IEnumerable<v1Phone> phones = await _phonesRepository.GetPhonesAsync();
 
         foreach (v1Phone phone in phones) 
         {

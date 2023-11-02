@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using PhoneAssistant.WPF.Application;
+using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF;
 /// <summary>
@@ -45,6 +46,7 @@ public partial class App : System.Windows.Application
         v1PhoneAssistantDbContext dbContext = _host.Services.GetRequiredService<v1PhoneAssistantDbContext>();
 
         dbContext.Database.EnsureCreated();
+
         //dbContext.Database.Migrate();
     }
 

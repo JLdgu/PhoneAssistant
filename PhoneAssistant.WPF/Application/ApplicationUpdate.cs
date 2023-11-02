@@ -20,6 +20,7 @@ public static class ApplicationUpdate
 
     public static bool FirstRun()
     {
+        return false;
         UserSettings userSettings = new();
         if (userSettings.Database is not null && File.Exists(userSettings.Database))
             return false;

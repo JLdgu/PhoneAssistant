@@ -106,8 +106,10 @@ internal sealed class PrintEnvelope : IPrintEnvelope
 
         float fontLineHeight = _bodyFont.GetHeight(graphics);
         RectangleF bodyRectangle = new(MARGIN_LEFT, _vertialPostion, A4_BODY_WIDTH, fontLineHeight * 9);
-
-        StringBuilder bodyText = new($"Order type: {_phone.NorR}");
+        string orderType = "Repurposed";
+        if (_phone.NorR == "N")
+            orderType = "New";
+        StringBuilder bodyText = new($"Order type: {orderType}");
         bodyText.AppendLine("");
         bodyText.AppendLine("");
         bodyText.AppendLine($"Mobile Phone Type: {_phone.OEM} {_phone.Model}");

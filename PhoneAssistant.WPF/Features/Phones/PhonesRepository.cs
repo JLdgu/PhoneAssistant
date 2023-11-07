@@ -114,7 +114,6 @@ public sealed class PhonesRepository : IPhonesRepository
         _dbContext.Sims.Add(sim);
         dbPhone.PhoneNumber = null;
         dbPhone.SimNumber = null;
-        dbPhone.NorR = "N";
         _dbContext.Phones.Update(dbPhone);
         await _dbContext.SaveChangesAsync();
 

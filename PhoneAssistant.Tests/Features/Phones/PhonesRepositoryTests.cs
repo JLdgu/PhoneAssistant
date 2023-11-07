@@ -1,4 +1,6 @@
-﻿using PhoneAssistant.WPF.Application.Entities;
+﻿using System.ComponentModel;
+
+using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Phones;
 
 using Xunit;
@@ -133,6 +135,67 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Assert.NotNull(phone);
         Assert.Null(phone.PhoneNumber);
         Assert.Null(phone.SimNumber);
+        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", lastUpdate);
+    }
+
+    [Fact]
+    [Description("Issue 19")]
+    public async Task RemoveSimFromPhone_OnlyChangesPhoneandSimNumberFields()
+    {
+        using v1DbTestHelper helper = new();
+        PhonesRepository repository = new(helper.DbContext);
+        const string EXPECTED_IMEI = "imei";
+        const string MOVE_PHONE_NUMBER = "phone number";
+        const string MOVE_SIM_NUMBER = "sim number";
+        const string EXPECTED_ASSET_TAG = "asset";
+        const string EXPECTED_FORMER_USER = "former user";
+        const string EXPECTED_MODEL = "model"; 
+        const string EXPECTED_NEW_USER = "new user";
+        const string EXPECTED_NORR = "norr";
+        const string EXPECTED_NOTES = "notes";
+        const string EXPECTED_OEM = "oem";
+        const int EXPECTED_SR = 12345;
+        const string EXPECTED_STATUS = "status";
+        v1Phone? phone = new()
+        {
+            Imei = EXPECTED_IMEI,
+            PhoneNumber = MOVE_PHONE_NUMBER,
+            SimNumber = MOVE_SIM_NUMBER,
+            AssetTag = EXPECTED_ASSET_TAG,
+            FormerUser = EXPECTED_FORMER_USER,
+            Model = EXPECTED_MODEL,
+            NewUser = EXPECTED_NEW_USER,
+            NorR = EXPECTED_NORR,
+            Notes = EXPECTED_NOTES,
+            OEM = EXPECTED_OEM,
+            SR = EXPECTED_SR,
+            Status = EXPECTED_STATUS
+        };
+        await helper.DbContext.Phones.AddAsync(phone);
+        await helper.DbContext.SaveChangesAsync();
+        
+        string lastUpdate = await repository.RemoveSimFromPhone(phone);
+
+        v1Sim? sim = await helper.DbContext.Sims.FindAsync(MOVE_PHONE_NUMBER);
+        Assert.NotNull(sim);
+        Assert.Equal(MOVE_PHONE_NUMBER, sim.PhoneNumber);
+        Assert.Equal(MOVE_SIM_NUMBER, sim.SimNumber);
+        Assert.Equal("In Stock", sim.Status);
+
+        v1Phone? actual = await helper.DbContext.Phones.FindAsync("imei");
+        Assert.NotNull(actual);
+        Assert.Equal(EXPECTED_IMEI, actual.Imei);
+        Assert.Null(actual.PhoneNumber);
+        Assert.Null(actual.SimNumber);
+        Assert.Equal(EXPECTED_ASSET_TAG, actual.AssetTag);
+        Assert.Equal(EXPECTED_FORMER_USER, actual.FormerUser);
+        Assert.Equal(EXPECTED_MODEL, actual.Model);
+        Assert.Equal(EXPECTED_NEW_USER, actual.NewUser);
+        Assert.Equal(EXPECTED_NORR, actual.NorR);
+        Assert.Equal(EXPECTED_NOTES, actual.Notes);
+        Assert.Equal(EXPECTED_OEM, actual.OEM);
+        Assert.Equal(EXPECTED_SR, actual.SR);
+        Assert.Equal(EXPECTED_STATUS, actual.Status);
         Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", lastUpdate);
     }
 

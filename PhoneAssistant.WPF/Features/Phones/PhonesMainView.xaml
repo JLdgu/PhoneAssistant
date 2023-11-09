@@ -171,11 +171,6 @@
                                     Header="Status"
                                     IsReadOnly="False" />
                 <DataGridTemplateColumn x:Name="gridPrintEnvelope" CanUserSort="False">
-                    <DataGridTemplateColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="materialDesign:DataGridAssist.CellPadding" Value="0" />
-                        </Style>
-                    </DataGridTemplateColumn.CellStyle>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="{x:Type viewmodel:PhonesItemViewModel}">
                             <Button Height="20"
@@ -204,11 +199,6 @@
                                     Binding="{Binding PhoneNumber}"
                                     Header="Phone Number" />
                 <DataGridTemplateColumn x:Name="gridRemoveSim" CanUserSort="False">
-                    <DataGridTemplateColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="materialDesign:DataGridAssist.CellPadding" Value="0" />
-                        </Style>
-                    </DataGridTemplateColumn.CellStyle>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="{x:Type viewmodel:PhonesItemViewModel}">
                             <Button Height="20"

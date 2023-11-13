@@ -165,11 +165,13 @@
                                     Binding="{Binding NorR, Converter={StaticResource NorRConverter}}"
                                     Header="Age"
                                     IsReadOnly="True" />
+
                 <DataGridTextColumn x:Name="gridStatus"
                                     Width="auto"
                                     Binding="{Binding Status}"
                                     Header="Status"
                                     IsReadOnly="False" />
+
                 <DataGridTemplateColumn x:Name="gridPrintEnvelope" CanUserSort="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="{x:Type viewmodel:PhonesItemViewModel}">
@@ -185,19 +187,59 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+
                 <DataGridTextColumn x:Name="gridSR"
                                     Width="auto"
-                                    Binding="{Binding SR}"
-                                    Header="SR" />
+                                    Header="SR">
+                    <DataGridTextColumn.Binding>
+                        <Binding Path="SR">
+                            <Binding.ValidationRules>
+                                <shared:EmptyOrNumericValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </DataGridTextColumn.Binding>
+                    <DataGridTextColumn.EditingElementStyle>
+                        <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+                            <Setter Property="MaxLength" Value="6" />
+                        </Style>
+                    </DataGridTextColumn.EditingElementStyle>
+                </DataGridTextColumn>
+
                 <DataGridTextColumn x:Name="gridImei"
                                     Width="auto"
-                                    Binding="{Binding Imei}"
-                                    Header="IMEI" />
+                                    Header="IMEI">
+                    <DataGridTextColumn.Binding>
+                        <Binding Path="Imei">
+                            <Binding.ValidationRules>
+                                <shared:EmptyOrNumericValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </DataGridTextColumn.Binding>
+                    <DataGridTextColumn.EditingElementStyle>
+                        <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+                            <Setter Property="MaxLength" Value="15" />
+                        </Style>
+                    </DataGridTextColumn.EditingElementStyle>
+                </DataGridTextColumn>
+
                 <DataGridTextColumn x:Name="gridPhoneNumber"
                                     Width="auto"
                                     MinWidth="110"
-                                    Binding="{Binding PhoneNumber}"
-                                    Header="Phone Number" />
+                                    Header="Phone Number">
+                    <DataGridTextColumn.Binding>
+                        <Binding Path="PhoneNumber">
+                            <Binding.ValidationRules>
+                                <shared:EmptyOrNumericValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </DataGridTextColumn.Binding>
+                    <DataGridTextColumn.EditingElementStyle>
+                        <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+                            <Setter Property="MaxLength" Value="10" />
+                        </Style>
+                    </DataGridTextColumn.EditingElementStyle>
+                </DataGridTextColumn>
+
                 <DataGridTemplateColumn x:Name="gridRemoveSim" CanUserSort="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="{x:Type viewmodel:PhonesItemViewModel}">
@@ -213,37 +255,63 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+
                 <DataGridTextColumn x:Name="gridSim"
                                     Width="auto"
-                                    Binding="{Binding SimNumber}"
-                                    Header="SIM Number" />
+                                    Header="SIM Number">
+                    <DataGridTextColumn.Binding>
+                        <Binding Path="SimNumber">
+                            <Binding.ValidationRules>
+                                <shared:EmptyOrNumericValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </DataGridTextColumn.Binding>
+                    <DataGridTextColumn.EditingElementStyle>
+                        <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+                            <Setter Property="MaxLength" Value="19" />
+                        </Style>
+                    </DataGridTextColumn.EditingElementStyle>
+                </DataGridTextColumn>
+
                 <DataGridTextColumn x:Name="gridNewUser"
                                     Width="auto"
                                     Binding="{Binding NewUser}"
                                     Header="New User" />
+
                 <DataGridTextColumn x:Name="gridAssetTag"
                                     Width="auto"
                                     MinWidth="75"
                                     Binding="{Binding AssetTag}"
-                                    Header="Asset Tag" />
+                                    Header="Asset Tag">
+                    <DataGridTextColumn.EditingElementStyle>
+                        <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+                            <Setter Property="MaxLength" Value="7" />
+                        </Style>
+                    </DataGridTextColumn.EditingElementStyle>
+                </DataGridTextColumn>
+
                 <DataGridTextColumn x:Name="gridOEM"
                                     Width="auto"
                                     Binding="{Binding OEM}"
                                     Header="OEM" />
+
                 <DataGridTextColumn x:Name="gridModel"
                                     Width="auto"
                                     MinWidth="60"
                                     Binding="{Binding Model}"
                                     Header="Model" />
+
                 <DataGridTextColumn x:Name="gridFormerUser"
                                     Width="auto"
                                     Binding="{Binding FormerUser}"
                                     Header="Former User" />
+
                 <DataGridTextColumn x:Name="gridNotes"
                                     Width="auto"
                                     MaxWidth="400"
                                     Binding="{Binding Notes}"
                                     Header="Notes" />
+
                 <DataGridTextColumn x:Name="gridLastUpdate"
                                     Width="auto"
                                     Binding="{Binding LastUpdate}"

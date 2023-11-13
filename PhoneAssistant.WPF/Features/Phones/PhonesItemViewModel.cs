@@ -5,6 +5,8 @@ using CommunityToolkit.Mvvm.Input;
 
 using PhoneAssistant.WPF.Application.Entities;
 
+using SQLitePCL;
+
 namespace PhoneAssistant.WPF.Features.Phones;
 
 public sealed partial class PhonesItemViewModel : ObservableObject
@@ -47,7 +49,6 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 
     [ObservableProperty]
     private string _assetTag;
-
     async partial void OnAssetTagChanged(string value)
     {
         if (value == _phone.AssetTag) return;
@@ -61,6 +62,29 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 
     [ObservableProperty]
     private string _formerUser;
+    async partial void OnFormerUserChanged(string value)
+    {
+        if (value == _phone.FormerUser) return;
+
+        if (string.IsNullOrEmpty(value))
+        {
+            if (_phone.FormerUser is null)
+            {
+                return;
+            }
+            else
+            {
+                _phone.FormerUser = null;
+            }
+        }
+        else
+        {
+            _phone.FormerUser = value;
+        }
+
+        var lastUpdate = await _repository.UpdateAsync(_phone);
+        LastUpdate = lastUpdate;
+    }
 
     [ObservableProperty]
     private string _imei;
@@ -70,15 +94,72 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 
     [ObservableProperty]
     private string _model;
+    async partial void OnModelChanged(string value)
+    {
+        if (value == _phone.Model) return;
+
+        if (string.IsNullOrEmpty(value) && _phone.AssetTag is null) return;
+
+        _phone.Model = value;
+        var lastUpdate = await _repository.UpdateAsync(_phone);
+        LastUpdate = lastUpdate;
+
+    }
 
     [ObservableProperty]
     private string _newUser;
+    async partial void OnNewUserChanged(string value)
+    {
+        if (value == _phone.NewUser) return;
+
+        if (string.IsNullOrEmpty(value))
+        {         
+           if (_phone.NewUser is null)
+           {
+            return;
+           }
+           else 
+           {
+                _phone.NewUser = null;
+           }
+        }
+        else
+        {
+            _phone.NewUser = value;
+        }
+
+        var lastUpdate = await _repository.UpdateAsync(_phone);
+        LastUpdate = lastUpdate;
+    }
 
     [ObservableProperty]
     private string _norR;
 
     [ObservableProperty]
     private string _notes;
+    async partial void OnNotesChanged(string value)
+    {
+        if (value == _phone.Notes) return;
+
+        if (string.IsNullOrEmpty(value))
+        {
+            if (_phone.Notes is null)
+            {
+                return;
+            }
+            else
+            {
+                _phone.Notes = null;
+            }
+        }
+        else
+        {
+            _phone.Notes = value;
+        }
+
+        var lastUpdate = await _repository.UpdateAsync(_phone);
+        LastUpdate = lastUpdate;
+    }
 
     [ObservableProperty]
     private string _oEM;
@@ -91,6 +172,30 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 
     [ObservableProperty]
     private string _sR;
+
+    async partial void OnSRChanged(string value)
+    {
+        if (value == _phone.SR.ToString()) return;
+
+        if (string.IsNullOrEmpty(value))
+        {
+            if  (_phone.SR is null)
+            {
+                return;
+            }        
+            else
+            {
+                _phone.SR = null;
+            }
+        }
+        else
+        {
+            _phone.SR = int.Parse(value);
+        }
+
+        var lastUpdate = await _repository.UpdateAsync(_phone);
+        LastUpdate = lastUpdate;
+    }
 
     [ObservableProperty]
     private string _status;
@@ -120,15 +225,6 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         CanRemoveSim = false;
         LastUpdate = lastUpdate;
         FormerUser = string.Empty;
-
-        //AssetTag = string.Empty;
-        //FormerUser = string.Empty;
-        //Model = string.Empty;
-        //NewUser = string.Empty;
-        //Notes = string.Empty;
-        //OEM = string.Empty;
-        //SR = string.Empty;
-        //Status = string.Empty;
     }
 
     [ObservableProperty]

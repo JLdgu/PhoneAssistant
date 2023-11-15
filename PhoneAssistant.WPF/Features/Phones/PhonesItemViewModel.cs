@@ -103,7 +103,6 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         _phone.Model = value;
         var lastUpdate = await _repository.UpdateAsync(_phone);
         LastUpdate = lastUpdate;
-
     }
 
     [ObservableProperty]
@@ -134,6 +133,14 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 
     [ObservableProperty]
     private string _norR;
+    async partial void OnNorRChanged(string value)
+    {
+        if (value == _phone.NorR) return;
+
+        _phone.NorR = value;
+        var lastUpdate = await _repository.UpdateAsync(_phone);
+        LastUpdate = lastUpdate;
+    }
 
     [ObservableProperty]
     private string _notes;
@@ -163,6 +170,14 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 
     [ObservableProperty]
     private string _oEM;
+    async partial void OnOEMChanged(string value)
+    {
+        if (value == _phone.OEM) return;        
+
+        _phone.OEM = value;
+        var lastUpdate = await _repository.UpdateAsync(_phone);
+        LastUpdate = lastUpdate;
+    }
 
     [ObservableProperty]
     private string _phoneNumber;
@@ -172,7 +187,6 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 
     [ObservableProperty]
     private string _sR;
-
     async partial void OnSRChanged(string value)
     {
         if (value == _phone.SR.ToString()) return;
@@ -199,10 +213,13 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 
     [ObservableProperty]
     private string _status;
-
-    partial void OnStatusChanged(string value)
+    async partial void OnStatusChanged(string value)
     {
-        
+        if (value == _phone.Status) return;
+
+        _phone.Status = value;
+        var lastUpdate = await _repository.UpdateAsync(_phone);
+        LastUpdate = lastUpdate;
     }
 
     [RelayCommand]

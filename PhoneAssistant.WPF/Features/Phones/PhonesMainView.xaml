@@ -159,18 +159,16 @@
             </DataGrid.Resources>
 
             <DataGrid.Columns>
-                <DataGridTextColumn x:Name="gridNorR"
-                                    Width="auto"
-                                    MinWidth="45"
-                                    Binding="{Binding NorR, Converter={StaticResource NorRConverter}}"
-                                    Header="Age"
-                                    IsReadOnly="True" />
+                <materialDesign:DataGridComboBoxColumn x:Name="gridNorR"
+                                                       MinWidth="45"
+                                                       Header="Age"
+                                                       ItemsSourceBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.NorRs}"
+                                                       SelectedValueBinding="{Binding NorR, Converter={StaticResource NorRConverter}}" />
 
-                <DataGridTextColumn x:Name="gridStatus"
-                                    Width="auto"
-                                    Binding="{Binding Status}"
-                                    Header="Status"
-                                    IsReadOnly="False" />
+                <materialDesign:DataGridComboBoxColumn x:Name="gridStatus"
+                                                       Header="Status"
+                                                       ItemsSourceBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.Statuses}"
+                                                       SelectedValueBinding="{Binding Status}" />
 
                 <DataGridTemplateColumn x:Name="gridPrintEnvelope" CanUserSort="False">
                     <DataGridTemplateColumn.CellTemplate>
@@ -290,10 +288,10 @@
                     </DataGridTextColumn.EditingElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn x:Name="gridOEM"
-                                    Width="auto"
-                                    Binding="{Binding OEM}"
-                                    Header="OEM" />
+                <materialDesign:DataGridComboBoxColumn x:Name="gridOEM"
+                                                       Header="OEM"
+                                                       ItemsSourceBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.OEMs}"
+                                                       SelectedValueBinding="{Binding OEM}" />
 
                 <DataGridTextColumn x:Name="gridModel"
                                     Width="auto"

@@ -18,6 +18,10 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
 
     private readonly ICollectionView _filterView;
 
+    public List<string> NorRs { get; init; } = new();
+    public List<string> OEMs { get; init; } = new();
+    public List<string> Statuses { get; init; } = new();
+
     public PhonesMainViewModel(IPhonesItemViewModelFactory phonesItemViewModelFactory,
                                IPhonesRepository phonesRepository)
     {
@@ -28,6 +32,18 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
         _filterView.Filter = new Predicate<object>(FilterView);
 
         CanRefeshPhones = true;
+
+        NorRs.Add("N(ew)");
+        NorRs.Add("R(epurposed)");
+
+        OEMs.Add("Apple");
+        OEMs.Add("Nokia");
+        OEMs.Add("Samsung");
+
+        Statuses.Add("Production");
+        Statuses.Add("In Stock");
+        Statuses.Add("In Repair");
+        Statuses.Add("Misplaced");
     }
 
     [RelayCommand]

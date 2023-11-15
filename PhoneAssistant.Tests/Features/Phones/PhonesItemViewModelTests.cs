@@ -3,11 +3,42 @@ using Moq.AutoMock;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Application.Entities;
 using Xunit;
+using System.Numerics;
+using System.Net.Sockets;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
 public sealed class PhonesItemViewModelTests
 {
+    private v1Phone _phone = new()
+    {
+        PhoneNumber = "phoneNumber",
+        SimNumber = "simNumber",
+        Status = "status",
+        AssetTag = "at",
+        FormerUser = "fu",
+        Imei = "imei",
+        Model = "model",
+        NewUser = "nu",
+        NorR = "norr",
+        Notes = "note",
+        OEM = "oem",
+        SR = 123456
+    };
+    private readonly AutoMocker _mocker = new AutoMocker();
+    private PhonesItemViewModel _vm;
+    private readonly Mock<IPhonesRepository> _repository;
+
+    public PhonesItemViewModelTests()
+    {
+        _mocker.Use(_phone);
+        _vm = _mocker.CreateInstance<PhonesItemViewModel>();
+        _repository = _mocker.GetMock<IPhonesRepository>();
+        _repository.Setup(r => r.UpdateAsync(It.IsAny<v1Phone>()))
+            .Callback<v1Phone>((p) => _phone = p)
+            .ReturnsAsync("LastUpdate");
+    }
+
     [Theory]
     [InlineData("phone number", "sim number",true,"In Stock",false)]
     [InlineData(null, "sim number",false,"In Stock",false)]
@@ -19,68 +50,36 @@ public sealed class PhonesItemViewModelTests
     [InlineData(null, null, false, "Production", true)]
     private void PhonePropertySet_SetsBoundProperties(string? phoneNumber, string? simNumber, bool canRemoveSim, string status, bool canPrintEnvelope)
     {
-        v1Phone phone = new()
-        {
-            PhoneNumber = phoneNumber,
-            SimNumber = simNumber,
-            Status = status,
-            AssetTag = "at",
-            FormerUser = "fu",
-            Imei = "imei",
-            Model = "model",
-            NewUser = "nu",
-            NorR = "norr",
-            Notes = "note",
-            OEM = "oem",
-            SR = 123456
-        };
-        AutoMocker mocker = new AutoMocker();
-        mocker.Use(phone);
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
+        _phone.PhoneNumber = phoneNumber;
+        _phone.SimNumber = simNumber;
+        _phone.Status = status;
+        _vm = _mocker.CreateInstance<PhonesItemViewModel>();
 
-        Assert.Equal(phone.AssetTag, vm.AssetTag);
-        Assert.Equal(phone.FormerUser, vm.FormerUser);
-        Assert.Equal(phone.Imei, vm.Imei);
-        Assert.Equal(phone.Model, vm.Model);
-        Assert.Equal(phone.NewUser, vm.NewUser);
-        Assert.Equal(phone.NorR, vm.NorR);
-        Assert.Equal(phone.Notes, vm.Notes);
-        Assert.Equal(phone.OEM, vm.OEM);
-        Assert.Equal(phone.PhoneNumber ?? string.Empty, vm.PhoneNumber);
-        Assert.Equal(phone.SimNumber ?? string.Empty, vm.SimNumber);
-        Assert.Equal(phone.SR.ToString(), vm.SR);
-        Assert.Equal(phone.Status, vm.Status);
-        Assert.Equal(canRemoveSim, vm.CanRemoveSim);
-        Assert.Equal(canPrintEnvelope, vm.CanPrintEnvelope);
+        Assert.Equal(_phone.AssetTag, _vm.AssetTag);
+        Assert.Equal(_phone.FormerUser, _vm.FormerUser);
+        Assert.Equal(_phone.Imei, _vm.Imei);
+        Assert.Equal(_phone.Model, _vm.Model);
+        Assert.Equal(_phone.NewUser, _vm.NewUser);
+        Assert.Equal(_phone.NorR, _vm.NorR);
+        Assert.Equal(_phone.Notes, _vm.Notes);
+        Assert.Equal(_phone.OEM, _vm.OEM);
+        Assert.Equal(_phone.PhoneNumber ?? string.Empty, _vm.PhoneNumber);
+        Assert.Equal(_phone.SimNumber ?? string.Empty, _vm.SimNumber);
+        Assert.Equal(_phone.SR.ToString(), _vm.SR);
+        Assert.Equal(_phone.Status, _vm.Status);
+        Assert.Equal(canRemoveSim, _vm.CanRemoveSim);
+        Assert.Equal(canPrintEnvelope, _vm.CanPrintEnvelope);
     }
 
     #region Update
     [Fact]
     private void OnAssetTagChanged_CallsUpdateAsync_WithChangedValue()
     {
-        v1Phone phone = new()
-        {
-            Imei = "imei",
-            PhoneNumber = "phone number",
-            SimNumber = "sim number",
-            Model = "model",
-            NorR = "norr",
-            OEM = "oem",
-            Status = "status"
-        };
-        AutoMocker mocker = new AutoMocker();
-        mocker.Use(phone);
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
-        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.UpdateAsync(It.IsAny<v1Phone>()))
-            .Callback<v1Phone>((p) => phone = p)
-            .ReturnsAsync("LastUpdate");        
+        _vm.AssetTag = "Updated";
 
-        vm.AssetTag = "Updated";
-
-        repository.Verify(r => r.UpdateAsync(phone), Times.Once);
-        Assert.Equal("Updated", phone.AssetTag);
-        Assert.Equal("LastUpdate", vm.LastUpdate);
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+        Assert.Equal("Updated", _phone.AssetTag);
+        Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
 
     [Theory]
@@ -88,58 +87,21 @@ public sealed class PhonesItemViewModelTests
     [InlineData("", null)]
     private void OnFormerUserChanged_CallsUpdateAsync_WithChangedValue(string actual, string? expected)
     {
-        v1Phone phone = new()
-        {
-            Imei = "imei",
-            PhoneNumber = "phone number",
-            SimNumber = "sim number",
-            FormerUser = "formeruser",
-            Model = "model",
-            NorR = "norr",
-            OEM = "oem",
-            Status = "status"
-        };
-        AutoMocker mocker = new AutoMocker();
-        mocker.Use(phone);
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
-        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.UpdateAsync(It.IsAny<v1Phone>()))
-            .Callback<v1Phone>((p) => phone = p)
-            .ReturnsAsync("LastUpdate");
+        _vm.FormerUser = actual;
 
-        vm.FormerUser = actual;
-
-        repository.Verify(r => r.UpdateAsync(phone), Times.Once);
-        Assert.Equal(expected, phone.FormerUser);
-        Assert.Equal("LastUpdate", vm.LastUpdate);
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+        Assert.Equal(expected, _phone.FormerUser);
+        Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
 
     [Fact]
     private void OnModelChanged_CallsUpdateAsync_WithChangedValue()
     {
-        v1Phone phone = new()
-        {
-            Imei = "imei",
-            PhoneNumber = "phone number",
-            SimNumber = "sim number",
-            Model = "model",
-            NorR = "norr",
-            OEM = "oem",
-            Status = "status"
-        };
-        AutoMocker mocker = new AutoMocker();
-        mocker.Use(phone);
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
-        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.UpdateAsync(It.IsAny<v1Phone>()))
-            .Callback<v1Phone>((p) => phone = p)
-            .ReturnsAsync("LastUpdate");
+        _vm.Model = "Updated";
 
-        vm.Model = "Updated";
-
-        repository.Verify(r => r.UpdateAsync(phone), Times.Once);
-        Assert.Equal("Updated", phone.Model);
-        Assert.Equal("LastUpdate", vm.LastUpdate);
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+        Assert.Equal("Updated", _phone.Model);
+        Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
 
     [Theory]
@@ -147,30 +109,21 @@ public sealed class PhonesItemViewModelTests
     [InlineData("", null)]
     private void OnNewUserChanged_CallsUpdateAsync_WithChangedValue(string actual, string? expected)
     {
-        v1Phone phone = new()
-        {
-            Imei = "imei",
-            PhoneNumber = "phone number",
-            SimNumber = "sim number",
-            Model = "model",
-            NorR = "norr",
-            NewUser = "user",
-            OEM = "oem",
-            Status = "status"
-        };
-        AutoMocker mocker = new AutoMocker();
-        mocker.Use(phone);
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
-        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.UpdateAsync(It.IsAny<v1Phone>()))
-            .Callback<v1Phone>((p) => phone = p)
-            .ReturnsAsync("LastUpdate");
+        _vm.NewUser = actual;
 
-        vm.NewUser = actual;
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+        Assert.Equal(expected, _phone.NewUser);
+        Assert.Equal("LastUpdate", _vm.LastUpdate);
+    }
 
-        repository.Verify(r => r.UpdateAsync(phone), Times.Once);
-        Assert.Equal(expected, phone.NewUser);
-        Assert.Equal("LastUpdate", vm.LastUpdate);
+    [Fact]
+    private void OnNorRChanged_CallsUpdateAsync_WithChangedValue()
+    {
+        _vm.NorR = "changed";
+
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+        Assert.Equal("changed", _phone.NorR);
+        Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
 
     [Theory]
@@ -178,61 +131,43 @@ public sealed class PhonesItemViewModelTests
     [InlineData("", null)]
     private void OnNotesChanged_CallsUpdateAsync_WithChangedValue(string actual, string? expected)
     {
-        v1Phone phone = new()
-        {
-            Imei = "imei",
-            PhoneNumber = "phone number",
-            SimNumber = "sim number",
-            Model = "model",
-            NorR = "norr",
-            Notes = "note",
-            OEM = "oem",
-            Status = "status"
-        };
-        AutoMocker mocker = new AutoMocker();
-        mocker.Use(phone);
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
-        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.UpdateAsync(It.IsAny<v1Phone>()))
-            .Callback<v1Phone>((p) => phone = p)
-            .ReturnsAsync("LastUpdate");
+        _vm.Notes = actual;
 
-        vm.Notes = actual;
-
-        repository.Verify(r => r.UpdateAsync(phone), Times.Once);
-        Assert.Equal(expected, phone.Notes);
-        Assert.Equal("LastUpdate", vm.LastUpdate);
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+        Assert.Equal(expected, _phone.Notes);
+        Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
 
+    [Fact]
+    private void OnOEMChanged_CallsUpdateAsync_WithChangedValue()
+    {
+        _vm.OEM = "new OEM";
+
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+        Assert.Equal("new OEM", _phone.OEM);
+        Assert.Equal("LastUpdate", _vm.LastUpdate);
+    }
+    
     [Theory]
     [InlineData("345", 345)]
     [InlineData("", null)]
     private void OnSRChanged_CallsUpdateAsync_WithChangedValue(string actual, int? expected)
     {
-        v1Phone phone = new()
-        {
-            Imei = "imei",
-            PhoneNumber = "phone number",
-            SimNumber = "sim number",
-            Model = "model",
-            NorR = "norr",
-            OEM = "oem",
-            Status = "status",
-            SR = 123
-        };
-        AutoMocker mocker = new AutoMocker();
-        mocker.Use(phone);
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
-        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.UpdateAsync(It.IsAny<v1Phone>()))
-            .Callback<v1Phone>((p) => phone = p)
-            .ReturnsAsync("LastUpdate");
+        _vm.SR = actual;
 
-        vm.SR = actual;
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+        Assert.Equal(expected, _phone.SR);
+        Assert.Equal("LastUpdate", _vm.LastUpdate);
+    }
 
-        repository.Verify(r => r.UpdateAsync(phone), Times.Once);
-        Assert.Equal(expected, phone.SR);
-        Assert.Equal("LastUpdate", vm.LastUpdate);
+    [Fact]
+    private void OnStatusChanged_CallsUpdateAsync_WithChangedValue()
+    {
+        _vm.Status = "changed";
+
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+        Assert.Equal("changed", _phone.Status);
+        Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
 
     #endregion
@@ -241,119 +176,46 @@ public sealed class PhonesItemViewModelTests
     [Fact]
     private void RemoveSim_CallsRepository_RemoveSimFromPhone()
     {
-        v1Phone phone = new()
-        {
-            Imei = "imei",
-            PhoneNumber = "phone number",
-            SimNumber = "sim number",
-            Model = "model",
-            NorR = "norr",
-            OEM = "oem",
-            Status = "status"
-        };
-        AutoMocker mocker = new AutoMocker();
-        mocker.Use(phone);
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
-        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
+        _vm.RemoveSimCommand.Execute(null);
 
-        vm.RemoveSimCommand.Execute(null);
-
-        repository.Verify(r => r.RemoveSimFromPhone(phone),Times.Once);        
+        _repository.Verify(r => r.RemoveSimFromPhone(_phone),Times.Once);        
     }
 
     [Fact]
     private void RemoveSim_SetsBoundProperties()
     {
-        v1Phone phone = new()
-        {
-            Imei = "imei",
-            PhoneNumber = "phone number",
-            SimNumber = "sim number",
-            Model = "model",
-            NorR = "norr",
-            OEM = "oem",
-            Status = "status"
-        };
-        AutoMocker mocker = new AutoMocker();
-        mocker.Use(phone);
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>(); 
-        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.RemoveSimFromPhone(It.IsAny<v1Phone>()))
-            .Callback<v1Phone>((p) => phone = p)
-            .ReturnsAsync("LastUpdate");
+        _vm.RemoveSimCommand.Execute(null);
 
-        vm.RemoveSimCommand.Execute(null);
-
-        Assert.Equal(string.Empty, vm.PhoneNumber);
-        Assert.Equal(string.Empty, vm.SimNumber);
-        Assert.Equal("LastUpdate", vm.LastUpdate);
+        Assert.Equal(string.Empty, _vm.PhoneNumber);
+        Assert.Equal(string.Empty, _vm.SimNumber);
+        Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
 
     [Fact]
     private void RemoveSim_SetsCanRemoveSim_False()
     {
-        v1Phone phone = new()
-        {
-            Imei = "imei",
-            PhoneNumber = "phone number",
-            SimNumber = "sim number",
-            Model = "model",
-            NorR = "norr",
-            OEM = "oem",
-            Status = "status"
-        };
-        AutoMocker mocker = new AutoMocker();
-        mocker.Use(phone);
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
 
-        vm.RemoveSimCommand.Execute(null);
+        _vm.RemoveSimCommand.Execute(null);
 
-        Assert.False(vm.CanRemoveSim);
+        Assert.False(_vm.CanRemoveSim);
     }
     #endregion
 
     [Fact]
     private void PrintEnvelopeCommand_CallsPrintEnvelope_Execute()
     {
-        v1Phone phone = new()
-        {
-            Imei = "imei",
-            PhoneNumber = "phone number",
-            SimNumber = "sim number",
-            Model = "model",
-            NorR = "norr",
-            OEM = "oem",
-            Status = "status"
-        };
-        AutoMocker mocker = new AutoMocker();
-        mocker.Use(phone);
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
-        Mock<IPrintEnvelope> repository = mocker.GetMock<IPrintEnvelope>();
+        Mock<IPrintEnvelope> repository = _mocker.GetMock<IPrintEnvelope>();
 
-        vm.PrintEnvelopeCommand.Execute(null);
+        _vm.PrintEnvelopeCommand.Execute(null);
 
-        repository.Verify(p => p.Execute(phone), Times.Once);
+        repository.Verify(p => p.Execute(_phone), Times.Once);
     }
 
     [Fact]
     private void PrintEnvelope_SetsCanPrintEnvelope_False()
     {
-        v1Phone phone = new()
-        {
-            Imei = "imei",
-            PhoneNumber = "phone number",
-            SimNumber = "sim number",
-            Model = "model",
-            NorR = "norr",
-            OEM = "oem",
-            Status = "Production"
-        };
-        AutoMocker mocker = new AutoMocker();
-        mocker.Use(phone);
-        PhonesItemViewModel vm = mocker.CreateInstance<PhonesItemViewModel>();
+        _vm.PrintEnvelopeCommand.Execute(null);
 
-        vm.PrintEnvelopeCommand.Execute(null);
-
-        Assert.False(vm.CanPrintEnvelope);
+        Assert.False(_vm.CanPrintEnvelope);
     }
 }

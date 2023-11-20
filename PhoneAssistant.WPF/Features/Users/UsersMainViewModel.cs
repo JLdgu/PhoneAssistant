@@ -2,6 +2,7 @@
 using System.DirectoryServices;
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace PhoneAssistant.WPF.Features.Users;
 public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainViewModel
@@ -17,14 +18,16 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
     [ObservableProperty]
     private string? _searchUser;
 
-    partial void OnSearchUserChanged(string? value)
+    [RelayCommand]
+    private void EnterKey()
     {
-        if (value == null) return;
-        if (value.Length < 3) return;
+        if (string.IsNullOrEmpty(SearchUser)) return;        
 
         UserItems.Clear();
 
-        using SearchResultCollection results = PersonSearch(value);
+        string person = SearchUser.Replace(" ", "*");
+
+        using SearchResultCollection results = PersonSearch(person);
 
         if (results.Count == 0) 
         {

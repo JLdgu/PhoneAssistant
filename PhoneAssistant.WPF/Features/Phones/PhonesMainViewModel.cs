@@ -4,12 +4,13 @@ using System.Windows.Data;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
 using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
-public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMainViewModel
+public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipient<PhoneUpdate>, IPhonesMainViewModel
 {
     private readonly IPhonesItemViewModelFactory _phonesItemViewModelFactory;
     private readonly IPhonesRepository _phonesRepository;
@@ -23,14 +24,15 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     public List<string> Statuses { get; init; } = new();
 
     public PhonesMainViewModel(IPhonesItemViewModelFactory phonesItemViewModelFactory,
-                               IPhonesRepository phonesRepository)
+                               IPhonesRepository phonesRepository,
+                               IMessenger messenger)
     {
         _phonesItemViewModelFactory = phonesItemViewModelFactory ?? throw new ArgumentNullException(nameof(phonesItemViewModelFactory));
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
-
         _filterView = CollectionViewSource.GetDefaultView(PhoneItems);
         _filterView.Filter = new Predicate<object>(FilterView);
 
+        messenger.RegisterAll(this);
         CanRefeshPhones = true;
 
         NorRs.Add("N(ew)");
@@ -46,6 +48,11 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
         Statuses.Add("Misplaced");
     }
 
+    public void Receive(PhoneUpdate phone)
+    {
+        throw new NotImplementedException();
+    }
+
     [RelayCommand]
     private async Task RefreshPhones()
     {
@@ -58,6 +65,15 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
     [ObservableProperty]
     private bool canRefeshPhones;
+
+    [RelayCommand]
+    private void EditPhone(PhonesItemViewModel? phone)
+    {
+        SelectedPhone = phone;
+    }
+
+    [ObservableProperty]
+    private PhonesItemViewModel? _selectedPhone;
 
     #region Filtering View
     public bool FilterView(object item)
@@ -257,9 +273,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IPhonesMa
         _filterView.Refresh();
     }
     #endregion
-
-    //[ObservableProperty]
-    //private PhonesItemViewModel? _selectedPhone;
 
     public async Task LoadAsync()
     {

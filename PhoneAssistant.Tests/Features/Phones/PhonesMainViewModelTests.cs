@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Windows.Data;
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using Moq;
 using Moq.AutoMock;
 
@@ -252,10 +254,11 @@ public sealed class PhonesMainViewModelTests
         Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
         repository.Setup(r => r.GetPhonesAsync()).ReturnsAsync(phones);
         Mock<IPrintEnvelope> print = mocker.GetMock<IPrintEnvelope>();
+        Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
         Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
         factory.Setup(r => r.Create(It.IsAny<v1Phone>()))
                             .Returns(() => {
-                                return new PhonesItemViewModel(repository.Object, print.Object, phones[index]);
+                                return new PhonesItemViewModel(repository.Object, print.Object,messenger.Object, phones[index]);
                                 }
                             )
                             .Callback(() => index++);

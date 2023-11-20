@@ -12,6 +12,9 @@
              d:DesignHeight="200"
              d:DesignWidth="900"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <viewmodel:NotNullConverter x:Key="NotNullConverter" />
+    </UserControl.Resources>
     <DockPanel>
         <Grid DockPanel.Dock="Top">
             <Grid.RowDefinitions>
@@ -28,6 +31,7 @@
                         ToolTip="Refresh" />
             </StackPanel>
         </Grid>
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -146,15 +150,18 @@
             </Grid>
 
             <materialDesign:DrawerHost Grid.Row="1"
+                                       IsTopDrawerOpen="{Binding SelectedPhone, Converter={StaticResource NotNullConverter}, Mode=OneWay}"
                                        Opacity="1"
                                        OpenMode="Modal">
                 <materialDesign:DrawerHost.TopDrawerContent>
                     <StackPanel Margin="16"
                                 HorizontalAlignment="Center"
+                                DataContext="{Binding SelectedPhone}"
                                 Orientation="Horizontal">
                         <TextBlock Margin="4"
                                    VerticalAlignment="Center"
                                    Text="Phone" />
+                        <TextBlock Margin="0,0,5,0" Text="{Binding Imei}" />
 
                         <Button Margin="4"
                                 VerticalAlignment="Center"
@@ -190,12 +197,12 @@
                                                                MinWidth="45"
                                                                Header="Age"
                                                                ItemsSourceBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.NorRs}"
-                                                               SelectedValueBinding="{Binding NorR, Converter={StaticResource NorRConverter}}" />
+                                                               SelectedValueBinding="{Binding NorR, Converter={StaticResource NorRConverter}, UpdateSourceTrigger=LostFocus}" />
 
                         <materialDesign:DataGridComboBoxColumn x:Name="gridStatus"
                                                                Header="Status"
                                                                ItemsSourceBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.Statuses}"
-                                                               SelectedValueBinding="{Binding Status}" />
+                                                               SelectedValueBinding="{Binding Status, UpdateSourceTrigger=LostFocus}" />
 
                         <DataGridTemplateColumn x:Name="gridPrintEnvelope" CanUserSort="False">
                             <DataGridTemplateColumn.CellTemplate>
@@ -213,8 +220,8 @@
                                         <Button Height="20"
                                                 Margin="10,0,0,0"
                                                 Padding="0"
-                                                Command="{x:Static materialDesign:DrawerHost.OpenDrawerCommand}"
-                                                CommandParameter="{x:Static Dock.Top}"
+                                                Command="{Binding Path=DataContext.EditPhoneCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"
                                                 Content="{materialDesign:PackIcon Kind=AccountOutline,
                                                                                   Size=15}"
                                                 IsEnabled="{Binding CanPrintEnvelope}"
@@ -230,7 +237,7 @@
                                             Width="auto"
                                             Header="SR">
                             <DataGridTextColumn.Binding>
-                                <Binding Path="SR">
+                                <Binding Path="SR" UpdateSourceTrigger="LostFocus">
                                     <Binding.ValidationRules>
                                         <shared:EmptyOrNumericValidationRule />
                                     </Binding.ValidationRules>
@@ -247,7 +254,7 @@
                                             Width="auto"
                                             Header="IMEI">
                             <DataGridTextColumn.Binding>
-                                <Binding Path="Imei">
+                                <Binding Path="Imei" UpdateSourceTrigger="LostFocus">
                                     <Binding.ValidationRules>
                                         <shared:EmptyOrNumericValidationRule />
                                     </Binding.ValidationRules>
@@ -265,7 +272,7 @@
                                             MinWidth="110"
                                             Header="Phone Number">
                             <DataGridTextColumn.Binding>
-                                <Binding Path="PhoneNumber">
+                                <Binding Path="PhoneNumber" UpdateSourceTrigger="LostFocus">
                                     <Binding.ValidationRules>
                                         <shared:EmptyOrNumericValidationRule />
                                     </Binding.ValidationRules>
@@ -298,7 +305,7 @@
                                             Width="auto"
                                             Header="SIM Number">
                             <DataGridTextColumn.Binding>
-                                <Binding Path="SimNumber">
+                                <Binding Path="SimNumber" UpdateSourceTrigger="LostFocus">
                                     <Binding.ValidationRules>
                                         <shared:EmptyOrNumericValidationRule />
                                     </Binding.ValidationRules>
@@ -313,13 +320,13 @@
 
                         <DataGridTextColumn x:Name="gridNewUser"
                                             Width="auto"
-                                            Binding="{Binding NewUser}"
+                                            Binding="{Binding NewUser, UpdateSourceTrigger=LostFocus}"
                                             Header="New User" />
 
                         <DataGridTextColumn x:Name="gridAssetTag"
                                             Width="auto"
                                             MinWidth="75"
-                                            Binding="{Binding AssetTag}"
+                                            Binding="{Binding AssetTag, UpdateSourceTrigger=LostFocus}"
                                             Header="Asset Tag">
                             <DataGridTextColumn.EditingElementStyle>
                                 <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
@@ -331,23 +338,23 @@
                         <materialDesign:DataGridComboBoxColumn x:Name="gridOEM"
                                                                Header="OEM"
                                                                ItemsSourceBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.OEMs}"
-                                                               SelectedValueBinding="{Binding OEM}" />
+                                                               SelectedValueBinding="{Binding OEM, UpdateSourceTrigger=LostFocus}" />
 
                         <DataGridTextColumn x:Name="gridModel"
                                             Width="auto"
                                             MinWidth="60"
-                                            Binding="{Binding Model}"
+                                            Binding="{Binding Model, UpdateSourceTrigger=LostFocus}"
                                             Header="Model" />
 
                         <DataGridTextColumn x:Name="gridFormerUser"
                                             Width="auto"
-                                            Binding="{Binding FormerUser}"
+                                            Binding="{Binding FormerUser, UpdateSourceTrigger=LostFocus}"
                                             Header="Former User" />
 
                         <DataGridTextColumn x:Name="gridNotes"
                                             Width="auto"
                                             MaxWidth="400"
-                                            Binding="{Binding Notes}"
+                                            Binding="{Binding Notes, UpdateSourceTrigger=LostFocus}"
                                             Header="Notes" />
 
                         <DataGridTextColumn x:Name="gridLastUpdate"

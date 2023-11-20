@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CommunityToolkit.Mvvm.Messaging;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -26,6 +28,9 @@ public static class ApplicationServicesExtensions
                             options => options.UseSqlite(connectionString),
                             ServiceLifetime.Singleton);
             services.AddSingleton<IUserSettings, UserSettings>();
+
+            services.AddSingleton<WeakReferenceMessenger>();
+            services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider => provider.GetRequiredService<WeakReferenceMessenger>());
 
             // Features
             services.AddTransient<IDashboardMainViewModel, DashboardMainViewModel>();

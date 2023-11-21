@@ -103,15 +103,20 @@ public sealed class PhonesRepository : IPhonesRepository
         v1Sim? sim = await _dbContext.Sims.FindAsync(phone.PhoneNumber);
         if (sim is not null)
         {
-            throw new InvalidOperationException($"'{nameof(phone.PhoneNumber)}' already exists.");
+            sim.SimNumber = phone.SimNumber;
+            sim.Status = "In Stock";
+            _dbContext.Sims.Update(sim);
         }
-        sim = new()
-        {
-            PhoneNumber = phone.PhoneNumber,
-            SimNumber = phone.SimNumber,
-            Status = "In Stock"
-        };
-        _dbContext.Sims.Add(sim);
+        else
+        {        
+            sim = new()
+            {
+                PhoneNumber = phone.PhoneNumber,
+                SimNumber = phone.SimNumber,
+                Status = "In Stock"        
+            };
+            _dbContext.Sims.Add(sim);
+        }
         dbPhone.PhoneNumber = null;
         dbPhone.SimNumber = null;
         _dbContext.Phones.Update(dbPhone);

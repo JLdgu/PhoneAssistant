@@ -81,26 +81,42 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     }
 
     [Fact]
-    public async Task RemoveSimFromPhone_WithExistingSim_ThrowsException()
+    [Description("Issue 21")]
+    public async Task RemoveSimFromPhone_WithExistingSim_Succeeds()
     {
         using v1DbTestHelper helper = new();
         PhonesRepository repository = new(helper.DbContext);
-        v1Phone phone = new()
+        const string PHONE_NUMBER = "phone number";
+        const string SIM_NUMBER = "sim number";
+        v1Phone? phone = new()
         {
             Imei = "imei",
-            PhoneNumber = "phone number",
-            SimNumber = "sim number",
+            PhoneNumber = PHONE_NUMBER,
+            SimNumber = SIM_NUMBER,
             Model = "model",
             NorR = "norr",
             OEM = "oem",
             Status = "status"
         };
         await helper.DbContext.Phones.AddAsync(phone);
-        v1Sim sim = new v1Sim() { PhoneNumber = "phone number", SimNumber = "sim number" };
+        v1Sim? sim = new v1Sim() { PhoneNumber = "phone number", SimNumber = "sim number" };
         await helper.DbContext.Sims.AddAsync(sim);
         await helper.DbContext.SaveChangesAsync();
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => repository.RemoveSimFromPhone(phone));
+        string lastUpdate = await repository.RemoveSimFromPhone(phone);
+
+        sim = await helper.DbContext.Sims.FindAsync(PHONE_NUMBER);
+        Assert.NotNull(sim);
+        Assert.Equal(PHONE_NUMBER, sim.PhoneNumber);
+        Assert.Equal(SIM_NUMBER, sim.SimNumber);
+        Assert.Equal("In Stock", sim.Status);
+
+        phone = await helper.DbContext.Phones.FindAsync("imei");
+        Assert.NotNull(phone);
+        Assert.Null(phone.PhoneNumber);
+        Assert.Null(phone.SimNumber);
+        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", lastUpdate);
+
     }
 
     [Fact]

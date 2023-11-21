@@ -235,6 +235,7 @@
 
                         <DataGridTextColumn x:Name="gridSR"
                                             Width="auto"
+                                            MinWidth="50"
                                             Header="SR">
                             <DataGridTextColumn.Binding>
                                 <Binding Path="SR" UpdateSourceTrigger="LostFocus">
@@ -303,6 +304,7 @@
 
                         <DataGridTextColumn x:Name="gridSim"
                                             Width="auto"
+                                            MinWidth="150"
                                             Header="SIM Number">
                             <DataGridTextColumn.Binding>
                                 <Binding Path="SimNumber" UpdateSourceTrigger="LostFocus">
@@ -320,6 +322,7 @@
 
                         <DataGridTextColumn x:Name="gridNewUser"
                                             Width="auto"
+                                            MinWidth="130"
                                             Binding="{Binding NewUser, UpdateSourceTrigger=LostFocus}"
                                             Header="New User" />
 
@@ -348,6 +351,7 @@
 
                         <DataGridTextColumn x:Name="gridFormerUser"
                                             Width="auto"
+                                            MinWidth="130"
                                             Binding="{Binding FormerUser, UpdateSourceTrigger=LostFocus}"
                                             Header="Former User" />
 

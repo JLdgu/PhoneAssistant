@@ -6,6 +6,12 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.MainWindow"
+        xmlns:dashboard="clr-namespace:PhoneAssistant.WPF.Features.Dashboard"
+        xmlns:phones="clr-namespace:PhoneAssistant.WPF.Features.Phones"
+        xmlns:sims="clr-namespace:PhoneAssistant.WPF.Features.Sims"
+        xmlns:sr="clr-namespace:PhoneAssistant.WPF.Features.ServiceRequests"
+        xmlns:settings="clr-namespace:PhoneAssistant.WPF.Features.Settings"
+        xmlns:users="clr-namespace:PhoneAssistant.WPF.Features.Users"
         Title="Phone Assistant"
         Width="1350"
         Height="800"
@@ -21,6 +27,26 @@
         TextOptions.TextRenderingMode="Auto"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type dashboard:DashboardMainViewModel}">
+                <dashboard:DashboardMainView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type phones:PhonesMainViewModel}">
+                <phones:PhonesMainView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type sims:SimsMainViewModel}">
+                <sims:SimsMainView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type sr:ServiceRequestsMainViewModel}">
+                <sr:ServiceRequestsMainView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type settings:SettingsMainViewModel}">
+                <settings:SettingsMainView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type users:UsersMainViewModel}">
+                <users:UsersMainView />
+            </DataTemplate>
+    </Window.Resources>
     <behaviors:Interaction.Triggers>
         <behaviors:EventTrigger EventName="Closing">
             <behaviors:CallMethodAction MethodName="WindowClosing" TargetObject="{Binding}" />

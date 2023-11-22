@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
+using System.Windows.Documents;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -31,6 +32,8 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
         _filterView = CollectionViewSource.GetDefaultView(PhoneItems);
         _filterView.Filter = new Predicate<object>(FilterView);
+
+        //EmailViewModel = new EmailViewModel();
 
         messenger.RegisterAll(this);
         CanRefeshPhones = true;
@@ -70,10 +73,26 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     private void EditPhone(PhonesItemViewModel? phone)
     {
         SelectedPhone = phone;
+        if (phone is null) return;
+
+        Imei = phone.Imei;
+        PhoneNumber = "11111111112";
+
+        //EmailViewModel email =  new();
+        //EmailFlowDocument = email.GenerateFlowDocument();
     }
 
     [ObservableProperty]
     private PhonesItemViewModel? _selectedPhone;
+
+    [ObservableProperty]
+    private string _imei;
+
+    [ObservableProperty]
+    private string _phoneNumber;
+
+    [ObservableProperty]
+    private FlowDocument _emailFlowDocument;
 
     #region Filtering View
     public bool FilterView(object item)

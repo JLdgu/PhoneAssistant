@@ -23,7 +23,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <DataTemplate DataType="{x:Type dashboard:DashboardMainViewModel}">
+            <!--<DataTemplate DataType="{x:Type dashboard:DashboardMainViewModel}">
                 <dashboard:DashboardMainView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type phones:PhonesMainViewModel}">
@@ -40,7 +40,7 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type users:UsersMainViewModel}">
                 <users:UsersMainView />
-            </DataTemplate>
+            </DataTemplate>-->
         </ResourceDictionary>
     </Application.Resources>
 </Application>

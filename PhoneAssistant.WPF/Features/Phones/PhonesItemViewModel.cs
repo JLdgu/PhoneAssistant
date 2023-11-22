@@ -247,8 +247,6 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         SimNumber = string.Empty;
         CanRemoveSim = false;
         LastUpdate = lastUpdate;
-        FormerUser = string.Empty;
-        //_messenger.Send(new PhoneUpdate(_phone));
     }
 
     [ObservableProperty]

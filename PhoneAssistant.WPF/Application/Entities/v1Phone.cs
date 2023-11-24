@@ -17,6 +17,6 @@ public class v1Phone
     //public string? Jobtitle { get; set; }
     //public string? Department { get; set; }
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    public string LastUpdate { get; }
+    public string LastUpdate { get; init; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 }

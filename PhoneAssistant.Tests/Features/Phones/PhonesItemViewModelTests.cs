@@ -17,7 +17,8 @@ public sealed class PhonesItemViewModelTests
         Status = "status",
         AssetTag = "at",
         FormerUser = "fu",
-        Imei = "imei",
+        Imei = "imei",  
+        LastUpdate = "lastupdate",
         Model = "model",
         NewUser = "nu",
         NorR = "norr",
@@ -37,6 +38,8 @@ public sealed class PhonesItemViewModelTests
         _repository.Setup(r => r.UpdateAsync(It.IsAny<v1Phone>()))
             .Callback<v1Phone>((p) => _phone = p)
             .ReturnsAsync("LastUpdate");
+        _repository.Setup(r => r.RemoveSimFromPhone(It.IsAny<v1Phone>()))            
+            .ReturnsAsync(_phone);
     }
 
     [Theory]

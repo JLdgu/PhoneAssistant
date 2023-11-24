@@ -1,20 +1,36 @@
-﻿using System.Windows.Documents;
-using System.Windows.Media.Media3D;
-using System.Xml;
+﻿using System.IO;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Markup;
+
+using CommunityToolkit.Mvvm.ComponentModel;
 
 using PhoneAssistant.WPF.Application.Entities;
 
-using static System.Net.Mime.MediaTypeNames;
-
 namespace PhoneAssistant.WPF.Features.Phones;
 
-public sealed class EmailViewModel
+public partial class EmailViewModel : ObservableObject
 {
-    public EmailViewModel() { }
+    public EmailViewModel()
+    {
+        var fd = GenerateFlowDocument();
+
+        
+    }
 
     public EmailViewModel(v1Phone phone) 
     {
     }
+
+    [ObservableProperty]
+    private string _imei;
+
+    [ObservableProperty]
+    private string _phoneNumber;
+
+    public string EmailDocument { get; set; }
 
     public FlowDocument GenerateFlowDocument()
     {

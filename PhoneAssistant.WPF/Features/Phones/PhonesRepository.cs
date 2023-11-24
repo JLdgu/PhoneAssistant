@@ -84,7 +84,7 @@ public sealed class PhonesRepository : IPhonesRepository
         return updatedPhone.LastUpdate;        
     }
 
-    public async Task<string> RemoveSimFromPhone(v1Phone phone)
+    public async Task<v1Phone> RemoveSimFromPhone(v1Phone phone)
     {
         if (phone is null)
         {
@@ -123,6 +123,6 @@ public sealed class PhonesRepository : IPhonesRepository
         await _dbContext.SaveChangesAsync();
 
         v1Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
-        return updatedPhone.LastUpdate;        
+        return updatedPhone;        
     }
 }

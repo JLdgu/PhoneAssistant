@@ -18,6 +18,8 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
 
     public ObservableCollection<PhonesItemViewModel> PhoneItems { get; } = new();    
 
+    public EmailViewModel EmailViewModel { get; set; }
+
     private readonly ICollectionView _filterView;
 
     public List<string> NorRs { get; init; } = new();
@@ -33,7 +35,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
         _filterView = CollectionViewSource.GetDefaultView(PhoneItems);
         _filterView.Filter = new Predicate<object>(FilterView);
 
-        //EmailViewModel = new EmailViewModel();
+        EmailViewModel = new EmailViewModel();
 
         messenger.RegisterAll(this);
         CanRefeshPhones = true;
@@ -77,8 +79,9 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
 
         Imei = phone.Imei;
         PhoneNumber = "11111111112";
+        
+        EmailViewModel.Imei =phone.Imei;
 
-        //EmailViewModel email =  new();
         //EmailFlowDocument = email.GenerateFlowDocument();
     }
 

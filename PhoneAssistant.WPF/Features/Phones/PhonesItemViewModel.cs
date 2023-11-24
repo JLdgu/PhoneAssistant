@@ -231,8 +231,11 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     [RelayCommand]
     private void PrintEnvelope()
     {
-        _printEnvelope.Execute(_phone);
         CanPrintEnvelope = false;
+        //await Task.Run(() =>
+        //{ 
+        _printEnvelope.Execute(_phone);
+        //});
     }
 
     [ObservableProperty]
@@ -242,11 +245,11 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     [RelayCommand]
     private async Task RemoveSimAsync()
     {
-        string lastUpdate = await _repository.RemoveSimFromPhone(_phone);
+        v1Phone updatedPhone = await _repository.RemoveSimFromPhone(_phone);
         PhoneNumber = string.Empty;
         SimNumber = string.Empty;
         CanRemoveSim = false;
-        LastUpdate = lastUpdate;
+        LastUpdate = updatedPhone.LastUpdate;
     }
 
     [ObservableProperty]

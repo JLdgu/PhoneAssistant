@@ -44,7 +44,7 @@
                 </DataTemplate>
             </materialDesign:DrawerHost.Resources>-->
             <materialDesign:DrawerHost.TopDrawerContent>
-                <viewmodel:EmailView />
+                <viewmodel:EmailView DataContext="{Binding EmailViewModel}" />
                 <!--<ContentControl Content="{Binding EmailView}" />-->
             </materialDesign:DrawerHost.TopDrawerContent>
             <Grid>
@@ -215,7 +215,7 @@
                                                 IsEnabled="{Binding CanPrintEnvelope}"
                                                 Style="{StaticResource MaterialDesignFlatLightButton}"
                                                 ToolTip="myScomis Email"
-                                                Visibility="Collapsed" />
+                                                Visibility="Visible" />
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

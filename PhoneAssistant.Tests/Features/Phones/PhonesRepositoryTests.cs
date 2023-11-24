@@ -103,7 +103,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         await helper.DbContext.Sims.AddAsync(sim);
         await helper.DbContext.SaveChangesAsync();
 
-        string lastUpdate = await repository.RemoveSimFromPhone(phone);
+        v1Phone updatedPhone = await repository.RemoveSimFromPhone(phone);
 
         sim = await helper.DbContext.Sims.FindAsync(PHONE_NUMBER);
         Assert.NotNull(sim);
@@ -115,7 +115,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Assert.NotNull(phone);
         Assert.Null(phone.PhoneNumber);
         Assert.Null(phone.SimNumber);
-        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", lastUpdate);
+        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", updatedPhone.LastUpdate);
 
     }
 
@@ -139,7 +139,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         await helper.DbContext.Phones.AddAsync(phone);
         await helper.DbContext.SaveChangesAsync();
 
-        string lastUpdate = await repository.RemoveSimFromPhone(phone);
+        v1Phone updatedPhone = await repository.RemoveSimFromPhone(phone);
 
         v1Sim? sim = await helper.DbContext.Sims.FindAsync(PHONE_NUMBER);
         Assert.NotNull(sim);
@@ -151,7 +151,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Assert.NotNull(phone);
         Assert.Null(phone.PhoneNumber);
         Assert.Null(phone.SimNumber);
-        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", lastUpdate);
+        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", updatedPhone.LastUpdate);
     }
 
     [Fact]
@@ -190,7 +190,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         await helper.DbContext.Phones.AddAsync(phone);
         await helper.DbContext.SaveChangesAsync();
         
-        string lastUpdate = await repository.RemoveSimFromPhone(phone);
+        v1Phone updatedPhone = await repository.RemoveSimFromPhone(phone);
 
         v1Sim? sim = await helper.DbContext.Sims.FindAsync(MOVE_PHONE_NUMBER);
         Assert.NotNull(sim);
@@ -212,7 +212,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Assert.Equal(EXPECTED_OEM, actual.OEM);
         Assert.Equal(EXPECTED_SR, actual.SR);
         Assert.Equal(EXPECTED_STATUS, actual.Status);
-        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", lastUpdate);
+        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", updatedPhone.LastUpdate);
     }
 
     [Fact]

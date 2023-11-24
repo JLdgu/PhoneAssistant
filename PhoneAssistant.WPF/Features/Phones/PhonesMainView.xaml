@@ -283,7 +283,6 @@
                                             Command="{Binding RemoveSimCommand}"
                                             Content="{materialDesign:PackIcon Kind=SimOutline,
                                                                               Size=15}"
-                                            IsEnabled="{Binding CanRemoveSim}"
                                             Style="{StaticResource MaterialDesignFlatLightButton}"
                                             ToolTip="Remove Sim" />
                                 </DataTemplate>

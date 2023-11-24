@@ -18,7 +18,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     private v1Phone _phone;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    public PhonesItemViewModel(IPhonesRepository repository, 
+    public PhonesItemViewModel(IPhonesRepository repository,
                                IPrintEnvelope printEnvelope,
                                IMessenger messenger,
                                v1Phone phone)
@@ -43,10 +43,6 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         SR = phone.SR.ToString() ?? string.Empty;
         Status = phone.Status ?? string.Empty;
 
-        if (string.IsNullOrEmpty(PhoneNumber) || string.IsNullOrEmpty(SimNumber))
-            CanRemoveSim = false;
-        else
-            CanRemoveSim = true;
         if (_phone.Status == "Production")
             CanPrintEnvelope = true;
         else
@@ -95,7 +91,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     [ObservableProperty]
     private string _imei;
 
-    [ObservableProperty]   
+    [ObservableProperty]
     private string _lastUpdate;
 
     [ObservableProperty]
@@ -118,15 +114,15 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         if (value == _phone.NewUser) return;
 
         if (string.IsNullOrEmpty(value))
-        {         
-           if (_phone.NewUser is null)
-           {
-            return;
-           }
-           else 
-           {
+        {
+            if (_phone.NewUser is null)
+            {
+                return;
+            }
+            else
+            {
                 _phone.NewUser = null;
-           }
+            }
         }
         else
         {
@@ -178,7 +174,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     private string _oEM;
     async partial void OnOEMChanged(string value)
     {
-        if (value == _phone.OEM) return;        
+        if (value == _phone.OEM) return;
 
         _phone.OEM = value;
         var lastUpdate = await _repository.UpdateAsync(_phone);
@@ -199,10 +195,10 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 
         if (string.IsNullOrEmpty(value))
         {
-            if  (_phone.SR is null)
+            if (_phone.SR is null)
             {
                 return;
-            }        
+            }
             else
             {
                 _phone.SR = null;
@@ -242,18 +238,17 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
     private bool canPrintEnvelope;
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanRemoveSim))]
     private async Task RemoveSimAsync()
     {
-        //v1Phone updatedPhone = await _repository.RemoveSimFromPhone(_phone);
         _phone = await _repository.RemoveSimFromPhone(_phone);
         PhoneNumber = string.Empty;
         SimNumber = string.Empty;
-        CanRemoveSim = false;
         LastUpdate = _phone.LastUpdate;
     }
 
-    [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private bool canRemoveSim;
+    public bool CanRemoveSim()
+    {
+        return !(string.IsNullOrEmpty(PhoneNumber) || string.IsNullOrEmpty(SimNumber));
+    }
 }

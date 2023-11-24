@@ -229,13 +229,13 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void PrintEnvelope()
+    private async Task PrintEnvelope()
     {
         CanPrintEnvelope = false;
-        //await Task.Run(() =>
-        //{ 
-        _printEnvelope.Execute(_phone);
-        //});
+        await Task.Run(() =>
+        {
+            _printEnvelope.Execute(_phone);
+        });
     }
 
     [ObservableProperty]

@@ -5,6 +5,7 @@ using PhoneAssistant.WPF.Application.Entities;
 using Xunit;
 using System.Numerics;
 using System.Net.Sockets;
+using System.ComponentModel;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -26,6 +27,23 @@ public sealed class PhonesItemViewModelTests
         OEM = "oem",
         SR = 123456
     };
+    private v1Phone _updatedPhone = new()
+    {
+        PhoneNumber = null,
+        SimNumber = null,
+        Status = "status",
+        AssetTag = "at",
+        FormerUser = "fu",
+        Imei = "imei",
+        LastUpdate = "updated",
+        Model = "model",
+        NewUser = "nu",
+        NorR = "norr",
+        Notes = "note",
+        OEM = "oem",
+        SR = 123456
+    };
+
     private readonly AutoMocker _mocker = new AutoMocker();
     private PhonesItemViewModel _vm;
     private readonly Mock<IPhonesRepository> _repository;
@@ -39,7 +57,7 @@ public sealed class PhonesItemViewModelTests
             .Callback<v1Phone>((p) => _phone = p)
             .ReturnsAsync("LastUpdate");
         _repository.Setup(r => r.RemoveSimFromPhone(It.IsAny<v1Phone>()))            
-            .ReturnsAsync(_phone);
+            .ReturnsAsync(_updatedPhone);
     }
 
     [Theory]
@@ -191,7 +209,7 @@ public sealed class PhonesItemViewModelTests
 
         Assert.Equal(string.Empty, _vm.PhoneNumber);
         Assert.Equal(string.Empty, _vm.SimNumber);
-        Assert.Equal("LastUpdate", _vm.LastUpdate);
+        Assert.Equal(_updatedPhone.LastUpdate, _vm.LastUpdate);
     }
 
     [Fact]

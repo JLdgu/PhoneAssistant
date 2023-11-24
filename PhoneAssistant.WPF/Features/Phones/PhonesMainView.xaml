@@ -215,7 +215,7 @@
                                                 IsEnabled="{Binding CanPrintEnvelope}"
                                                 Style="{StaticResource MaterialDesignFlatLightButton}"
                                                 ToolTip="myScomis Email"
-                                                Visibility="Visible" />
+                                                Visibility="Collapsed" />
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

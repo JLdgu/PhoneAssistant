@@ -15,7 +15,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     private readonly IPhonesRepository _repository;
     private readonly IPrintEnvelope _printEnvelope;
     private readonly IMessenger _messenger;
-    private readonly v1Phone _phone;
+    private v1Phone _phone;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public PhonesItemViewModel(IPhonesRepository repository, 
@@ -245,11 +245,12 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     [RelayCommand]
     private async Task RemoveSimAsync()
     {
-        v1Phone updatedPhone = await _repository.RemoveSimFromPhone(_phone);
+        //v1Phone updatedPhone = await _repository.RemoveSimFromPhone(_phone);
+        _phone = await _repository.RemoveSimFromPhone(_phone);
         PhoneNumber = string.Empty;
         SimNumber = string.Empty;
         CanRemoveSim = false;
-        LastUpdate = updatedPhone.LastUpdate;
+        LastUpdate = _phone.LastUpdate;
     }
 
     [ObservableProperty]

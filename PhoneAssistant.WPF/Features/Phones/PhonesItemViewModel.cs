@@ -1,12 +1,8 @@
-﻿using System.Windows;
-
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using PhoneAssistant.WPF.Application.Entities;
-
-using SQLitePCL;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
@@ -43,12 +39,13 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         SR = phone.SR.ToString() ?? string.Empty;
         Status = phone.Status ?? string.Empty;
 
-        if (_phone.Status == "Production")
+        if (_phone.Status.Equals("Production", StringComparison.InvariantCultureIgnoreCase))
             CanPrintEnvelope = true;
         else
             CanPrintEnvelope = false;
     }
 
+    #region ObServableProperties
     [ObservableProperty]
     private string _assetTag;
     async partial void OnAssetTagChanged(string value)
@@ -223,8 +220,9 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         var lastUpdate = await _repository.UpdateAsync(_phone);
         LastUpdate = lastUpdate;
     }
+    #endregion
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanPrintEnvelope))]
     private async Task PrintEnvelope()
     {
         CanPrintEnvelope = false;
@@ -233,6 +231,14 @@ public sealed partial class PhonesItemViewModel : ObservableObject
             _printEnvelope.Execute(_phone);
         });
     }
+
+    [RelayCommand(CanExecute =nameof(CanCreateEmail))]
+    private void CreateEmail()
+    {
+        _messenger.Send(new Email(_phone));
+    }
+
+    private bool CanCreateEmail() => Status.Equals("Production", StringComparison.InvariantCultureIgnoreCase);
 
     [ObservableProperty]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
@@ -247,8 +253,5 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         LastUpdate = _phone.LastUpdate;
     }
 
-    public bool CanRemoveSim()
-    {
-        return !(string.IsNullOrEmpty(PhoneNumber) || string.IsNullOrEmpty(SimNumber));
-    }
+    public bool CanRemoveSim() =>  !(string.IsNullOrEmpty(PhoneNumber) || string.IsNullOrEmpty(SimNumber));    
 }

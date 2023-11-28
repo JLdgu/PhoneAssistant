@@ -35,17 +35,11 @@
             </StackPanel>
         </Grid>
 
-        <materialDesign:DrawerHost IsTopDrawerOpen="{Binding SelectedPhone, Converter={StaticResource NotNullConverter}, Mode=OneWay}"
+        <materialDesign:DrawerHost IsTopDrawerOpen="{Binding SelectedItem, Converter={StaticResource NotNullConverter}, Mode=OneWay}"
                                    Opacity="1"
                                    OpenMode="Modal">
-            <!--<materialDesign:DrawerHost.Resources>
-                <DataTemplate DataType="{x:Type viewmodel:EmailViewModel}">
-                    <viewmodel:EmailView />
-                </DataTemplate>
-            </materialDesign:DrawerHost.Resources>-->
             <materialDesign:DrawerHost.TopDrawerContent>
                 <viewmodel:EmailView DataContext="{Binding EmailViewModel}" />
-                <!--<ContentControl Content="{Binding EmailView}" />-->
             </materialDesign:DrawerHost.TopDrawerContent>
             <Grid>
                 <Grid.RowDefinitions>
@@ -202,20 +196,17 @@
                                                 Command="{Binding PrintEnvelopeCommand}"
                                                 Content="{materialDesign:PackIcon Kind=EmailOutline,
                                                                                   Size=15}"
-                                                IsEnabled="{Binding CanPrintEnvelope}"
                                                 Style="{StaticResource MaterialDesignFlatLightButton}"
                                                 ToolTip="Print Envelope" />
                                         <Button Height="20"
                                                 Margin="10,0,0,0"
                                                 Padding="0"
-                                                Command="{Binding Path=DataContext.EditPhoneCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}"
+                                                Command="{Binding CreateEmailCommand}"
                                                 Content="{materialDesign:PackIcon Kind=AccountOutline,
                                                                                   Size=15}"
-                                                IsEnabled="{Binding CanPrintEnvelope}"
                                                 Style="{StaticResource MaterialDesignFlatLightButton}"
-                                                ToolTip="myScomis Email"
-                                                Visibility="Collapsed" />
+                                                ToolTip="myScomis Email(phone)"
+                                                Visibility="Visible" />
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

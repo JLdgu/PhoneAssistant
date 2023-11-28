@@ -5,51 +5,62 @@
              xmlns:local="clr-namespace:PhoneAssistant.WPF.Features.Phones"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             d:DataContext="{d:DesignInstance Type=local:PhonesMainViewModel,
+             Height="500"
+             d:DataContext="{d:DesignInstance Type=local:EmailViewModel,
                                               IsDesignTimeCreatable=False}"
              d:DesignHeight="200"
              d:DesignWidth="800"
              mc:Ignorable="d">
-    <StackPanel Margin="16" Orientation="Horizontal">
+    <Grid d:Background="Aquamarine">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <GroupBox Margin="16"
+                  materialDesign:ColorZoneAssist.Mode="SecondaryMid"
+                  Header="myScomis HTML Email"
+                  Style="{StaticResource MaterialDesignGroupBox}">
+            <StackPanel Orientation="Horizontal">
 
-        <TextBlock Margin="4" Text="Phone" />
+                <RadioButton Content="Primary"
+                             GroupName="GroupChoiceChip"
+                             IsChecked="True"
+                             Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}" />
+                <RadioButton Content="Secondary"
+                             GroupName="GroupChoiceChip"
+                             Style="{StaticResource MaterialDesignChoiceChipSecondaryRadioButton}" />
+                <TextBlock Text="My Content" />
 
-        <TextBlock Margin="0,0,5,0"
-                   d:Background="AntiqueWhite"
-                   d:Text="IMEI"
-                   Text="{Binding Imei}" />
-        <TextBlock Margin="4" Text="PhoneNumber" />
 
-        <TextBlock Margin="0,0,5,0"
-                   d:Background="AntiqueWhite"
-                   d:Text="PhoneNumber"
-                   Text="{Binding PhoneNumber}" />
+                <TextBlock Margin="4" Text="IMEI" />
 
-        <RichTextBox Height="80"
-                     MinWidth="280"
-                     materialDesign:HintAssist.Hint="Multiline text"
-                     AcceptsReturn="True"
-                     IsDocumentEnabled="True"
-                     SpellCheck.IsEnabled="True"
-                     VerticalScrollBarVisibility="Auto">
-            <!--<FlowDocument>
-                <Paragraph>
-                    <Run FontWeight="Bold">Rich Text Box.</Run>
-                    <LineBreak />
-                    <Run FontStyle="Italic">With formatting support</Run>
-                    <LineBreak />
-                    <Hyperlink Cursor="Hand" NavigateUri="https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit">
-                        Material Design in XAML
-                    </Hyperlink>
-                </Paragraph>
-            </FlowDocument>-->
-        </RichTextBox>
+                <TextBlock Margin="0,0,5,0"
+                           d:Background="AntiqueWhite"
+                           d:Text="IMEI"
+                           Text="{Binding Imei}" />
 
-        <Button Margin="4"
-                Command="{x:Static materialDesign:DrawerHost.CloseDrawerCommand}"
-                CommandParameter="{x:Static Dock.Top}"
-                Content="CLOSE THIS"
-                Style="{StaticResource MaterialDesignFlatButton}" />
-    </StackPanel>
+                <TextBlock Margin="4" Text="PhoneNumber" />
+
+                <TextBlock Margin="0,0,5,0"
+                           d:Background="AntiqueWhite"
+                           d:Text="PhoneNumber"
+                           Text="{Binding PhoneNumber}" />
+
+                <Button Margin="4"
+                        Command="{x:Static materialDesign:DrawerHost.CloseDrawerCommand}"
+                        CommandParameter="{x:Static Dock.Top}"
+                        Content="CLOSE THIS"
+                        Style="{StaticResource MaterialDesignFlatButton}" />
+            </StackPanel>
+        </GroupBox>
+        <TextBox Grid.Row="1"
+                 VerticalAlignment="Stretch"
+                 materialDesign:HintAssist.Hint="Multiline text"
+                 AcceptsReturn="True"
+                 SpellCheck.IsEnabled="False"
+                 Text="{Binding EmailHtml}"
+                 TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto" />
+    </Grid>
 
 </UserControl>

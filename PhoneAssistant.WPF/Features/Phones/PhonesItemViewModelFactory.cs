@@ -19,4 +19,4 @@ public sealed class PhonesItemViewModelFactory : IPhonesItemViewModelFactory
     public PhonesItemViewModel Create(v1Phone phone) => new PhonesItemViewModel(_repository, _printEnvelope, _messenger, phone);
 }
 
-public sealed record class PhoneUpdate(v1Phone Phone);
+public sealed record class Email(v1Phone Phone);

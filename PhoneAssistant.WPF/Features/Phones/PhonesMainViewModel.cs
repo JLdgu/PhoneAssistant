@@ -11,7 +11,7 @@ using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
-public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipient<PhoneUpdate>, IPhonesMainViewModel
+public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipient<Email>, IPhonesMainViewModel
 {
     private readonly IPhonesItemViewModelFactory _phonesItemViewModelFactory;
     private readonly IPhonesRepository _phonesRepository;
@@ -34,10 +34,11 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
         _filterView = CollectionViewSource.GetDefaultView(PhoneItems);
         _filterView.Filter = new Predicate<object>(FilterView);
+               
+        messenger.RegisterAll(this);
 
         EmailViewModel = new EmailViewModel();
 
-        messenger.RegisterAll(this);
         CanRefeshPhones = true;
 
         NorRs.Add("N(ew)");
@@ -53,11 +54,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
         Statuses.Add("Misplaced");
     }
 
-    public void Receive(PhoneUpdate phone)
-    {
-        throw new NotImplementedException();
-    }
-
     [RelayCommand]
     private async Task RefreshPhones()
     {
@@ -71,22 +67,8 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     [ObservableProperty]
     private bool canRefeshPhones;
 
-    [RelayCommand]
-    private void EditPhone(PhonesItemViewModel? phone)
-    {
-        SelectedPhone = phone;
-        if (phone is null) return;
-
-        Imei = phone.Imei;
-        PhoneNumber = "11111111112";
-        
-        EmailViewModel.Imei =phone.Imei;
-
-        //EmailFlowDocument = email.GenerateFlowDocument();
-    }
-
     [ObservableProperty]
-    private PhonesItemViewModel? _selectedPhone;
+    private v1Phone? _selectedItem;
 
     [ObservableProperty]
     private string _imei;
@@ -94,8 +76,8 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     [ObservableProperty]
     private string _phoneNumber;
 
-    [ObservableProperty]
-    private FlowDocument _emailFlowDocument;
+    //[ObservableProperty]
+    //private FlowDocument _emailFlowDocument;
 
     #region Filtering View
     public bool FilterView(object item)
@@ -310,5 +292,11 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     public Task WindowClosingAsync()
     {
         throw new NotImplementedException();
+    }
+
+    public void Receive(Email message)
+    {
+        SelectedItem = message.Phone;
+        EmailViewModel.GenerateEmail(SelectedItem.Imei, SelectedItem.PhoneNumber);
     }
 }

@@ -63,22 +63,10 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
         CanRefeshPhones = true;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+//    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
     [ObservableProperty]
     private bool canRefeshPhones;
-
-    [ObservableProperty]
-    private v1Phone? _selectedItem;
-
-    [ObservableProperty]
-    private string _imei;
-
-    [ObservableProperty]
-    private string _phoneNumber;
-
-    //[ObservableProperty]
-    //private FlowDocument _emailFlowDocument;
-
+        
     #region Filtering View
     public bool FilterView(object item)
     {
@@ -160,7 +148,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    //[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
     private string? filterNorR;
 
     partial void OnFilterNorRChanged(string? value)
@@ -169,7 +157,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    //[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
     private string? filterStatus;
 
     partial void OnFilterStatusChanged(string? value)
@@ -296,7 +284,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
 
     public void Receive(Email message)
     {
-        SelectedItem = message.Phone;
-        EmailViewModel.GenerateEmail(SelectedItem.Imei, SelectedItem.PhoneNumber);
+        EmailViewModel.SetupEmail(message.Phone);
     }
 }

@@ -35,7 +35,7 @@
             </StackPanel>
         </Grid>
 
-        <materialDesign:DrawerHost IsTopDrawerOpen="{Binding SelectedItem, Converter={StaticResource NotNullConverter}, Mode=OneWay}"
+        <materialDesign:DrawerHost IsTopDrawerOpen="{Binding EmailViewModel.GeneratingEmail, Mode=OneWay}"
                                    Opacity="1"
                                    OpenMode="Modal">
             <materialDesign:DrawerHost.TopDrawerContent>

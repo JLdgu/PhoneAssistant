@@ -54,6 +54,7 @@ public sealed class EmailViewModelTests
 
         Assert.Contains("Your phone can be collected from", vm.EmailHtml);
         Assert.Contains("Hardware Room, Great Moor House", vm.EmailHtml);
+        Assert.Contains("It will be available for collection from", vm.EmailHtml);
     }
     [Fact]
     private void EmailHtml_WithDespatchMethodColletL87()
@@ -65,6 +66,7 @@ public sealed class EmailViewModelTests
 
         Assert.Contains("Your phone can be collected from", vm.EmailHtml);
         Assert.Contains("Room L87, County Hall", vm.EmailHtml);
+        Assert.Contains("It will be available for collection from", vm.EmailHtml);
     }
 
     [Theory]
@@ -78,5 +80,14 @@ public sealed class EmailViewModelTests
         vm.SetupEmail(_phone);
 
         Assert.Contains($"<td>Phone supplied:</td><td>{norrDescription} {_phone.OEM} {_phone.Model}</td>", vm.EmailHtml);
+    }
+
+    [Theory]
+    [InlineData("2/12/2023")]
+    [InlineData("3/12/2023")]
+    private void ToOrdinalWorkingDate_IgnoresWeekends(string date)
+    {
+        string actual = EmailViewModel.ToOrdinalWorkingDate(DateTime.Parse(date));
+        Assert.Equal("Monday 4th December 2023",actual);
     }
 }

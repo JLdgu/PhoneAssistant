@@ -73,10 +73,14 @@ public partial class EmailViewModel : ObservableObject
             case DespatchMethod.CollectGMH:
                 html.AppendLine("<p>Your phone can be collected from</p>");
                 html.AppendLine("<p>DTS End User Compute Team, Hardware Room, Great Moor House, Bittern Road, Exeter, EX2 7FW</p>");
+                html.AppendLine($"<p>It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now.AddDays(2))}</p><p>&nbsp;</p>");
+                html.AppendLine("<p>&nbsp;</p>");
                 break;
             case DespatchMethod.CollectL87:
                 html.AppendLine("<p>Your phone can be collected from</p>");
                 html.AppendLine("<p>DTS End User Compute Team, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</p>");
+                html.AppendLine($"<p>It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now)}</p><p>&nbsp;</p>");
+                html.AppendLine("<p>&nbsp;</p>");
                 break;
             case DespatchMethod.Delivery:
                 break;
@@ -142,6 +146,54 @@ public partial class EmailViewModel : ObservableObject
             </span>
             """;
     }
+    public static string ToOrdinalWorkingDate(DateTime date)
+    {
+        int addDays = 0;
+        switch (date.DayOfWeek)
+        {
+            case DayOfWeek.Sunday:
+                addDays = 1;
+                break;  
+            case DayOfWeek.Saturday:
+                addDays = 2;
+                break;
+        }
+        DateTime weekDay = date.AddDays(addDays);
+
+        string ordinalDay = string.Empty;
+        int number = weekDay.Day;
+        switch (number % 100)
+        {
+            case 11:
+            case 12:
+            case 13:
+                ordinalDay = number.ToString() + "th";
+                break;
+        }
+
+        if (ordinalDay == string.Empty)
+        {
+            switch (number % 10)
+            {
+                case 1:
+                    ordinalDay = number.ToString() + "st";
+                    break;
+                case 2:
+                    ordinalDay = number.ToString() + "nd";
+                    break;
+                case 3:
+                    ordinalDay = number.ToString() + "rd";
+                    break;
+                default:
+                    ordinalDay = number.ToString() + "th";
+                    break;
+            }
+        }
+        string from = weekDay.ToString("dddd * MMMM yyyy");
+        from = from.Replace("*", ordinalDay);
+
+        return from;
+    }
 }
 
 public enum OrderType
@@ -158,3 +210,4 @@ public enum DespatchMethod
     CollectL87 = 2,
     Delivery = 3
 }
+

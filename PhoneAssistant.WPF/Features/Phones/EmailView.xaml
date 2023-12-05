@@ -5,7 +5,7 @@
              xmlns:local="clr-namespace:PhoneAssistant.WPF.Features.Phones"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             Height="500"
+             Height="700"
              d:DataContext="{d:DesignInstance Type=local:EmailViewModel,
                                               IsDesignTimeCreatable=False}"
              d:DesignHeight="300"
@@ -58,6 +58,11 @@
                            d:Background="AntiqueWhite"
                            d:Text="Asset Tag"
                            Text="{Binding AssetTag}" />
+
+                <Button Command="{Binding CloseCommand}"
+                        Content="Close"
+                        Style="{StaticResource MaterialDesignFlatButton}" />
+
             </StackPanel>
 
             <StackPanel Grid.Row="1" Orientation="Horizontal">
@@ -85,16 +90,20 @@
                              IsChecked="{Binding DespatchMethod, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:DespatchMethod.Delivery}}"
                              Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}" />
 
-                <Button Command="{Binding CloseCommand}"
-                        Content="Close"
-                        Style="{StaticResource MaterialDesignFlatButton}" />
-
+                <TextBox Width="200"
+                         Height="80"
+                         VerticalAlignment="Stretch"
+                         materialDesign:HintAssist.Hint="Multiline text"
+                         AcceptsReturn="True"
+                         Text="{Binding DeliveryAddress}"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto" />
             </StackPanel>
             <TextBox Grid.Row="3"
                      VerticalAlignment="Stretch"
                      materialDesign:HintAssist.Hint="Multiline text"
                      AcceptsReturn="True"
-                     SpellCheck.IsEnabled="False"
+                     FontSize="14"
                      Text="{Binding EmailHtml}"
                      TextWrapping="Wrap"
                      VerticalScrollBarVisibility="Auto" />

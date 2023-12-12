@@ -21,12 +21,18 @@
               Style="{StaticResource MaterialDesignGroupBox}">
 
         <Grid d:Background="Aquamarine">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
+
 
             <StackPanel Orientation="Horizontal">
                 <TextBlock Margin="4"
@@ -59,9 +65,6 @@
                            d:Text="Asset Tag"
                            Text="{Binding AssetTag}" />
 
-                <Button Command="{Binding CloseCommand}"
-                        Content="Close"
-                        Style="{StaticResource MaterialDesignFlatButton}" />
 
             </StackPanel>
 
@@ -86,22 +89,38 @@
                              IsChecked="{Binding DespatchMethod, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:DespatchMethod.CollectGMH}}"
                              Style="{StaticResource MaterialDesignChoiceChipSecondaryRadioButton}" />
 
-                <RadioButton Content="Delivery"
+                <RadioButton x:Name="delivery"
+                             Content="Delivery"
                              IsChecked="{Binding DespatchMethod, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:DespatchMethod.Delivery}}"
                              Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}" />
-
-                <TextBox Width="200"
-                         Height="80"
-                         VerticalAlignment="Stretch"
-                         materialDesign:HintAssist.Hint="Multiline text"
-                         AcceptsReturn="True"
-                         Text="{Binding DeliveryAddress}"
-                         TextWrapping="Wrap"
-                         VerticalScrollBarVisibility="Auto" />
             </StackPanel>
-            <TextBox Grid.Row="3"
+
+            <TextBox Grid.Row="1"
+                     Grid.RowSpan="3"
+                     Grid.Column="1"
+                     Width="300"
+                     Height="100"
+                     Margin="10,0,0,0"
+                     HorizontalAlignment="Left"
                      VerticalAlignment="Stretch"
-                     materialDesign:HintAssist.Hint="Multiline text"
+                     d:Visibility="Visible"
+                     materialDesign:HintAssist.Hint="Delivery Address"
+                     AcceptsReturn="True"
+                     Text="{Binding DeliveryAddress}"
+                     TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     Visibility="{Binding IsChecked, ElementName=delivery, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+            <Button Grid.Row="3"
+                    Margin="0,10,0,20"
+                    HorizontalAlignment="Left"
+                    Command="{Binding CloseCommand}"
+                    Content="Copy to Clipbboard"
+                    Style="{StaticResource MaterialDesignRaisedButton}" />
+
+            <TextBox Grid.Row="4"
+                     Grid.ColumnSpan="2"
+                     VerticalAlignment="Stretch"
                      AcceptsReturn="True"
                      FontSize="14"
                      Text="{Binding EmailHtml}"

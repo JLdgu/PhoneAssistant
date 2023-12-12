@@ -206,7 +206,7 @@
                                                                                   Size=15}"
                                                 Style="{StaticResource MaterialDesignFlatLightButton}"
                                                 ToolTip="myScomis Email(phone)"
-                                                Visibility="Visible" />
+                                                Visibility="Collapsed" />
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

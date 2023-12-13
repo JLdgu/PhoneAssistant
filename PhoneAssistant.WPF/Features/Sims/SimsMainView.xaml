@@ -95,7 +95,19 @@
                                     Width="auto"
                                     MinWidth="110"
                                     Binding="{Binding PhoneNumber}"
-                                    Header="Phone Number" />
+                                    Header="Phone Number">
+                    <DataGridTextColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                <!--<TextBox materialDesign:HintAssist.Hint="Filter"
+                                         materialDesign:TextFieldAssist.HasClearButton="True"
+                                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterPhoneNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}"
+                                         Visibility="Hidden" />-->
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTextColumn.HeaderTemplate>
+                </DataGridTextColumn>
                 <DataGridTextColumn x:Name="SimNumber"
                                     Width="auto"
                                     Binding="{Binding SimNumber}"

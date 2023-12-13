@@ -41,313 +41,312 @@
             <materialDesign:DrawerHost.TopDrawerContent>
                 <viewmodel:EmailView DataContext="{Binding EmailViewModel}" />
             </materialDesign:DrawerHost.TopDrawerContent>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
 
-                <Grid Margin="16,10,0,0" d:Background="LightCoral">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="{Binding ElementName=gridNorR, Path=ActualWidth}" d:Width="60" />
-                        <ColumnDefinition Width="{Binding ElementName=gridStatus, Path=ActualWidth}" d:Width="70" />
-                        <ColumnDefinition Width="{Binding ElementName=gridPrintEnvelope, Path=ActualWidth}" d:Width="25" />
-                        <ColumnDefinition Width="{Binding ElementName=gridSR, Path=ActualWidth}" d:Width="45" />
-                        <ColumnDefinition Width="{Binding ElementName=gridImei, Path=ActualWidth}" d:Width="60" />
-                        <ColumnDefinition Width="{Binding ElementName=gridPhoneNumber, Path=ActualWidth}" d:Width="120" />
-                        <ColumnDefinition Width="{Binding ElementName=gridRemoveSim, Path=ActualWidth}" d:Width="25" />
-                        <ColumnDefinition Width="{Binding ElementName=gridSim, Path=ActualWidth}" d:Width="110" />
-                        <ColumnDefinition Width="{Binding ElementName=gridNewUser, Path=ActualWidth}" d:Width="90" />
-                        <ColumnDefinition Width="{Binding ElementName=gridAssetTag, Path=ActualWidth}" d:Width="85" />
-                        <ColumnDefinition Width="{Binding ElementName=gridOEM, Path=ActualWidth}" d:Width="60" />
-                        <ColumnDefinition Width="{Binding ElementName=gridModel, Path=ActualWidth}" d:Width="60" />
-                        <ColumnDefinition Width="{Binding ElementName=gridFormerUser, Path=ActualWidth}" d:Width="90" />
-                        <ColumnDefinition Width="{Binding ElementName=gridNotes, Path=ActualWidth}" d:Width="60" />
-                        <ColumnDefinition Width="{Binding ElementName=gridLastUpdate, Path=ActualWidth}" d:Width="100" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0"
-                             Margin="0,0,5,0"
-                             d:Width="80"
-                             materialDesign:HintAssist.Hint="Age (N/R)"
-                             materialDesign:HintAssist.IsFloating="True"
-                             materialDesign:TextFieldAssist.HasClearButton="True"
-                             MaxLength="1"
-                             Text="{Binding FilterNorR, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                    <TextBox Grid.Column="1"
-                             Margin="0,0,5,0"
-                             materialDesign:HintAssist.Hint="Status"
-                             materialDesign:HintAssist.IsFloating="True"
-                             materialDesign:TextFieldAssist.HasClearButton="True"
-                             Text="{Binding FilterStatus, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                    <TextBlock Grid.Column="2"
-                               IsEnabled="False"
-                               Text=""
-                               Visibility="Hidden" />
-                    <TextBox Grid.Column="3"
-                             Margin="0,0,5,0"
-                             materialDesign:HintAssist.Hint="SR"
-                             materialDesign:HintAssist.IsFloating="True"
-                             materialDesign:TextFieldAssist.HasClearButton="True"
-                             MaxLength="6"
-                             Text="{Binding FilterSR, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                    <TextBox Grid.Column="4"
-                             Margin="0,0,5,0"
-                             materialDesign:HintAssist.Hint="IMEI"
-                             materialDesign:HintAssist.IsFloating="True"
-                             materialDesign:TextFieldAssist.HasClearButton="True"
-                             Text="{Binding FilterImei, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                    <TextBox Grid.Column="5"
-                             Margin="0,0,5,0"
-                             materialDesign:HintAssist.Hint="Phone Number"
-                             materialDesign:HintAssist.IsFloating="True"
-                             materialDesign:TextFieldAssist.HasClearButton="True"
-                             Text="{Binding FilterPhoneNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                    <TextBlock Grid.Column="6"
-                               IsEnabled="False"
-                               Text=""
-                               Visibility="Hidden" />
-                    <TextBox Grid.Column="7"
-                             Margin="0,0,5,0"
-                             materialDesign:HintAssist.Hint="SIM Number"
-                             materialDesign:HintAssist.IsFloating="True"
-                             materialDesign:TextFieldAssist.HasClearButton="True"
-                             Text="{Binding FilterSimNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                    <TextBox Grid.Column="8"
-                             Margin="0,0,5,0"
-                             materialDesign:HintAssist.Hint="New User"
-                             materialDesign:HintAssist.IsFloating="True"
-                             materialDesign:TextFieldAssist.HasClearButton="True"
-                             Text="{Binding FilterNewUser, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                    <TextBox Grid.Column="9"
-                             Margin="0,0,5,0"
-                             materialDesign:HintAssist.Hint="Asset Tag"
-                             materialDesign:HintAssist.IsFloating="True"
-                             materialDesign:TextFieldAssist.HasClearButton="True"
-                             MaxLength="7"
-                             Text="{Binding FilterAssetTag, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                    <TextBox Grid.Column="10"
-                             Margin="0,0,5,0"
-                             materialDesign:HintAssist.Hint="OEM"
-                             materialDesign:HintAssist.IsFloating="True"
-                             materialDesign:TextFieldAssist.HasClearButton="True"
-                             Text="{Binding FilterOEM, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                    <TextBox Grid.Column="11"
-                             Margin="0,0,5,0"
-                             materialDesign:HintAssist.Hint="Model"
-                             materialDesign:HintAssist.IsFloating="True"
-                             materialDesign:TextFieldAssist.HasClearButton="True"
-                             Text="{Binding FilterModel, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                    <TextBox Grid.Column="12"
-                             Margin="0,0,5,0"
-                             materialDesign:HintAssist.Hint="Former User"
-                             materialDesign:HintAssist.IsFloating="True"
-                             materialDesign:TextFieldAssist.HasClearButton="True"
-                             Text="{Binding FilterFormerUser, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                    <TextBox Grid.Column="13"
-                             Margin="0,0,5,0"
-                             materialDesign:HintAssist.Hint="Notes"
-                             materialDesign:HintAssist.IsFloating="True"
-                             materialDesign:TextFieldAssist.HasClearButton="True"
-                             Text="{Binding FilterNotes, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                    <TextBox Grid.Column="14"
-                             Margin="0,0,5,0"
-                             materialDesign:HintAssist.Hint="Last Update"
-                             materialDesign:HintAssist.IsFloating="True"
-                             materialDesign:TextFieldAssist.HasClearButton="True"
-                             Text="{Binding FilterLastUpdate, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                </Grid>
+            <DataGrid Margin="10,5,0,0"
+                      materialDesign:DataGridAssist.CellPadding="4 5 2 5"
+                      materialDesign:DataGridAssist.ColumnHeaderPadding="4 5 2 18"
+                      AlternatingRowBackground="{DynamicResource MaterialDesignChipBackground}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      HeadersVisibility="Column"
+                      ItemsSource="{Binding PhoneItems}">
+                <DataGrid.Resources>
+                    <viewmodel:NorRConverter x:Key="NorRConverter" />
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <materialDesign:DataGridComboBoxColumn Header="Age"
+                                                           ItemsSourceBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.NorRs}"
+                                                           SelectedValueBinding="{Binding NorR, Converter={StaticResource NorRConverter}, UpdateSourceTrigger=LostFocus}">
+                        <DataGridComboBoxColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBox MinWidth="80"
+                                             materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.HasClearButton="True"
+                                             MaxLength="1"
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterNorR, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridComboBoxColumn.HeaderTemplate>
+                    </materialDesign:DataGridComboBoxColumn>
 
+                    <materialDesign:DataGridComboBoxColumn Header="Status"
+                                                           ItemsSourceBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.Statuses}"
+                                                           SelectedValueBinding="{Binding Status, UpdateSourceTrigger=LostFocus}">
+                        <DataGridComboBoxColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBox MinWidth="80"
+                                             materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.HasClearButton="True"
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterStatus, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridComboBoxColumn.HeaderTemplate>
+                    </materialDesign:DataGridComboBoxColumn>
 
-                <DataGrid Grid.Row="1"
-                          Margin="10,0,0,0"
-                          materialDesign:DataGridAssist.CellPadding="4 5 2 5"
-                          materialDesign:DataGridAssist.ColumnHeaderPadding="4 5 2 5"
-                          AlternatingRowBackground="{DynamicResource MaterialDesignChipBackground}"
-                          AutoGenerateColumns="False"
-                          CanUserAddRows="False"
-                          CanUserDeleteRows="False"
-                          HeadersVisibility="Column"
-                          IsReadOnly="False"
-                          ItemsSource="{Binding PhoneItems}"
-                          MouseDown="PhonesGrid_MouseDown">
-                    <DataGrid.Resources>
-                        <viewmodel:NorRConverter x:Key="NorRConverter" />
-                    </DataGrid.Resources>
-                    <DataGrid.Columns>
-                        <materialDesign:DataGridComboBoxColumn x:Name="gridNorR"
-                                                               MinWidth="45"
-                                                               Header="Age"
-                                                               ItemsSourceBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.NorRs}"
-                                                               SelectedValueBinding="{Binding NorR, Converter={StaticResource NorRConverter}, UpdateSourceTrigger=LostFocus}" />
-
-                        <materialDesign:DataGridComboBoxColumn x:Name="gridStatus"
-                                                               Header="Status"
-                                                               ItemsSourceBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.Statuses}"
-                                                               SelectedValueBinding="{Binding Status, UpdateSourceTrigger=LostFocus}" />
-
-                        <DataGridTemplateColumn x:Name="gridPrintEnvelope" CanUserSort="False">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate DataType="{x:Type viewmodel:PhonesItemViewModel}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Button Height="20"
-                                                Margin="0"
-                                                Padding="0"
-                                                Command="{Binding PrintEnvelopeCommand}"
-                                                Content="{materialDesign:PackIcon Kind=EmailOutline,
-                                                                                  Size=15}"
-                                                Style="{StaticResource MaterialDesignFlatLightButton}"
-                                                ToolTip="Print Envelope" />
-                                        <Button Height="20"
-                                                Margin="10,0,0,0"
-                                                Padding="0"
-                                                Command="{Binding CreateEmailCommand}"
-                                                Content="{materialDesign:PackIcon Kind=AccountOutline,
-                                                                                  Size=15}"
-                                                Style="{StaticResource MaterialDesignFlatLightButton}"
-                                                ToolTip="myScomis Email(phone)"
-                                                Visibility="Collapsed" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-
-                        <DataGridTextColumn x:Name="gridSR"
-                                            Width="auto"
-                                            MinWidth="50"
-                                            Header="SR">
-                            <DataGridTextColumn.Binding>
-                                <Binding Path="SR" UpdateSourceTrigger="LostFocus">
-                                    <Binding.ValidationRules>
-                                        <shared:EmptyOrNumericValidationRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </DataGridTextColumn.Binding>
-                            <DataGridTextColumn.EditingElementStyle>
-                                <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
-                                    <Setter Property="MaxLength" Value="6" />
-                                </Style>
-                            </DataGridTextColumn.EditingElementStyle>
-                        </DataGridTextColumn>
-
-                        <DataGridTextColumn x:Name="gridImei"
-                                            Width="auto"
-                                            Header="IMEI">
-                            <DataGridTextColumn.Binding>
-                                <Binding Path="Imei" UpdateSourceTrigger="LostFocus">
-                                    <Binding.ValidationRules>
-                                        <shared:EmptyOrNumericValidationRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </DataGridTextColumn.Binding>
-                            <DataGridTextColumn.EditingElementStyle>
-                                <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
-                                    <Setter Property="MaxLength" Value="15" />
-                                </Style>
-                            </DataGridTextColumn.EditingElementStyle>
-                        </DataGridTextColumn>
-
-                        <DataGridTextColumn x:Name="gridPhoneNumber"
-                                            Width="auto"
-                                            MinWidth="110"
-                                            Header="Phone Number">
-                            <DataGridTextColumn.Binding>
-                                <Binding Path="PhoneNumber" UpdateSourceTrigger="LostFocus">
-                                    <Binding.ValidationRules>
-                                        <shared:EmptyOrNumericValidationRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </DataGridTextColumn.Binding>
-                            <DataGridTextColumn.EditingElementStyle>
-                                <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
-                                    <Setter Property="MaxLength" Value="10" />
-                                </Style>
-                            </DataGridTextColumn.EditingElementStyle>
-                        </DataGridTextColumn>
-
-                        <DataGridTemplateColumn x:Name="gridRemoveSim" CanUserSort="False">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate DataType="{x:Type viewmodel:PhonesItemViewModel}">
+                    <DataGridTemplateColumn CanUserSort="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type viewmodel:PhonesItemViewModel}">
+                                <StackPanel Orientation="Horizontal">
                                     <Button Height="20"
                                             Margin="0"
                                             Padding="0"
-                                            Command="{Binding RemoveSimCommand}"
-                                            Content="{materialDesign:PackIcon Kind=SimOutline,
+                                            Command="{Binding PrintEnvelopeCommand}"
+                                            Content="{materialDesign:PackIcon Kind=EmailOutline,
                                                                               Size=15}"
                                             Style="{StaticResource MaterialDesignFlatLightButton}"
-                                            ToolTip="Remove Sim" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
+                                            ToolTip="Print Envelope" />
+                                    <Button Height="20"
+                                            Margin="10,0,0,0"
+                                            Padding="0"
+                                            Command="{Binding CreateEmailCommand}"
+                                            Content="{materialDesign:PackIcon Kind=AccountOutline,
+                                                                              Size=15}"
+                                            Style="{StaticResource MaterialDesignFlatLightButton}"
+                                            ToolTip="myScomis Email(phone)"
+                                            Visibility="Collapsed" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                        <DataGridTextColumn x:Name="gridSim"
-                                            Width="auto"
-                                            MinWidth="150"
-                                            Header="SIM Number">
-                            <DataGridTextColumn.Binding>
-                                <Binding Path="SimNumber" UpdateSourceTrigger="LostFocus">
-                                    <Binding.ValidationRules>
-                                        <shared:EmptyOrNumericValidationRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </DataGridTextColumn.Binding>
-                            <DataGridTextColumn.EditingElementStyle>
-                                <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
-                                    <Setter Property="MaxLength" Value="19" />
-                                </Style>
-                            </DataGridTextColumn.EditingElementStyle>
-                        </DataGridTextColumn>
+                    <DataGridTextColumn Header="SR">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBox MinWidth="50"
+                                             materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.HasClearButton="True"
+                                             MaxLength="6"
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterSR, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                        <DataGridTextColumn.Binding>
+                            <Binding Path="SR" UpdateSourceTrigger="LostFocus">
+                                <Binding.ValidationRules>
+                                    <shared:EmptyOrNumericValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </DataGridTextColumn.Binding>
+                        <DataGridTextColumn.EditingElementStyle>
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+                                <Setter Property="MaxLength" Value="6" />
+                            </Style>
+                        </DataGridTextColumn.EditingElementStyle>
+                    </DataGridTextColumn>
 
-                        <DataGridTextColumn x:Name="gridNewUser"
-                                            Width="auto"
-                                            MinWidth="130"
-                                            Binding="{Binding NewUser, UpdateSourceTrigger=LostFocus}"
-                                            Header="New User" />
+                    <DataGridTextColumn Header="IMEI">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBox MinWidth="110"
+                                             materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.HasClearButton="True"
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterImei, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                        <DataGridTextColumn.Binding>
+                            <Binding Path="Imei" UpdateSourceTrigger="LostFocus">
+                                <Binding.ValidationRules>
+                                    <shared:EmptyOrNumericValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </DataGridTextColumn.Binding>
+                        <DataGridTextColumn.EditingElementStyle>
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+                                <Setter Property="MaxLength" Value="15" />
+                            </Style>
+                        </DataGridTextColumn.EditingElementStyle>
+                    </DataGridTextColumn>
 
-                        <DataGridTextColumn x:Name="gridAssetTag"
-                                            Width="auto"
-                                            MinWidth="75"
-                                            Binding="{Binding AssetTag, UpdateSourceTrigger=LostFocus}"
-                                            Header="Asset Tag">
-                            <DataGridTextColumn.EditingElementStyle>
-                                <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
-                                    <Setter Property="MaxLength" Value="7" />
-                                </Style>
-                            </DataGridTextColumn.EditingElementStyle>
-                        </DataGridTextColumn>
+                    <DataGridTextColumn Header="Phone Number">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBox MinWidth="110"
+                                             materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.HasClearButton="True"
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterPhoneNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                        <DataGridTextColumn.Binding>
+                            <Binding Path="PhoneNumber" UpdateSourceTrigger="LostFocus">
+                                <Binding.ValidationRules>
+                                    <shared:EmptyOrNumericValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </DataGridTextColumn.Binding>
+                        <DataGridTextColumn.EditingElementStyle>
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+                                <Setter Property="MaxLength" Value="10" />
+                            </Style>
+                        </DataGridTextColumn.EditingElementStyle>
+                    </DataGridTextColumn>
 
-                        <materialDesign:DataGridComboBoxColumn x:Name="gridOEM"
-                                                               Header="OEM"
-                                                               ItemsSourceBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.OEMs}"
-                                                               SelectedValueBinding="{Binding OEM, UpdateSourceTrigger=LostFocus}" />
+                    <DataGridTemplateColumn CanUserSort="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type viewmodel:PhonesItemViewModel}">
+                                <Button Height="20"
+                                        Margin="0"
+                                        Padding="0"
+                                        Command="{Binding RemoveSimCommand}"
+                                        Content="{materialDesign:PackIcon Kind=SimOutline,
+                                                                          Size=15}"
+                                        Style="{StaticResource MaterialDesignFlatLightButton}"
+                                        ToolTip="Remove Sim" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                        <DataGridTextColumn x:Name="gridModel"
-                                            Width="auto"
-                                            MinWidth="60"
-                                            Binding="{Binding Model, UpdateSourceTrigger=LostFocus}"
-                                            Header="Model" />
+                    <DataGridTextColumn Header="SIM Number">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBox MinWidth="140"
+                                             materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.HasClearButton="True"
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterSimNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                        <DataGridTextColumn.Binding>
+                            <Binding Path="SimNumber" UpdateSourceTrigger="LostFocus">
+                                <Binding.ValidationRules>
+                                    <shared:EmptyOrNumericValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </DataGridTextColumn.Binding>
+                        <DataGridTextColumn.EditingElementStyle>
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+                                <Setter Property="MaxLength" Value="19" />
+                            </Style>
+                        </DataGridTextColumn.EditingElementStyle>
+                    </DataGridTextColumn>
 
-                        <DataGridTextColumn x:Name="gridFormerUser"
-                                            Width="auto"
-                                            MinWidth="130"
-                                            Binding="{Binding FormerUser, UpdateSourceTrigger=LostFocus}"
-                                            Header="Former User" />
+                    <DataGridTextColumn Binding="{Binding NewUser, UpdateSourceTrigger=LostFocus}" Header="New User">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBox MinWidth="130"
+                                             materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.HasClearButton="True"
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterNewUser, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
 
-                        <DataGridTextColumn x:Name="gridNotes"
-                                            Width="auto"
-                                            MaxWidth="400"
-                                            Binding="{Binding Notes, UpdateSourceTrigger=LostFocus}"
-                                            Header="Notes" />
+                    <DataGridTextColumn Binding="{Binding AssetTag, UpdateSourceTrigger=LostFocus}" Header="Asset Tag">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBox MinWidth="90"
+                                             materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.HasClearButton="True"
+                                             MaxLength="7"
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterAssetTag, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                        <DataGridTextColumn.EditingElementStyle>
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+                                <Setter Property="MaxLength" Value="7" />
+                            </Style>
+                        </DataGridTextColumn.EditingElementStyle>
+                    </DataGridTextColumn>
 
-                        <DataGridTextColumn x:Name="gridLastUpdate"
-                                            Width="auto"
-                                            Binding="{Binding LastUpdate}"
-                                            Header="Last Update"
-                                            IsReadOnly="True" />
-                    </DataGrid.Columns>
-                </DataGrid>
+                    <materialDesign:DataGridComboBoxColumn Header="OEM"
+                                                           ItemsSourceBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.OEMs}"
+                                                           SelectedValueBinding="{Binding OEM, UpdateSourceTrigger=LostFocus}">
+                        <DataGridComboBoxColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBox MinWidth="60"
+                                             materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.HasClearButton="True"
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterOEM, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridComboBoxColumn.HeaderTemplate>
+                    </materialDesign:DataGridComboBoxColumn>
 
-            </Grid>
+                    <DataGridTextColumn Binding="{Binding Model, UpdateSourceTrigger=LostFocus}" Header="Model">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBox MinWidth="60"
+                                             materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.HasClearButton="True"
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterModel, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding FormerUser, UpdateSourceTrigger=LostFocus}" Header="Former User">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBox MinWidth="130"
+                                             materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.HasClearButton="True"
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterFormerUser, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn MaxWidth="400"
+                                        Binding="{Binding Notes, UpdateSourceTrigger=LostFocus}"
+                                        Header="Notes">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBox MinWidth="130"
+                                             MaxWidth="400"
+                                             materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.HasClearButton="True"
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterNotes, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding LastUpdate}"
+                                        Header="Last Update"
+                                        IsReadOnly="True">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBox MinWidth="120"
+                                             materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.HasClearButton="True"
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterLastUpdate, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+
+                </DataGrid.Columns>
+            </DataGrid>
         </materialDesign:DrawerHost>
     </DockPanel>
 </UserControl>

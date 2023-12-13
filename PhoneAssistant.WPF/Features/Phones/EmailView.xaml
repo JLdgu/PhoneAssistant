@@ -110,13 +110,23 @@
                      TextWrapping="Wrap"
                      VerticalScrollBarVisibility="Auto"
                      Visibility="{Binding IsChecked, ElementName=delivery, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <StackPanel Grid.Row="3"
+                        Margin="0,10,0,20"
+                        Orientation="Horizontal">
 
-            <Button Grid.Row="3"
-                    Margin="0,10,0,20"
-                    HorizontalAlignment="Left"
-                    Command="{Binding CloseCommand}"
-                    Content="Copy to Clipbboard"
-                    Style="{StaticResource MaterialDesignRaisedButton}" />
+                <Button HorizontalAlignment="Left"
+                        Command="{Binding CloseCommand}"
+                        CommandParameter="Save"
+                        Content="Save &amp; Copy"
+                        Style="{StaticResource MaterialDesignRaisedButton}" />
+
+                <Button Margin="20,0"
+                        HorizontalAlignment="Left"
+                        Command="{Binding CloseCommand}"
+                        Content="Cancel"
+                        Style="{StaticResource MaterialDesignRaisedButton}" />
+
+            </StackPanel>
 
             <TextBox Grid.Row="4"
                      Grid.ColumnSpan="2"

@@ -35,6 +35,8 @@ public sealed class PhonesRepository : IPhonesRepository
             throw new ArgumentException($"IMEI {phone.Imei} not found.");
         }
         dbPhone.AssetTag = phone.AssetTag;
+        dbPhone.Collection = phone.Collection;
+        dbPhone.DespatchDetails = phone.DespatchDetails;
         dbPhone.FormerUser = phone.FormerUser;
         dbPhone.Imei = phone.Imei;
         dbPhone.Model = phone.Model;

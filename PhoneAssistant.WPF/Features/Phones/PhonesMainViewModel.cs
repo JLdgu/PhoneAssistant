@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
-using System.Windows.Documents;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -15,10 +14,10 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
 {
     private readonly IPhonesItemViewModelFactory _phonesItemViewModelFactory;
     private readonly IPhonesRepository _phonesRepository;
-
+    
     public ObservableCollection<PhonesItemViewModel> PhoneItems { get; } = new();    
 
-    public EmailViewModel EmailViewModel { get; set; }
+    public EmailViewModel EmailViewModel { get; }
 
     private readonly ICollectionView _filterView;
 
@@ -28,16 +27,18 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
 
     public PhonesMainViewModel(IPhonesItemViewModelFactory phonesItemViewModelFactory,
                                IPhonesRepository phonesRepository,
+                               EmailViewModel emailViewModel,
                                IMessenger messenger)
     {
         _phonesItemViewModelFactory = phonesItemViewModelFactory ?? throw new ArgumentNullException(nameof(phonesItemViewModelFactory));
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
+        EmailViewModel = emailViewModel ?? throw new ArgumentNullException(nameof(emailViewModel));
         _filterView = CollectionViewSource.GetDefaultView(PhoneItems);
         _filterView.Filter = new Predicate<object>(FilterView);
                
         messenger.RegisterAll(this);
 
-        EmailViewModel = new EmailViewModel();
+        //EmailViewModel = new EmailViewModel();
 
         CanRefeshPhones = true;
 
@@ -279,6 +280,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
 
     public void Receive(Email message)
     {
-        EmailViewModel.SetupEmail(message.Phone);
+        EmailViewModel.Phone = message.Phone;
     }
 }

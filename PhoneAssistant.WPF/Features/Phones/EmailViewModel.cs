@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Threading.Channels;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,29 +7,37 @@ using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
-public partial class EmailViewModel : ObservableObject
+public partial class EmailViewModel(IPhonesRepository phonesRepository) : ObservableObject
 {
+    private readonly IPhonesRepository _phonesRepository = phonesRepository ?? throw new ArgumentNullException();
+    
     private v1Phone? _phone;
-
-    public void SetupEmail(v1Phone phone)
+    public v1Phone? Phone
     {
-        _phone = phone ?? throw new ArgumentNullException(nameof(phone));
-        Imei = phone.Imei;
-        PhoneNumber = phone.PhoneNumber;
-        AssetTag = phone.AssetTag;
+        get { return _phone; }
+        set 
+        { 
+            _phone = value ?? throw new NullReferenceException(nameof(Phone));
+            Imei = value.Imei;
+            PhoneNumber = value.PhoneNumber ?? string.Empty;
+            AssetTag = value.AssetTag ?? string.Empty;
+            OrderType = OrderType.New;
+            DespatchMethod = DespatchMethod.CollectL87;
+            DeliveryAddress = value.DespatchDetails ?? string.Empty;
 
-        GeneratingEmail = true;
-        GenerateEmailHtml();
+            GeneratingEmail = true;
+            GenerateEmailHtml();
+        }
     }
 
     [ObservableProperty]
-    private string? _imei;
+    private string _imei = string.Empty;
 
     [ObservableProperty]
-    private string? _phoneNumber;
+    private string _phoneNumber = string.Empty;
 
     [ObservableProperty]
-    private string? _assetTag;
+    private string _assetTag = string.Empty;
 
     [ObservableProperty]
     private OrderType _orderType;
@@ -45,23 +52,39 @@ public partial class EmailViewModel : ObservableObject
 
     partial void OnDespatchMethodChanged(DespatchMethod value)
     {
+        Phone!.Collection = true;
+        if (value == DespatchMethod.Delivery)
+            Phone!.Collection = false;                
+        
         GenerateEmailHtml();
     }
 
     [RelayCommand]
-    private void Close()
+    private async Task CloseAsync(string? SaveAndCopy)
     {
         GeneratingEmail = false;
+        if (SaveAndCopy is null) return;
+
+        await _phonesRepository.UpdateAsync(_phone!);
     }
 
     [ObservableProperty]
-    private string? _deliveryAddress;
+    private string _deliveryAddress = string.Empty;
+
+    partial void OnDeliveryAddressChanged(string value)
+    {
+        Phone!.DespatchDetails = value;
+
+        _formattedAddress = value.Replace(Environment.NewLine,"<br />");
+        GenerateEmailHtml();
+    }
+    private string _formattedAddress = string.Empty;
 
     [ObservableProperty]
     private bool _generatingEmail;
 
     [ObservableProperty]
-    private string? _emailHtml;
+    private string _emailHtml = string.Empty;
 
     public void GenerateEmailHtml()
     {
@@ -75,16 +98,14 @@ public partial class EmailViewModel : ObservableObject
                 html.AppendLine("<p>Your phone can be collected from</p>");
                 html.AppendLine("<p>DTS End User Compute Team, Hardware Room, Great Moor House, Bittern Road, Exeter, EX2 7FW</p>");
                 html.AppendLine($"<p>It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now.AddDays(2))}</p><p>&nbsp;</p>");
-                html.AppendLine("<p>&nbsp;</p>");
                 break;
             case DespatchMethod.CollectL87:
                 html.AppendLine("<p>Your phone can be collected from</p>");
                 html.AppendLine("<p>DTS End User Compute Team, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</p>");
                 html.AppendLine($"<p>It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now)}</p><p>&nbsp;</p>");
-                html.AppendLine("<p>&nbsp;</p>");
                 break;
             case DespatchMethod.Delivery:
-                html.AppendLine("<p>Your phone has been sent to [address]</p>");
+                html.AppendLine($"<p>Your phone has been sent to<br />{_formattedAddress}</p>");
                 html.AppendLine($"<p>It was sent on {ToOrdinalWorkingDate(DateTime.Now)}</p>");
                 break;
         }

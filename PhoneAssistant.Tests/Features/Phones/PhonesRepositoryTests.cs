@@ -9,9 +9,9 @@ namespace PhoneAssistant.Tests.Features.Phones;
 
 public sealed class PhonesRepositoryTests : DbTestHelper
 {
-    v1DbTestHelper _helper = new();
-    PhonesRepository _repository;
-    v1Phone _phone = new()
+    readonly v1DbTestHelper _helper = new();
+    readonly PhonesRepository _repository;
+    readonly v1Phone _phone = new()
     {
         Imei = "imei",
         Model = "model",
@@ -21,6 +21,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         SimNumber = "simNumber",
         Status = "status"
     };
+
     public PhonesRepositoryTests()
     {
         _repository = new(_helper.DbContext);
@@ -207,11 +208,13 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         v1Phone? expected = new()
         {
             Imei = _phone.Imei,
-            PhoneNumber = "phone2",
-            SimNumber = "sim2",
+            Collection = true,
+            DespatchDetails = "despatch",
             Model = "model2",
             NorR = "norr2",
             OEM = "oem2",
+            PhoneNumber = "phone2",
+            SimNumber = "sim2",
             Status = "status2"
         };
 
@@ -220,6 +223,8 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         v1Phone? actual = await _helper.DbContext.Phones.FindAsync(_phone.Imei);
         Assert.NotNull(actual);                
         Assert.Equal(expected.AssetTag, actual.AssetTag);
+        Assert.True(actual.Collection);
+        Assert.Equal(expected.DespatchDetails, actual.DespatchDetails);
         Assert.Equal(expected.FormerUser, actual.FormerUser);
         Assert.Equal(expected.Imei, actual.Imei);
         Assert.Equal(expected.Model, actual.Model);

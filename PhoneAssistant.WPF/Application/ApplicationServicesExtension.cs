@@ -36,6 +36,7 @@ public static class ApplicationServicesExtensions
             services.AddTransient<IDashboardMainViewModel, DashboardMainViewModel>();
 
             services.AddTransient<IPhonesMainViewModel, PhonesMainViewModel>();
+            services.AddSingleton<EmailViewModel>();
             services.AddTransient<IPhonesItemViewModelFactory, PhonesItemViewModelFactory>();
             services.AddTransient<PhonesItemViewModel>();
             services.AddSingleton<IPhonesRepository, PhonesRepository>();

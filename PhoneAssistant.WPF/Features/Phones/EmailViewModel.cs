@@ -1,9 +1,11 @@
 ﻿using System.Text;
+using System.Windows;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using PhoneAssistant.WPF.Application.Entities;
+using PhoneAssistant.WPF.Features.Users;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
@@ -65,6 +67,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
         GeneratingEmail = false;
         if (SaveAndCopy is null) return;
 
+        Clipboard.SetText(EmailHtml);
         await _phonesRepository.UpdateAsync(_phone!);
     }
 

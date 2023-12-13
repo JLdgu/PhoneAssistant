@@ -68,10 +68,4 @@ public sealed partial class MainWindowViewModel : ObservableObject
         };
         await SelectedViewModel.LoadAsync();
     }
-
-    public void WindowClosing()
-    {
-        if (SelectedViewModel is null) return;
-        Task.Run(async () => await SelectedViewModel.WindowClosingAsync());
-    }
 }

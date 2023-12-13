@@ -328,21 +328,4 @@ public sealed class PhonesMainViewModelTests
 
     //    phonesRepository.Verify(pr => pr.UpdateAsync(selctedPhone), Times.Never);
     //}
-
-    //[TestMethod]
-    //public async Task WindowClosingAsync_CallsUpdateAsync_WhenPossibleOutstandingChanges()
-    //{
-    //    Phone selctedPhone = new Phone() { Id = 11, IMEI = "11", FormerUser = "11", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null };
-    //    Phone newSelctedPhone = new Phone() { Id = 999, IMEI = "99", FormerUser = "99", Wiped = true, Status = "In Stock", OEM = "Samsung", AssetTag = null, Note = null };
-    //    IStateRepository stateRepository = Mock.Of<IStateRepository>();
-    //    var phonesRepository = new Mock<IPhonesRepository>();
-    //    phonesRepository.Setup(pr => pr.UpdateAsync(selctedPhone));
-
-    //    PhonesMainViewModel viewModel = new(phonesRepository.Object, stateRepository);
-
-    //    viewModel.SelectedPhone = selctedPhone;
-    //    await viewModel.WindowClosingAsync();
-
-    //    phonesRepository.Verify(pr => pr.UpdateAsync(selctedPhone), Times.Once);
-    //}    
 }

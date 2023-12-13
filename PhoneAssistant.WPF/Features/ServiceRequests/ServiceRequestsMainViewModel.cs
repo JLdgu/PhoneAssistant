@@ -47,10 +47,4 @@ public sealed partial class ServiceRequestsMainViewModel : ObservableObject, ISe
         }
         ServiceRequestsView = new ListCollectionView(ServiceRequests);
     }
-
-    public Task WindowClosingAsync()
-    {
-        // TODO : Check outstanding edits have been saved
-        return Task.CompletedTask;
-    }
 }

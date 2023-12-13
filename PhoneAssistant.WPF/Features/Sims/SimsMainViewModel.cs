@@ -158,11 +158,4 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
             SimItems.Add(_simsItemViewModelFactory.Create(simcard));
         }
     }
-
-    public Task WindowClosingAsync()
-    {
-        // TODO : Check outstanding edits have been saved
-        return Task.CompletedTask;
-
-    }
 }

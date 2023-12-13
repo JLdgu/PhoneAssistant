@@ -11,9 +11,4 @@ public class DashboardMainViewModel : IDashboardMainViewModel
         return Task.CompletedTask;
     }
 
-    public Task WindowClosingAsync()
-    {
-        throw new NotImplementedException();
-    }
-
 }

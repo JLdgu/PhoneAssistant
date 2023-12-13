@@ -1,7 +1,6 @@
 ﻿<Window x:Class="PhoneAssistant.WPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:dashboard="clr-namespace:PhoneAssistant.WPF.Features.Dashboard"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -47,11 +46,6 @@
             <users:UsersMainView />
         </DataTemplate>
     </Window.Resources>
-    <behaviors:Interaction.Triggers>
-        <behaviors:EventTrigger EventName="Closing">
-            <behaviors:CallMethodAction MethodName="WindowClosing" TargetObject="{Binding}" />
-        </behaviors:EventTrigger>
-    </behaviors:Interaction.Triggers>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />

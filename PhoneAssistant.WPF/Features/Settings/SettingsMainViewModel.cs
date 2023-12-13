@@ -128,9 +128,4 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
     {
         return Task.CompletedTask;
     }
-
-    public Task WindowClosingAsync()
-    {
-        return Task.CompletedTask;
-    }
 }

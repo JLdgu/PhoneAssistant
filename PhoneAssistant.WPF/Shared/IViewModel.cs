@@ -7,5 +7,4 @@
 public interface IViewModel
 {
     Task LoadAsync();
-    Task WindowClosingAsync();
 }

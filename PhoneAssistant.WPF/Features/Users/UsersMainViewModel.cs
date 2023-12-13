@@ -101,9 +101,4 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
     {
         return Task.CompletedTask;
     }
-
-    public Task WindowClosingAsync()
-    {
-        throw new NotImplementedException();
-    }
 }

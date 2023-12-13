@@ -277,11 +277,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
         }
     }
 
-    public Task WindowClosingAsync()
-    {
-        throw new NotImplementedException();
-    }
-
     public void Receive(Email message)
     {
         EmailViewModel.SetupEmail(message.Phone);

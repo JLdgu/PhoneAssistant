@@ -67,8 +67,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
         GeneratingEmail = false;
         if (SaveAndCopy is null) return;
 
-        Clipboard.SetText(EmailHtml);
         await _phonesRepository.UpdateAsync(_phone!);
+        Clipboard.SetText(EmailHtml);
     }
 
     [ObservableProperty]

@@ -147,12 +147,19 @@ public sealed class EmailViewModelTests
     }
 
     [Theory]
-    [InlineData("2/12/2023")]
-    [InlineData("3/12/2023")]
-    private void ToOrdinalWorkingDate_IgnoresWeekends(string date)
+    [InlineData("2/12/2023", "Monday 4<sup>th</sup> December 2023")]
+    [InlineData("3/12/2023", "Monday 4<sup>th</sup> December 2023")]
+    [InlineData("1/1/2024", "Monday 1<sup>st</sup> January 2024")]
+    [InlineData("2/1/2024", "Tuesday 2<sup>nd</sup> January 2024")]
+    [InlineData("3/1/2024", "Wednesday 3<sup>rd</sup> January 2024")]
+    [InlineData("21/12/2023", "Thursday 21<sup>st</sup> December 2023")]
+    [InlineData("22/12/2023", "Friday 22<sup>nd</sup> December 2023")]
+    [InlineData("23/1/2024", "Tuesday 23<sup>rd</sup> January 2024")]
+    [InlineData("31/1/2024", "Wednesday 31<sup>st</sup> January 2024")]
+    private void ToOrdinalWorkingDate_IgnoresWeekends(string date,string expected)
     {
         string actual = EmailViewModel.ToOrdinalWorkingDate(DateTime.Parse(date));
 
-        Assert.Equal("Monday 4th December 2023",actual);
+        Assert.Equal(expected,actual);
     }
 }

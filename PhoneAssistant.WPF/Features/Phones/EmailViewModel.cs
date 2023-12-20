@@ -184,7 +184,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
             case 11:
             case 12:
             case 13:
-                ordinalDay = number.ToString() + "th";
+                ordinalDay = number.ToString() + "<sup>th></sup>";
                 break;
         }
 
@@ -193,19 +193,19 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
             switch (number % 10)
             {
                 case 1:
-                    ordinalDay = number.ToString() + "st";
+                    ordinalDay = number.ToString() + "<sup>st</sup>";
                     break;
                 case 2:
-                    ordinalDay = number.ToString() + "nd";
+                    ordinalDay = number.ToString() + "<sup>nd</sup>";
                     break;
                 case 3:
-                    ordinalDay = number.ToString() + "rd";
+                    ordinalDay = number.ToString() + "<sup>rd</sup>";
                     break;
                 default:
-                    ordinalDay = number.ToString() + "th";
+                    ordinalDay = number.ToString() + "<sup>th</sup>";
                     break;
             }
-        }
+        }        
         string from = weekDay.ToString("dddd * MMMM yyyy");
         from = from.Replace("*", ordinalDay);
 

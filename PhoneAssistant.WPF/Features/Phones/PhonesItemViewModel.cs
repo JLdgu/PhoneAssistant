@@ -1,4 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Windows.Controls;
+using System.Windows;
+
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
@@ -38,11 +41,6 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         SimNumber = phone.SimNumber ?? string.Empty;
         SR = phone.SR.ToString() ?? string.Empty;
         Status = phone.Status ?? string.Empty;
-
-        if (_phone.Status.Equals("Production", StringComparison.InvariantCultureIgnoreCase))
-            CanPrintEnvelope = true;
-        else
-            CanPrintEnvelope = false;
     }
 
     #region ObServableProperties
@@ -211,6 +209,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     }
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CreateEmailCommand))]
     private string _status;
     async partial void OnStatusChanged(string value)
     {
@@ -225,11 +225,21 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanPrintEnvelope))]
     private async Task PrintEnvelope()
     {
-        CanPrintEnvelope = false;
         await Task.Run(() =>
         {
             _printEnvelope.Execute(_phone);
         });
+    }
+    private bool CanPrintEnvelope()
+    {
+        if (!_phone.Status.Equals("Production", StringComparison.InvariantCultureIgnoreCase))
+            return false;
+        if (string.IsNullOrEmpty(SR)) 
+            return false;
+        if (string.IsNullOrEmpty(NewUser))
+            return false;
+
+        return true;
     }
 
     [RelayCommand(CanExecute =nameof(CanCreateEmail))]
@@ -237,14 +247,20 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     {
         _messenger.Send(new Email(_phone));
     }
+    private bool CanCreateEmail()
+    {
+        if (!_phone.Status.Equals("Production", StringComparison.InvariantCultureIgnoreCase))
+            return false;
+        if (string.IsNullOrEmpty(SR))
+            return false;
+        if (string.IsNullOrEmpty(NewUser))
+            return false;
 
-    private bool CanCreateEmail() => Status.Equals("Production", StringComparison.InvariantCultureIgnoreCase);
+        return true;
+    }
 
-    [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private bool canPrintEnvelope;
 
-    [RelayCommand(CanExecute = nameof(CanRemoveSim))]
+    [RelayCommand(CanExecute = nameof(_canRemoveSim))]
     private async Task RemoveSimAsync()
     {
         _phone = await _repository.RemoveSimFromPhone(_phone);
@@ -253,5 +269,5 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         LastUpdate = _phone.LastUpdate;
     }
 
-    public bool CanRemoveSim() =>  !(string.IsNullOrEmpty(PhoneNumber) || string.IsNullOrEmpty(SimNumber));    
+    private bool _canRemoveSim() =>  !(string.IsNullOrEmpty(PhoneNumber) || string.IsNullOrEmpty(SimNumber));    
 }

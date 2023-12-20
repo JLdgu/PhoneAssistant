@@ -60,8 +60,9 @@ public sealed class EmailViewModelTests
 
     [WpfFact]
     private void CloseCommand_WithNoneNullParameter_SavesChanges()
-    {
+    {        
         _vm.CloseCommand.Execute("Something");
+
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
     }
 

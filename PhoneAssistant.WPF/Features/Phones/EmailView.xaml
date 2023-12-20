@@ -128,14 +128,18 @@
 
             </StackPanel>
 
-            <TextBox Grid.Row="4"
+            <!--<TextBox Grid.Row="4"
                      Grid.ColumnSpan="2"
                      VerticalAlignment="Stretch"
                      AcceptsReturn="True"
                      FontSize="14"
                      Text="{Binding EmailHtml}"
                      TextWrapping="Wrap"
-                     VerticalScrollBarVisibility="Auto" />
+                     VerticalScrollBarVisibility="Auto" />-->
+            <WebBrowser Grid.Row="4"
+                        Grid.ColumnSpan="2"
+                        local:WebBrowserHelper.NavigateTo="{Binding EmailHtml}"
+                        Visibility="{Binding GeneratingEmail,Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
     </GroupBox>
 

@@ -3,6 +3,7 @@ using Moq.AutoMock;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Application.Entities;
 using Xunit;
+using System.Numerics;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -58,15 +59,15 @@ public sealed class PhonesItemViewModelTests
     }
 
     [Theory]
-    [InlineData("phone number", "sim number","In Stock",false)]
-    [InlineData(null, "sim number","In Stock",false)]
-    [InlineData("phone number", null,"In Stock", false)]
-    [InlineData(null, null, "In Stock", false)]
-    [InlineData("phone number", "sim number",  "Production", true)]
-    [InlineData(null, "sim number", "Production", true)]
-    [InlineData("phone number", null, "Production", true)]
-    [InlineData(null, null, "Production", true)]
-    private void PhonePropertySet_SetsBoundProperties(string? phoneNumber, string? simNumber, string status, bool canPrintEnvelope)
+    [InlineData("phone number", "sim number","In Stock")]
+    [InlineData(null, "sim number","In Stock")]
+    [InlineData("phone number", null,"In Stock")]
+    [InlineData(null, null, "In Stock")]
+    [InlineData("phone number", "sim number",  "Production")]
+    [InlineData(null, "sim number", "Production")]
+    [InlineData("phone number", null, "Production")]
+    [InlineData(null, null, "Production")]
+    private void PhonePropertySet_SetsBoundProperties(string? phoneNumber, string? simNumber, string status)
     {
         _phone.PhoneNumber = phoneNumber;
         _phone.SimNumber = simNumber;
@@ -85,7 +86,6 @@ public sealed class PhonesItemViewModelTests
         Assert.Equal(_phone.SimNumber ?? string.Empty, _vm.SimNumber);
         Assert.Equal(_phone.SR.ToString(), _vm.SR);
         Assert.Equal(_phone.Status, _vm.Status);
-        Assert.Equal(canPrintEnvelope, _vm.CanPrintEnvelope);
     }
 
     #region Update
@@ -209,12 +209,12 @@ public sealed class PhonesItemViewModelTests
     }
 
     [Fact]
-    private void RemoveSim_SetsCanRemoveSim_False()
+    private void RemoveSimCaooand_SetsCanExecute_False()
     {
 
         _vm.RemoveSimCommand.Execute(null);
 
-        Assert.False(_vm.CanRemoveSim());
+        Assert.False(_vm.RemoveSimCommand.CanExecute(null));
     }
     #endregion
 
@@ -228,11 +228,37 @@ public sealed class PhonesItemViewModelTests
         repository.Verify(p => p.Execute(_phone), Times.Once);
     }
 
-    [Fact]
-    private void PrintEnvelope_SetsCanPrintEnvelope_False()
+    [Theory]
+    [InlineData("In Stock",null,null,false)]
+    [InlineData("In Repair", null, null, false)]
+    [InlineData("Production", null, null, false)]
+    [InlineData("Production", 123, null, false)]
+    [InlineData("Production", null, "new user", false)]
+    [InlineData("Production", 123, "new user", true)]
+    private void PrintEnvelopeCommand_CanExecute(string status, int? sr, string? newUser, bool canExecute)
     {
-        _vm.PrintEnvelopeCommand.Execute(null);
+        _phone.Status = status;
+        _phone.SR = sr;
+        _phone.NewUser = newUser;
+        _vm = _mocker.CreateInstance<PhonesItemViewModel>();
 
-        Assert.False(_vm.CanPrintEnvelope);
+        Assert.Equal(canExecute, _vm.PrintEnvelopeCommand.CanExecute(null));
+    }
+
+    [Theory]
+    [InlineData("In Stock", null, null, false)]
+    [InlineData("In Repair", null, null, false)]
+    [InlineData("Production", null, null, false)]
+    [InlineData("Production", 123, null, false)]
+    [InlineData("Production", null, "new user", false)]
+    [InlineData("Production", 123, "new user", true)]
+    private void CreateEmailCommand_CanExecute(string status, int? sr, string? newUser, bool canExecute)
+    {
+        _phone.Status = status;
+        _phone.SR = sr;
+        _phone.NewUser = newUser;
+        _vm = _mocker.CreateInstance<PhonesItemViewModel>();
+
+        Assert.Equal(canExecute, _vm.CreateEmailCommand.CanExecute(null));
     }
 }

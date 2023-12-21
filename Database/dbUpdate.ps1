@@ -1,5 +1,5 @@
 
-$script = "Despatch.sql"
+$script = "../Migrations/Migrationyymmdd_name.sql"
 
 $dbPath =  "c:/temp/paTest.db"  
 #$dbPath = "p:/ICTS/Mobile Phones/PhoneAssistant/PhoneAssistant.db" 

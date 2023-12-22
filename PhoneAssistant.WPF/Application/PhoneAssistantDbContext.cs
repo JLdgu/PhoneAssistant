@@ -2,6 +2,8 @@
 
 using PhoneAssistant.WPF.Application.Entities;
 
+using static System.Net.Mime.MediaTypeNames;
+
 namespace PhoneAssistant.WPF.Application;
 
 public sealed class PhoneAssistantDbContext : DbContext
@@ -43,7 +45,8 @@ public sealed class PhoneAssistantDbContext : DbContext
             });
         modelBuilder.Entity<Phone>()
             .ToTable(p => p.HasCheckConstraint("CK_NorR", "\"NorR\" = 'N' OR \"NorR\" = 'R'"))
-            .ToTable(p => p.HasCheckConstraint("CK_OEM", "\"OEM\" = 'Apple' OR \"OEM\" = 'Nokia' OR \"OEM\" = 'Samsung'"));
+            .ToTable(p => p.HasCheckConstraint("CK_OEM", "\"OEM\" = 'Apple' OR \"OEM\" = 'Nokia' OR \"OEM\" = 'Samsung'"))
+;
 
         modelBuilder.Entity<Sim>(
             s =>
@@ -57,7 +60,16 @@ public sealed class PhoneAssistantDbContext : DbContext
             sr =>
             {
                 sr.HasKey(sr => sr.ServiceRequestNumber);
+                sr.Property(sr => sr.ServiceRequestNumber).HasColumnName("SRNumber");
                 //sr.Property(sr => sr.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            });
+
+        modelBuilder.Entity<Link>(
+            l =>
+            {
+                l.Property("PhoneImei").HasColumnName("Imei");
+                l.Property("SimPhoneNumber").HasColumnName("PhoneNumber");
+                l.Property("ServiceRequestNumber").HasColumnName("SRNumber");
             });
 
         base.OnModelCreating(modelBuilder);

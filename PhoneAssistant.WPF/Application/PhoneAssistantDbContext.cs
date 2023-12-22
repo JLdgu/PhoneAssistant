@@ -6,7 +6,7 @@ namespace PhoneAssistant.WPF.Application;
 
 public sealed class PhoneAssistantDbContext : DbContext
 {
-    //public DbSet<Link> Links => Set<Link>();
+    public DbSet<Link> Links => Set<Link>();
 
     public DbSet<Phone> Phones => Set<Phone>();
 
@@ -14,7 +14,7 @@ public sealed class PhoneAssistantDbContext : DbContext
 
     //public DbSet<Disposal> Disposals => Set<Disposal>();
 
-    //public DbSet<ServiceRequest> ServiceRequests => Set<ServiceRequest>();
+    public DbSet<ServiceRequest> ServiceRequests => Set<ServiceRequest>();
 
     public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
 
@@ -33,31 +33,32 @@ public sealed class PhoneAssistantDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        //modelBuilder.Entity<Phone>()
-        //    .HasIndex(p => p.Imei).IsUnique();
-        //modelBuilder.Entity<Phone>()
-        //    .HasIndex(p => p.AssetTag).IsUnique();
         modelBuilder.Entity<Phone>(
             p => 
             {
-                p.HasKey(x => x.Imei);
-                p.Property(x => x.SR).HasColumnName("SRNumber");
-                p.Property(x => x.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+                p.HasKey(p => p.Imei);
+                p.Property(p => p.SR).HasColumnName("SRNumber");                
+                p.HasIndex(p => p.AssetTag).IsUnique();
+                //p.Property(x => x.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
+        modelBuilder.Entity<Phone>()
+            .ToTable(p => p.HasCheckConstraint("CK_NorR", "\"NorR\" = 'N' OR \"NorR\" = 'R'"))
+            .ToTable(p => p.HasCheckConstraint("CK_OEM", "\"OEM\" = 'Apple' OR \"OEM\" = 'Nokia' OR \"OEM\" = 'Samsung'"));
 
-        //modelBuilder.Entity<Sim>()
-        //    .HasIndex(sc => sc.PhoneNumber).IsUnique();
-        //modelBuilder.Entity<Sim>()
-        //    .HasIndex(sc => sc.SimNumber).IsUnique();
         modelBuilder.Entity<Sim>(
             s =>
             {
                 s.HasKey(s => s.PhoneNumber);
-                s.Property(s => s.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+                s.HasIndex(s => s.SimNumber).IsUnique();
+                //s.Property(s => s.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
 
-        //modelBuilder.Entity<ServiceRequest>()
-        //    .HasIndex(sr => sr.ServiceRequestNumber).IsUnique();
+        modelBuilder.Entity<ServiceRequest>(
+            sr =>
+            {
+                sr.HasKey(sr => sr.ServiceRequestNumber);
+                //sr.Property(sr => sr.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            });
 
         base.OnModelCreating(modelBuilder);
     }

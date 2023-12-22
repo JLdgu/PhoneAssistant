@@ -16,7 +16,7 @@ namespace PhoneAssistant.WPF.Features.ServiceRequests
         public ServiceRequestsItemViewModel(IServiceRequestsRepository serviceRequestsRepository)
         {
             _srRepository = serviceRequestsRepository;
-            SR = new() { NewUser = "" };
+            SR = new() { ServiceRequestNumber = 0, NewUser = "" };
         }
 
         [ObservableProperty]
@@ -38,7 +38,6 @@ namespace PhoneAssistant.WPF.Features.ServiceRequests
         {
             _srPreAmendments = new()
             {
-                Id = value.Id,
                 ServiceRequestNumber = value.ServiceRequestNumber,
                 NewUser = value.NewUser,
                 DespatchDetails = value.DespatchDetails
@@ -47,7 +46,7 @@ namespace PhoneAssistant.WPF.Features.ServiceRequests
             NewUser = value.NewUser;
             DespatchDetails = value.DespatchDetails;
 
-            if (value.Id != 0)
+            if (value.ServiceRequestNumber != 0)
                 CanCreateNewSR = true;
 
             ClearErrors();

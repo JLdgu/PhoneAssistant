@@ -1,6 +1,6 @@
 ﻿namespace PhoneAssistant.WPF.Application.Entities;
 
-public sealed class Sim
+public class Sim
 {    
     public required string PhoneNumber { get; set; }
     public required string SimNumber { get; set; }
@@ -8,7 +8,7 @@ public sealed class Sim
     public int? SR { get; set; }
     public string? AssetTag { get; set; }
     public string? Notes { get; set; }
-    public string? LastUpdate { get; }
+    public string LastUpdate { get; set; } = string.Empty;
 
     // Navigation properties
     //public virtual ICollection<Link> Links { get; set; } = null!;

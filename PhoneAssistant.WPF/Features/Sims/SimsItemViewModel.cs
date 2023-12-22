@@ -3,6 +3,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using PhoneAssistant.WPF.Application.Entities;
+using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.Sims;
 

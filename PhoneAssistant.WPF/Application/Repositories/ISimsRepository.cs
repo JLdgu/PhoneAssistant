@@ -1,6 +1,6 @@
 ﻿using PhoneAssistant.WPF.Application.Entities;
 
-namespace PhoneAssistant.WPF.Features.Sims;
+namespace PhoneAssistant.WPF.Application.Repositories;
 public interface ISimsRepository
 {
     Task<IEnumerable<v1Sim>> GetSimsAsync();

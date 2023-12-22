@@ -1,6 +1,6 @@
 ﻿using PhoneAssistant.WPF.Application.Entities;
 
-namespace PhoneAssistant.WPF.Features.ServiceRequests;
+namespace PhoneAssistant.WPF.Application.Repositories;
 public interface IServiceRequestsRepository
 {
     Task AddAsync(ServiceRequest newSR);

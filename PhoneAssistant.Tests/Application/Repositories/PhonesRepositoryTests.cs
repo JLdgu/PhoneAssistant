@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel;
 
 using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Features.Phones;
+using PhoneAssistant.WPF.Application.Repositories;
 
 using Xunit;
 
-namespace PhoneAssistant.Tests.Features.Phones;
+namespace PhoneAssistant.Tests.Application.Repositories;
 
 public sealed class PhonesRepositoryTests : DbTestHelper
 {
@@ -136,7 +136,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         const string MOVE_SIM_NUMBER = "sim number";
         const string EXPECTED_ASSET_TAG = "asset";
         const string EXPECTED_FORMER_USER = "former user";
-        const string EXPECTED_MODEL = "model"; 
+        const string EXPECTED_MODEL = "model";
         const string EXPECTED_NEW_USER = "new user";
         const string EXPECTED_NORR = "norr";
         const string EXPECTED_NOTES = "notes";
@@ -160,7 +160,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         };
         await _helper.DbContext.Phones.AddAsync(phone);
         await _helper.DbContext.SaveChangesAsync();
-        
+
         v1Phone updatedPhone = await _repository.RemoveSimFromPhone(phone);
 
         Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", updatedPhone.LastUpdate);
@@ -197,7 +197,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     [Fact]
     public async Task UpdateAsync_WithPhoneNotFound_ThrowsException()
     {
-        await Assert.ThrowsAsync<ArgumentException>(() => _repository.UpdateAsync(_phone));    
+        await Assert.ThrowsAsync<ArgumentException>(() => _repository.UpdateAsync(_phone));
     }
 
     [Fact]
@@ -221,7 +221,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         string lastUpdate = await _repository.UpdateAsync(expected);
 
         v1Phone? actual = await _helper.DbContext.Phones.FindAsync(_phone.Imei);
-        Assert.NotNull(actual);                
+        Assert.NotNull(actual);
         Assert.Equal(expected.AssetTag, actual.AssetTag);
         Assert.True(actual.Collection);
         Assert.Equal(expected.DespatchDetails, actual.DespatchDetails);
@@ -243,7 +243,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     public async Task UpdateKeyAsync_WithNullOldImei_ThrowsException()
     {
 #pragma warning disable CS8625 // Converting null literal or possible null value to non-nullable type.
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.UpdateKeyAsync(null,"new"));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.UpdateKeyAsync(null, "new"));
 #pragma warning restore CS8625 // Possible null reference argument.
     }
 

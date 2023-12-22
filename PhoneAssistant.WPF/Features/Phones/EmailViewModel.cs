@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using PhoneAssistant.WPF.Application.Entities;
+using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Features.Users;
 
 namespace PhoneAssistant.WPF.Features.Phones;

@@ -3,7 +3,7 @@
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application;
 
-namespace PhoneAssistant.WPF.Features.ServiceRequests;
+namespace PhoneAssistant.WPF.Application.Repositories;
 
 public sealed class ServiceRequestsRepository : IServiceRequestsRepository
 {

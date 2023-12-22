@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Windows.Data;
 using Xunit;
 using PhoneAssistant.WPF.Features.Phones;
+using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.Tests.Features.Sims;
 public sealed class SimsMainViewModelTests

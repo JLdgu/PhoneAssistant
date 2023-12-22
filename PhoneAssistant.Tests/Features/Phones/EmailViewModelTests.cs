@@ -3,6 +3,7 @@ using PhoneAssistant.WPF.Application.Entities;
 using Xunit;
 using Moq.AutoMock;
 using Moq;
+using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 

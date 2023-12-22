@@ -3,7 +3,7 @@
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 
-namespace PhoneAssistant.Tests.Application;
+namespace PhoneAssistant.Tests.Application.Repositories;
 
 public sealed class StateRepositoryTests
 {

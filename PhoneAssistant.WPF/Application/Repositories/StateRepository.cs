@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Application;
 
-namespace PhoneAssistant.WPF.Application;
+namespace PhoneAssistant.WPF.Application.Repositories;
 public sealed class StateRepository : IStateRepository
 {
     private readonly PhoneAssistantDbContext _dbContext;

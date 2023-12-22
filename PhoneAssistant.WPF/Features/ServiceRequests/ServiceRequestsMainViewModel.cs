@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Data;
 using PhoneAssistant.WPF.Application.Entities;
+using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.ServiceRequests;
 

@@ -3,7 +3,7 @@
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 
-namespace PhoneAssistant.WPF.Features.Sims;
+namespace PhoneAssistant.WPF.Application.Repositories;
 
 public sealed class SimsRepository : ISimsRepository
 {

@@ -3,7 +3,7 @@
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 
-namespace PhoneAssistant.WPF.Features.Phones;
+namespace PhoneAssistant.WPF.Application.Repositories;
 
 public sealed class PhonesRepository : IPhonesRepository
 {
@@ -83,7 +83,7 @@ public sealed class PhonesRepository : IPhonesRepository
         await _dbContext.SaveChangesAsync();
 
         v1Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
-        return updatedPhone.LastUpdate;        
+        return updatedPhone.LastUpdate;
     }
 
     public async Task<v1Phone> RemoveSimFromPhone(v1Phone phone)
@@ -110,12 +110,12 @@ public sealed class PhonesRepository : IPhonesRepository
             _dbContext.Sims.Update(sim);
         }
         else
-        {        
+        {
             sim = new()
             {
                 PhoneNumber = phone.PhoneNumber,
                 SimNumber = phone.SimNumber,
-                Status = "In Stock"        
+                Status = "In Stock"
             };
             _dbContext.Sims.Add(sim);
         }
@@ -125,6 +125,6 @@ public sealed class PhonesRepository : IPhonesRepository
         await _dbContext.SaveChangesAsync();
 
         v1Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
-        return updatedPhone;        
+        return updatedPhone;
     }
 }

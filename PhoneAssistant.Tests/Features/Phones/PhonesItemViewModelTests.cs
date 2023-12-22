@@ -4,6 +4,7 @@ using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Application.Entities;
 using Xunit;
 using System.Numerics;
+using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 

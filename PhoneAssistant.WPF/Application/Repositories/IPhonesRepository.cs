@@ -1,6 +1,6 @@
 ﻿using PhoneAssistant.WPF.Application.Entities;
 
-namespace PhoneAssistant.WPF.Features.Phones;
+namespace PhoneAssistant.WPF.Application.Repositories;
 
 public interface IPhonesRepository
 {

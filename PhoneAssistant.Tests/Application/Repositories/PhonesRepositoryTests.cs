@@ -81,7 +81,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
             Status = "status"
         };
         await helper.DbContext.Phones.AddAsync(phone);
-        v1Sim? sim = new v1Sim() { PhoneNumber = "phone number", SimNumber = "sim number" };
+        Sim? sim = new Sim() { PhoneNumber = "phone number", SimNumber = "sim number" };
         await helper.DbContext.Sims.AddAsync(sim);
         await helper.DbContext.SaveChangesAsync();
 
@@ -115,7 +115,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Phone updatedPhone = await _repository.RemoveSimFromPhone(_phone);
         Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", updatedPhone.LastUpdate);
 
-        v1Sim? sim = await _helper.DbContext.Sims.FindAsync(PHONE_NUMBER);
+        Sim? sim = await _helper.DbContext.Sims.FindAsync(PHONE_NUMBER);
         Assert.NotNull(sim);
         Assert.Equal(PHONE_NUMBER, sim.PhoneNumber);
         Assert.Equal(SIM_NUMBER, sim.SimNumber);
@@ -164,7 +164,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Phone updatedPhone = await _repository.RemoveSimFromPhone(phone);
 
         Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", updatedPhone.LastUpdate);
-        v1Sim? sim = await _helper.DbContext.Sims.FindAsync(MOVE_PHONE_NUMBER);
+        Sim? sim = await _helper.DbContext.Sims.FindAsync(MOVE_PHONE_NUMBER);
         Assert.NotNull(sim);
         Assert.Equal(MOVE_PHONE_NUMBER, sim.PhoneNumber);
         Assert.Equal(MOVE_SIM_NUMBER, sim.SimNumber);

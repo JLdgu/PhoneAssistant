@@ -102,7 +102,7 @@ public sealed class PhonesRepository : IPhonesRepository
         }
 
         Phone dbPhone = await _dbContext.Phones.SingleAsync(x => x.Imei == phone.Imei);
-        v1Sim? sim = await _dbContext.Sims.FindAsync(phone.PhoneNumber);
+        Sim? sim = await _dbContext.Sims.FindAsync(phone.PhoneNumber);
         if (sim is not null)
         {
             sim.SimNumber = phone.SimNumber;

@@ -1,14 +1,16 @@
 ﻿namespace PhoneAssistant.WPF.Application.Entities;
 
-public class Sim
-{
-    public int Id { get; set; }
+public sealed class Sim
+{    
     public required string PhoneNumber { get; set; }
-
     public required string SimNumber { get; set; }
-    
-    public string? FormerUser { get; set; }
+    public string? Status { get; set; }
+    public int? SR { get; set; }
+    public string? AssetTag { get; set; }
+    public string? Notes { get; set; }
+    public string? LastUpdate { get; }
 
     // Navigation properties
-    public virtual ICollection<Link> Links { get; set; }  = null!;
+    //public virtual ICollection<Link> Links { get; set; } = null!;
+
 }

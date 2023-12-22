@@ -148,13 +148,13 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
     {
         SimItems.Clear();
 
-        IEnumerable<v1Sim> simCards = await _simRepository.GetSimsAsync();
+        IEnumerable<Sim> simCards = await _simRepository.GetSimsAsync();
         if (simCards == null)
         {
             throw new ArgumentNullException(nameof(simCards));
         }
 
-        foreach (v1Sim simcard in simCards)
+        foreach (Sim simcard in simCards)
         {            
             SimItems.Add(_simsItemViewModelFactory.Create(simcard));
         }

@@ -10,9 +10,9 @@ namespace PhoneAssistant.WPF.Features.Sims;
 public sealed partial class SimsItemViewModel : ObservableObject
 {
     private readonly ISimsRepository _simsRepository;
-    private readonly v1Sim _sim;
+    private readonly Sim _sim;
 
-    public SimsItemViewModel(ISimsRepository simsRepository, v1Sim sim)
+    public SimsItemViewModel(ISimsRepository simsRepository, Sim sim)
     {
         _simsRepository = simsRepository ?? throw new ArgumentNullException(nameof(simsRepository));
         _sim = sim ?? throw new ArgumentNullException(nameof(sim));

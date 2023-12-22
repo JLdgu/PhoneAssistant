@@ -10,7 +10,7 @@ public sealed class PhoneAssistantDbContext : DbContext
 
     public DbSet<Phone> Phones => Set<Phone>();
 
-    public DbSet<v1Sim> Sims => Set<v1Sim>();
+    public DbSet<Sim> Sims => Set<Sim>();
 
     //public DbSet<Disposal> Disposals => Set<Disposal>();
 
@@ -49,7 +49,7 @@ public sealed class PhoneAssistantDbContext : DbContext
         //    .HasIndex(sc => sc.PhoneNumber).IsUnique();
         //modelBuilder.Entity<Sim>()
         //    .HasIndex(sc => sc.SimNumber).IsUnique();
-        modelBuilder.Entity<v1Sim>(
+        modelBuilder.Entity<Sim>(
             s =>
             {
                 s.HasKey(s => s.PhoneNumber);

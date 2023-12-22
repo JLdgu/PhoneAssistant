@@ -3,5 +3,5 @@
 namespace PhoneAssistant.WPF.Application.Repositories;
 public interface ISimsRepository
 {
-    Task<IEnumerable<v1Sim>> GetSimsAsync();
+    Task<IEnumerable<Sim>> GetSimsAsync();
 }

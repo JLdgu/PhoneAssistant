@@ -14,17 +14,17 @@ public sealed class SimsMainViewModelTests
     [Fact]
     public async Task RefreshPhonesCommand_AfterCRUDChanges_UpdatesViewAsync()
     {
-        List<v1Sim> sims = new List<v1Sim>()
+        List<Sim> sims = new List<Sim>()
         {
-            new v1Sim() {PhoneNumber = "1", SimNumber = "1.1", AssetTag = "B1"},
-            new v1Sim() {PhoneNumber = "2", SimNumber = "2.2", AssetTag = "B2"},
-            new v1Sim() {PhoneNumber = "3", SimNumber = "3.3"}
+            new Sim() {PhoneNumber = "1", SimNumber = "1.1", AssetTag = "B1"},
+            new Sim() {PhoneNumber = "2", SimNumber = "2.2", AssetTag = "B2"},
+            new Sim() {PhoneNumber = "3", SimNumber = "3.3"}
         };
         SimsMainViewModel vm = ViewModelMockSetup(sims);
         await vm.LoadAsync();
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.SimItems);
         index = 0;
-        sims.Add(new v1Sim() { PhoneNumber = "4", SimNumber = "4.4", AssetTag = "D4" });
+        sims.Add(new Sim() { PhoneNumber = "4", SimNumber = "4.4", AssetTag = "D4" });
 
         vm.RefreshSimsCommand.Execute(null);
 
@@ -35,11 +35,11 @@ public sealed class SimsMainViewModelTests
     [Fact]
     public async Task ChangingFilterAssetTag_ChangesFilterViewAsync()
     {
-        List<v1Sim> sims = new List<v1Sim>()
+        List<Sim> sims = new List<Sim>()
         {
-            new v1Sim() {PhoneNumber = "1", SimNumber = "1.1", AssetTag = "B1"},
-            new v1Sim() {PhoneNumber = "2", SimNumber = "2.2", AssetTag = "B2"},
-            new v1Sim() {PhoneNumber = "3", SimNumber = "3.3"}
+            new Sim() {PhoneNumber = "1", SimNumber = "1.1", AssetTag = "B1"},
+            new Sim() {PhoneNumber = "2", SimNumber = "2.2", AssetTag = "B2"},
+            new Sim() {PhoneNumber = "3", SimNumber = "3.3"}
         };
             
         SimsMainViewModel vm = ViewModelMockSetup(sims);
@@ -56,11 +56,11 @@ public sealed class SimsMainViewModelTests
     [Fact]
     public async Task ChangingFilterNotes_ChangesFilterViewAsync()
     {
-        List<v1Sim> sims = new List<v1Sim>()
+        List<Sim> sims = new List<Sim>()
         {
-            new v1Sim() {PhoneNumber = "1", SimNumber = "1.1", Notes = "B1"},
-            new v1Sim() {PhoneNumber = "2", SimNumber = "2.2", Notes = "B2"},
-            new v1Sim() {PhoneNumber = "3", SimNumber = "3.3"}
+            new Sim() {PhoneNumber = "1", SimNumber = "1.1", Notes = "B1"},
+            new Sim() {PhoneNumber = "2", SimNumber = "2.2", Notes = "B2"},
+            new Sim() {PhoneNumber = "3", SimNumber = "3.3"}
         };
 
         SimsMainViewModel vm = ViewModelMockSetup(sims);
@@ -77,11 +77,11 @@ public sealed class SimsMainViewModelTests
     [Fact]
     public async Task ChangingFilterPhoneNumber_ChangesFilterViewAsync()
     {
-        List<v1Sim> sims = new List<v1Sim>()
+        List<Sim> sims = new List<Sim>()
         {
-            new v1Sim() {PhoneNumber = "A1", SimNumber = "1.1"},
-            new v1Sim() {PhoneNumber = "B2", SimNumber = "2.2"},
-            new v1Sim() {PhoneNumber = "C3", SimNumber = "3.3"}
+            new Sim() {PhoneNumber = "A1", SimNumber = "1.1"},
+            new Sim() {PhoneNumber = "B2", SimNumber = "2.2"},
+            new Sim() {PhoneNumber = "C3", SimNumber = "3.3"}
         };
 
         SimsMainViewModel vm = ViewModelMockSetup(sims);
@@ -98,11 +98,11 @@ public sealed class SimsMainViewModelTests
     [Fact]
     public async Task ChangingFilterSimNumber_ChangesFilterViewAsync()
     {
-        List<v1Sim> sims = new List<v1Sim>()
+        List<Sim> sims = new List<Sim>()
         {
-            new v1Sim() {PhoneNumber = "A1", SimNumber = "101"},
-            new v1Sim() {PhoneNumber = "B2", SimNumber = "202"},
-            new v1Sim() {PhoneNumber = "C3", SimNumber = "333"}
+            new Sim() {PhoneNumber = "A1", SimNumber = "101"},
+            new Sim() {PhoneNumber = "B2", SimNumber = "202"},
+            new Sim() {PhoneNumber = "C3", SimNumber = "333"}
         };
 
         SimsMainViewModel vm = ViewModelMockSetup(sims);
@@ -119,11 +119,11 @@ public sealed class SimsMainViewModelTests
     [Fact]
     public async Task ChangingFilterStatus_ChangesFilterViewAsync()
     {
-        List<v1Sim> sims = new List<v1Sim>()
+        List<Sim> sims = new List<Sim>()
         {
-            new v1Sim() {PhoneNumber = "1", SimNumber = "1.1", Status = "B1"},
-            new v1Sim() {PhoneNumber = "2", SimNumber = "2.2", Status = "B2"},
-            new v1Sim() {PhoneNumber = "3", SimNumber = "3.3"}
+            new Sim() {PhoneNumber = "1", SimNumber = "1.1", Status = "B1"},
+            new Sim() {PhoneNumber = "2", SimNumber = "2.2", Status = "B2"},
+            new Sim() {PhoneNumber = "3", SimNumber = "3.3"}
         };
 
         SimsMainViewModel vm = ViewModelMockSetup(sims);
@@ -138,14 +138,14 @@ public sealed class SimsMainViewModelTests
     }
 
     private int index = 0;
-    private SimsMainViewModel ViewModelMockSetup(List<v1Sim> sims)
+    private SimsMainViewModel ViewModelMockSetup(List<Sim> sims)
     {
         AutoMocker mocker = new AutoMocker();
 
         Mock<ISimsRepository> repository = mocker.GetMock<ISimsRepository>();
         repository.Setup(r => r.GetSimsAsync()).ReturnsAsync(sims);
         Mock<ISimsItemViewModelFactory> factory = mocker.GetMock<ISimsItemViewModelFactory>();
-        factory.Setup(r => r.Create(It.IsAny<v1Sim>()))
+        factory.Setup(r => r.Create(It.IsAny<Sim>()))
                             .Returns(() => {
                                 return new SimsItemViewModel(repository.Object, sims[index]);                                
                             }

@@ -14,9 +14,9 @@ public sealed class SimsRepository : ISimsRepository
         _dbContext = dbContext;
     }
 
-    public async Task<IEnumerable<v1Sim>> GetSimsAsync()
+    public async Task<IEnumerable<Sim>> GetSimsAsync()
     {
-        List<v1Sim> sims = await _dbContext.Sims.ToListAsync();
+        List<Sim> sims = await _dbContext.Sims.ToListAsync();
         return sims;
     }
 
@@ -27,7 +27,7 @@ public sealed class SimsRepository : ISimsRepository
             throw new ArgumentNullException(nameof(phoneNumber));
         }
 
-        v1Sim sim = await _dbContext.Sims.SingleAsync(x => x.PhoneNumber == phoneNumber);
+        Sim sim = await _dbContext.Sims.SingleAsync(x => x.PhoneNumber == phoneNumber);
         Phone phone = await _dbContext.Phones.SingleAsync(x => x.Imei == imei);
 
         phone.PhoneNumber = phoneNumber;

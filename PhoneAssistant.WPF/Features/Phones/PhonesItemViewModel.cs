@@ -15,13 +15,13 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     private readonly IPhonesRepository _repository;
     private readonly IPrintEnvelope _printEnvelope;
     private readonly IMessenger _messenger;
-    private v1Phone _phone;
+    private Phone _phone;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public PhonesItemViewModel(IPhonesRepository repository,
                                IPrintEnvelope printEnvelope,
                                IMessenger messenger,
-                               v1Phone phone)
+                               Phone phone)
     {
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));

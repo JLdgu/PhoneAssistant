@@ -3,5 +3,5 @@
 namespace PhoneAssistant.WPF.Features.Phones;
 public interface IPhonesItemViewModelFactory
 {
-    PhonesItemViewModel Create(v1Phone phone);
+    PhonesItemViewModel Create(Phone phone);
 }

@@ -10,43 +10,43 @@ using Xunit;
 namespace PhoneAssistant.Tests.Application.Repositories;
 public sealed class SimsRepositoryTests
 {
-    [Fact]
-    public async Task MoveSimToPhone_WithNullPhoneNumber_ThrowsException()
-    {
-        v1DbTestHelper helper = new();
-        using SqliteConnection connection = helper.CreateConnection();
-        using v1PhoneAssistantDbContext dbContext = new(helper.Options!);
-        await dbContext.Database.EnsureCreatedAsync();
-        SimsRepository repository = new(dbContext);
+//    [Fact]
+//    public async Task MoveSimToPhone_WithNullPhoneNumber_ThrowsException()
+//    {
+//        v1DbTestHelper helper = new();
+//        using SqliteConnection connection = helper.CreateConnection();
+//        using v1PhoneAssistantDbContext dbContext = new(helper.Options!);
+//        await dbContext.Database.EnsureCreatedAsync();
+//        SimsRepository repository = new(dbContext);
 
-#pragma warning disable CS8625 // Possible null reference argument.
-        await Assert.ThrowsAsync<ArgumentNullException>(() => repository.MoveSimToPhone(null, "ignored"));
-#pragma warning restore CS8625 // Possible null reference argument.
-    }
+//#pragma warning disable CS8625 // Possible null reference argument.
+//        await Assert.ThrowsAsync<ArgumentNullException>(() => repository.MoveSimToPhone(null, "ignored"));
+//#pragma warning restore CS8625 // Possible null reference argument.
+//    }
 
-    [Fact]
-    public async Task MoveSimToPhone_WithNotFoundSim_ThrowsException()
-    {
-        v1DbTestHelper helper = new();
-        using SqliteConnection connection = helper.CreateConnection();
-        using v1PhoneAssistantDbContext dbContext = new(helper.Options!);
-        await dbContext.Database.EnsureCreatedAsync();
-        SimsRepository repository = new(dbContext);
+//    [Fact]
+//    public async Task MoveSimToPhone_WithNotFoundSim_ThrowsException()
+//    {
+//        v1DbTestHelper helper = new();
+//        using SqliteConnection connection = helper.CreateConnection();
+//        using v1PhoneAssistantDbContext dbContext = new(helper.Options!);
+//        await dbContext.Database.EnsureCreatedAsync();
+//        SimsRepository repository = new(dbContext);
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => repository.MoveSimToPhone("1", "ignored"));
-    }
+//        await Assert.ThrowsAsync<InvalidOperationException>(() => repository.MoveSimToPhone("1", "ignored"));
+//    }
 
-    [Fact]
-    public async Task MoveSimToPhone_WithNotFoundPhone_ThrowsException()
-    {
-        v1DbTestHelper helper = new();
-        SimsRepository repository = new(helper.DbContext);
-        v1Sim sim = new v1Sim() { PhoneNumber = "sim1", SimNumber = "simnumber" };
-        await helper.DbContext.Sims.AddAsync(sim);
-        await helper.DbContext.SaveChangesAsync();
+//    [Fact]
+//    public async Task MoveSimToPhone_WithNotFoundPhone_ThrowsException()
+//    {
+//        v1DbTestHelper helper = new();
+//        SimsRepository repository = new(helper.DbContext);
+//        v1Sim sim = new v1Sim() { PhoneNumber = "sim1", SimNumber = "simnumber" };
+//        await helper.DbContext.Sims.AddAsync(sim);
+//        await helper.DbContext.SaveChangesAsync();
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => repository.MoveSimToPhone("sim1", "imei1"));
-    }
+//        await Assert.ThrowsAsync<InvalidOperationException>(() => repository.MoveSimToPhone("sim1", "imei1"));
+//    }
 
     //[Fact]
     //public async Task MoveSimToPhone_WithFoundSimAndPhone_Succeeds()

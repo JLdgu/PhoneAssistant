@@ -25,7 +25,7 @@ public static class ApplicationServicesExtensions
             UserSettings settings = new();
             string database = settings.Database;
             string connectionString = $@"DataSource={database};";
-            services.AddDbContext<v1PhoneAssistantDbContext>(
+            services.AddDbContext<PhoneAssistantDbContext>(
                             options => options.UseSqlite(connectionString),
                             ServiceLifetime.Singleton);
             services.AddSingleton<IUserSettings, UserSettings>();

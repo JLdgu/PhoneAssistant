@@ -7,29 +7,29 @@ namespace PhoneAssistant.WPF.Application.Repositories;
 
 public sealed class PhonesRepository : IPhonesRepository
 {
-    private readonly v1PhoneAssistantDbContext _dbContext;
+    private readonly PhoneAssistantDbContext _dbContext;
 
-    public PhonesRepository(v1PhoneAssistantDbContext dbContext)
+    public PhonesRepository(PhoneAssistantDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public async Task<IEnumerable<v1Phone>> GetPhonesAsync()
+    public async Task<IEnumerable<Phone>> GetPhonesAsync()
     {
-        List<v1Phone> phones = await _dbContext.Phones
+        List<Phone> phones = await _dbContext.Phones
                                .AsNoTracking()
                                .OrderByDescending(p => p.LastUpdate)
                                .ToListAsync();
         return phones;
     }
 
-    public async Task<string> UpdateAsync(v1Phone phone)
+    public async Task<string> UpdateAsync(Phone phone)
     {
         if (phone is null)
         {
             throw new ArgumentNullException(nameof(phone));
         }
-        v1Phone? dbPhone = await _dbContext.Phones.FindAsync(phone.Imei);
+        Phone? dbPhone = await _dbContext.Phones.FindAsync(phone.Imei);
         if (dbPhone is null)
         {
             throw new ArgumentException($"IMEI {phone.Imei} not found.");
@@ -52,7 +52,7 @@ public sealed class PhonesRepository : IPhonesRepository
         _dbContext.Phones.Update(dbPhone);
         await _dbContext.SaveChangesAsync();
 
-        v1Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
+        Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
         return updatedPhone.LastUpdate;
     }
 
@@ -68,7 +68,7 @@ public sealed class PhonesRepository : IPhonesRepository
             throw new ArgumentNullException(nameof(newImei));
         }
 
-        v1Phone? phone = await _dbContext.Phones.FindAsync(oldImei);
+        Phone? phone = await _dbContext.Phones.FindAsync(oldImei);
         if (phone is null)
         {
             throw new ArgumentException($"IMEI {oldImei} not found.");
@@ -82,11 +82,11 @@ public sealed class PhonesRepository : IPhonesRepository
         _dbContext.Phones.Add(phone);
         await _dbContext.SaveChangesAsync();
 
-        v1Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
+        Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
         return updatedPhone.LastUpdate;
     }
 
-    public async Task<v1Phone> RemoveSimFromPhone(v1Phone phone)
+    public async Task<Phone> RemoveSimFromPhone(Phone phone)
     {
         if (phone is null)
         {
@@ -101,7 +101,7 @@ public sealed class PhonesRepository : IPhonesRepository
             throw new ArgumentException($"'{nameof(phone.SimNumber)}' cannot be null or empty.", nameof(phone.SimNumber));
         }
 
-        v1Phone dbPhone = await _dbContext.Phones.SingleAsync(x => x.Imei == phone.Imei);
+        Phone dbPhone = await _dbContext.Phones.SingleAsync(x => x.Imei == phone.Imei);
         v1Sim? sim = await _dbContext.Sims.FindAsync(phone.PhoneNumber);
         if (sim is not null)
         {
@@ -124,7 +124,7 @@ public sealed class PhonesRepository : IPhonesRepository
         _dbContext.Phones.Update(dbPhone);
         await _dbContext.SaveChangesAsync();
 
-        v1Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
+        Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
         return updatedPhone;
     }
 }

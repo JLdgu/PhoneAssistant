@@ -7,9 +7,9 @@ namespace PhoneAssistant.WPF.Application.Repositories;
 
 public sealed class SimsRepository : ISimsRepository
 {
-    private readonly v1PhoneAssistantDbContext _dbContext;
+    private readonly PhoneAssistantDbContext _dbContext;
 
-    public SimsRepository(v1PhoneAssistantDbContext dbContext)
+    public SimsRepository(PhoneAssistantDbContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -28,7 +28,7 @@ public sealed class SimsRepository : ISimsRepository
         }
 
         v1Sim sim = await _dbContext.Sims.SingleAsync(x => x.PhoneNumber == phoneNumber);
-        v1Phone phone = await _dbContext.Phones.SingleAsync(x => x.Imei == imei);
+        Phone phone = await _dbContext.Phones.SingleAsync(x => x.Imei == imei);
 
         phone.PhoneNumber = phoneNumber;
         phone.SimNumber = sim.SimNumber;

@@ -100,15 +100,15 @@ namespace PhoneAssistant.WPF.Features.ServiceRequests
         [ObservableProperty]
         private bool canSaveSRChanges;
 
-        [RelayCommand]
-        private async Task SaveSRChangesAsync()
-        {
-            await _srRepository.UpdateAsync(SR);
+        //[RelayCommand]
+        //private async Task SaveSRChangesAsync()
+        //{
+        //    await _srRepository.UpdateAsync(SR);
 
-            CanCancelSRChanges = false;
-            CanSaveSRChanges = false;
-            CanCreateNewSR = true;
-        }
+        //    CanCancelSRChanges = false;
+        //    CanSaveSRChanges = false;
+        //    CanCreateNewSR = true;
+        //}
 
         [ObservableProperty]
         private bool canCancelSRChanges;

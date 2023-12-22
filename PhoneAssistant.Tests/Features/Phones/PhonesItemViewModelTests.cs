@@ -10,7 +10,7 @@ namespace PhoneAssistant.Tests.Features.Phones;
 
 public sealed class PhonesItemViewModelTests
 {
-    private v1Phone _phone = new()
+    private Phone _phone = new()
     {
         PhoneNumber = "phoneNumber",
         SimNumber = "simNumber",
@@ -26,7 +26,7 @@ public sealed class PhonesItemViewModelTests
         OEM = "oem",
         SR = 123456
     };
-    private readonly v1Phone _updatedPhone = new()
+    private readonly Phone _updatedPhone = new()
     {
         PhoneNumber = null,
         SimNumber = null,
@@ -52,10 +52,10 @@ public sealed class PhonesItemViewModelTests
         _mocker.Use(_phone);
         _vm = _mocker.CreateInstance<PhonesItemViewModel>();
         _repository = _mocker.GetMock<IPhonesRepository>();
-        _repository.Setup(r => r.UpdateAsync(It.IsAny<v1Phone>()))
-            .Callback<v1Phone>((p) => _phone = p)
+        _repository.Setup(r => r.UpdateAsync(It.IsAny<Phone>()))
+            .Callback<Phone>((p) => _phone = p)
             .ReturnsAsync("LastUpdate");
-        _repository.Setup(r => r.RemoveSimFromPhone(It.IsAny<v1Phone>()))            
+        _repository.Setup(r => r.RemoveSimFromPhone(It.IsAny<Phone>()))            
             .ReturnsAsync(_updatedPhone);
     }
 

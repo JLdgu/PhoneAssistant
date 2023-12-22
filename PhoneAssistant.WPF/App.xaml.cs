@@ -42,7 +42,7 @@ public partial class App : System.Windows.Application
 
     private void ConfigureDatabase()
     {
-        v1PhoneAssistantDbContext dbContext = _host.Services.GetRequiredService<v1PhoneAssistantDbContext>();
+        PhoneAssistantDbContext dbContext = _host.Services.GetRequiredService<PhoneAssistantDbContext>();
 
         dbContext.Database.EnsureCreated();
         //dbContext.Database.Migrate();

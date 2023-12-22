@@ -13,20 +13,4 @@ public sealed class ServiceRequestsRepository : IServiceRequestsRepository
     {
         _dbContext = dbContext;
     }
-
-    public Task AddAsync(ServiceRequest newSR)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<IEnumerable<ServiceRequest>?> GetServiceRequestsAsync()
-    {
-        List<ServiceRequest> serviceRequests = await _dbContext.ServiceRequests.ToListAsync();
-        return serviceRequests;
-    }
-
-    public Task UpdateAsync(ServiceRequest srToUpdate)
-    {
-        throw new NotImplementedException();
-    }
 }

@@ -34,7 +34,7 @@ internal sealed class PrintEnvelope : IPrintEnvelope
     int _vertialPostion = MARGIN_TOP;
 
     private readonly IUserSettings _userSettings;
-    private v1Phone? _phone;
+    private Phone? _phone;
 
     public PrintEnvelope(IUserSettings userSettings)
     {
@@ -42,7 +42,7 @@ internal sealed class PrintEnvelope : IPrintEnvelope
         _linePen = new Pen(_lineBrush, 2);
     }
 
-    public void Execute(v1Phone? phone)
+    public void Execute(Phone? phone)
     {
         if (phone is null)
         {

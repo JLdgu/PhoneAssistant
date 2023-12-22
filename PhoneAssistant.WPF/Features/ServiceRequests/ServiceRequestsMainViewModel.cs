@@ -34,18 +34,18 @@ public sealed partial class ServiceRequestsMainViewModel : ObservableObject, ISe
 
     public async Task LoadAsync()
     {
-        if (ServiceRequests.Any()) return;
+    //    if (ServiceRequests.Any()) return;
 
-        var serviceRequests = await _serviceRequestsRepository.GetServiceRequestsAsync();
-        if (serviceRequests == null)
-        {
-            throw new ArgumentNullException(nameof(serviceRequests));
-        }
+    //    var serviceRequests = await _serviceRequestsRepository.GetServiceRequestsAsync();
+    //    if (serviceRequests == null)
+    //    {
+    //        throw new ArgumentNullException(nameof(serviceRequests));
+    //    }
 
-        foreach (var sr in serviceRequests)
-        {
-            ServiceRequests.Add(sr);
-        }
-        ServiceRequestsView = new ListCollectionView(ServiceRequests);
+    //    foreach (var sr in serviceRequests)
+    //    {
+    //        ServiceRequests.Add(sr);
+    //    }
+    //    ServiceRequestsView = new ListCollectionView(ServiceRequests);
     }
 }

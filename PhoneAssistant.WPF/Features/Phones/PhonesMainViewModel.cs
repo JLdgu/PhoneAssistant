@@ -271,9 +271,9 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     public async Task LoadAsync()
     {
         PhoneItems.Clear();
-        IEnumerable<v1Phone> phones = await _phonesRepository.GetPhonesAsync();
+        IEnumerable<Phone> phones = await _phonesRepository.GetPhonesAsync();
 
-        foreach (v1Phone phone in phones) 
+        foreach (Phone phone in phones) 
         {
             PhoneItems.Add(_phonesItemViewModelFactory.Create(phone));
         }

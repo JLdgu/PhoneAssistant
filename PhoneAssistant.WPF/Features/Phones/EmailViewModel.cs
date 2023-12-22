@@ -15,8 +15,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
 {
     private readonly IPhonesRepository _phonesRepository = phonesRepository ?? throw new ArgumentNullException();
     
-    private v1Phone? _phone;
-    public v1Phone? Phone
+    private Phone? _phone;
+    public Phone? Phone
     {
         get { return _phone; }
         set 

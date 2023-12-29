@@ -16,7 +16,7 @@ public class Phone
     public string? Notes { get; set; }
     public bool? Collection { get; set; }
     public string? DespatchDetails { get; set; }
-    public string LastUpdate { get; set; } = string.Empty;
+    public string LastUpdate { get; set; }
 
     // Navigation properties
     //public virtual ICollection<Link> Links { get; set; } = null!;

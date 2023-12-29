@@ -8,19 +8,19 @@ namespace PhoneAssistant.Tests;
 public class DbTestHelper : IDisposable
 {
     private readonly SqliteConnection _connection;
+    
     public PhoneAssistantDbContext DbContext { get; }
-
 
     public DbContextOptions<PhoneAssistantDbContext>? Options;
     private bool _disposedValue;
     public DbTestHelper(string datasource = "DataSource=:memory:;")
     {
-        _connection = CreateConnection();
+        _connection = CreateConnection(datasource);
         DbContext = new(Options!);
         DbContext.Database.EnsureCreated();
     }
 
-    internal SqliteConnection CreateConnection(string datasource = "DataSource=:memory:;")
+    internal SqliteConnection CreateConnection(string datasource)
     {
         var connection = new SqliteConnection(datasource);
         connection.Open();

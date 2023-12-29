@@ -41,7 +41,7 @@ public sealed class PhoneAssistantDbContext : DbContext
                 p.HasKey(p => p.Imei);
                 p.Property(p => p.SR).HasColumnName("SRNumber");                
                 p.HasIndex(p => p.AssetTag).IsUnique();
-                //p.Property(x => x.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+                p.Property(p => p.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
         modelBuilder.Entity<Phone>()
             .ToTable(p => p.HasCheckConstraint("CK_NorR", "\"NorR\" = 'N' OR \"NorR\" = 'R'"))

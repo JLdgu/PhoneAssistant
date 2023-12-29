@@ -15,8 +15,8 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     {
         Imei = "imei",
         Model = "model",
-        NorR = "norr",
-        OEM = "oem",
+        NorR = "R",
+        OEM = "Nokia",
         PhoneNumber = "phoneNumber",
         SimNumber = "simNumber",
         Status = "status"
@@ -66,40 +66,31 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     [Description("Issue 21")]
     public async Task RemoveSimFromPhone_WithExistingSim_Succeeds()
     {
-        using DbTestHelper helper = new();
-        PhonesRepository repository = new(helper.DbContext);
         const string PHONE_NUMBER = "phone number";
         const string SIM_NUMBER = "sim number";
-        Phone? phone = new()
-        {
-            Imei = "imei",
-            PhoneNumber = PHONE_NUMBER,
-            SimNumber = SIM_NUMBER,
-            Model = "model",
-            NorR = "norr",
-            OEM = "oem",
-            Status = "status"
-        };
-        await helper.DbContext.Phones.AddAsync(phone);
-        Sim? sim = new Sim() { PhoneNumber = "phone number", SimNumber = "sim number" };
-        await helper.DbContext.Sims.AddAsync(sim);
-        await helper.DbContext.SaveChangesAsync();
+        _phone.PhoneNumber = PHONE_NUMBER;
+        _phone.SimNumber = SIM_NUMBER;
+        await _helper.DbContext.Phones.AddAsync(_phone);
+        Sim? sim = new Sim() { PhoneNumber = PHONE_NUMBER, SimNumber = SIM_NUMBER };
+        await _helper.DbContext.Sims.AddAsync(sim);
+        await _helper.DbContext.SaveChangesAsync();
 
-        Phone updatedPhone = await repository.RemoveSimFromPhone(phone);
+        Phone updatedPhone = await _repository.RemoveSimFromPhone(_phone);
+
         Assert.Null(updatedPhone.PhoneNumber);
         Assert.Null(updatedPhone.SimNumber);
         Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", updatedPhone.LastUpdate);
 
-        sim = await helper.DbContext.Sims.FindAsync(PHONE_NUMBER);
-        Assert.NotNull(sim);
-        Assert.Equal(PHONE_NUMBER, sim.PhoneNumber);
-        Assert.Equal(SIM_NUMBER, sim.SimNumber);
-        Assert.Equal("In Stock", sim.Status);
+        Sim? dbSim = await _helper.DbContext.Sims.FindAsync(PHONE_NUMBER);
+        Assert.NotNull(dbSim);
+        Assert.Equal(PHONE_NUMBER, dbSim.PhoneNumber);
+        Assert.Equal(SIM_NUMBER, dbSim.SimNumber);
+        Assert.Equal("In Stock", dbSim.Status);
 
-        phone = await helper.DbContext.Phones.FindAsync("imei");
-        Assert.NotNull(phone);
-        Assert.Null(phone.PhoneNumber);
-        Assert.Null(phone.SimNumber);
+        Phone? dbPhone = await _helper.DbContext.Phones.FindAsync("imei");
+        Assert.NotNull(dbPhone);
+        Assert.Null(dbPhone.PhoneNumber);
+        Assert.Null(dbPhone.SimNumber);
     }
 
     [Fact]
@@ -138,9 +129,9 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         const string EXPECTED_FORMER_USER = "former user";
         const string EXPECTED_MODEL = "model";
         const string EXPECTED_NEW_USER = "new user";
-        const string EXPECTED_NORR = "norr";
+        const string EXPECTED_NORR = "R";
         const string EXPECTED_NOTES = "notes";
-        const string EXPECTED_OEM = "oem";
+        const string EXPECTED_OEM = "Samsung";
         const int EXPECTED_SR = 12345;
         const string EXPECTED_STATUS = "status";
         Phone? phone = new()
@@ -211,8 +202,8 @@ public sealed class PhonesRepositoryTests : DbTestHelper
             Collection = true,
             DespatchDetails = "despatch",
             Model = "model2",
-            NorR = "norr2",
-            OEM = "oem2",
+            NorR = "N",
+            OEM = "Apple",
             PhoneNumber = "phone2",
             SimNumber = "sim2",
             Status = "status2"

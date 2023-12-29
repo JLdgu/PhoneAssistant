@@ -7,7 +7,6 @@ using CommunityToolkit.Mvvm.Input;
 
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
-using PhoneAssistant.WPF.Features.Users;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
@@ -16,9 +15,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
     private readonly IPhonesRepository _phonesRepository = phonesRepository ?? throw new ArgumentNullException();
     
     private Phone? _phone;
-    public Phone? Phone
+    public Phone Phone
     {
-        get { return _phone; }
         set 
         { 
             _phone = value ?? throw new NullReferenceException(nameof(Phone));
@@ -26,6 +24,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
             PhoneNumber = value.PhoneNumber ?? string.Empty;
             AssetTag = value.AssetTag ?? string.Empty;
             OrderType = OrderType.New;
+            DeviceType = DeviceType.Phone;
             DespatchMethod = DespatchMethod.CollectL87;
             DeliveryAddress = value.DespatchDetails ?? string.Empty;
 
@@ -45,8 +44,14 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
 
     [ObservableProperty]
     private OrderType _orderType;
-
     partial void OnOrderTypeChanged(OrderType value)
+    {
+        GenerateEmailHtml();
+    }
+
+    [ObservableProperty]
+    private DeviceType _deviceType;
+    partial void OnDeviceTypeChanged(DeviceType value)
     {
         GenerateEmailHtml();
     }
@@ -56,9 +61,9 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
 
     partial void OnDespatchMethodChanged(DespatchMethod value)
     {
-        Phone!.Collection = true;
+        _phone!.Collection = true;
         if (value == DespatchMethod.Delivery)
-            Phone!.Collection = false;                
+            _phone!.Collection = false;                
         
         GenerateEmailHtml();
     }
@@ -78,7 +83,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
 
     partial void OnDeliveryAddressChanged(string value)
     {
-        Phone!.DespatchDetails = value;
+        _phone!.DespatchDetails = value;
 
         _formattedAddress = value.Replace(Environment.NewLine,"<br />");
         GenerateEmailHtml();
@@ -97,25 +102,30 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
 
         StringBuilder html = new StringBuilder("<span style=\"font-size:12px; font-family:Verdana;\">");
 
+
+        string device = "Phone";
+        if (DeviceType == DeviceType.Tablet)
+            device = "Tablet";
+
         switch (DespatchMethod)
         {
             case DespatchMethod.CollectGMH:
-                html.AppendLine("<p>Your phone can be collected from</br>");
+                html.AppendLine($"<p>Your {device.ToLower()} can be collected from</br>");
                 html.AppendLine("DTS End User Compute Team, Hardware Room, Great Moor House, Bittern Road, Exeter, EX2 7FW</br>");
                 html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now.AddDays(2))}</p>");
                 break;
             case DespatchMethod.CollectL87:
-                html.AppendLine("<p>Your phone can be collected from</br>");
+                html.AppendLine($"<p>Your {device.ToLower()} can be collected from</br>");
                 html.AppendLine("DTS End User Compute Team, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
                 html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now)}");
                 break;
             case DespatchMethod.Delivery:
-                html.AppendLine($"<p>Your phone has been sent to<br />{_formattedAddress}</br>");
+                html.AppendLine($"<p>Your {device.ToLower()} has been sent to<br />{_formattedAddress}</br>");
                 html.AppendLine($"It was sent on {ToOrdinalWorkingDate(DateTime.Now)}</p>");
                 break;
         }
 
-        html.AppendLine("<p>To find out how to set up your phone, please go here:</br>");
+        html.AppendLine($"<p>To find out how to set up your {device.ToLower()}, please go here:</br>");
         if (_phone.OEM == "Apple")
         {
             html.Append(@"<a href=""https://devoncc.sharepoint.com/sites/ICTKB/Public/DCC%20Mobile%20Phone%20Service%20-%20Setting%20up%20Apple%20(iOS)%20Smartphone.docx?d=w5a23e7d6e2404401a5039a4936743875"">
@@ -129,7 +139,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
         html.AppendLine("<p>On many sites DCC Wi-Fi no longer allows setup / registration of phones. </br>");
         html.AppendLine("To setup the phone either use Gov Wi-Fi, tether the phone to another phone, setup at another site or setup at home.</p>");
 
-        if (OrderType == OrderType.Replacement)
+        if (OrderType == OrderType.Replacement && DeviceType == DeviceType.Phone)
         {
             html.AppendLine("<p>Don't forget to transfer your old sim to the replacement phone before returning the old phone to");
             html.AppendLine("DTS End User Compute, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
@@ -142,9 +152,9 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
         html.AppendLine("<table style=\"font-size:12px;font-family: Verdana, Arial, Times, serif;\">");
         html.AppendLine("<tr><th>Order Details</th><th></th></tr>");
         if (OrderType == OrderType.New)
-            html.AppendLine("<tr><td>Order type:</td><td>New</td></tr>");
+            html.AppendLine($"<tr><td>Order type:</td><td>New {device}</td></tr>");
         else
-            html.AppendLine("<tr><td>Order type:</td><td>Replacement</td></tr>");
+            html.AppendLine($"<tr><td>Order type:</td><td>Replacement {device}</td></tr>");
 
         html.Append("<tr><td>Phone supplied:</td><td>");
         switch (_phone!.NorR)
@@ -160,10 +170,12 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
 
         html.AppendLine($"<tr><td>Handset identifier:</td><td>{Imei}</td></tr>");
         html.AppendLine($"<tr><td>Asset tag:</td><td>{AssetTag}</td></tr>");
-        html.AppendLine($"<tr><td>Phone number:</td><td>{PhoneNumber}</td></tr>\r\n</table>");
+        if (_phone.PhoneNumber is not null)
+            html.AppendLine($"<tr><td>Phone number:</td><td>{PhoneNumber}</td></tr>\r\n</table>");
 
         EmailHtml = html.ToString();
     }
+
     public static string ToOrdinalWorkingDate(DateTime date)
     {
         int addDays = 0;
@@ -237,11 +249,19 @@ public static class WebBrowserHelper
                     browser.NavigateToString(html);
     }
 }
+
 public enum OrderType
 {
     None = 0,
     New = 1,
     Replacement
+}
+
+public enum DeviceType
+{
+    None = 0,
+    Phone = 1,
+    Tablet = 2
 }
 
 public enum DespatchMethod

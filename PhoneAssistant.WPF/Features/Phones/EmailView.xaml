@@ -64,18 +64,28 @@
                            d:Background="AntiqueWhite"
                            d:Text="Asset Tag"
                            Text="{Binding AssetTag}" />
-
-
             </StackPanel>
 
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center" Text="Order Type" />
 
                 <RadioButton Content="New"
+                             GroupName="OrderType"
                              IsChecked="{Binding OrderType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:OrderType.New}}"
                              Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}" />
                 <RadioButton Content="Replacement"
+                             GroupName="OrderType"
                              IsChecked="{Binding OrderType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:OrderType.Replacement}}"
+                             Style="{StaticResource MaterialDesignChoiceChipSecondaryRadioButton}" />
+
+                <RadioButton Margin="20,0,0,0"
+                             Content="Phone"
+                             GroupName="DeviceType"
+                             IsChecked="{Binding DeviceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:DeviceType.Phone}}"
+                             Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}" />
+                <RadioButton Content="Tablet"
+                             GroupName="DeviceType"
+                             IsChecked="{Binding DeviceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:DeviceType.Tablet}}"
                              Style="{StaticResource MaterialDesignChoiceChipSecondaryRadioButton}" />
             </StackPanel>
 
@@ -110,6 +120,7 @@
                      TextWrapping="Wrap"
                      VerticalScrollBarVisibility="Auto"
                      Visibility="{Binding IsChecked, ElementName=delivery, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
             <StackPanel Grid.Row="3"
                         Margin="0,10,0,20"
                         Orientation="Horizontal">
@@ -128,18 +139,10 @@
 
             </StackPanel>
 
-            <!--<TextBox Grid.Row="4"
-                     Grid.ColumnSpan="2"
-                     VerticalAlignment="Stretch"
-                     AcceptsReturn="True"
-                     FontSize="14"
-                     Text="{Binding EmailHtml}"
-                     TextWrapping="Wrap"
-                     VerticalScrollBarVisibility="Auto" />-->
             <WebBrowser Grid.Row="4"
                         Grid.ColumnSpan="2"
                         local:WebBrowserHelper.NavigateTo="{Binding EmailHtml}"
-                        Visibility="{Binding GeneratingEmail,Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        Visibility="{Binding GeneratingEmail, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
     </GroupBox>
 

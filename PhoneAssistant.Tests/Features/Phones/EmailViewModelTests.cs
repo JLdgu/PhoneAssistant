@@ -4,6 +4,7 @@ using Xunit;
 using Moq.AutoMock;
 using Moq;
 using PhoneAssistant.WPF.Application.Repositories;
+using System.ComponentModel;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -73,7 +74,7 @@ public sealed class EmailViewModelTests
 
         _vm.OrderType = OrderType.New;
 
-        Assert.Contains("<td>Order type:</td><td>New</td>", _vm.EmailHtml);
+        Assert.Contains("<td>Order type:</td><td>New ", _vm.EmailHtml);
     }
     
     [Fact]
@@ -82,7 +83,7 @@ public sealed class EmailViewModelTests
         _vm.OrderType = OrderType.Replacement;
 
         Assert.Contains("Don't forget to transfer your old sim", _vm.EmailHtml);
-        Assert.Contains("<td>Order type:</td><td>Replacement</td>", _vm.EmailHtml);
+        Assert.Contains("<td>Order type:</td><td>Replacement ", _vm.EmailHtml);
     }
 
     [Fact]
@@ -93,8 +94,6 @@ public sealed class EmailViewModelTests
         Assert.Contains("Your phone can be collected from", _vm.EmailHtml);
         Assert.Contains("Hardware Room, Great Moor House", _vm.EmailHtml);
         Assert.Contains("It will be available for collection from", _vm.EmailHtml);
-
-        Assert.True(_vm.Phone!.Collection);
     }
     
     [Fact]
@@ -105,8 +104,6 @@ public sealed class EmailViewModelTests
         Assert.Contains("Your phone can be collected from", _vm.EmailHtml);
         Assert.Contains("Room L87, County Hall", _vm.EmailHtml);
         Assert.Contains("It will be available for collection from", _vm.EmailHtml);
-
-        Assert.True(_vm.Phone!.Collection);
     }
 
     [Fact]
@@ -116,8 +113,6 @@ public sealed class EmailViewModelTests
 
         Assert.Contains("Your phone has been sent to", _vm.EmailHtml);
         Assert.Contains("It was sent on", _vm.EmailHtml);
-
-        Assert.False(_vm.Phone!.Collection);
     }
 
     [Fact]
@@ -145,6 +140,23 @@ public sealed class EmailViewModelTests
         _vm.Phone = _phone;
 
         Assert.Contains($"<td>Phone supplied:</td><td>{norrDescription} {_phone.OEM} {_phone.Model}</td>", _vm.EmailHtml);
+    }
+
+    [Fact]
+    private void EmailHtml_WithNullPhoneNumber()
+    {
+        _phone.PhoneNumber = null;
+        _vm.Phone = _phone;
+
+        Assert.DoesNotContain($"<tr><td>Phone number:</td><td>", _vm.EmailHtml);
+    }
+
+    [Fact]
+    private void EmailHtml_WithPhoneNumber()
+    {
+        _vm.Phone = _phone;
+
+        Assert.Contains($"<tr><td>Phone number:</td><td>{_phone.PhoneNumber}</td></tr>\r\n</table>", _vm.EmailHtml);
     }
 
     [Theory]

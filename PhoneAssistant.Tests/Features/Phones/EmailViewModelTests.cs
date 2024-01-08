@@ -69,6 +69,21 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
+    private void EmailHtml_BoilerPlate()
+    {
+        Assert.Contains(
+            """
+            <span style="font-size:12px; font-family:Verdana;>"
+            """, _vm.EmailHtml);
+        Assert.Contains(
+            """
+            <p><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1">
+            DCC mobile phone data usage guidance and policies</a></p>
+            """, _vm.EmailHtml);
+        Assert.Contains("</span>",_vm.EmailHtml);
+    }
+
+    [Fact]
     private void EmailHtml_WithOrderTypeNew()
     {
 
@@ -132,14 +147,13 @@ public sealed class EmailViewModelTests
 
     [Theory]
     [InlineData("N", "New")]
-    [InlineData("R", "Repurposed")]
-   
+    [InlineData("R", "Repurposed")]   
     private void EmailHtml_ContainsPhoneDetails(string norr, string norrDescription)
     {
         _phone.NorR = norr;
         _vm.Phone = _phone;
 
-        Assert.Contains($"<td>Phone supplied:</td><td>{norrDescription} {_phone.OEM} {_phone.Model}</td>", _vm.EmailHtml);
+        Assert.Contains($"<td>Device supplied:</td><td>{norrDescription} {_phone.OEM} {_phone.Model}</td>", _vm.EmailHtml);
     }
 
     [Fact]

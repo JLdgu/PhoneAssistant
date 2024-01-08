@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -28,8 +29,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
             DespatchMethod = DespatchMethod.CollectL87;
             DeliveryAddress = value.DespatchDetails ?? string.Empty;
 
-            GeneratingEmail = true;
             GenerateEmailHtml();
+            GeneratingEmail = true;
         }
     }
 
@@ -100,8 +101,10 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
     {
         if (_phone is null) throw new NullReferenceException();
 
-        StringBuilder html = new StringBuilder("<span style=\"font-size:12px; font-family:Verdana;\">");
-
+        StringBuilder html = new StringBuilder(
+            """
+            <span style="font-size:12px; font-family:Verdana;>"
+            """);
 
         string device = "Phone";
         if (DeviceType == DeviceType.Tablet)
@@ -124,17 +127,28 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
                 html.AppendLine($"It was sent on {ToOrdinalWorkingDate(DateTime.Now)}</p>");
                 break;
         }
+        html.AppendLine(
+            """
+            <p><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1">
+            DCC mobile phone data usage guidance and policies</a></p>
+            """);
 
         html.AppendLine($"<p>To find out how to set up your {device.ToLower()}, please go here:</br>");
         if (_phone.OEM == "Apple")
         {
-            html.Append(@"<a href=""https://devoncc.sharepoint.com/sites/ICTKB/Public/DCC%20Mobile%20Phone%20Service%20-%20Setting%20up%20Apple%20(iOS)%20Smartphone.docx?d=w5a23e7d6e2404401a5039a4936743875"">
-            Setting up your Apple (iOS) Smartphone.docx (devoncc.sharepoint.com)</a></p>");
+            html.Append(
+                """
+                <a href="https://devoncc.sharepoint.com/sites/ICTKB/Public/DCC%20Mobile%20Phone%20Service%20-%20Setting%20up%20Apple%20(iOS)%20Smartphone.docx?d=w5a23e7d6e2404401a5039a4936743875">
+                Setting up your Apple (iOS) Smartphone.docx (devoncc.sharepoint.com)</a></p>
+                """);            
         }
         else
         {
-            html.AppendLine(@"<a href=""https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/Android%20Enterprise%20-%20Setting%20up%20your%20Android%20Phone.docx?d=w64bb3f0a09e44557a64bb78311ee513b&csf=1&web=1"">
-            Android Enterprise - Setting up your Android Smartphone.docx (devoncc.sharepoint.com)</a></p>");
+            html.AppendLine(
+                """
+                <a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/Android%20Enterprise%20-%20Setting%20up%20your%20Android%20Phone.docx?d=w64bb3f0a09e44557a64bb78311ee513b&csf=1&web=1">
+                Android Enterprise - Setting up your Android Smartphone.docx (devoncc.sharepoint.com)</a></p>
+                """);
         }
         html.AppendLine("<p>On many sites DCC Wi-Fi no longer allows setup / registration of phones. </br>");
         html.AppendLine("To setup the phone either use Gov Wi-Fi, tether the phone to another phone, setup at another site or setup at home.</p>");
@@ -143,8 +157,11 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
         {
             html.AppendLine("<p>Don't forget to transfer your old sim to the replacement phone before returning the old phone to");
             html.AppendLine("DTS End User Compute, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
-            html.AppendLine(@"You can use <a href=""https://www.royalmail.com/track-my-return#/details/5244"">Royal Mail Tracked Returns for DCC</a>");
-            html.AppendLine("to have the phone picked up from your home or you can drop off the item at a Parcel Post Box, Delivery Office or Post Office branch.</p>");
+            html.AppendLine(
+                """
+                You can use <a href="https://www.royalmail.com/track-my-return#/details/5244">Royal Mail Tracked Returns for DCC</a>
+                """);
+            html.AppendLine(" to have the phone picked up from your home or you can drop off the item at a Parcel Post Box, Delivery Office or Post Office branch.</p>");
         }
         html.AppendLine("</span>");
 
@@ -156,7 +173,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
         else
             html.AppendLine($"<tr><td>Order type:</td><td>Replacement {device}</td></tr>");
 
-        html.Append("<tr><td>Phone supplied:</td><td>");
+        html.Append("<tr><td>Device supplied:</td><td>");
         switch (_phone!.NorR)
         {
             case "N":
@@ -170,9 +187,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository) : Observ
 
         html.AppendLine($"<tr><td>Handset identifier:</td><td>{Imei}</td></tr>");
         html.AppendLine($"<tr><td>Asset tag:</td><td>{AssetTag}</td></tr>");
-        if (_phone.PhoneNumber is not null)
-            html.AppendLine($"<tr><td>Phone number:</td><td>{PhoneNumber}</td></tr>\r\n</table>");
-
+        if (!string.IsNullOrEmpty(PhoneNumber))
+            html.AppendLine($"<tr><td>Phone number:</td><td>{PhoneNumber}</td></tr></table>");
         EmailHtml = html.ToString();
     }
 

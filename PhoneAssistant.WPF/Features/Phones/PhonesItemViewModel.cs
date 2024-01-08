@@ -180,8 +180,25 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     [ObservableProperty]
     private string _phoneNumber;
 
+    async partial void OnPhoneNumberChanged(string value)
+    {
+        if (value == _phone.PhoneNumber) return;
+
+        _phone.PhoneNumber = value;
+        var lastUpdate = await _repository.UpdateAsync(_phone);
+        LastUpdate = lastUpdate;
+    }
+
     [ObservableProperty]
     private string _simNumber;
+    async partial void OnSimNumberChanged(string value)
+    {
+        if (value == _phone.SimNumber) return;
+
+        _phone.SimNumber = value;
+        var lastUpdate = await _repository.UpdateAsync(_phone);
+        LastUpdate = lastUpdate;
+    }
 
     [ObservableProperty]
     private string _sR;

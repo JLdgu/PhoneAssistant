@@ -104,6 +104,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     }
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CreateEmailCommand))]
     private string _newUser;
     async partial void OnNewUserChanged(string value)
     {
@@ -178,8 +180,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     }
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RemoveSimCommand))]
     private string _phoneNumber;
-
     async partial void OnPhoneNumberChanged(string value)
     {
         if (value == _phone.PhoneNumber) return;
@@ -190,6 +192,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     }
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RemoveSimCommand))]
     private string _simNumber;
     async partial void OnSimNumberChanged(string value)
     {
@@ -201,6 +204,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     }
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CreateEmailCommand))]
     private string _sR;
     async partial void OnSRChanged(string value)
     {
@@ -277,8 +282,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         return true;
     }
 
-
-    [RelayCommand(CanExecute = nameof(_canRemoveSim))]
+    [RelayCommand(CanExecute = nameof(CanRemoveSim))]
     private async Task RemoveSimAsync()
     {
         _phone = await _repository.RemoveSimFromPhone(_phone);
@@ -286,6 +290,5 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         SimNumber = string.Empty;
         LastUpdate = _phone.LastUpdate;
     }
-
-    private bool _canRemoveSim() =>  !(string.IsNullOrEmpty(PhoneNumber) || string.IsNullOrEmpty(SimNumber));    
+    private bool CanRemoveSim() =>  !(string.IsNullOrEmpty(PhoneNumber) || string.IsNullOrEmpty(SimNumber));    
 }

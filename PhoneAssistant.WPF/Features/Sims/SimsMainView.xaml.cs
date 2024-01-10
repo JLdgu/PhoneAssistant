@@ -13,7 +13,4 @@ public partial class SimsMainView : UserControl
         InitializeComponent();
         MaxHeight = System.Windows.SystemParameters.VirtualScreenHeight;
     }
-
-    private void SimsGrid_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        => UI_Interactions.SelectRowFromWhiteSpaceClick(e);
 }

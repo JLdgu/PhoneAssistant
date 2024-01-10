@@ -181,8 +181,22 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     async partial void OnPhoneNumberChanged(string value)
     {
         if (value == _phone.PhoneNumber) return;
+        if (string.IsNullOrEmpty(value))
+        {
+            if (_phone.PhoneNumber is null)
+            {
+                return;
+            }
+            else
+            {
+                _phone.PhoneNumber = null;
+            }
+        }
+        else
+        {
+            _phone.PhoneNumber = value;
+        }
 
-        _phone.PhoneNumber = value;
         var lastUpdate = await _repository.UpdateAsync(_phone);
         LastUpdate = lastUpdate;
     }
@@ -193,8 +207,22 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     async partial void OnSimNumberChanged(string value)
     {
         if (value == _phone.SimNumber) return;
+        if (string.IsNullOrEmpty(value))
+        {
+            if (_phone.SimNumber is null)
+            {
+                return;
+            }
+            else
+            {
+                _phone.SimNumber = null;
+            }
+        }
+        else
+        {
+            _phone.SimNumber = value;
+        }
 
-        _phone.SimNumber = value;
         var lastUpdate = await _repository.UpdateAsync(_phone);
         LastUpdate = lastUpdate;
     }
@@ -239,7 +267,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     }
     #endregion
 
-    [RelayCommand(CanExecute =nameof(CanCreateEmail))]
+    [RelayCommand(CanExecute = nameof(CanCreateEmail))]
     private void CreateEmail()
     {
 
@@ -266,5 +294,5 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         SimNumber = string.Empty;
         LastUpdate = _phone.LastUpdate;
     }
-    private bool CanRemoveSim() =>  !(string.IsNullOrEmpty(PhoneNumber) || string.IsNullOrEmpty(SimNumber));    
+    private bool CanRemoveSim() => !(string.IsNullOrEmpty(PhoneNumber) || string.IsNullOrEmpty(SimNumber));
 }

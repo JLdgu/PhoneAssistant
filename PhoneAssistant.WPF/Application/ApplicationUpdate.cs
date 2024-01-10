@@ -21,9 +21,16 @@ public static class ApplicationUpdate
     public static bool FirstRun()
     {
         UserSettings userSettings = new();
-        if (userSettings.Database is not null && File.Exists(userSettings.Database))
-            return false;
+        if (userSettings.Database is not null)
+        {
+            for (int retry = 0; retry < 3; retry++) 
+            {
+                if (File.Exists(userSettings.Database))
+                    return false;
+                Thread.Sleep(100);
+            }
 
+        }
         MessageBox.Show($"Select the Phone Assistant database to use.{Environment.NewLine}Application will need to restart.", "Phone Assistant", MessageBoxButton.OK, MessageBoxImage.Question);
 
         OpenFileDialog openFileDialog = new()

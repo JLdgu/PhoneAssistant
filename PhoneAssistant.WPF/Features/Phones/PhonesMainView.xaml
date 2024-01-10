@@ -91,25 +91,15 @@
                     <DataGridTemplateColumn CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type viewmodel:PhonesItemViewModel}">
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Height="20"
-                                            Margin="0"
-                                            Padding="0"
-                                            Command="{Binding PrintEnvelopeCommand}"
-                                            Content="{materialDesign:PackIcon Kind=EmailOutline,
-                                                                              Size=15}"
-                                            Style="{StaticResource MaterialDesignFlatLightButton}"
-                                            ToolTip="Print Envelope" />
-                                    <Button Height="20"
-                                            Margin="10,0,0,0"
-                                            Padding="0"
-                                            Command="{Binding CreateEmailCommand}"
-                                            Content="{materialDesign:PackIcon Kind=AccountOutline,
-                                                                              Size=15}"
-                                            Style="{StaticResource MaterialDesignFlatLightButton}"
-                                            ToolTip="myScomis Email(phone)"
-                                            Visibility="Visible" />
-                                </StackPanel>
+                                <Button Height="20"
+                                        Margin="10,0,0,0"
+                                        Padding="0"
+                                        Command="{Binding CreateEmailCommand}"
+                                        Content="{materialDesign:PackIcon Kind=EmailOutline,
+                                                                          Size=15}"
+                                        Style="{StaticResource MaterialDesignFlatLightButton}"
+                                        ToolTip="Email &amp; Print"
+                                        Visibility="Visible" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

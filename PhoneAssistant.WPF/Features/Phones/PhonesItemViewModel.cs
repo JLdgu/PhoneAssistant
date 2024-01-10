@@ -1,7 +1,4 @@
-﻿using System.Windows.Controls;
-using System.Windows;
-
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
@@ -104,7 +101,6 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     }
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
     [NotifyCanExecuteChangedFor(nameof(CreateEmailCommand))]
     private string _newUser;
     async partial void OnNewUserChanged(string value)
@@ -204,7 +200,6 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     }
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
     [NotifyCanExecuteChangedFor(nameof(CreateEmailCommand))]
     private string _sR;
     async partial void OnSRChanged(string value)
@@ -232,7 +227,6 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     }
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
     [NotifyCanExecuteChangedFor(nameof(CreateEmailCommand))]
     private string _status;
     async partial void OnStatusChanged(string value)
@@ -245,30 +239,12 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     }
     #endregion
 
-    [RelayCommand(CanExecute = nameof(CanPrintEnvelope))]
-    private async Task PrintEnvelope()
-    {
-        await Task.Run(() =>
-        {
-            _printEnvelope.Execute(_phone);
-        });
-    }
-    private bool CanPrintEnvelope()
-    {
-        if (!_phone.Status.Equals("Production", StringComparison.InvariantCultureIgnoreCase))
-            return false;
-        if (string.IsNullOrEmpty(SR)) 
-            return false;
-        if (string.IsNullOrEmpty(NewUser))
-            return false;
-
-        return true;
-    }
-
     [RelayCommand(CanExecute =nameof(CanCreateEmail))]
     private void CreateEmail()
     {
-        _messenger.Send(new Email(_phone));
+
+        OrderDetails orderDetails = new(_phone);
+        _messenger.Send(new Order(orderDetails));
     }
     private bool CanCreateEmail()
     {

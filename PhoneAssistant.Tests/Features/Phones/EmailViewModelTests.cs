@@ -4,7 +4,6 @@ using Xunit;
 using Moq.AutoMock;
 using Moq;
 using PhoneAssistant.WPF.Application.Repositories;
-using System.ComponentModel;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -37,7 +36,9 @@ public sealed class EmailViewModelTests
         _mocker.Use(_phone);
         _repository = _mocker.GetMock<IPhonesRepository>();
         _vm = _mocker.CreateInstance<EmailViewModel>();
-        _vm.Phone = _phone;
+        
+        OrderDetails orderDetails = new(_phone);
+        _vm.OrderDetails = orderDetails;
     }
 
     [Fact]
@@ -134,7 +135,9 @@ public sealed class EmailViewModelTests
     private void EmailHtml_WithAppleOEM()
     {
         _phone.OEM = "Apple";
-        _vm.Phone = _phone;
+        OrderDetails orderDetails = new(_phone);
+        _vm.OrderDetails = orderDetails;
+
 
         Assert.Contains("Apple (iOS) Smartphone", _vm.EmailHtml);
     }
@@ -151,7 +154,8 @@ public sealed class EmailViewModelTests
     private void EmailHtml_ContainsPhoneDetails(string norr, string norrDescription)
     {
         _phone.NorR = norr;
-        _vm.Phone = _phone;
+        OrderDetails orderDetails = new(_phone);
+        _vm.OrderDetails = orderDetails;
 
         Assert.Contains($"<td>Device supplied:</td><td>{norrDescription} {_phone.OEM} {_phone.Model}</td>", _vm.EmailHtml);
     }
@@ -160,7 +164,8 @@ public sealed class EmailViewModelTests
     private void EmailHtml_WithNullPhoneNumber()
     {
         _phone.PhoneNumber = null;
-        _vm.Phone = _phone;
+        OrderDetails orderDetails = new(_phone);
+        _vm.OrderDetails = orderDetails;
 
         Assert.DoesNotContain($"<tr><td>Phone number:</td><td>", _vm.EmailHtml);
     }
@@ -168,9 +173,7 @@ public sealed class EmailViewModelTests
     [Fact]
     private void EmailHtml_WithPhoneNumber()
     {
-        _vm.Phone = _phone;
-
-        Assert.Contains($"<tr><td>Phone number:</td><td>{_phone.PhoneNumber}</td></tr>\r\n</table>", _vm.EmailHtml);
+        Assert.Contains($"<tr><td>Phone number:</td><td>{_phone.PhoneNumber}</td></tr></table>", _vm.EmailHtml);
     }
 
     [Theory]

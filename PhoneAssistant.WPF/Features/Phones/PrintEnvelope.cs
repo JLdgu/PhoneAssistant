@@ -6,7 +6,6 @@ using System.Text;
 using Microsoft.Extensions.FileProviders;
 
 using PhoneAssistant.WPF.Application;
-using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 internal sealed class PrintEnvelope : IPrintEnvelope
@@ -14,9 +13,9 @@ internal sealed class PrintEnvelope : IPrintEnvelope
     const int A4_PAGE_HEIGHT = 1169;
     const int A4_PAGE_WIDTH = 827;
     //const int A4_BODY_HEIGHT = 969;
-    const int A4_BODY_WIDTH = 627;
+    const int A4_BODY_WIDTH = 667;
     const int MARGIN_TOP = 70;
-    const int MARGIN_LEFT = 100;
+    const int MARGIN_LEFT = 80;
     const int MARGIN_BOTTOM = 100;
     const int EUC_IMAGE_HEIGHT = 140;
     const int EUC_IMAGE_WIDTH = 500;
@@ -29,12 +28,12 @@ internal sealed class PrintEnvelope : IPrintEnvelope
     private readonly Brush _blackBrush = new SolidBrush(Color.Black);
     //public Brush BlackBrush => _blackBrush;
 
-    private readonly Font _bodyFont = new("Arial", 22);
-    private readonly Font _footerFont = new("Arial", 10);
+    private readonly Font _bodyFont = new("Arial", 18);
+    //private readonly Font _footerFont = new("Arial", 16);
     int _vertialPostion = MARGIN_TOP;
 
     private readonly IUserSettings _userSettings;
-    private Phone? _phone;
+    private OrderDetails? _orderDetails;
 
     public PrintEnvelope(IUserSettings userSettings)
     {
@@ -42,13 +41,13 @@ internal sealed class PrintEnvelope : IPrintEnvelope
         _linePen = new Pen(_lineBrush, 2);
     }
 
-    public void Execute(Phone? phone)
+    public void Execute(OrderDetails orderDetails)
     {
-        if (phone is null)
+        if (orderDetails is null)
         {
-            throw new ArgumentNullException(nameof(phone));
+            throw new ArgumentNullException(nameof(orderDetails));
         }
-        _phone = phone;
+        _orderDetails = orderDetails;
         _vertialPostion = MARGIN_TOP;
 
         PrintDocument pd = new();
@@ -73,7 +72,7 @@ internal sealed class PrintEnvelope : IPrintEnvelope
 
     void PrintPage(object sender, PrintPageEventArgs ev)
     {
-        if (ev.Graphics is null || _phone is null)
+        if (ev.Graphics is null || _orderDetails is null)
             return;
         Graphics graphics = ev.Graphics;
 
@@ -105,44 +104,37 @@ internal sealed class PrintEnvelope : IPrintEnvelope
         _vertialPostion += IMAGE_HEIGHT + IMAGE_VERTICAL_PADDING;
 
         float fontLineHeight = _bodyFont.GetHeight(graphics);
-        RectangleF bodyRectangle = new(MARGIN_LEFT, _vertialPostion, A4_BODY_WIDTH, fontLineHeight * 9);
-        string orderType = "Repurposed";
-        if (_phone.NorR == "N")
-            orderType = "New";
-        StringBuilder bodyText = new($"Order type: {orderType}");
+        RectangleF bodyRectangle = new(MARGIN_LEFT, _vertialPostion, A4_BODY_WIDTH, fontLineHeight * 15);
+
+        StringBuilder bodyText = new($"Service Request:\t#{_orderDetails.Phone.SR}");
         bodyText.AppendLine("");
         bodyText.AppendLine("");
-        bodyText.AppendLine($"Mobile Phone Type: {_phone.OEM} {_phone.Model}");
+        bodyText.AppendLine($"Device User:\t{_orderDetails.Phone.NewUser}");
         bodyText.AppendLine("");
-        bodyText.AppendLine($"Handset identifier: {_phone.Imei}");
+        bodyText.AppendLine($"Order type:\t{_orderDetails.OrderedItem}");
         bodyText.AppendLine("");
-        bodyText.AppendLine($"Asset Tag: {_phone.AssetTag}");
-        if (!string.IsNullOrWhiteSpace(_phone.PhoneNumber))
+        bodyText.AppendLine($"Device supplied:\t{_orderDetails.DeviceSupplied}");
+        bodyText.AppendLine("");
+        bodyText.AppendLine($"Handset identifier:\t{_orderDetails.Phone.Imei}");
+        bodyText.AppendLine("");
+        bodyText.AppendLine($"Asset Tag:\t{_orderDetails.Phone.AssetTag}");
+        if (!string.IsNullOrWhiteSpace(_orderDetails.Phone.PhoneNumber))
         {
             bodyText.AppendLine("");
-            bodyText.Append($"New mobile number: {_phone.PhoneNumber}");
+            bodyText.AppendLine($"Phone number:\t{_orderDetails.Phone.PhoneNumber}");
+            bodyText.AppendLine("");
+            bodyText.AppendLine($"SIM:\t{_orderDetails.Phone.SimNumber}");
         }
-        graphics.DrawString(bodyText.ToString(), _bodyFont, _blackBrush, bodyRectangle);
-        _vertialPostion += (int)fontLineHeight * 9;
+        StringFormat stringFormat = new StringFormat();
+        float[] tabs = { 225 };
+        stringFormat.SetTabStops(0,tabs);
+
+        graphics.DrawString(bodyText.ToString(), _bodyFont, _blackBrush, bodyRectangle, stringFormat);
+
+        //_vertialPostion += (int)fontLineHeight * 15;
 
         _vertialPostion = A4_PAGE_HEIGHT - MARGIN_BOTTOM;
         DrawLine(graphics);
-
-        StringFormat alignCenter = new() { Alignment = StringAlignment.Center };
-        StringFormat alignRight = new() { Alignment = StringAlignment.Far };
-
-        fontLineHeight = _footerFont.GetHeight(graphics);
-        RectangleF footerRectangle = new(MARGIN_LEFT, _vertialPostion, A4_BODY_WIDTH, fontLineHeight);
-        string srText = $"Service Request# {_phone.SR}";
-        graphics.DrawString(srText, _footerFont, _blackBrush, footerRectangle);
-
-        string simText = $"SIM {_phone.SimNumber}";
-        if (string.IsNullOrWhiteSpace(_phone.SimNumber))
-            simText = "SIM n/a";
-        graphics.DrawString(simText, _footerFont, _blackBrush, footerRectangle, alignCenter);
-
-        string userText = $"New User {_phone.NewUser}";
-        graphics.DrawString(userText, _footerFont, _blackBrush, footerRectangle, alignRight);
 
         ev.HasMorePages = false;
     }

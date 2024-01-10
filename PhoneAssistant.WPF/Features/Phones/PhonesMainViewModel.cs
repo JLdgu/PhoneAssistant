@@ -11,7 +11,7 @@ using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
-public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipient<Email>, IPhonesMainViewModel
+public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipient<Order>, IPhonesMainViewModel
 {
     private readonly IPhonesItemViewModelFactory _phonesItemViewModelFactory;
     private readonly IPhonesRepository _phonesRepository;
@@ -39,8 +39,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
                
         messenger.RegisterAll(this);
 
-        //EmailViewModel = new EmailViewModel();
-
         CanRefeshPhones = true;
 
         NorRs.Add("N(ew)");
@@ -65,7 +63,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
         CanRefeshPhones = true;
     }
 
-//    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
     [ObservableProperty]
     private bool canRefeshPhones;
         
@@ -279,8 +276,8 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
         }
     }
 
-    public void Receive(Email message)
+    public void Receive(Order message)
     {
-        EmailViewModel.Phone = message.Phone;
+        EmailViewModel.OrderDetails = message.OrderDetails;
     }
 }

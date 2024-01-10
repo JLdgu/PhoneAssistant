@@ -3,7 +3,6 @@ using Moq.AutoMock;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Application.Entities;
 using Xunit;
-using System.Numerics;
 using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.Tests.Features.Phones;
@@ -192,14 +191,6 @@ public sealed class PhonesItemViewModelTests
 
     #region RemoveSim
     [Fact]
-    private void RemoveSim_CallsRepository_RemoveSimFromPhone()
-    {
-        _vm.RemoveSimCommand.Execute(null);
-
-        _repository.Verify(r => r.RemoveSimFromPhone(_phone),Times.Once);        
-    }
-
-    [Fact]
     private void RemoveSim_SetsBoundProperties()
     {
         _vm.RemoveSimCommand.Execute(null);
@@ -218,33 +209,6 @@ public sealed class PhonesItemViewModelTests
         Assert.False(_vm.RemoveSimCommand.CanExecute(null));
     }
     #endregion
-
-    [Fact]
-    private void PrintEnvelopeCommand_CallsPrintEnvelope_Execute()
-    {
-        Mock<IPrintEnvelope> repository = _mocker.GetMock<IPrintEnvelope>();
-
-        _vm.PrintEnvelopeCommand.Execute(null);
-
-        repository.Verify(p => p.Execute(_phone), Times.Once);
-    }
-
-    [Theory]
-    [InlineData("In Stock",null,null,false)]
-    [InlineData("In Repair", null, null, false)]
-    [InlineData("Production", null, null, false)]
-    [InlineData("Production", 123, null, false)]
-    [InlineData("Production", null, "new user", false)]
-    [InlineData("Production", 123, "new user", true)]
-    private void PrintEnvelopeCommand_CanExecute(string status, int? sr, string? newUser, bool canExecute)
-    {
-        _phone.Status = status;
-        _phone.SR = sr;
-        _phone.NewUser = newUser;
-        _vm = _mocker.CreateInstance<PhonesItemViewModel>();
-
-        Assert.Equal(canExecute, _vm.PrintEnvelopeCommand.CanExecute(null));
-    }
 
     [Theory]
     [InlineData("In Stock", null, null, false)]

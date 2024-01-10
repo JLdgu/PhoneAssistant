@@ -4,5 +4,5 @@ namespace PhoneAssistant.WPF.Features.Phones;
 
 public interface IPrintEnvelope
 {
-    void Execute(Phone? phone);
+    void Execute(OrderDetails orderDetails);
 }

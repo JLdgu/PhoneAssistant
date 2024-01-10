@@ -64,6 +64,15 @@
                            d:Background="AntiqueWhite"
                            d:Text="Asset Tag"
                            Text="{Binding AssetTag}" />
+
+                <Button Margin="20,0,0,0"
+                        Padding="0"
+                        Command="{Binding PrintEnvelopeCommand}"
+                        Content="{materialDesign:PackIcon Kind=EmailOutline,
+                                                          Size=35}"
+                        Style="{StaticResource MaterialDesignFlatLightButton}"
+                        ToolTip="Print Envelope" />
+
             </StackPanel>
 
             <StackPanel Grid.Row="1" Orientation="Horizontal">
@@ -136,7 +145,6 @@
                         Command="{Binding CloseCommand}"
                         Content="Cancel"
                         Style="{StaticResource MaterialDesignRaisedButton}" />
-
             </StackPanel>
 
             <WebBrowser Grid.Row="4"

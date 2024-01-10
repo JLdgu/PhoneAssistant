@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto" />
 
         </Grid.RowDefinitions>
-        <shared:HeaderMainView HeaderIcon="SimOutline" HeaderText="SIM Cards" />
+        <shared:HeaderMainView HeaderIcon="SimOutline" HeaderText="Dashboard" />
         <materialDesign:Card Grid.Row="1"
                              Margin="5,5"
                              Padding="4,2">
@@ -27,11 +27,12 @@
                              Margin="5,5"
                              Padding="4,2">
             <StackPanel Orientation="Vertical">
-                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.401.10.1" />
+                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.401.11.0" />
                 <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #3 Complete edit phone functionality" />
                 <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #27 Envelope and Email contants differ" />
                 <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #30 Add usage policy to email" />
                 <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Retry finding database 3 times before prompting user" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add release notes to Dashboard" />
             </StackPanel>
         </materialDesign:Card>
     </Grid>

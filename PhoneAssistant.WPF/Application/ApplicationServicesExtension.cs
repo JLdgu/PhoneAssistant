@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
+using PhoneAssistant.WPF.Features.BaseReport;
 using PhoneAssistant.WPF.Features.Dashboard;
 using PhoneAssistant.WPF.Features.MainWindow;
 using PhoneAssistant.WPF.Features.Phones;
@@ -34,7 +34,9 @@ public static class ApplicationServicesExtensions
             services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider => provider.GetRequiredService<WeakReferenceMessenger>());
 
             // Features
-            services.AddTransient<IDashboardMainViewModel, DashboardMainViewModel>();
+            services.AddSingleton<IBaseReportMainViewModel, BaseReportMainViewModel>();
+
+            services.AddSingleton<IDashboardMainViewModel, DashboardMainViewModel>();
 
             services.AddTransient<IPhonesMainViewModel, PhonesMainViewModel>();
             services.AddSingleton<EmailViewModel>();
@@ -43,7 +45,7 @@ public static class ApplicationServicesExtensions
             services.AddSingleton<IPhonesRepository, PhonesRepository>();
             services.AddTransient<IPrintEnvelope, PrintEnvelope>();
 
-            services.AddTransient<ISettingsMainViewModel, SettingsMainViewModel>();
+            services.AddSingleton<ISettingsMainViewModel, SettingsMainViewModel>();
             services.AddTransient<IThemeWrapper, ThemeWrapper>();
 
             services.AddTransient<IUsersMainViewModel, UsersMainViewModel>();

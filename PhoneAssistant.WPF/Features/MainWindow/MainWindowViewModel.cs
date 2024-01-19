@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using PhoneAssistant.WPF.Features.BaseReport;
 using PhoneAssistant.WPF.Features.Dashboard;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.Settings;
@@ -13,6 +14,7 @@ namespace PhoneAssistant.WPF.Features.MainWindow;
 public enum ViewModelType
 {
     None,
+    BaseReport,
     Dashboard,
     Phones,
     Sims,
@@ -23,22 +25,24 @@ public enum ViewModelType
 
 public sealed partial class MainWindowViewModel : ObservableObject
 {
+    private readonly IBaseReportMainViewModel _baseReportMainViewModel;
     private readonly IDashboardMainViewModel _dashboardMainViewModel;
     private readonly IPhonesMainViewModel _phonesMainViewModel;
     private readonly ISimsMainViewModel _simsMainViewModel;
     private readonly ISettingsMainViewModel _settingsMainViewModel;
     private readonly IUsersMainViewModel _usersMainViewModel;
-    [ObservableProperty]
-#pragma warning disable IDE0044 // Add readonly modifier
-    private IViewModel? _selectedViewModel;
-#pragma warning restore IDE0044 // Add readonly modifier
 
-    public MainWindowViewModel(IDashboardMainViewModel dashboardMainViewModel,
+    [ObservableProperty]
+    private IViewModel? _selectedViewModel;
+
+    public MainWindowViewModel(IBaseReportMainViewModel baseReportMainViewModel,
+                               IDashboardMainViewModel dashboardMainViewModel,
                                IPhonesMainViewModel phonesMainViewModel,
                                ISimsMainViewModel simsMainViewModel,
                                ISettingsMainViewModel settingsMainViewModel,
                                IUsersMainViewModel usersMainViewModel)
     {
+        _baseReportMainViewModel = baseReportMainViewModel ?? throw new ArgumentNullException(nameof(baseReportMainViewModel));
         _dashboardMainViewModel = dashboardMainViewModel ?? throw new ArgumentNullException(nameof(dashboardMainViewModel));
         _phonesMainViewModel = phonesMainViewModel ?? throw new ArgumentNullException(nameof(phonesMainViewModel));
         _simsMainViewModel = simsMainViewModel ?? throw new ArgumentNullException(nameof(simsMainViewModel));
@@ -60,6 +64,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         var viewType = (ViewModelType)selectedViewModelType;
         SelectedViewModel = viewType switch
         {
+            ViewModelType.BaseReport => _baseReportMainViewModel,
             ViewModelType.Dashboard => _dashboardMainViewModel,
             ViewModelType.Phones => _phonesMainViewModel,
             ViewModelType.Sims => _simsMainViewModel,

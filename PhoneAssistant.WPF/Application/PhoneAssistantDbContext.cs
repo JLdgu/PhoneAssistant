@@ -2,13 +2,13 @@
 
 using PhoneAssistant.WPF.Application.Entities;
 
-using static System.Net.Mime.MediaTypeNames;
-
 namespace PhoneAssistant.WPF.Application;
 
 public sealed class PhoneAssistantDbContext : DbContext
 {
-    public DbSet<Link> Links => Set<Link>();
+    public DbSet<EEBaseReport> BaseReport => Set<EEBaseReport>();
+
+    //public DbSet<Link> Links => Set<Link>();
 
     public DbSet<Phone> Phones => Set<Phone>();
 
@@ -35,6 +35,10 @@ public sealed class PhoneAssistantDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<EEBaseReport>()
+            .ToTable("BaseReport")
+            .HasNoKey();
+
         modelBuilder.Entity<Phone>(
             p => 
             {
@@ -64,13 +68,13 @@ public sealed class PhoneAssistantDbContext : DbContext
                 //sr.Property(sr => sr.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
 
-        modelBuilder.Entity<Link>(
-            l =>
-            {
-                l.Property("PhoneImei").HasColumnName("Imei");
-                l.Property("SimPhoneNumber").HasColumnName("PhoneNumber");
-                l.Property("ServiceRequestNumber").HasColumnName("SRNumber");
-            });
+        //modelBuilder.Entity<Link>(
+        //    l =>
+        //    {
+        //        l.Property("PhoneImei").HasColumnName("Imei");
+        //        l.Property("SimPhoneNumber").HasColumnName("PhoneNumber");
+        //        l.Property("ServiceRequestNumber").HasColumnName("SRNumber");
+        //    });
 
         base.OnModelCreating(modelBuilder);
     }

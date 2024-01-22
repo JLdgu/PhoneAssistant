@@ -16,10 +16,11 @@ public sealed class PhonesRepository : IPhonesRepository
 
     public async Task<IEnumerable<Phone>> GetPhonesAsync()
     {
-        List<Phone> phones = await _dbContext.Phones
-                               .AsNoTracking()
-                               .OrderByDescending(p => p.LastUpdate)
-                               .ToListAsync();
+        IEnumerable<Phone> phones = await _dbContext.Phones
+            .Where(p => p.Status != "Disposed" &&  p.Status != "Decommissioned")                               
+            .AsNoTracking()
+            .OrderByDescending(p => p.LastUpdate)
+            .ToListAsync();
         return phones;
     }
 

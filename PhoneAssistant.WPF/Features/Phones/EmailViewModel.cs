@@ -1,12 +1,10 @@
-﻿using System.Reflection;
-using System.Text;
+﻿using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.Phones;
@@ -15,27 +13,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
                                     IPrintEnvelope printEnvelope) : ObservableObject
 {
     private readonly IPhonesRepository _phonesRepository = phonesRepository ?? throw new ArgumentNullException();
-    private readonly IPrintEnvelope _printEnvelope = printEnvelope ?? throw new ArgumentNullException();
-    
-
-    //private Phone? _phone;
-    //public Phone Phone
-    //{
-    //    set 
-    //    { 
-    //        _phone = value ?? throw new NullReferenceException(nameof(Phone));
-    //        Imei = value.Imei;
-    //        PhoneNumber = value.PhoneNumber ?? string.Empty;
-    //        AssetTag = value.AssetTag ?? string.Empty;
-    //        OrderType = OrderType.New;
-    //        DeviceType = DeviceType.Phone;
-    //        DespatchMethod = DespatchMethod.CollectL87;
-    //        DeliveryAddress = value.DespatchDetails ?? string.Empty;
-
-    //        GenerateEmailHtml();
-    //        GeneratingEmail = true;
-    //    }
-    //}
+    private readonly IPrintEnvelope _printEnvelope = printEnvelope ?? throw new ArgumentNullException();   
 
     private OrderDetails _orderDetails;
     
@@ -52,7 +30,9 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             OrderType = value.OrderType;
             DeviceType = value.DeviceType;
             DespatchMethod = value.DespatchMethod;
-            DeliveryAddress = value.Phone.DespatchDetails ?? string.Empty;
+            DeliveryAddress = value.Phone.NewUser ?? string.Empty;
+            if (value.Phone.DespatchDetails is not null)
+                DeliveryAddress = value.Phone.DespatchDetails;
 
             GenerateEmailHtml();
             GeneratingEmail = true;
@@ -103,7 +83,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         if (SaveAndCopy is null) return;
 
         await _phonesRepository.UpdateAsync(_orderDetails.Phone);
-        Clipboard.SetText(EmailHtml);
+        //Clipboard.SetText(EmailHtml);
     }
 
     [RelayCommand]
@@ -116,6 +96,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     }
     
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(EmailHtml))]
     private string _deliveryAddress = string.Empty;
 
     partial void OnDeliveryAddressChanged(string value)
@@ -137,7 +118,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     {
         StringBuilder html = new StringBuilder(
             """
-            <span style="font-size:12px; font-family:Verdana;>"
+            <span style="font-size:12px; font-family:Verdana;">
             """);
 
         switch (DespatchMethod)
@@ -159,16 +140,18 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         }
         html.AppendLine(
             """
-            <p><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1">
+            <p><br /><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1"
+                  style="font-size:12px; font-family:Verdana";>
             DCC mobile phone data usage guidance and policies</a></p>
             """);
 
-        html.AppendLine($"<p>To find out how to set up your {DeviceType.ToString().ToLower()}, please go here:</br>");
+        html.AppendLine($"<p><br />To find out how to set up your {DeviceType.ToString().ToLower()}, please go here:</br>");
         if (_orderDetails.Phone.OEM == "Apple")
         {
             html.Append(
                 """
-                <a href="https://devoncc.sharepoint.com/sites/ICTKB/Public/DCC%20Mobile%20Phone%20Service%20-%20Setting%20up%20Apple%20(iOS)%20Smartphone.docx?d=w5a23e7d6e2404401a5039a4936743875">
+                <a href="https://devoncc.sharepoint.com/sites/ICTKB/Public/DCC%20Mobile%20Phone%20Service%20-%20Setting%20up%20Apple%20(iOS)%20Smartphone.docx?d=w5a23e7d6e2404401a5039a4936743875"
+                   style="font-size:12px; font-family:Verdana";>
                 Setting up your Apple (iOS) Smartphone.docx (devoncc.sharepoint.com)</a></p>
                 """);            
         }
@@ -176,7 +159,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         {
             html.AppendLine(
                 """
-                <a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/Android%20Enterprise%20-%20Setting%20up%20your%20Android%20Phone.docx?d=w64bb3f0a09e44557a64bb78311ee513b&csf=1&web=1">
+                <a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/Android%20Enterprise%20-%20Setting%20up%20your%20Android%20Phone.docx?d=w64bb3f0a09e44557a64bb78311ee513b&csf=1&web=1"
+                   style="font-size:12px; font-family:Verdana";>
                 Android Enterprise - Setting up your Android Smartphone.docx (devoncc.sharepoint.com)</a></p>
                 """);
         }
@@ -195,10 +179,13 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
                 """);
             html.AppendLine(" to have the phone picked up from your home or you can drop off the item at a Parcel Post Box, Delivery Office or Post Office branch.</p>");
         }
-        html.AppendLine("</span>");
+        html.AppendLine("<p><br /></p></span>");
 
 
-        html.AppendLine("<table style=\"font-size:12px;font-family: Verdana, Arial, Times, serif;\">");
+        html.AppendLine(
+            """
+            <table style="font-size:12px;font-family: Verdana">
+            """);
         html.AppendLine("<tr><th>Order Details</th><th></th></tr>");
         html.AppendLine($"<tr><td>Order type:</td><td>{_orderDetails.OrderedItem}</td></tr>");
         html.AppendLine($"<tr><td>Device supplied:</td><td>{_orderDetails.DeviceSupplied}</td></tr>");

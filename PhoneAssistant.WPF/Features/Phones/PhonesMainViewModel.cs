@@ -51,6 +51,8 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
         Statuses.Add("Production");
         Statuses.Add("In Stock");
         Statuses.Add("In Repair");
+        Statuses.Add("Decommissioned");
+        Statuses.Add("Disposed");
         Statuses.Add("Misplaced");
     }
 

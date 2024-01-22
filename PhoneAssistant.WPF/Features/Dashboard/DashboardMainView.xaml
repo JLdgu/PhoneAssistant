@@ -27,8 +27,10 @@
                              Margin="5,5"
                              Padding="4,2">
             <StackPanel Orientation="Vertical">
-                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="vNext" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add EE Base Report view" />
+                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.401.22.0" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #8 Add EE Base Report view " />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add notes to Disposed table" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Exclude phones with status Disposed &amp; Decommissioned from Phones view" />
             </StackPanel>
         </materialDesign:Card>
 

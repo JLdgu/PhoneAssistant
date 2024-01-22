@@ -31,7 +31,19 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     {
         if (item is not EEBaseReport vm) return false;
 
-        if (FilterOutItem(FilterPhoneNumber, vm.PhoneNumber)) return false;
+        if (FilterOutItem(FilterConnectedIMEI, vm.ConnectedIMEI)) return false;
+
+        if (FilterOutItem(FilterContractEndDate, vm.ContractEndDate)) return false;
+        
+        if (FilterOutItem(FilterHandset, vm.Handset)) return false;
+        
+        if (FilterOutItem(FilterLastUsedIMEI, vm.LastUsedIMEI)) return false;
+        
+        if (FilterOutItem(FilterPhoneNumber, vm.PhoneNumber)) return false; 
+        
+        if (FilterOutItem(FilterSIMNumber, vm.SIMNumber)) return false;
+        
+        if (FilterOutItem(FilterTalkPlan, vm.TalkPlan)) return false;
 
         if (FilterOutItem(FilterUserName, vm.UserName)) return false;
 
@@ -43,14 +55,41 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         if (filter is not null && filter.Length > 0)
             if (item is null)
                 return true;
-            else if (!item.Contains(filter))
+            else if (!item.Contains(filter, StringComparison.InvariantCultureIgnoreCase))
                 return true;
 
         return false;
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string? filterConnectedIMEI;
+    partial void OnFilterConnectedIMEIChanged(string? value)
+    {
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
+    private string? filterContractEndDate;
+    partial void OnFilterContractEndDateChanged(string? value)
+    {
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
+    private string? filterHandset;
+    partial void OnFilterHandsetChanged(string? value)
+    {
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
+    private string? filterLastUsedIMEI;
+    partial void OnFilterLastUsedIMEIChanged(string? value)
+    {
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
     private string? filterPhoneNumber;
     partial void OnFilterPhoneNumberChanged(string? value)
     {
@@ -58,7 +97,20 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private string? filterSIMNumber;
+    partial void OnFilterSIMNumberChanged(string? value)
+    {
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
+    private string? filterTalkPlan;
+    partial void OnFilterTalkPlanChanged(string? value)
+    {
+        _filterView.Refresh();
+    }
+
+    [ObservableProperty]
     private string? filterUserName;
     partial void OnFilterUserNameChanged(string? value)
     {

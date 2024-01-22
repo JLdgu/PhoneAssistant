@@ -27,6 +27,15 @@
                              Margin="5,5"
                              Padding="4,2">
             <StackPanel Orientation="Vertical">
+                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="vNext" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add EE Base Report view" />
+            </StackPanel>
+        </materialDesign:Card>
+
+        <materialDesign:Card Grid.Row="3"
+                             Margin="5,5"
+                             Padding="4,2">
+            <StackPanel Orientation="Vertical">
                 <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.401.11.0" />
                 <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #3 Complete edit phone functionality" />
                 <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #27 Envelope and Email contants differ" />

@@ -8,13 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Features.Phones;
 
 namespace PhoneAssistant.WPF.Features.BaseReport;
 
 public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMainViewModel
 {
     private readonly PhoneAssistantDbContext _dbContext;
+
+    private bool _loaded;
 
     public ObservableCollection<EEBaseReport> BaseReport { get; } = new();
     
@@ -116,10 +117,13 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     {
         _filterView.Refresh();
     }
-
-
+    
     public async Task LoadAsync()
     {
+        if (_loaded) return;
+
+        _loaded = true;
+
         IEnumerable<EEBaseReport> phones = await _dbContext
                 .BaseReport.
                 AsNoTracking()

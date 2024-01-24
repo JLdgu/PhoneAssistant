@@ -1,13 +1,12 @@
 $newRelease = "K:\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application\v1.401.24.0"
 
-If (Test-Path -Path $newRelease) {
-  Write-Host "Release alread exists"
-  Exit
+If (Test-Path -Path $newRelease)
+{    
+    $newRelease = $newRelease + "\*"
+    New-Item -Path "$ENV:UserProfile\AppData\Local" -Name PhoneAssistant.New -ItemType Directory
+    Copy-Item -Path $newRelease -Destination "$ENV:UserProfile\AppData\Local\PhoneAssistant.New"
 }
-
-Copy-Item -Path "c:\dev\PhoneAssistant\Publish" -Destination $newRelease -Recurse
-
-$newRelease = $newRelease + "\*"
-Copy-Item -Path $newRelease -Destination "$ENV:UserProfile\AppData\Local\PhoneAssistant"
-
-# Copy-Item -Path "c:\dev\PhoneAssistant\Publish\*" -Destination "$ENV:UserProfile\AppData\Local\PhoneAssistant"
+else
+{
+    Copy-Item -Path "c:\dev\PhoneAssistant\Publish" -Destination $newRelease -Recurse
+}

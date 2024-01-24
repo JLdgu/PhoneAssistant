@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 
 using PhoneAssistant.WPF.Features.BaseReport;
 using PhoneAssistant.WPF.Features.Dashboard;
+using PhoneAssistant.WPF.Features.Disposals;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Features.Sims;
@@ -16,6 +17,7 @@ public enum ViewModelType
     None,
     BaseReport,
     Dashboard,
+    Disposals,
     Phones,
     Sims,
     ServiceRequests,
@@ -27,6 +29,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 {
     private readonly IBaseReportMainViewModel _baseReportMainViewModel;
     private readonly IDashboardMainViewModel _dashboardMainViewModel;
+    private readonly IDisposalsMainViewModel _disposalsMainViewModel;
     private readonly IPhonesMainViewModel _phonesMainViewModel;
     private readonly ISimsMainViewModel _simsMainViewModel;
     private readonly ISettingsMainViewModel _settingsMainViewModel;
@@ -37,6 +40,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     public MainWindowViewModel(IBaseReportMainViewModel baseReportMainViewModel,
                                IDashboardMainViewModel dashboardMainViewModel,
+                               IDisposalsMainViewModel disposalsMainViewModel,
                                IPhonesMainViewModel phonesMainViewModel,
                                ISimsMainViewModel simsMainViewModel,
                                ISettingsMainViewModel settingsMainViewModel,
@@ -44,6 +48,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         _baseReportMainViewModel = baseReportMainViewModel ?? throw new ArgumentNullException(nameof(baseReportMainViewModel));
         _dashboardMainViewModel = dashboardMainViewModel ?? throw new ArgumentNullException(nameof(dashboardMainViewModel));
+        _disposalsMainViewModel = disposalsMainViewModel ?? throw new ArgumentNullException(nameof(disposalsMainViewModel));
         _phonesMainViewModel = phonesMainViewModel ?? throw new ArgumentNullException(nameof(phonesMainViewModel));
         _simsMainViewModel = simsMainViewModel ?? throw new ArgumentNullException(nameof(simsMainViewModel));
         _settingsMainViewModel = settingsMainViewModel ?? throw new ArgumentNullException(nameof(settingsMainViewModel));
@@ -66,6 +71,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         {
             ViewModelType.BaseReport => _baseReportMainViewModel,
             ViewModelType.Dashboard => _dashboardMainViewModel,
+            ViewModelType.Disposals => _disposalsMainViewModel,
             ViewModelType.Phones => _phonesMainViewModel,
             ViewModelType.Sims => _simsMainViewModel,
             //ViewModelType.ServiceRequests => _serviceRequestMainViewModel,

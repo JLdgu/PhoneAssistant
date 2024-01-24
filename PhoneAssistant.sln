@@ -30,7 +30,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{94
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migrations", "Migrations", "{7F8E736A-2CB8-49B4-A2FC-6136B4BEBBED}"
 	ProjectSection(SolutionItems) = preProject
+		Database\backupDatabase.ps1 = Database\backupDatabase.ps1
+		Database\Migrations\M20240117_Disposals.sql = Database\Migrations\M20240117_Disposals.sql
+		Database\Migrations\WIP_Migration_Link.sql = Database\Migrations\WIP_Migration_Link.sql
 		Database\Migrations\WIP_Migration_UpdateHistory.sql = Database\Migrations\WIP_Migration_UpdateHistory.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BaseReport", "BaseReport", "{0EF8AF1C-E2E1-4047-9207-663ED2697B17}"
+	ProjectSection(SolutionItems) = preProject
+		Database\BaseReport\BaseReport.md = Database\BaseReport\BaseReport.md
+		Database\BaseReport\BaseReport.ps1 = Database\BaseReport\BaseReport.ps1
+		Database\BaseReport\BaseReport.sql = Database\BaseReport\BaseReport.sql
 	EndProjectSection
 EndProject
 Global
@@ -53,6 +63,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7F8E736A-2CB8-49B4-A2FC-6136B4BEBBED} = {94784686-8721-4E01-AABA-008AEC733F43}
+		{0EF8AF1C-E2E1-4047-9207-663ED2697B17} = {94784686-8721-4E01-AABA-008AEC733F43}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {72A07A8D-4847-464D-A7B0-C1C3F61CF6F7}

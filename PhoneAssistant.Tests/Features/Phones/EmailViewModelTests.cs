@@ -74,11 +74,12 @@ public sealed class EmailViewModelTests
     {
         Assert.Contains(
             """
-            <span style="font-size:12px; font-family:Verdana;>"
+            <span style="font-size:12px; font-family:Verdana;">
             """, _vm.EmailHtml);
         Assert.Contains(
             """
-            <p><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1">
+            <p><br /><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1"
+                  style="font-size:12px; font-family:Verdana";>
             DCC mobile phone data usage guidance and policies</a></p>
             """, _vm.EmailHtml);
         Assert.Contains("</span>",_vm.EmailHtml);

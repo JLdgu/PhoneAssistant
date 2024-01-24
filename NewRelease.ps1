@@ -1,4 +1,4 @@
-$newRelease = "K:\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application\v1.401.11.0"
+$newRelease = "K:\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application\v1.401.24.0"
 
 If (Test-Path -Path $newRelease) {
   Write-Host "Release alread exists"

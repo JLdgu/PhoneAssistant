@@ -112,7 +112,7 @@
                                     <TextBox MinWidth="50"
                                              materialDesign:HintAssist.Hint="Filter"
                                              materialDesign:TextFieldAssist.HasClearButton="True"
-                                             MaxLength="6"
+                                             MaxLength="7"
                                              Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterSR, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
                                 </StackPanel>
                             </DataTemplate>

@@ -5,7 +5,10 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
+             xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.Disposals"
              MaxHeight="1080"
+             d:DataContext="{d:DesignInstance Type=viewmodel:DisposalsMainViewModel,
+                                              IsDesignTimeCreatable=False}"
              d:DesignHeight="500"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -14,16 +17,95 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <shared:HeaderMainView HeaderIcon="DeleteOutline" HeaderText="Disposals" />
 
         <materialDesign:Card Grid.Row="1"
-                             Margin="5,5"
-                             Padding="4,2">
-            <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="Add disposals here" />
+                             Margin="0,5,0,0"
+                             Padding="5,5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.ColumnSpan="2"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource MaterialDesignBody1TextBlock}"
+                           Text="myScomis Phone CIs to import (.xlsx)" />
+                <Button Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="0,4,10,0"
+                        Command="{Binding SelectMyScomisFileCommand}"
+                        Content="{materialDesign:PackIcon Kind=FolderOpenOutline,
+                                                          Size=20}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        ToolTip="Change Database" />
+                <TextBox Grid.Row="1"
+                         Grid.Column="1"
+                         Margin="0,4,10,0"
+                         Padding="5,10"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding ImportmyScomis}" />
+            </Grid>
+        </materialDesign:Card>
+
+        <materialDesign:Card Grid.Row="2"
+                             Margin="0,5,0,0"
+                             Padding="5,5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.ColumnSpan="2"
+                           Margin="5,5"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource MaterialDesignBody1TextBlock}"
+                           Text="SCC Collection Request to import (.xls)" />
+                <Button Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="0,4,10,0"
+                        Command="{Binding SelectSCCFileCommand}"
+                        Content="{materialDesign:PackIcon Kind=FolderOpenOutline,
+                                                          Size=20}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        ToolTip="Change Database" />
+                <TextBox Grid.Row="1"
+                         Grid.Column="1"
+                         Margin="0,4,10,0"
+                         Padding="5,10"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding ImportSCC}" />
+            </Grid>
+        </materialDesign:Card>
+
+        <materialDesign:Card Grid.Row="3"
+                             Margin="0,5,0,0"
+                             Padding="5,5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock Margin="5,5"
+                           Style="{StaticResource MaterialDesignBody1TextBlock}"
+                           Text="Import Log" />
+                <TextBlock Grid.Row="1"
+                           Margin="0,4,0,0"
+                           Style="{StaticResource MaterialDesignBody2TextBlock}"
+                           Text="{Binding Log}"
+                           TextWrapping="Wrap" />
+            </Grid>
         </materialDesign:Card>
     </Grid>
 </UserControl>

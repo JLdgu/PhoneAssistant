@@ -37,6 +37,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
+    <PackageReference Include="NPOI" />
     <PackageReference Include="System.Drawing.Common" />
   </ItemGroup>
 

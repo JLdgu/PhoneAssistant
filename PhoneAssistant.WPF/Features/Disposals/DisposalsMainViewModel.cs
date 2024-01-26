@@ -1,11 +1,19 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
 namespace PhoneAssistant.WPF.Features.Disposals;
 public partial class DisposalsMainViewModel : ObservableObject, IDisposalsMainViewModel
 {
+    private readonly ILogger<DisposalsMainViewModel> _logger;
+
+    public DisposalsMainViewModel(ILogger<DisposalsMainViewModel> logger)
+    {
+        _logger = logger;
+    }
+
     [ObservableProperty]
     private string? _importmyScomis;
 
@@ -22,6 +30,7 @@ public partial class DisposalsMainViewModel : ObservableObject, IDisposalsMainVi
         {
             ImportmyScomis = openFileDialog.FileName;
         }
+        _logger.LogInformation(ImportmyScomis);        
     }
 
     [ObservableProperty]

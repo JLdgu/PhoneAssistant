@@ -3,6 +3,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Features.BaseReport;
@@ -23,6 +24,8 @@ public static class ApplicationServicesExtensions
         host.ConfigureServices((context, services) =>
         {
             // Application
+            services.AddLogging(configure => configure.AddConsole());
+
             UserSettings settings = new();
             string database = settings.Database;
             string connectionString = $@"DataSource={database};";

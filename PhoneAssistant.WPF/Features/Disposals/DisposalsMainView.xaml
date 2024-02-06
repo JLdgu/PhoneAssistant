@@ -45,7 +45,7 @@
                         Content="{materialDesign:PackIcon Kind=FolderOpenOutline,
                                                           Size=20}"
                         Style="{StaticResource MaterialDesignOutlinedButton}"
-                        ToolTip="Change Database" />
+                        ToolTip="Find file" />
                 <TextBox Grid.Row="1"
                          Grid.Column="1"
                          Margin="0,4,10,0"
@@ -79,7 +79,7 @@
                         Content="{materialDesign:PackIcon Kind=FolderOpenOutline,
                                                           Size=20}"
                         Style="{StaticResource MaterialDesignOutlinedButton}"
-                        ToolTip="Change Database" />
+                        ToolTip="Find File" />
                 <TextBox Grid.Row="1"
                          Grid.Column="1"
                          Margin="0,4,10,0"
@@ -95,16 +95,39 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <TextBlock Margin="5,5"
                            Style="{StaticResource MaterialDesignBody1TextBlock}"
                            Text="Import Log" />
-                <TextBlock Grid.Row="1"
+                <Button Grid.Row="1"
+                        Grid.Column="0"
+                        Width="50"
+                        Margin="0,4,10,0"
+                        HorizontalAlignment="Left"
+                        Command="{Binding ExecuteMyScomisImportCommand}"
+                        Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
+                                                          Size=20}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        ToolTip="Start myScomis Import" />
+
+                <!--<TextBlock Grid.Row="2"
                            Margin="0,4,0,0"
                            Style="{StaticResource MaterialDesignBody2TextBlock}"
                            Text="{Binding Log}"
-                           TextWrapping="Wrap" />
+                           TextWrapping="Wrap" />-->
+                <ListView Grid.Row="2"
+                          ItemsSource="{Binding LogItems, Mode=OneWay}">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Margin"
+                                    Value="0" />
+                            <Setter Property="Padding"
+                                    Value="0" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
             </Grid>
         </materialDesign:Card>
     </Grid>

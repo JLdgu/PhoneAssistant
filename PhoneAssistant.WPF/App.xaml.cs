@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -18,9 +17,6 @@ public partial class App : System.Windows.Application
 
     public App()
     {
-        Trace.Listeners.Add(new TextWriterTraceListener( "PhoneAssistant.log", "logListener"));//
-        Trace.AutoFlush = true;
-
         _host = Host.CreateDefaultBuilder()
             .ConfigureApplicationServices()
             .Build();
@@ -65,6 +61,9 @@ public partial class App : System.Windows.Application
 
     private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
+        Trace.Listeners.Add(new TextWriterTraceListener("PhoneAssistant.log", "logListener"));//
+        Trace.AutoFlush = true;
+
         Trace.TraceError(DateTime.Now.ToString());
 
         Exception? ex = e.Exception;

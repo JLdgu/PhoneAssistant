@@ -24,8 +24,6 @@ public static class ApplicationServicesExtensions
         host.ConfigureServices((context, services) =>
         {
             // Application
-            services.AddLogging(configure => configure.AddConsole());
-
             UserSettings settings = new();
             string database = settings.Database;
             string connectionString = $@"DataSource={database};";
@@ -43,6 +41,7 @@ public static class ApplicationServicesExtensions
             services.AddSingleton<IDashboardMainViewModel, DashboardMainViewModel>();
 
             services.AddSingleton<IDisposalsMainViewModel, DisposalsMainViewModel>();
+            services.AddSingleton<DisposalsRepository>();
 
             services.AddTransient<IPhonesMainViewModel, PhonesMainViewModel>();
             services.AddSingleton<EmailViewModel>();

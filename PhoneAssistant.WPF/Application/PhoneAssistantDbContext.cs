@@ -14,7 +14,7 @@ public sealed class PhoneAssistantDbContext : DbContext
 
     public DbSet<Sim> Sims => Set<Sim>();
 
-    //public DbSet<Disposal> Disposals => Set<Disposal>();
+    public DbSet<Disposal> Disposals => Set<Disposal>();
 
     public DbSet<ServiceRequest> ServiceRequests => Set<ServiceRequest>();
 
@@ -26,7 +26,7 @@ public sealed class PhoneAssistantDbContext : DbContext
             throw new ArgumentException("DbContextOptionsBuilder has not been configured");
 
 #if DEBUG
-        optionsBuilder.EnableSensitiveDataLogging();
+        //optionsBuilder.EnableSensitiveDataLogging();        
 #endif
       
         //optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
@@ -35,6 +35,14 @@ public sealed class PhoneAssistantDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Disposal>(
+            d =>
+            {
+                d.ToTable("ReconcileDisposals");
+                d.Property(d => d.Id).HasColumnName("RowId");
+                d.HasIndex(d => d.Imei).IsUnique();
+            });
+
         modelBuilder.Entity<EEBaseReport>()
             .ToTable("BaseReport")
             .HasNoKey();

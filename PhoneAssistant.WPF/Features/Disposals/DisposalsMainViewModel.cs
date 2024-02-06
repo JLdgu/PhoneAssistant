@@ -1,20 +1,39 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
+using PhoneAssistant.WPF.Application.Repositories;
+using PhoneAssistant.WPF.Features.Phones;
+
 namespace PhoneAssistant.WPF.Features.Disposals;
-public partial class DisposalsMainViewModel : ObservableObject, IDisposalsMainViewModel
+public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMessage>, IDisposalsMainViewModel
 {
+    private readonly DisposalsRepository _disposalsRepository;
+    private readonly IMessenger _messenger;
     private readonly ILogger<DisposalsMainViewModel> _logger;
 
-    public DisposalsMainViewModel(ILogger<DisposalsMainViewModel> logger)
+    public ObservableCollection<string> LogItems { get; } = new();
+
+    public DisposalsMainViewModel(DisposalsRepository disposalsRepository,
+                                  IMessenger messenger,
+                                  ILogger<DisposalsMainViewModel> logger)
     {
+        messenger.RegisterAll(this);
+        _disposalsRepository = disposalsRepository;
+        _messenger = messenger;
         _logger = logger;
+#if DEBUG
+        ImportmyScomis = @"C:\Users\Jonathan.Linstead\OneDrive - Devon County Council\Phones\Disposals\CI List2024_17_1_13_42_55.xlsx";
+#endif
     }
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ExecuteMyScomisImportCommand))]
     private string? _importmyScomis;
 
     [RelayCommand]
@@ -34,6 +53,7 @@ public partial class DisposalsMainViewModel : ObservableObject, IDisposalsMainVi
     }
 
     [ObservableProperty]
+    //[NotifyCanExecuteChangedFor(nameof(ExecuteSCCImportCommand))]
     private string? _importSCC;
 
     [RelayCommand]
@@ -51,6 +71,17 @@ public partial class DisposalsMainViewModel : ObservableObject, IDisposalsMainVi
         }
     }
 
+    [RelayCommand(CanExecute = nameof(CanImportMyScomis))]
+    private void ExecuteMyScomisImport()
+    {
+        ImportMyScomis import = new(ImportmyScomis!, 
+                                    _disposalsRepository, 
+                                    _messenger);
+        import.Execute();
+        
+    }
+    private bool CanImportMyScomis() => ImportmyScomis is not null;
+
     [ObservableProperty]
     private string? _log;
 
@@ -59,4 +90,9 @@ public partial class DisposalsMainViewModel : ObservableObject, IDisposalsMainVi
         return Task.CompletedTask;
     }
 
+    public void Receive(LogMessage message)
+    {
+        LogItems.Add($"{DateTime.Now}: {message.text}");
+        _logger.LogInformation(message.text);        
+    }
 }

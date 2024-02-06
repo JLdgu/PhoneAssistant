@@ -25,7 +25,7 @@ CREATE TABLE Phones (
 );
 INSERT INTO Phones (
     "AssetTag","Collection","DespatchDetails","FormerUser","IMEI","LastUpdate","Model","NewUser","NorR","Notes","OEM","PhoneNumber","SIMNumber","SRNumber","Status") 
-    SELECT "AssetTag","Collection","DespatchDetails","FormerUser","IMEI","LastUpdate","Model","NewUser","NorR","Notes","OEM","PhoneNumber","SIMNumber","SRNumber","Status" FROM Phones;
+    SELECT "AssetTag","Collection","DespatchDetails","FormerUser","IMEI","LastUpdate","Model","NewUser","NorR","Notes","OEM","PhoneNumber","SIMNumber","SRNumber","Status" FROM PhonesOld;
 
 DROP TABLE PhonesOld;
 

@@ -98,33 +98,49 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <TextBlock Margin="5,5"
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="5"
+                               VerticalAlignment="Center"
+                               Style="{StaticResource MaterialDesignBody2TextBlock}"
+                               Text="myScomis" />
+                    <Button Grid.Column="0"
+                            Width="50"
+                            Margin="0,4,10,0"
+                            HorizontalAlignment="Left"
+                            Command="{Binding ExecuteMyScomisImportCommand}"
+                            Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
+                                                              Size=20}"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            ToolTip="Start myScomis Import" />
+                    <TextBlock Margin="5"
+                               VerticalAlignment="Center"
+                               Style="{StaticResource MaterialDesignBody2TextBlock}"
+                               Text="Phone Assistant" />
+                    <Button Grid.Column="0"
+                            Width="50"
+                            Margin="0,4,10,0"
+                            HorizontalAlignment="Left"
+                            Command="{Binding ExecutePAImportCommand}"
+                            Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
+                                                              Size=20}"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            ToolTip="Start PA Import" />
+                </StackPanel>
+                <TextBlock Grid.Row="1"
+                           Margin="5,5"
                            Style="{StaticResource MaterialDesignBody1TextBlock}"
                            Text="Import Log" />
-                <Button Grid.Row="1"
-                        Grid.Column="0"
-                        Width="50"
-                        Margin="0,4,10,0"
-                        HorizontalAlignment="Left"
-                        Command="{Binding ExecuteMyScomisImportCommand}"
-                        Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
-                                                          Size=20}"
-                        Style="{StaticResource MaterialDesignOutlinedButton}"
-                        ToolTip="Start myScomis Import" />
 
                 <!--<TextBlock Grid.Row="2"
                            Margin="0,4,0,0"
                            Style="{StaticResource MaterialDesignBody2TextBlock}"
                            Text="{Binding Log}"
                            TextWrapping="Wrap" />-->
-                <ListView Grid.Row="2"
-                          ItemsSource="{Binding LogItems, Mode=OneWay}">
+                <ListView Grid.Row="2" ItemsSource="{Binding LogItems, Mode=OneWay}">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
-                            <Setter Property="Margin"
-                                    Value="0" />
-                            <Setter Property="Padding"
-                                    Value="0" />
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="Padding" Value="0" />
                         </Style>
                     </ListView.ItemContainerStyle>
                 </ListView>

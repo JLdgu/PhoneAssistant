@@ -14,19 +14,23 @@ namespace PhoneAssistant.WPF.Features.Disposals;
 public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMessage>, IDisposalsMainViewModel
 {
     private readonly DisposalsRepository _disposalsRepository;
+    private readonly IPhonesRepository _phonesRepository;
     private readonly IMessenger _messenger;
     private readonly ILogger<DisposalsMainViewModel> _logger;
 
     public ObservableCollection<string> LogItems { get; } = new();
 
     public DisposalsMainViewModel(DisposalsRepository disposalsRepository,
+                                  IPhonesRepository phonesRepository,
                                   IMessenger messenger,
                                   ILogger<DisposalsMainViewModel> logger)
     {
+        _disposalsRepository = disposalsRepository ?? throw new ArgumentNullException(nameof(disposalsRepository));
+        _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
+        _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
         messenger.RegisterAll(this);
-        _disposalsRepository = disposalsRepository;
-        _messenger = messenger;
-        _logger = logger;
 #if DEBUG
         ImportmyScomis = @"C:\Users\Jonathan.Linstead\OneDrive - Devon County Council\Phones\Disposals\CI List2024_17_1_13_42_55.xlsx";
 #endif
@@ -72,15 +76,23 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     }
 
     [RelayCommand(CanExecute = nameof(CanImportMyScomis))]
-    private void ExecuteMyScomisImport()
+     private async Task ExecuteMyScomisImport()
     {
         ImportMyScomis import = new(ImportmyScomis!, 
                                     _disposalsRepository, 
-                                    _messenger);
-        import.Execute();
-        
+                                    _messenger);            
+        await import.Execute();
     }
     private bool CanImportMyScomis() => ImportmyScomis is not null;
+
+    [RelayCommand]
+    private async Task ExecutePAImport()
+    {
+        ImportPhoneAssistant import = new(_disposalsRepository,
+                                          _phonesRepository,            
+                                          _messenger);
+        await import.Execute();
+    }
 
     [ObservableProperty]
     private string? _log;
@@ -92,7 +104,7 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
 
     public void Receive(LogMessage message)
     {
-        LogItems.Add($"{DateTime.Now}: {message.text}");
-        _logger.LogInformation(message.text);        
+        LogItems.Add($"{DateTime.Now}: {message.Text}");
+        _logger.LogInformation(message.Text);        
     }
 }

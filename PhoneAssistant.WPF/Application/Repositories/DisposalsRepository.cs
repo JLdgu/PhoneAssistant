@@ -12,29 +12,21 @@ public sealed class DisposalsRepository
         _dbContext = dbContext;
     }
 
-    public async Task<Disposal?> GetDisposal(string imei)
+    public async Task<Disposal?> GetDisposalAsync(string imei)
     {
         Disposal? disposal = await _dbContext.Disposals.FirstOrDefaultAsync(d => d.Imei == imei);
         return disposal;
     }
 
-    public void Add(Disposal disposal)
+    public async Task AddAsync(Disposal disposal)
     {
-        _dbContext.Disposals.Add(disposal);
-        //await _dbContext.SaveChangesAsync();
+        await _dbContext.Disposals.AddAsync(disposal);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<bool> Save()
+    public async Task UpdateAsync(Disposal disposal)
     {
-        try
-        {
-            await _dbContext.SaveChangesAsync();
-            return false;
-        }
-        catch (Exception ex) 
-        { 
-            return true; 
-        }
+        _dbContext.Disposals.Update(disposal);
+        await _dbContext.SaveChangesAsync();
     }
-
 }

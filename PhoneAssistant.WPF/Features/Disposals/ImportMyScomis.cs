@@ -13,9 +13,7 @@ public sealed class ImportMyScomis(string importFile,
                                    DisposalsRepository disposalsRepository,
                                    IMessenger messenger)
 {
-    private readonly DisposalsRepository _disposalsRepository = disposalsRepository;
-
-    public async void Execute()
+    public async Task Execute()
     {
         using FileStream? stream = new FileStream(importFile, FileMode.Open, FileAccess.Read);
         using XSSFWorkbook xssWorkbook = new XSSFWorkbook(stream);
@@ -32,7 +30,6 @@ public sealed class ImportMyScomis(string importFile,
             return;
         }
         int added = 0;
-        int deleted = 0;
         int updated = 0;
         int unchanged = 0;
 
@@ -42,24 +39,30 @@ public sealed class ImportMyScomis(string importFile,
             if (row == null) continue;
 
             string name = row.GetCell(3).StringCellValue;
+            string ciStatus = row.GetCell(7).StringCellValue;
 
-            Disposal? disposal = await _disposalsRepository.GetDisposal(name);
+            Disposal? disposal = await disposalsRepository.GetDisposalAsync(name);
             if (disposal is null)
             {
-                disposal = new() { Imei = name, StatusDCC = row.GetCell(7).StringCellValue };                
-                _disposalsRepository.Add(disposal);
+                disposal = new() { Imei = name, StatusDCC = ciStatus };                
+                await disposalsRepository.AddAsync(disposal);
                 added++;
             }
             else
             {
-                unchanged++;
+                if (disposal.StatusDCC == ciStatus)
+                    unchanged++;
+                else
+                {
+                    disposal.StatusDCC = ciStatus;
+                    await disposalsRepository.UpdateAsync(disposal);
+                    updated++;
+                }
             }
         }
-        await _disposalsRepository.Save();
         messenger.Send(new LogMessage($"Added {added} disposals"));
         messenger.Send(new LogMessage($"Unchanged {unchanged} disposals"));
+        messenger.Send(new LogMessage($"Updated {updated} disposals"));
         messenger.Send(new LogMessage("Import complete"));
     }
 }
-
-public sealed record class LogMessage(string text);

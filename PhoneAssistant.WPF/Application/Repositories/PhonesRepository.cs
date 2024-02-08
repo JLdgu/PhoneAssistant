@@ -14,12 +14,19 @@ public sealed class PhonesRepository : IPhonesRepository
         _dbContext = dbContext;
     }
 
-    public async Task<IEnumerable<Phone>> GetPhonesAsync()
+    public async Task<IEnumerable<Phone>> GetActivePhonesAsync()
     {
         IEnumerable<Phone> phones = await _dbContext.Phones
             .Where(p => p.Status != "Disposed" &&  p.Status != "Decommissioned")                               
             .AsNoTracking()
             .OrderByDescending(p => p.LastUpdate)
+            .ToListAsync();
+        return phones;
+    }
+    
+    public async Task<IEnumerable<Phone>> GetAllPhonesAsync()
+    {
+        IEnumerable<Phone> phones = await _dbContext.Phones
             .ToListAsync();
         return phones;
     }

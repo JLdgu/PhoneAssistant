@@ -3,10 +3,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Features.BaseReport;
 using PhoneAssistant.WPF.Features.Dashboard;
+using PhoneAssistant.WPF.Features.Disposals;
 using PhoneAssistant.WPF.Features.MainWindow;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.Settings;
@@ -37,6 +39,9 @@ public static class ApplicationServicesExtensions
             services.AddSingleton<IBaseReportMainViewModel, BaseReportMainViewModel>();
 
             services.AddSingleton<IDashboardMainViewModel, DashboardMainViewModel>();
+
+            services.AddSingleton<IDisposalsMainViewModel, DisposalsMainViewModel>();
+            services.AddSingleton<DisposalsRepository>();
 
             services.AddTransient<IPhonesMainViewModel, PhonesMainViewModel>();
             services.AddSingleton<EmailViewModel>();

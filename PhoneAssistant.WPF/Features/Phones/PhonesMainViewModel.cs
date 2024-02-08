@@ -270,7 +270,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     public async Task LoadAsync()
     {
         PhoneItems.Clear();
-        IEnumerable<Phone> phones = await _phonesRepository.GetPhonesAsync();
+        IEnumerable<Phone> phones = await _phonesRepository.GetActivePhonesAsync();
 
         foreach (Phone phone in phones) 
         {

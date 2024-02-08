@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -17,9 +17,6 @@ public partial class App : System.Windows.Application
 
     public App()
     {
-
-        ApplicationUpdate.UpdateUserSettings();
-
         _host = Host.CreateDefaultBuilder()
             .ConfigureApplicationServices()
             .Build();
@@ -30,7 +27,10 @@ public partial class App : System.Windows.Application
         _host.Start();
 
         if (ApplicationUpdate.FirstRun())
+        {
+            Trace.Close();
             Current.Shutdown();
+        }
 
         ConfigureDatabase();
 
@@ -38,6 +38,10 @@ public partial class App : System.Windows.Application
         MainWindow.Show();
 
         base.OnStartup(e);
+    }
+    private void OnExit(object sender, ExitEventArgs e)
+    {
+        Trace.Close();
     }
 
     private void ConfigureDatabase()
@@ -57,31 +61,34 @@ public partial class App : System.Windows.Application
 
     private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
-        using StreamWriter writer = new("PhoneAssistant.ErrorLog.txt", true);
-        writer.WriteLine(DateTime.Now.ToString());
+        Trace.Listeners.Add(new TextWriterTraceListener("PhoneAssistant.log", "logListener"));//
+        Trace.AutoFlush = true;
+
+        Trace.TraceError(DateTime.Now.ToString());
 
         Exception? ex = e.Exception;
 
         while (ex is not null)
         {
-            writer.WriteLine(ex.GetType().FullName);
-            writer.WriteLine("HResult=" + ex.HResult);
-            writer.WriteLine("Message=" + ex.Message);
-            writer.WriteLine("StackTrace:");
-            writer.WriteLine(ex.StackTrace);
+
+            Trace.TraceError(ex.GetType().FullName);
+            Trace.TraceError("HResult=" + ex.HResult);
+            Trace.TraceError("Message=" + ex.Message);
+            Trace.TraceError("StackTrace:");
+            Trace.TraceError(ex.StackTrace);
 
             ex = ex.InnerException;
         }
-        writer.WriteLine("-----------------------------------------------------------------------------");
-        writer.WriteLine();
+        Trace.TraceError("-----------------------------------------------------------------------------");
+        Trace.TraceError("");
 
-        writer.Close();
+        Trace.Close();
 
         e.Handled = true;
 
-        MessageBox.Show($"An unexpected exception has occured {Environment.NewLine}See PhoneAssistant.ErrorLog.txt for more details.",
+        MessageBox.Show($"An unexpected exception has occured {Environment.NewLine}See PhoneAssistant.log for more details.",
             "Phone Assistant", MessageBoxButton.OK, MessageBoxImage.Stop);
 
         App.Current.Shutdown();
-    }
+    }    
 }

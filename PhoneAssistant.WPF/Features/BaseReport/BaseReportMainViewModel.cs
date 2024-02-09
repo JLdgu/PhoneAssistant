@@ -1,33 +1,54 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
+using System.Windows;
 using System.Windows.Data;
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 
-using PhoneAssistant.WPF.Application;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
+
 using PhoneAssistant.WPF.Application.Entities;
+using PhoneAssistant.WPF.Application.Repositories;
+using PhoneAssistant.WPF.Features.Disposals;
+
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace PhoneAssistant.WPF.Features.BaseReport;
 
 public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMainViewModel
 {
-    private readonly PhoneAssistantDbContext _dbContext;
+    private readonly BaseReportRepository _repository;
 
     private bool _loaded;
-
+    
+    public ObservableCollection<string> LogItems { get; } = new();
+    
     public ObservableCollection<EEBaseReport> BaseReport { get; } = new();
     
     private readonly ICollectionView _filterView;
 
-    public BaseReportMainViewModel(PhoneAssistantDbContext dbContext)
+    public BaseReportMainViewModel(BaseReportRepository repository)
     {
-        _dbContext = dbContext;
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _filterView = CollectionViewSource.GetDefaultView(BaseReport);
         _filterView.Filter = new Predicate<object>(FilterView);
+        ImportViewVisibility = Visibility.Collapsed;
+        ReportViewVisibility = Visibility.Visible;
     }
 
+    [ObservableProperty]
+    private Visibility _importViewVisibility;
+    
+    [ObservableProperty]
+    private Visibility _reportViewVisibility;
+
+    #region Filter
     public bool FilterView(object item)
     {
         if (item is not EEBaseReport vm) return false;
@@ -117,19 +138,104 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     {
         _filterView.Refresh();
     }
-    
+    #endregion
+
+    [RelayCommand]
+    private void ShowImport()
+    {
+        ImportViewVisibility = Visibility.Visible;
+        ReportViewVisibility = Visibility.Collapsed;
+    }
+
+    [RelayCommand]
+    private void SelectBaseReportFile()
+    {
+        OpenFileDialog openFileDialog = new()
+        {
+            Filter = "Devon Base Report (*.xls)|*.xls",
+            Multiselect = false
+        };
+
+        if (openFileDialog.ShowDialog() == true)
+        {
+            DevonBaseReport = openFileDialog.FileName;
+        }
+    }
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ImportCommand))]
+    private string? _devonBaseReport;
+
+    private bool CanImport() => !string.IsNullOrWhiteSpace(DevonBaseReport);
+
+    [RelayCommand(CanExecute = nameof(CanImport))]
+    private async Task Import()
+    {
+
+        using FileStream? stream = new FileStream(DevonBaseReport!, FileMode.Open, FileAccess.Read);
+        using HSSFWorkbook workbook = new HSSFWorkbook(stream);
+
+        ISheet sheet = workbook.GetSheetAt(1);
+
+        IRow header = sheet.GetRow(0);
+        ICell cell = header.GetCell(0);
+        if (cell is null || cell.StringCellValue != "Group Id")
+        {
+            LogItems.Add($"Unable to find Group Id in cell A1, check you are importing the correct file.");
+            return;
+        }
+
+        await _repository.TruncateAsync();
+
+        int added = 0;
+        for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++)
+        {
+            IRow row = sheet.GetRow(i);
+            if (row == null) continue;
+            if (row.Cells.Count == 4) break;
+
+            EEBaseReport item = new()
+            {
+                PhoneNumber = row.GetCell(3).StringCellValue,
+                UserName = row.GetCell(4).StringCellValue,
+                ContractEndDate = row.GetCell(7).DateCellValue.ToShortDateString(),
+                TalkPlan = row.GetCell(8).StringCellValue,
+                Handset = row.GetCell(9).StringCellValue,
+                SIMNumber = row.GetCell(10).StringCellValue,
+                ConnectedIMEI = row.GetCell(11).StringCellValue,
+                LastUsedIMEI = row.GetCell(12).StringCellValue
+            };
+
+            await _repository.CreateAsync(item);
+            added++;
+        }
+
+        LogItems.Add($"Added {added} disposals");
+        LogItems.Add("Import complete");
+
+        DevonBaseReport = string.Empty;
+
+        BaseReport.Clear();
+        _loaded = false;
+        await LoadAsync();
+    }
+
+    [RelayCommand]
+    private void CloseImport()
+    { 
+        ImportViewVisibility = Visibility.Collapsed;
+        ReportViewVisibility = Visibility.Visible;
+    }    
+
     public async Task LoadAsync()
     {
         if (_loaded) return;
 
         _loaded = true;
 
-        IEnumerable<EEBaseReport> phones = await _dbContext
-                .BaseReport.
-                AsNoTracking()
-                .ToListAsync();
+        IEnumerable<EEBaseReport> report = await _repository.GetBaseReportAsync();
 
-        foreach (EEBaseReport phone in phones)
+        foreach (EEBaseReport phone in report)
         {
             BaseReport.Add(phone);
         };

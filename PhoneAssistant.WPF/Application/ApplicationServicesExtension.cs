@@ -36,19 +36,20 @@ public static class ApplicationServicesExtensions
             services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider => provider.GetRequiredService<WeakReferenceMessenger>());
 
             // Features
+            services.AddSingleton<BaseReportRepository>();
             services.AddSingleton<IBaseReportMainViewModel, BaseReportMainViewModel>();
 
             services.AddSingleton<IDashboardMainViewModel, DashboardMainViewModel>();
 
-            services.AddSingleton<IDisposalsMainViewModel, DisposalsMainViewModel>();
             services.AddSingleton<DisposalsRepository>();
+            services.AddSingleton<IDisposalsMainViewModel, DisposalsMainViewModel>();
 
-            services.AddTransient<IPhonesMainViewModel, PhonesMainViewModel>();
-            services.AddSingleton<EmailViewModel>();
-            services.AddTransient<IPhonesItemViewModelFactory, PhonesItemViewModelFactory>();
-            services.AddTransient<PhonesItemViewModel>();
             services.AddSingleton<IPhonesRepository, PhonesRepository>();
+            services.AddTransient<IPhonesItemViewModelFactory, PhonesItemViewModelFactory>();
+            services.AddSingleton<EmailViewModel>();
+            services.AddTransient<PhonesItemViewModel>();
             services.AddTransient<IPrintEnvelope, PrintEnvelope>();
+            services.AddTransient<IPhonesMainViewModel, PhonesMainViewModel>();
 
             services.AddSingleton<ISettingsMainViewModel, SettingsMainViewModel>();
             services.AddTransient<IThemeWrapper, ThemeWrapper>();
@@ -56,10 +57,10 @@ public static class ApplicationServicesExtensions
             services.AddTransient<IUsersMainViewModel, UsersMainViewModel>();
             services.AddTransient<IUsersItemViewModelFactory, UsersItemViewModelFactory>();
             
+            services.AddSingleton<ISimsRepository, SimsRepository>();
             services.AddTransient<ISimsMainViewModel, SimsMainViewModel>();
             services.AddTransient<ISimsItemViewModelFactory, SimsItemViewModelFactory>();
             services.AddTransient<SimsItemViewModel>();
-            services.AddSingleton<ISimsRepository, SimsRepository>();
             
             services.AddTransient<MainWindowViewModel>();
             services.AddSingleton(s => new MainWindow(s.GetRequiredService<MainWindowViewModel>()));

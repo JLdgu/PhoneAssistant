@@ -14,13 +14,87 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
 
         </Grid.RowDefinitions>
 
         <shared:HeaderMainView HeaderIcon="AlphaECircleOutline" HeaderText="Base Report" />
 
-        <DataGrid Grid.Row="1"
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Button Margin="5,5"
+                    Command="{Binding ShowImportCommand}"
+                    Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
+                                                      Size=25}"
+                    Style="{StaticResource MaterialDesignOutlinedLightButton}"
+                    ToolTip="Select Base Report to import" />
+        </StackPanel>
+
+        <materialDesign:Card Grid.Row="1"
+                             Margin="0,5,0,0"
+                             Padding="5,5"
+                             Visibility="{Binding ImportViewVisibility}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.ColumnSpan="2"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource MaterialDesignBody1TextBlock}"
+                           Text="Devon Base Report to Import (*.xls)" />
+                <Button Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="0,4,10,0"
+                        Command="{Binding SelectBaseReportFileCommand}"
+                        Content="{materialDesign:PackIcon Kind=FolderOpenOutline,
+                                                          Size=20}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        ToolTip="Find file" />
+                <TextBox Grid.Row="1"
+                         Grid.Column="1"
+                         Margin="0,4,10,0"
+                         Padding="5,10"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding DevonBaseReport}" />
+                <Button Grid.Row="2"
+                        Margin="0,4,10,0"
+                        Command="{Binding ImportCommand}"
+                        Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
+                                                          Size=25}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        ToolTip="Import new base report" />
+
+                <Button Grid.Row="2"
+                        Grid.Column="1"
+                        Width="80"
+                        Margin="0,4,10,0"
+                        HorizontalAlignment="Left"
+                        Command="{Binding CloseImportCommand}"
+                        Content="Close"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        ToolTip="Close" />
+
+                <ListView Grid.Row="3"
+                          Grid.ColumnSpan="2"
+                          ItemsSource="{Binding LogItems, Mode=OneWay}">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="Padding" Value="0" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </Grid>
+        </materialDesign:Card>
+
+        <DataGrid Grid.Row="2"
                   MaxHeight="1000"
                   Margin="10,5,0,0"
                   materialDesign:DataGridAssist.CellPadding="0 5 0 5"
@@ -30,7 +104,8 @@
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
                   HeadersVisibility="Column"
-                  ItemsSource="{Binding BaseReport}">
+                  ItemsSource="{Binding BaseReport}"
+                  Visibility="{Binding ReportViewVisibility}">
             <DataGrid.Columns>
 
                 <DataGridTextColumn Binding="{Binding PhoneNumber}" Header="Phone Number">

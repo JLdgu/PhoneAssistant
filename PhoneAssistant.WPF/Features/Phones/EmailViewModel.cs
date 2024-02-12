@@ -131,7 +131,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             case DespatchMethod.CollectL87:
                 html.AppendLine($"<p>Your {DeviceType.ToString().ToLower()} can be collected from</br>");
                 html.AppendLine("DTS End User Compute Team, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
-                html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now)}");
+                html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now)}</p>");
                 break;
             case DespatchMethod.Delivery:
                 html.AppendLine($"<p>Your {DeviceType.ToString().ToLower()} has been sent to<br />{_formattedAddress}</br>");
@@ -218,7 +218,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             case 11:
             case 12:
             case 13:
-                ordinalDay = number.ToString() + "<sup>th></sup>";
+                ordinalDay = number.ToString() + "<sup>th</sup>";
                 break;
         }
 

@@ -187,6 +187,7 @@ public sealed class EmailViewModelTests
     [InlineData("22/12/2023", "Friday 22<sup>nd</sup> December 2023")]
     [InlineData("23/1/2024", "Tuesday 23<sup>rd</sup> January 2024")]
     [InlineData("31/1/2024", "Wednesday 31<sup>st</sup> January 2024")]
+    [InlineData("12/02/2024", "Monday 12<sup>th</sup> February 2024")] // Issue #40
     private void ToOrdinalWorkingDate_IgnoresWeekends(string date,string expected)
     {
         string actual = EmailViewModel.ToOrdinalWorkingDate(DateTime.Parse(date));

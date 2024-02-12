@@ -1,5 +1,5 @@
 
-$script = "Migrations/WIP_BaseReport.sql"
+$script = "Migrations/M20240212_BaseReport.sql"
 
 $dbPath =  "c:/temp/paTest.db"  
 #$dbPath = "p:/ICTS/Mobile Phones/PhoneAssistant/PhoneAssistant.db" 

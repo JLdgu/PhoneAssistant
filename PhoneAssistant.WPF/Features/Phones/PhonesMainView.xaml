@@ -64,6 +64,7 @@
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="80"
                                              materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                                              materialDesign:TextFieldAssist.HasClearButton="True"
                                              MaxLength="1"
                                              Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterNorR, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
@@ -104,13 +105,14 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="SR">
+                    <DataGridTextColumn Header="Ticket #">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel>
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                    <TextBox MinWidth="50"
+                                    <TextBox MinWidth="55"
                                              materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                                              materialDesign:TextFieldAssist.HasClearButton="True"
                                              MaxLength="7"
                                              Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterSR, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
@@ -126,7 +128,7 @@
                         </DataGridTextColumn.Binding>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
-                                <Setter Property="MaxLength" Value="6" />
+                                <Setter Property="MaxLength" Value="7" />
                             </Style>
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
@@ -178,7 +180,7 @@
                         </DataGridTextColumn.Binding>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
-                                <Setter Property="MaxLength" Value="10" />
+                                <Setter Property="MaxLength" Value="11" />
                             </Style>
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
@@ -245,6 +247,7 @@
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="90"
                                              materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                                              materialDesign:TextFieldAssist.HasClearButton="True"
                                              MaxLength="7"
                                              Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterAssetTag, UpdateSourceTrigger=PropertyChanged, Delay=200}" />

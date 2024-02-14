@@ -105,7 +105,7 @@
                                Text="myScomis" />
                     <Button Grid.Column="0"
                             Width="50"
-                            Margin="0,4,10,0"
+                            Margin="0,4,20,0"
                             HorizontalAlignment="Left"
                             Command="{Binding ExecuteMyScomisImportCommand}"
                             Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
@@ -118,13 +118,27 @@
                                Text="Phone Assistant" />
                     <Button Grid.Column="0"
                             Width="50"
-                            Margin="0,4,10,0"
+                            Margin="0,4,20,0"
                             HorizontalAlignment="Left"
                             Command="{Binding ExecutePAImportCommand}"
                             Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
                                                               Size=20}"
                             Style="{StaticResource MaterialDesignOutlinedButton}"
                             ToolTip="Start PA Import" />
+                    <TextBlock Margin="5"
+                               VerticalAlignment="Center"
+                               Style="{StaticResource MaterialDesignBody2TextBlock}"
+                               Text="SCC" />
+                    <Button Grid.Column="0"
+                            Width="50"
+                            Margin="0,4,20,0"
+                            HorizontalAlignment="Left"
+                            Command="{Binding ExecuteSCCImportCommand}"
+                            Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
+                                                              Size=20}"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            ToolTip="Start myScomis Import" />
+
                 </StackPanel>
                 <TextBlock Grid.Row="1"
                            Margin="5,5"

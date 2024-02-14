@@ -6,7 +6,7 @@ DROP TRIGGER Phones_Update;
 ALTER TABLE Phones RENAME TO PhonesOld;
 
 CREATE TABLE Phones (
-	"IMEI"	        TEXT NOT NULL,
+	"IMEI"	        TEXT NOT NULL PRIMARY KEY,
 	"PhoneNumber"	TEXT,
 	"SIMNumber"	    TEXT,
 	"FormerUser"	TEXT,
@@ -20,8 +20,7 @@ CREATE TABLE Phones (
 	"Notes"	        TEXT,
 	"Collection"	INTEGER,
 	"DespatchDetails"	TEXT,
-	"LastUpdate"	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY("IMEI")
+	"LastUpdate"	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 INSERT INTO Phones (
     "AssetTag","Collection","DespatchDetails","FormerUser","IMEI","LastUpdate","Model","NewUser","NorR","Notes","OEM","PhoneNumber","SIMNumber","SRNumber","Status") 
@@ -78,8 +77,7 @@ INSERT INTO Phones (
 DROP TABLE Disposals;
 
 CREATE TABLE ReconcileDisposals (
-    ROWID           INTEGER PRIMARY KEY,
-	IMEI	        TEXT UNIQUE,
+	IMEI	        TEXT NOT NULL PRIMARY KEY,
 	StatusDCC       TEXT,	
 	StatusPA        TEXT,
     StatusSCC       TEXT,

@@ -33,6 +33,7 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
         messenger.RegisterAll(this);
 #if DEBUG
         ImportmyScomis = @"C:\Users\Jonathan.Linstead\OneDrive - Devon County Council\Phones\Disposals\CI List2024_17_1_13_42_55.xlsx";
+        ImportSCC = @"C:\Users\Jonathan.Linstead\OneDrive - Devon County Council\Phones\Disposals\CR152126 Units D1024CT 2024-01-15.xls";
 #endif
     }
 
@@ -57,7 +58,7 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     }
 
     [ObservableProperty]
-    //[NotifyCanExecuteChangedFor(nameof(ExecuteSCCImportCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExecuteSCCImportCommand))]
     private string? _importSCC;
 
     [RelayCommand]
@@ -91,6 +92,16 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
         ImportPhoneAssistant import = new(_disposalsRepository,
                                           _phonesRepository,            
                                           _messenger);
+        await import.Execute();
+    }
+
+    private bool CanImportSCC() => ImportSCC is not null;
+    [RelayCommand(CanExecute = nameof(CanImportSCC))]
+    private async Task ExecuteSCCImport()
+    {
+        ImportSCC import = new(ImportSCC!,                                
+                              _disposalsRepository,                                
+                              _messenger);
         await import.Execute();
     }
 

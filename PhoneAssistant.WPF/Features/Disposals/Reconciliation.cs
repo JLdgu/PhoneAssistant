@@ -67,18 +67,3 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository)
         return Result.Updated;
     }
 }
-
-public enum Import
-{
-    DCC = 0,
-    PA,
-    SCC
-}
-
-public enum Result
-{
-    Unchanged = 0,
-    Added,
-    Updated,
-    Deleted
-}

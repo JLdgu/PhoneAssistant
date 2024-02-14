@@ -1,11 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 
-using MaterialDesignThemes.Wpf;
-
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.Disposals;
+
 public sealed class ImportPhoneAssistant(DisposalsRepository disposalsRepository, 
                                          IPhonesRepository phonesRepository,     
                                          IMessenger messenger)
@@ -18,14 +17,19 @@ public sealed class ImportPhoneAssistant(DisposalsRepository disposalsRepository
         int updated = 0;
         int unchanged = 0;
 
+        Reconciliation reconciliation = new(disposalsRepository);
+
         foreach (Phone phone in phones)
         {
-            Disposal? disposal = await disposalsRepository.GetDisposalAsync(phone.Imei);
-            if (disposal is null)
+            Result result = await reconciliation.DisposalAsync(Import.PA, phone.Imei, phone.Status);
+            switch (result)
             {
-                disposal = new() { Imei = phone.Imei, StatusPA = phone.Status, Action = "Missing from myScomis"};
-                await disposalsRepository.AddAsync(disposal);
-                added++;
+                case Result.Added:
+                    added++; break;
+                case Result.Updated:
+                    updated++; break;
+                case Result.Unchanged:
+                    unchanged++; break;
             }
         }
 

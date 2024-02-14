@@ -3,7 +3,7 @@ using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Application.Repositories;
 
-public sealed class DisposalsRepository
+public sealed class DisposalsRepository : IDisposalsRepository
 {
     private readonly PhoneAssistantDbContext _dbContext;
 

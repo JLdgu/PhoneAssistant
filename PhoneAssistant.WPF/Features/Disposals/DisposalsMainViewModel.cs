@@ -75,15 +75,15 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
         }
     }
 
+    private bool CanImportMyScomis() => ImportmyScomis is not null;
     [RelayCommand(CanExecute = nameof(CanImportMyScomis))]
      private async Task ExecuteMyScomisImport()
     {
-        ImportMyScomis import = new(ImportmyScomis!, 
+            ImportMyScomis import = new(ImportmyScomis!, 
                                     _disposalsRepository, 
-                                    _messenger);            
-        await import.Execute();
+                                    _messenger);
+            await import.Execute();
     }
-    private bool CanImportMyScomis() => ImportmyScomis is not null;
 
     [RelayCommand]
     private async Task ExecutePAImport()

@@ -86,16 +86,6 @@
                              GroupName="OrderType"
                              IsChecked="{Binding OrderType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:OrderType.Replacement}}"
                              Style="{StaticResource MaterialDesignChoiceChipSecondaryRadioButton}" />
-
-                <RadioButton Margin="20,0,0,0"
-                             Content="Phone"
-                             GroupName="DeviceType"
-                             IsChecked="{Binding DeviceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:DeviceType.Phone}}"
-                             Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}" />
-                <RadioButton Content="Tablet"
-                             GroupName="DeviceType"
-                             IsChecked="{Binding DeviceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:DeviceType.Tablet}}"
-                             Style="{StaticResource MaterialDesignChoiceChipSecondaryRadioButton}" />
             </StackPanel>
 
             <StackPanel Grid.Row="2" Orientation="Horizontal">

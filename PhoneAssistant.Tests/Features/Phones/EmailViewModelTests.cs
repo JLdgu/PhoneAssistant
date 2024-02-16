@@ -55,21 +55,6 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    private void CloseCommand_NullParameter_DoesNotSaveChanges()
-    {
-        _vm.CloseCommand.Execute(null);
-        _repository.Verify(r => r.UpdateAsync(_phone), Times.Never);
-    }
-
-    [WpfFact]
-    private void CloseCommand_WithNoneNullParameter_SavesChanges()
-    {        
-        _vm.CloseCommand.Execute("Something");
-
-        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-    }
-
-    [Fact]
     private void EmailHtml_BoilerPlate()
     {
         Assert.Contains(

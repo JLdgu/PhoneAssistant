@@ -6,7 +6,6 @@ using System.Windows.Data;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 
 using Microsoft.Win32;
 
@@ -15,9 +14,6 @@ using NPOI.SS.UserModel;
 
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
-using PhoneAssistant.WPF.Features.Disposals;
-
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace PhoneAssistant.WPF.Features.BaseReport;
 

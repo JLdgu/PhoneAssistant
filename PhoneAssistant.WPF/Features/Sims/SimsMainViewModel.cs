@@ -25,8 +25,6 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
 
         _filterView = CollectionViewSource.GetDefaultView(SimItems);
         _filterView.Filter = new Predicate<object>(FilterView);
-
-        CanRefeshSims = true;
     }
 
     [RelayCommand]
@@ -146,8 +144,9 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
 
     public async Task LoadAsync()
     {
-        SimItems.Clear();
+        if (CanRefeshSims) return;
 
+        SimItems.Clear();
         IEnumerable<Sim> simCards = await _simRepository.GetSimsAsync();
         if (simCards == null)
         {
@@ -158,5 +157,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
         {            
             SimItems.Add(_simsItemViewModelFactory.Create(simcard));
         }
+
+        CanRefeshSims = true;
     }
 }

@@ -15,6 +15,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
 
         </Grid.RowDefinitions>
         <shared:HeaderMainView HeaderIcon="SimOutline" HeaderText="Dashboard" />
@@ -27,6 +28,21 @@
                              Margin="5,5"
                              Padding="4,2">
             <StackPanel Orientation="Vertical">
+                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.402.?.?" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #34 Username not shown on email view" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #35 email text appearing in html format" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #38 speed up 2nd and subsequent avtivation of views" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #39 Max length of Phone Number needs to be 11 not 10" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #40 Erroneous chevron appears in date on email view" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #41 Change save behaviour in email view" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Remove Device Type choice from email view" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add ability to import Base Report to base view" />
+            </StackPanel>
+        </materialDesign:Card>
+        <materialDesign:Card Grid.Row="3"
+                             Margin="5,5"
+                             Padding="4,2">
+            <StackPanel Orientation="Vertical">
                 <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.401.24.0" />
                 <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #8 Add EE Base Report view" />
                 <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #32 Max length of SR Number needs to be 7 not 6 as it can be used for Incidents" />
@@ -35,7 +51,7 @@
             </StackPanel>
         </materialDesign:Card>
 
-        <materialDesign:Card Grid.Row="3"
+        <materialDesign:Card Grid.Row="4"
                              Margin="5,5"
                              Padding="4,2">
             <StackPanel Orientation="Vertical">

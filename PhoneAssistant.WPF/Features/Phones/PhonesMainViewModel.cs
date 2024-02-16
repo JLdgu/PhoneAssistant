@@ -39,8 +39,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
                
         messenger.RegisterAll(this);
 
-        CanRefeshPhones = true;
-
         NorRs.Add("N(ew)");
         NorRs.Add("R(epurposed)");
 
@@ -269,6 +267,8 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
 
     public async Task LoadAsync()
     {
+        if (CanRefeshPhones) return;
+
         PhoneItems.Clear();
         IEnumerable<Phone> phones = await _phonesRepository.GetActivePhonesAsync();
 
@@ -276,6 +276,8 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
         {
             PhoneItems.Add(_phonesItemViewModelFactory.Create(phone));
         }
+
+        CanRefeshPhones = true;
     }
 
     public void Receive(Order message)

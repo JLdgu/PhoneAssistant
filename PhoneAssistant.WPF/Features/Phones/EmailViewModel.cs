@@ -46,6 +46,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     private string _assetTag = string.Empty;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
     private OrderType _orderType;
     partial void OnOrderTypeChanged(OrderType value)
     {
@@ -55,7 +56,6 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
     [ObservableProperty]
     private DespatchMethod _despatchMethod;
-
     partial void OnDespatchMethodChanged(DespatchMethod value)
     {
         _orderDetails.Phone.Collection = (int)value;
@@ -64,16 +64,13 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     }
 
     [RelayCommand]
-    private async Task CloseAsync(string? SaveAndCopy)
+    private void Close()
     {
         GeneratingEmail = false;
-        if (SaveAndCopy is null) return;
-
-        await _phonesRepository.UpdateAsync(_orderDetails.Phone);
-        //Clipboard.SetText(EmailHtml);
     }
 
-    [RelayCommand]
+    private bool CanPrintEnvelope() => OrderType != OrderType.None;
+    [RelayCommand(CanExecute=nameof(CanPrintEnvelope))]
     private async Task PrintEnvelope()
     {
         await Task.Run(() =>
@@ -154,8 +151,6 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         html.AppendLine("<p>On many sites DCC Wi-Fi no longer allows setup / registration of phones. </br>");
         html.AppendLine("To setup the phone either use Gov Wi-Fi, tether the phone to another phone, setup at another site or setup at home.</p>");
 
-        var a = OrderType.ToString();
-
         if (OrderType == OrderType.Replacement && _orderDetails.DeviceType == DeviceType.Phone)
         {
             html.AppendLine("<p>Don't forget to transfer your old sim to the replacement phone before returning the old phone to");
@@ -167,7 +162,6 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             html.AppendLine(" to have the phone picked up from your home or you can drop off the item at a Parcel Post Box, Delivery Office or Post Office branch.</p>");
         }
         html.AppendLine("<p><br /></p></span>");
-
 
         html.AppendLine(
             """

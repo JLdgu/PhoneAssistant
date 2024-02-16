@@ -21,7 +21,7 @@ public sealed class OrderDetails
             DespatchMethod = (DespatchMethod)phone.Collection!;
     }
 
-    public OrderType OrderType { get; set; } = OrderType.New;
+    public OrderType OrderType { get; set; } = OrderType.None;
     public DeviceType DeviceType { get; }
     public DespatchMethod DespatchMethod { get; }
 

@@ -1,49 +1,52 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using System.IO;
 
+using CommunityToolkit.Mvvm.Messaging;
+
+using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
 
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
-using System.IO;
-
 namespace PhoneAssistant.WPF.Features.Disposals;
-public sealed class ImportMyScomis(string importFile,
-                                   IDisposalsRepository disposalsRepository,
-                                   IMessenger messenger)
+
+public sealed class ImportSCC(string importFile,
+                              IDisposalsRepository disposalsRepository,
+                              IMessenger messenger)
 {
     public async Task Execute()
     {
         using FileStream? stream = new FileStream(importFile, FileMode.Open, FileAccess.Read);
-        using XSSFWorkbook xssWorkbook = new XSSFWorkbook(stream);
+        using HSSFWorkbook workbook = new HSSFWorkbook(stream);
 
-        ISheet sheet = xssWorkbook.GetSheetAt(0);
+        ISheet sheet = workbook.GetSheetAt(0);
         messenger.Send(new LogMessage($"Found sheet {sheet.SheetName}"));
         messenger.Send(new LogMessage($"Processing {sheet.LastRowNum} rows"));
 
-        IRow header = sheet.GetRow(0);
+        IRow header = sheet.GetRow(1);
         ICell cell = header.GetCell(0);
-        if (cell is null || cell.StringCellValue != "Category")
+        if (cell is null || cell.StringCellValue != "Units")
         {
-            messenger.Send(new LogMessage("Unable to find 'Category' in cell A1, check you are importing a myScomis export."));
+            messenger.Send(new LogMessage("Unable to find 'Units' in cell A2, check you are importing a SCC export."));
             return;
         }
         int added = 0;
         int unchanged = 0;
         int updated = 0;
 
-        for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++)
+        for (int i = (sheet.FirstRowNum + 4); i <= sheet.LastRowNum; i++)
         {
             IRow row = sheet.GetRow(i);
             if (row == null) continue;
 
-            string imei = row.GetCell(3).StringCellValue;
-            string status = row.GetCell(7).StringCellValue;
+            if (row.GetCell(3).CellType != CellType.Numeric)
+                continue;
+            string imei = row.GetCell(3).NumericCellValue.ToString();
+            string status = row.GetCell(8).StringCellValue;
 
-            Disposal disposal = new() { Imei = imei, StatusDCC = status };
+            Disposal disposal = new() { Imei = imei, StatusSCC = status };
 
-            Result result = await disposalsRepository.AddOrUpdateAsync(Import.DCC, disposal);
+            Result result = await disposalsRepository.AddOrUpdateAsync(Import.SCC, disposal);
             switch (result)
             {
                 case Result.Added:
@@ -61,5 +64,7 @@ public sealed class ImportMyScomis(string importFile,
         messenger.Send(new LogMessage($"Updated {updated} disposals"));
         messenger.Send(new LogMessage($"Unchanged {unchanged} disposals"));
         messenger.Send(new LogMessage("Import complete"));
+
+
     }
 }

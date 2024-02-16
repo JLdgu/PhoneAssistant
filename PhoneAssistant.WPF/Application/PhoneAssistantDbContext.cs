@@ -37,9 +37,8 @@ public sealed class PhoneAssistantDbContext : DbContext
     {
         modelBuilder.Entity<Disposal>(d =>
         {
+            d.HasKey(d => d.Imei);
             d.ToTable("ReconcileDisposals");
-            d.Property(d => d.Id).HasColumnName("RowId");
-            d.HasIndex(d => d.Imei).IsUnique();
         });
 
         modelBuilder.Entity<EEBaseReport>(b => 

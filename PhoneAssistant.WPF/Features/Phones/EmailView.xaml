@@ -35,9 +35,7 @@
 
 
             <StackPanel Orientation="Horizontal">
-                <TextBlock Margin="4"
-                           VerticalAlignment="Center"
-                           Text="IMEI" />
+                <TextBlock VerticalAlignment="Center" Text="IMEI" />
 
                 <TextBlock Margin="0,0,5,0"
                            VerticalAlignment="Center"
@@ -86,16 +84,6 @@
                              GroupName="OrderType"
                              IsChecked="{Binding OrderType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:OrderType.Replacement}}"
                              Style="{StaticResource MaterialDesignChoiceChipSecondaryRadioButton}" />
-
-                <RadioButton Margin="20,0,0,0"
-                             Content="Phone"
-                             GroupName="DeviceType"
-                             IsChecked="{Binding DeviceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:DeviceType.Phone}}"
-                             Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}" />
-                <RadioButton Content="Tablet"
-                             GroupName="DeviceType"
-                             IsChecked="{Binding DeviceType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:DeviceType.Tablet}}"
-                             Style="{StaticResource MaterialDesignChoiceChipSecondaryRadioButton}" />
             </StackPanel>
 
             <StackPanel Grid.Row="2" Orientation="Horizontal">
@@ -129,22 +117,12 @@
                      TextWrapping="Wrap"
                      VerticalScrollBarVisibility="Auto" />
 
-            <StackPanel Grid.Row="3"
-                        Margin="0,10,0,20"
-                        Orientation="Horizontal">
-
-                <Button HorizontalAlignment="Left"
-                        Command="{Binding CloseCommand}"
-                        CommandParameter="Save"
-                        Content="Save"
-                        Style="{StaticResource MaterialDesignRaisedButton}" />
-
-                <Button Margin="20,0"
-                        HorizontalAlignment="Left"
-                        Command="{Binding CloseCommand}"
-                        Content="Cancel"
-                        Style="{StaticResource MaterialDesignRaisedButton}" />
-            </StackPanel>
+            <Button Grid.Row="3"
+                    Margin="0,10,0,20"
+                    HorizontalAlignment="Left"
+                    Command="{Binding CloseCommand}"
+                    Content="Close"
+                    Style="{StaticResource MaterialDesignRaisedButton}" />
 
             <WebBrowser Grid.Row="4"
                         Grid.ColumnSpan="2"

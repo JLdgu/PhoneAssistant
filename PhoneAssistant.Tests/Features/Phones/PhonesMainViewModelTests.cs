@@ -253,7 +253,7 @@ public sealed class PhonesMainViewModelTests
         AutoMocker mocker = new AutoMocker();
 
         Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.GetPhonesAsync()).ReturnsAsync(phones);
+        repository.Setup(r => r.GetActivePhonesAsync()).ReturnsAsync(phones);
         Mock<IPrintEnvelope> print = mocker.GetMock<IPrintEnvelope>();
         Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
         Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();

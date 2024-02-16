@@ -3,7 +3,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Features.BaseReport;
@@ -58,7 +57,7 @@ public static class ApplicationServicesExtensions
             services.AddTransient<IUsersItemViewModelFactory, UsersItemViewModelFactory>();
             
             services.AddSingleton<ISimsRepository, SimsRepository>();
-            services.AddTransient<ISimsMainViewModel, SimsMainViewModel>();
+            services.AddSingleton<ISimsMainViewModel, SimsMainViewModel>();
             services.AddTransient<ISimsItemViewModelFactory, SimsItemViewModelFactory>();
             services.AddTransient<SimsItemViewModel>();
             

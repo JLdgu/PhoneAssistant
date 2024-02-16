@@ -28,14 +28,11 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             PhoneNumber = value.Phone.PhoneNumber ?? string.Empty;
             AssetTag = value.Phone.AssetTag ?? string.Empty;
             OrderType = value.OrderType;
-            DeviceType = value.DeviceType;
             DespatchMethod = value.DespatchMethod;
-            DeliveryAddress = value.Phone.NewUser ?? string.Empty;
-            if (value.Phone.DespatchDetails is not null)
-                DeliveryAddress = value.Phone.DespatchDetails;
-
-            GenerateEmailHtml();
+            DeliveryAddress = value.Phone.DespatchDetails ?? value.Phone.NewUser ?? string.Empty;
+            
             GeneratingEmail = true;
+            GenerateEmailHtml();
         }
     }
         
@@ -49,6 +46,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     private string _assetTag = string.Empty;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
     private OrderType _orderType;
     partial void OnOrderTypeChanged(OrderType value)
     {
@@ -57,36 +55,22 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     }
 
     [ObservableProperty]
-    private DeviceType _deviceType;
-    partial void OnDeviceTypeChanged(DeviceType value)
-    {
-        OrderDetails.DeviceType = DeviceType;
-        GenerateEmailHtml();
-    }
-
-    [ObservableProperty]
     private DespatchMethod _despatchMethod;
-
     partial void OnDespatchMethodChanged(DespatchMethod value)
     {
-        _orderDetails.Phone.Collection = true;
-        if (value == DespatchMethod.Delivery)
-            _orderDetails.Phone.Collection = false;                
+        _orderDetails.Phone.Collection = (int)value;
         
         GenerateEmailHtml();
     }
 
     [RelayCommand]
-    private async Task CloseAsync(string? SaveAndCopy)
+    private void Close()
     {
         GeneratingEmail = false;
-        if (SaveAndCopy is null) return;
-
-        await _phonesRepository.UpdateAsync(_orderDetails.Phone);
-        //Clipboard.SetText(EmailHtml);
     }
 
-    [RelayCommand]
+    private bool CanPrintEnvelope() => OrderType != OrderType.None;
+    [RelayCommand(CanExecute=nameof(CanPrintEnvelope))]
     private async Task PrintEnvelope()
     {
         await Task.Run(() =>
@@ -124,17 +108,17 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         switch (DespatchMethod)
         {
             case DespatchMethod.CollectGMH:
-                html.AppendLine($"<p>Your {DeviceType.ToString().ToLower()} can be collected from</br>");
+                html.AppendLine($"<p>Your {_orderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
                 html.AppendLine("DTS End User Compute Team, Hardware Room, Great Moor House, Bittern Road, Exeter, EX2 7FW</br>");
                 html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now.AddDays(2))}</p>");
                 break;
             case DespatchMethod.CollectL87:
-                html.AppendLine($"<p>Your {DeviceType.ToString().ToLower()} can be collected from</br>");
+                html.AppendLine($"<p>Your {_orderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
                 html.AppendLine("DTS End User Compute Team, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
-                html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now)}");
+                html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now)}</p>");
                 break;
             case DespatchMethod.Delivery:
-                html.AppendLine($"<p>Your {DeviceType.ToString().ToLower()} has been sent to<br />{_formattedAddress}</br>");
+                html.AppendLine($"<p>Your {_orderDetails.DeviceType.ToString().ToLower()} has been sent to<br />{_formattedAddress}</br>");
                 html.AppendLine($"It was sent on {ToOrdinalWorkingDate(DateTime.Now)}</p>");
                 break;
         }
@@ -145,7 +129,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             DCC mobile phone data usage guidance and policies</a></p>
             """);
 
-        html.AppendLine($"<p><br />To find out how to set up your {DeviceType.ToString().ToLower()}, please go here:</br>");
+        html.AppendLine($"<p><br />To find out how to set up your {_orderDetails.DeviceType.ToString().ToLower()}, please go here:</br>");
         if (_orderDetails.Phone.OEM == "Apple")
         {
             html.Append(
@@ -167,9 +151,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         html.AppendLine("<p>On many sites DCC Wi-Fi no longer allows setup / registration of phones. </br>");
         html.AppendLine("To setup the phone either use Gov Wi-Fi, tether the phone to another phone, setup at another site or setup at home.</p>");
 
-        var a = OrderType.ToString();
-
-        if (OrderType == OrderType.Replacement && DeviceType == DeviceType.Phone)
+        if (OrderType == OrderType.Replacement && _orderDetails.DeviceType == DeviceType.Phone)
         {
             html.AppendLine("<p>Don't forget to transfer your old sim to the replacement phone before returning the old phone to");
             html.AppendLine("DTS End User Compute, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
@@ -180,7 +162,6 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             html.AppendLine(" to have the phone picked up from your home or you can drop off the item at a Parcel Post Box, Delivery Office or Post Office branch.</p>");
         }
         html.AppendLine("<p><br /></p></span>");
-
 
         html.AppendLine(
             """
@@ -218,7 +199,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             case 11:
             case 12:
             case 13:
-                ordinalDay = number.ToString() + "<sup>th></sup>";
+                ordinalDay = number.ToString() + "<sup>th</sup>";
                 break;
         }
 

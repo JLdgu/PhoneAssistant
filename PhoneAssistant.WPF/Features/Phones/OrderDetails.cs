@@ -11,11 +11,19 @@ public sealed class OrderDetails
     public OrderDetails(Phone phone)
     {
         Phone = phone;
+
+        DeviceType = DeviceType.Phone;
+        if (Phone.Model != null && Phone.Model.Contains("ipad",StringComparison.InvariantCultureIgnoreCase))
+            DeviceType  = DeviceType.Phone;
+
+        DespatchMethod = DespatchMethod.CollectL87;
+        if (Phone.Collection is not null)
+            DespatchMethod = (DespatchMethod)phone.Collection!;
     }
 
-    public OrderType OrderType { get; set; } = OrderType.New;
-    public DeviceType DeviceType { get; set; } = DeviceType.Phone;    
-    public DespatchMethod DespatchMethod { get; set; } = DespatchMethod.CollectL87;
+    public OrderType OrderType { get; set; } = OrderType.None;
+    public DeviceType DeviceType { get; }
+    public DespatchMethod DespatchMethod { get; }
 
     public string OrderedItem
     {

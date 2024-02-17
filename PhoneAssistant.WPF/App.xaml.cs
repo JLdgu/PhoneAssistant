@@ -26,13 +26,13 @@ public partial class App : System.Windows.Application
     {
         _host.Start();
 
-        if (ApplicationUpdate.FirstRun())
-        {
-            Trace.Close();
-            Current.Shutdown();
-        }
+        //if (ApplicationUpdate.FirstRun())
+        //{
+        //    Trace.Close();
+        //    Current.Shutdown();
+        //}
 
-        ConfigureDatabase();
+        //ConfigureDatabase();
 
         MainWindow = _host.Services.GetRequiredService<MainWindow>();
         MainWindow.Show();

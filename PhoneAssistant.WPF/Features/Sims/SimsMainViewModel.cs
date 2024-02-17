@@ -5,12 +5,17 @@ using System.Windows.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using MaterialDesignThemes.Wpf;
+
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.Sims;
 
-public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewModel
+// Suggested fix 
+// https://stackoverflow.com/questions/20204592/wpf-datagrid-refresh-is-not-allowed-during-an-addnew-or-edititem-transaction-m
+
+public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewModel, IEditableObject
 {
     private readonly ISimsItemViewModelFactory _simsItemViewModelFactory;
     private readonly ISimsRepository _simRepository;
@@ -25,6 +30,8 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
 
         _filterView = CollectionViewSource.GetDefaultView(SimItems);
         _filterView.Filter = new Predicate<object>(FilterView);
+
+        LoadAsync();
     }
 
     [RelayCommand]
@@ -36,7 +43,6 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
         CanRefeshSims = true;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
     [ObservableProperty]
     private bool canRefeshSims;
 
@@ -99,6 +105,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
 
     partial void OnFilterSimNumberChanged(string? value)
     {
+        ((IEditableCollectionView)_filterView).CancelEdit();
         _filterView.Refresh();
     }
 
@@ -147,17 +154,32 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
         if (CanRefeshSims) return;
 
         SimItems.Clear();
-        IEnumerable<Sim> simCards = await _simRepository.GetSimsAsync();
-        if (simCards == null)
-        {
-            throw new ArgumentNullException(nameof(simCards));
-        }
+        IEnumerable<Sim> simCards = new List<Sim>
+        { 
+            new Sim { PhoneNumber = "0123456789", SimNumber = "9876543210" },
+            new Sim { PhoneNumber = "123456789", SimNumber = "876543210" },
+            new Sim { PhoneNumber = "23456789", SimNumber = "76543210" },
+            new Sim { PhoneNumber = "3456789", SimNumber = "6543210" },
+            new Sim { PhoneNumber = "456789", SimNumber = "543210" },
+            new Sim { PhoneNumber = "56789", SimNumber = "43210" },
+            new Sim { PhoneNumber = "6789", SimNumber = "3210" },
+        };
+        //if (simCards == null)
+        //{
+        //    throw new ArgumentNullException(nameof(simCards));
+        //}
 
         foreach (Sim simcard in simCards)
-        {            
+        {
             SimItems.Add(_simsItemViewModelFactory.Create(simcard));
         }
 
         CanRefeshSims = true;
     }
+
+    public void BeginEdit() { }
+
+    public void CancelEdit() { }
+
+    public void EndEdit() { }
 }

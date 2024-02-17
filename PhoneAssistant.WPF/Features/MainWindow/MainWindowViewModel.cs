@@ -54,7 +54,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
         _settingsMainViewModel = settingsMainViewModel ?? throw new ArgumentNullException(nameof(settingsMainViewModel));
         _usersMainViewModel = usersMainViewModel ?? throw new ArgumentNullException(nameof(usersMainViewModel));
 
-        SelectedViewModel = _dashboardMainViewModel;
+        SelectedViewModel = _simsMainViewModel;
+
     }
 
     [RelayCommand]

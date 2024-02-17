@@ -12,10 +12,7 @@ using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.Sims;
 
-// Suggested fix 
-// https://stackoverflow.com/questions/20204592/wpf-datagrid-refresh-is-not-allowed-during-an-addnew-or-edititem-transaction-m
-
-public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewModel, IEditableObject
+public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewModel
 {
     private readonly ISimsItemViewModelFactory _simsItemViewModelFactory;
     private readonly ISimsRepository _simRepository;
@@ -105,7 +102,6 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
 
     partial void OnFilterSimNumberChanged(string? value)
     {
-        ((IEditableCollectionView)_filterView).CancelEdit();
         _filterView.Refresh();
     }
 
@@ -176,10 +172,4 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
 
         CanRefeshSims = true;
     }
-
-    public void BeginEdit() { }
-
-    public void CancelEdit() { }
-
-    public void EndEdit() { }
 }

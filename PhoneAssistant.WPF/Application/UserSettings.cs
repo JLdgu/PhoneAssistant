@@ -1,5 +1,7 @@
 using System.Configuration;
 
+using PhoneAssistant.WPF.Features.MainWindow;
+
 namespace PhoneAssistant.WPF.Application;
 
 public sealed class UserSettings : ApplicationSettingsBase, IUserSettings
@@ -40,6 +42,14 @@ public sealed class UserSettings : ApplicationSettingsBase, IUserSettings
     {
         get => (bool)this[nameof(DarkMode)];
         set => this[nameof(DarkMode)] = value;
+    }
+
+    [UserScopedSetting()]
+    [DefaultSettingValue("0")]
+    public ViewModelType CurrentView
+    {
+        get => (ViewModelType)this[nameof(CurrentView)];
+        set => this[nameof(CurrentView)] = value;
     }
 
     [UserScopedSetting()]

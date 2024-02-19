@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.BaseReport;
 using PhoneAssistant.WPF.Features.Dashboard;
 using PhoneAssistant.WPF.Features.Disposals;
@@ -14,7 +15,7 @@ namespace PhoneAssistant.WPF.Features.MainWindow;
 
 public enum ViewModelType
 {
-    None,
+    None = 0,
     BaseReport,
     Dashboard,
     Disposals,
@@ -34,7 +35,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private readonly ISimsMainViewModel _simsMainViewModel;
     private readonly ISettingsMainViewModel _settingsMainViewModel;
     private readonly IUsersMainViewModel _usersMainViewModel;
-
+    private readonly IUserSettings _userSettings;
+    
     [ObservableProperty]
     private IViewModel? _selectedViewModel;
 
@@ -44,7 +46,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
                                IPhonesMainViewModel phonesMainViewModel,
                                ISimsMainViewModel simsMainViewModel,
                                ISettingsMainViewModel settingsMainViewModel,
-                               IUsersMainViewModel usersMainViewModel)
+                               IUsersMainViewModel usersMainViewModel,
+                               IUserSettings userSettings)
     {
         _baseReportMainViewModel = baseReportMainViewModel ?? throw new ArgumentNullException(nameof(baseReportMainViewModel));
         _dashboardMainViewModel = dashboardMainViewModel ?? throw new ArgumentNullException(nameof(dashboardMainViewModel));
@@ -53,8 +56,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
         _simsMainViewModel = simsMainViewModel ?? throw new ArgumentNullException(nameof(simsMainViewModel));
         _settingsMainViewModel = settingsMainViewModel ?? throw new ArgumentNullException(nameof(settingsMainViewModel));
         _usersMainViewModel = usersMainViewModel ?? throw new ArgumentNullException(nameof(usersMainViewModel));
+        _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
 
-        SelectedViewModel = _dashboardMainViewModel;
+        ViewModelType currentView = _userSettings.CurrentView;
+        _ = UpdateViewAsync(currentView);        
     }
 
     [RelayCommand]
@@ -66,19 +71,22 @@ public sealed partial class MainWindowViewModel : ObservableObject
         if (selectedViewModelType.GetType() != typeof(ViewModelType))
             throw new ArgumentException("Type " + selectedViewModelType.GetType() + " is not handled.");
 
-        var viewType = (ViewModelType)selectedViewModelType;
+        ViewModelType viewType = (ViewModelType)selectedViewModelType;
         SelectedViewModel = viewType switch
         {
+            ViewModelType.None => _dashboardMainViewModel,
             ViewModelType.BaseReport => _baseReportMainViewModel,
             ViewModelType.Dashboard => _dashboardMainViewModel,
             ViewModelType.Disposals => _disposalsMainViewModel,
             ViewModelType.Phones => _phonesMainViewModel,
             ViewModelType.Sims => _simsMainViewModel,
-            //ViewModelType.ServiceRequests => _serviceRequestMainViewModel,
+            ViewModelType.ServiceRequests => throw new NotImplementedException(),
             ViewModelType.Settings => _settingsMainViewModel,
             ViewModelType.Users => _usersMainViewModel,
-            _ => throw new NotImplementedException(),
+            _ => throw new NotImplementedException()
         };
+        _userSettings.CurrentView = viewType;
+        _userSettings.Save();
         await SelectedViewModel.LoadAsync();
     }
 }

@@ -136,7 +136,7 @@
                          Command="{Binding UpdateViewCommand}"
                          CommandParameter="{x:Static viewmodel:ViewModelType.Disposals}"
                          DockPanel.Dock="Top"
-                         IsEnabled="False"
+                         IsEnabled="True"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon Width="24"

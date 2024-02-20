@@ -26,14 +26,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{94
 		Database\Live2Test.ps1 = Database\Live2Test.ps1
 		Database\Schema.ps1 = Database\Schema.ps1
 		Database\schema.sql = Database\schema.sql
+		Database\TriggerTest.ps1 = Database\TriggerTest.ps1
+		Database\triggertest.sql = Database\triggertest.sql
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migrations", "Migrations", "{7F8E736A-2CB8-49B4-A2FC-6136B4BEBBED}"
 	ProjectSection(SolutionItems) = preProject
 		Database\Migrations\M20240117_Disposals.sql = Database\Migrations\M20240117_Disposals.sql
-		Database\Migrations\WIP_Migration_Link.sql = Database\Migrations\WIP_Migration_Link.sql
 		Database\Migrations\M20240212_BaseReport.sql = Database\Migrations\M20240212_BaseReport.sql
 		Database\Migrations\WIP_Disposals.sql = Database\Migrations\WIP_Disposals.sql
+		Database\Migrations\WIP_Migration_Link.sql = Database\Migrations\WIP_Migration_Link.sql
 		Database\Migrations\WIP_Migration_UpdateHistory.sql = Database\Migrations\WIP_Migration_UpdateHistory.sql
 	EndProjectSection
 EndProject

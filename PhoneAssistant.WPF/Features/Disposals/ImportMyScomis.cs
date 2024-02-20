@@ -19,6 +19,7 @@ public sealed class ImportMyScomis(string importFile,
         using XSSFWorkbook xssWorkbook = new XSSFWorkbook(stream);
 
         ISheet sheet = xssWorkbook.GetSheetAt(0);
+        messenger.Send(new LogMessage($"Importing {importFile}"));
         messenger.Send(new LogMessage($"Found sheet {sheet.SheetName}"));
         messenger.Send(new LogMessage($"Processing {sheet.LastRowNum} rows"));
 

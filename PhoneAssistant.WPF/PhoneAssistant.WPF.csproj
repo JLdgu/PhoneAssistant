@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Features\Disposals\CISearch.png" />
     <None Remove="Resources\EUC.png" />
     <None Remove="Resources\Keyboard.jpg" />
     <None Remove="Resources\MobilePhone.jpg" />
@@ -39,6 +40,10 @@
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
     <PackageReference Include="NPOI" />
     <PackageReference Include="System.Drawing.Common" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Features\Disposals\CISearch.png" />
   </ItemGroup>
 
 </Project>

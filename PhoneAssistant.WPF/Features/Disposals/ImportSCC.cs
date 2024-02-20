@@ -20,6 +20,7 @@ public sealed class ImportSCC(string importFile,
         using HSSFWorkbook workbook = new HSSFWorkbook(stream);
 
         ISheet sheet = workbook.GetSheetAt(0);
+        messenger.Send(new LogMessage($"Importing {importFile}"));
         messenger.Send(new LogMessage($"Found sheet {sheet.SheetName}"));
         messenger.Send(new LogMessage($"Processing {sheet.LastRowNum} rows"));
 
@@ -40,23 +41,30 @@ public sealed class ImportSCC(string importFile,
             if (row == null) continue;
 
             if (row.GetCell(3).CellType != CellType.Numeric)
+            {
+                messenger.Send(new LogMessage($"Ignored row {i} Serial Number is not numeric."));
                 continue;
+            }
             string imei = row.GetCell(3).NumericCellValue.ToString();
             string status = row.GetCell(8).StringCellValue;
 
             Disposal disposal = new() { Imei = imei, StatusSCC = status };
+            if (row.GetCell(2).CellType == CellType.Numeric)
+            {
+                disposal.Certificate = (int?)row.GetCell(2).NumericCellValue;
+            }
 
             Result result = await disposalsRepository.AddOrUpdateAsync(Import.SCC, disposal);
             switch (result)
             {
                 case Result.Added:
-                    added++; 
+                    added++;
                     break;
                 case Result.Unchanged:
-                    unchanged++; 
+                    unchanged++;
                     break;
                 case Result.Updated:
-                    updated++; 
+                    updated++;
                     break;
             }
         }

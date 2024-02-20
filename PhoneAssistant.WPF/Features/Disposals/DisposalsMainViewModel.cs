@@ -31,15 +31,11 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         messenger.RegisterAll(this);
-#if DEBUG
-        ImportmyScomis = @"C:\Users\Jonathan.Linstead\OneDrive - Devon County Council\Phones\Disposals\CI List2024_17_1_13_42_55.xlsx";
-        ImportSCC = @"C:\Users\Jonathan.Linstead\OneDrive - Devon County Council\Phones\Disposals\CR152126 Units D1024CT 2024-01-15.xls";
-#endif
     }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ExecuteMyScomisImportCommand))]
-    private string? _importmyScomis;
+    private string? _scomisFile;
 
     [RelayCommand]
     private void SelectMyScomisFile()
@@ -52,14 +48,14 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
 
         if (openFileDialog.ShowDialog() == true)
         {
-            ImportmyScomis = openFileDialog.FileName;
+            ScomisFile = openFileDialog.FileName;
         }
-        _logger.LogInformation(ImportmyScomis);        
+        _logger.LogInformation(ScomisFile);
     }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ExecuteSCCImportCommand))]
-    private string? _importSCC;
+    private string? _sCCFile;
 
     [RelayCommand]
     private void SelectSCCFile()
@@ -72,37 +68,52 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
 
         if (openFileDialog.ShowDialog() == true)
         {
-            ImportSCC = openFileDialog.FileName;
+            SCCFile = openFileDialog.FileName;
         }
     }
 
-    private bool CanImportMyScomis() => ImportmyScomis is not null;
+    [ObservableProperty]
+    private bool _importingFiles;
+
+    private bool CanImportMyScomis() => ScomisFile is not null && !ImportingFiles;
     [RelayCommand(CanExecute = nameof(CanImportMyScomis))]
-     private async Task ExecuteMyScomisImport()
+    private async Task ExecuteMyScomisImport()
     {
-            ImportMyScomis import = new(ImportmyScomis!, 
-                                    _disposalsRepository, 
+        ImportingFiles = true;
+
+        ImportMyScomis import = new(ScomisFile!,
+                                    _disposalsRepository,
                                     _messenger);
-            await import.Execute();
+        await import.Execute();
+
+        ScomisFile = string.Empty;
+        ImportingFiles = false;
     }
 
-    [RelayCommand]
+    private bool CanImportPA() => !ImportingFiles;
+    [RelayCommand(CanExecute=nameof(CanImportPA))]
     private async Task ExecutePAImport()
     {
+        ImportingFiles = true;
         ImportPhoneAssistant import = new(_disposalsRepository,
-                                          _phonesRepository,            
+                                          _phonesRepository,
                                           _messenger);
         await import.Execute();
+        ImportingFiles = false;
     }
 
-    private bool CanImportSCC() => ImportSCC is not null;
+    private bool CanImportSCC() => SCCFile is not null && !ImportingFiles;
     [RelayCommand(CanExecute = nameof(CanImportSCC))]
     private async Task ExecuteSCCImport()
     {
-        ImportSCC import = new(ImportSCC!,                                
-                              _disposalsRepository,                                
+        ImportingFiles = true;
+        ImportSCC import = new(SCCFile!,
+                              _disposalsRepository,
                               _messenger);
         await import.Execute();
+
+        SCCFile = string.Empty;
+        ImportingFiles = false;
     }
 
     [ObservableProperty]
@@ -116,6 +127,6 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     public void Receive(LogMessage message)
     {
         LogItems.Add($"{DateTime.Now}: {message.Text}");
-        _logger.LogInformation(message.Text);        
+        _logger.LogInformation(message.Text);
     }
 }

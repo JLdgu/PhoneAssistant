@@ -6,5 +6,7 @@ public class Disposal
     public string? StatusDCC { get; set; }
     public string? StatusPA { get; set; }
     public string? StatusSCC { get; set; }
+    public int? SR { get; set; }
+    public int? Certificate { get; set; }
     public string? Action { get; set; }
 }

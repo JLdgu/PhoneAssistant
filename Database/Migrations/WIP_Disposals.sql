@@ -33,7 +33,7 @@ CREATE TRIGGER Phones_Delete
     FOR EACH ROW
 BEGIN
 	INSERT INTO UpdateHistoryPhones (        
-        AssetTag, Collection, DespatchDetails, FormerUser, IMEI, LastUpdate Model, 
+        AssetTag, Collection, DespatchDetails, FormerUser, IMEI, LastUpdate, Model, 
         NewUser, NorR, Notes, OEM, PhoneNumber, SIMNumber, SRNumber, Status, UpdateType
         ) 
     VALUES (
@@ -81,6 +81,8 @@ CREATE TABLE ReconcileDisposals (
 	StatusDCC       TEXT,	
 	StatusPA        TEXT,
     StatusSCC       TEXT,
+    SR              INTEGER,
+    Certificate     INTEGER,
     Action          TEXT
 );
 .exit 1

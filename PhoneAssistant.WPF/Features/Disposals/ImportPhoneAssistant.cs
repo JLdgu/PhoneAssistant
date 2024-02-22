@@ -20,8 +20,7 @@ public sealed class ImportPhoneAssistant(DisposalsRepository disposalsRepository
 
         foreach (Phone phone in phones)
         {
-            Disposal disposal = new() { Imei = phone.Imei, StatusPA = phone.Status };
-            Result result = await disposalsRepository.AddOrUpdateAsync(Import.PA, disposal);
+            Result result = await disposalsRepository.AddOrUpdatePAAsync(phone.Imei, phone.Status, phone.SR);
             switch (result)
             {
                 case Result.Added:

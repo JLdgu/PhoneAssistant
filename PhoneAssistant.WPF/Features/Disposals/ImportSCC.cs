@@ -46,15 +46,18 @@ public sealed class ImportSCC(string importFile,
                 continue;
             }
             string imei = row.GetCell(3).NumericCellValue.ToString();
-            string status = row.GetCell(8).StringCellValue;
-
-            Disposal disposal = new() { Imei = imei, StatusSCC = status };
+            
+            string status = row.GetCell(8).StringCellValue.ToLower();
+            if (status.Contains("despatched"))
+                status = "Disposed";
+            
+            int? certificate = null;
             if (row.GetCell(2).CellType == CellType.Numeric)
             {
-                disposal.Certificate = (int?)row.GetCell(2).NumericCellValue;
+                certificate = (int?)row.GetCell(2).NumericCellValue;
             }
 
-            Result result = await disposalsRepository.AddOrUpdateAsync(Import.SCC, disposal);
+            Result result = await disposalsRepository.AddOrUpdateSCCAsync(imei, status, certificate);
             switch (result)
             {
                 case Result.Added:

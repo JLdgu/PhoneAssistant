@@ -34,7 +34,7 @@ public sealed class ReconciliationTests
 
     //        _repository.VerifyAll();
     //        Assert.Equal(Result.Added, result);
-    //        Assert.Equal("status", _actual.StatusDCC);
+    //        Assert.Equal("status", _actual.StatusMS);
     //        Assert.Null(_actual.StatusPA);
     //        Assert.Null(_actual.StatusSCC);
     //        Assert.Null(_actual.Action);
@@ -43,7 +43,7 @@ public sealed class ReconciliationTests
     //    [Fact]
     //    private async Task Disposal_DCC_WithMismatchedStatus_UpdatesStatus()
     //    {
-    //        _repository.Setup(r => r.GetDisposalAsync("imei")).ReturnsAsync(new Disposal() { Imei = "imei", StatusDCC = "status" });
+    //        _repository.Setup(r => r.GetDisposalAsync("imei")).ReturnsAsync(new Disposal() { Imei = "imei", StatusMS = "status" });
     //        _repository.Setup(r => r.UpdateAsync(It.IsAny<Disposal>()))
     //            .Callback<Disposal>((d) => _actual = d);
 
@@ -51,7 +51,7 @@ public sealed class ReconciliationTests
 
     //        _repository.VerifyAll();
     //        Assert.Equal(Result.Updated, result);
-    //        Assert.Equal("newstatus", _actual.StatusDCC);
+    //        Assert.Equal("newstatus", _actual.StatusMS);
     //        Assert.Null(_actual.StatusPA);
     //        Assert.Null(_actual.StatusSCC);
     //        Assert.Null(_actual.Action);
@@ -60,14 +60,14 @@ public sealed class ReconciliationTests
     //    [Fact]
     //    private async Task Disposal_DCC_WithMatchingStatus_ReturnsUnchanged()
     //    {
-    //        Disposal disposal = new() { Imei = "imei", StatusDCC = "DCC" };
+    //        Disposal disposal = new() { Imei = "imei", StatusMS = "DCC" };
     //        _repository.Setup(r => r.GetDisposalAsync("imei")).ReturnsAsync(disposal);
 
     //        Result result = await _iut.DisposalAsync(Import.DCC, "imei", "DCC");
 
     //        _repository.VerifyAll();
     //        Assert.Equal(Result.Unchanged, result);
-    //        Assert.Equal("DCC", disposal.StatusDCC);
+    //        Assert.Equal("DCC", disposal.StatusMS);
     //        Assert.Null(_actual.StatusPA);
     //        Assert.Null(_actual.StatusSCC);
     //        Assert.Null(_actual.Action);
@@ -86,7 +86,7 @@ public sealed class ReconciliationTests
 
     //        _repository.VerifyAll();
     //        Assert.Equal(Result.Added, result);
-    //        Assert.Null(_actual.StatusDCC);
+    //        Assert.Null(_actual.StatusMS);
     //        Assert.Equal("status", _actual.StatusPA);
     //        Assert.Null(_actual.StatusSCC);
     //        Assert.Equal("Missing from myScomis", _actual.Action);
@@ -103,7 +103,7 @@ public sealed class ReconciliationTests
 
     //        _repository.VerifyAll();
     //        Assert.Equal(Result.Updated, result);
-    //        Assert.Null(_actual.StatusDCC);
+    //        Assert.Null(_actual.StatusMS);
     //        Assert.Equal("newstatus", _actual.StatusPA);
     //        Assert.Null(_actual.StatusSCC);
     //        Assert.Null(_actual.Action);
@@ -119,7 +119,7 @@ public sealed class ReconciliationTests
 
     //        _repository.VerifyAll();
     //        Assert.Equal(Result.Unchanged, result);
-    //        Assert.Null(_actual.StatusDCC);
+    //        Assert.Null(_actual.StatusMS);
     //        Assert.Equal("PA", disposal.StatusPA);
     //        Assert.Null(_actual.StatusSCC);
     //        Assert.Null(_actual.Action);
@@ -138,7 +138,7 @@ public sealed class ReconciliationTests
 
     //        _repository.VerifyAll();
     //        Assert.Equal(Result.Added, result);
-    //        Assert.Null(_actual.StatusDCC);
+    //        Assert.Null(_actual.StatusMS);
     //        Assert.Null(_actual.StatusPA);
     //        Assert.Equal("status", _actual.StatusSCC);
     //        Assert.Equal("Missing from myScomis", _actual.Action);
@@ -155,7 +155,7 @@ public sealed class ReconciliationTests
 
     //        _repository.VerifyAll();
     //        Assert.Equal(Result.Updated, result);
-    //        Assert.Null(_actual.StatusDCC);
+    //        Assert.Null(_actual.StatusMS);
     //        Assert.Equal("newstatus", _actual.StatusPA);
     //        Assert.Null(_actual.StatusSCC);
     //        Assert.Null(_actual.Action);
@@ -171,7 +171,7 @@ public sealed class ReconciliationTests
 
     //        _repository.VerifyAll();
     //        Assert.Equal(Result.Unchanged, result);
-    //        Assert.Null(_actual.StatusDCC);
+    //        Assert.Null(_actual.StatusMS);
     //        Assert.Equal("PA", disposal.StatusPA);
     //        Assert.Null(_actual.StatusSCC);
     //        Assert.Null(_actual.Action);

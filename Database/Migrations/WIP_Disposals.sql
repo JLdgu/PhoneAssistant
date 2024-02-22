@@ -78,7 +78,7 @@ DROP TABLE Disposals;
 
 CREATE TABLE ReconcileDisposals (
 	IMEI	        TEXT NOT NULL PRIMARY KEY,
-	StatusDCC       TEXT,	
+	StatusMS       TEXT,	
 	StatusPA        TEXT,
     StatusSCC       TEXT,
     SR              INTEGER,

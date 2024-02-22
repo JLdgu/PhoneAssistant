@@ -75,7 +75,7 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     [ObservableProperty]
     private bool _importingFiles;
 
-    private bool CanImportMyScomis() => ScomisFile is not null && !ImportingFiles;
+    private bool CanImportMyScomis() => !string.IsNullOrEmpty(ScomisFile)  && !ImportingFiles;
     [RelayCommand(CanExecute = nameof(CanImportMyScomis))]
     private async Task ExecuteMyScomisImport()
     {
@@ -102,7 +102,7 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
         ImportingFiles = false;
     }
 
-    private bool CanImportSCC() => SCCFile is not null && !ImportingFiles;
+    private bool CanImportSCC() => !string.IsNullOrEmpty(SCCFile) && !ImportingFiles;
     [RelayCommand(CanExecute = nameof(CanImportSCC))]
     private async Task ExecuteSCCImport()
     {

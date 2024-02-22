@@ -11,7 +11,7 @@ public sealed class ImportPhoneAssistant(DisposalsRepository disposalsRepository
 {    
     public async Task Execute()
     {
-        IEnumerable<Phone> phones = await phonesRepository.GetActivePhonesAsync();
+        IEnumerable<Phone> phones = await phonesRepository.GetAllPhonesAsync();
 
         int added = 0;
         int updated = 0;

@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Threading;
+
+using MaterialDesignThemes.Wpf;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,6 +36,14 @@ public partial class App : System.Windows.Application
         }
 
         ConfigureDatabase();
+
+#if DEBUG
+        var helper = new PaletteHelper();
+        var theme = helper.GetTheme();
+        theme.SetPrimaryColor(Colors.Orange);
+        helper.SetTheme(theme);
+#endif
+
 
         MainWindow = _host.Services.GetRequiredService<MainWindow>();
         MainWindow.Show();

@@ -23,8 +23,12 @@ if ($test)
 }
 else
 {
-    Write-Host "LIVE run" 
-    #$dbPath = "p:/ICTS/Mobile Phones/PhoneAssistant/PhoneAssistant.db" 
+    $confirmation = Read-Host "LIVE Run - Are you Sure You Want To Proceed (y/n)"
+    if ($confirmation -ne 'y')
+    {
+        exit
+    }
+    $dbPath = "K:/FITProject/ICTS/Mobile Phones/PhoneAssistant/PhoneAssistant.db" 
 }
 
 $env:Path += ';c:\temp\sqlite'

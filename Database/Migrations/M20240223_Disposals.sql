@@ -75,14 +75,4 @@ INSERT INTO Phones (
    FROM Disposals;
    
 DROP TABLE Disposals;
-
-CREATE TABLE ReconcileDisposals (
-	IMEI	        TEXT NOT NULL PRIMARY KEY,
-	StatusMS       TEXT,	
-	StatusPA        TEXT,
-    StatusSCC       TEXT,
-    SR              INTEGER,
-    Certificate     INTEGER,
-    Action          TEXT
-);
 .exit 1

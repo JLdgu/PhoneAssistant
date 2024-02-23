@@ -1,5 +1,5 @@
 # Copy Live PhoneAssistant db to c:/temp
-$live = "p:/ICTS/Mobile Phones/PhoneAssistant/PhoneAssistant.db"
+$live = "K:/FITProject/ICTS/Mobile Phones/PhoneAssistant/PhoneAssistant.db"
 $test =  "c:/temp/paTest.db" 
 
 If (Test-Path -Path $test) {

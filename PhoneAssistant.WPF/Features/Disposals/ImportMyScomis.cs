@@ -19,6 +19,7 @@ public sealed class ImportMyScomis(string importFile,
         using XSSFWorkbook xssWorkbook = new XSSFWorkbook(stream);
 
         ISheet sheet = xssWorkbook.GetSheetAt(0);
+        messenger.Send(new LogMessage($"Importing {importFile}"));
         messenger.Send(new LogMessage($"Found sheet {sheet.SheetName}"));
         messenger.Send(new LogMessage($"Processing {sheet.LastRowNum} rows"));
 
@@ -41,9 +42,7 @@ public sealed class ImportMyScomis(string importFile,
             string imei = row.GetCell(3).StringCellValue;
             string status = row.GetCell(7).StringCellValue;
 
-            Disposal disposal = new() { Imei = imei, StatusDCC = status };
-
-            Result result = await disposalsRepository.AddOrUpdateAsync(Import.DCC, disposal);
+            Result result = await disposalsRepository.AddOrUpdateMSAsync(imei, status);
             switch (result)
             {
                 case Result.Added:

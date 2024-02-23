@@ -20,7 +20,7 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository)
             switch (import)
             {
                 case Import.DCC:
-                    disposal.StatusDCC = status;
+                    disposal.StatusMS = status;
                     break;
                 case Import.PA:
                     disposal.StatusPA = status;
@@ -39,7 +39,7 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository)
         switch (import) 
         {
             case Import.DCC:
-                if (disposal.StatusDCC == status)
+                if (disposal.StatusMS == status)
                     return Result.Unchanged;
                 break;
             case Import.PA:
@@ -54,7 +54,7 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository)
         switch (import)
         {
             case Import.DCC:
-                disposal.StatusDCC = status;
+                disposal.StatusMS = status;
                 break;
             case Import.PA:
                 disposal.StatusPA = status;

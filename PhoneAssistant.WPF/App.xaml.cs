@@ -41,6 +41,7 @@ public partial class App : System.Windows.Application
         var helper = new PaletteHelper();
         var theme = helper.GetTheme();
         theme.SetPrimaryColor(Colors.Orange);
+        theme.SetSecondaryColor(Colors.DarkOrange);
         helper.SetTheme(theme);
 #endif
 

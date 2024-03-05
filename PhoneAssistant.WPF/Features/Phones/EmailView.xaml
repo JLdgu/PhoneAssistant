@@ -135,6 +135,7 @@
                     materialDesign:HintAssist.Hint="Delivery Address"
                     AcceptsReturn="True"
                     BorderThickness="1"
+                    FontSize="16"
                     Text="{Binding DeliveryAddress}"
                     TextWrapping="Wrap"
                     VerticalScrollBarVisibility="Auto" />

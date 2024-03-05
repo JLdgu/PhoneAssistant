@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.Phones;
@@ -18,10 +19,10 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     private readonly IPrintEnvelope _printEnvelope = printEnvelope ?? throw new ArgumentNullException();
     private readonly IPrintDymoLabel _dymoLabel = dymoLabel ?? throw new ArgumentNullException();
     private OrderDetails? _orderDetails;
-    
+
     public OrderDetails OrderDetails
     {
-        get => _orderDetails;             
+        get => _orderDetails;
         set
         {
             _orderDetails = value;
@@ -31,13 +32,13 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             AssetTag = value.Phone.AssetTag ?? string.Empty;
             OrderType = value.OrderType;
             DespatchMethod = value.DespatchMethod;
-            DeliveryAddress = value.Phone.DespatchDetails ?? value.Phone.NewUser ?? string.Empty;
-            
+            DeliveryAddress = value.Phone.DespatchDetails ?? string.Empty;
+
             GeneratingEmail = true;
             GenerateEmailHtml();
         }
     }
-        
+
     [ObservableProperty]
     private string _imei = string.Empty;
 
@@ -58,12 +59,37 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
     [ObservableProperty]
     private DespatchMethod _despatchMethod;
-    partial void OnDespatchMethodChanged(DespatchMethod value)
+    async partial void OnDespatchMethodChanged(DespatchMethod value)
     {
         if (_orderDetails is null) return;
+        if (_orderDetails.Phone.Collection == (int?)value) return;
+
+        StringBuilder deliveryAddress = new();
+        switch (value)
+        {
+            case DespatchMethod.CollectGMH:
+                deliveryAddress.AppendLine("Collection from");
+                deliveryAddress.AppendLine("Hardware Room GMH");
+                deliveryAddress.AppendLine($"by {OrderDetails.Phone.NewUser}");
+                deliveryAddress.AppendLine($"SR {OrderDetails.Phone.SR}");
+                deliveryAddress.AppendLine($"{OrderDetails.Phone.PhoneNumber}");
+                break;
+            case DespatchMethod.CollectL87:
+                deliveryAddress.AppendLine("Collection from L87");
+                deliveryAddress.AppendLine($"by {OrderDetails.Phone.NewUser}");
+                deliveryAddress.AppendLine($"SR {OrderDetails.Phone.SR}");
+                deliveryAddress.AppendLine($"{OrderDetails.Phone.PhoneNumber}");
+                break;
+            case DespatchMethod.Delivery:
+                deliveryAddress.Append(OrderDetails.Phone.NewUser);
+                break;
+        }
+
+        DeliveryAddress = deliveryAddress.ToString();
 
         _orderDetails.Phone.Collection = (int)value;
-        
+        await _phonesRepository.UpdateAsync(_orderDetails.Phone);
+
         GenerateEmailHtml();
     }
 
@@ -74,9 +100,11 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     }
 
     private bool CanPrintEnvelope() => OrderType != OrderType.None;
-    [RelayCommand(CanExecute=nameof(CanPrintEnvelope))]
+    [RelayCommand(CanExecute = nameof(CanPrintEnvelope))]
     private async Task PrintEnvelope()
     {
+        if (_orderDetails is null) return;
+
         await Task.Run(() =>
         {
             _printEnvelope.Execute(_orderDetails);
@@ -96,13 +124,15 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     [NotifyPropertyChangedFor(nameof(EmailHtml))]
     private string _deliveryAddress = string.Empty;
 
-    partial void OnDeliveryAddressChanged(string value)
+    async partial void OnDeliveryAddressChanged(string value)
     {
         if (_orderDetails is null) return;
+        if (_orderDetails.Phone.DespatchDetails == value) return;
 
         _orderDetails.Phone.DespatchDetails = value;
+        await _phonesRepository.UpdateAsync(_orderDetails.Phone);
 
-        _formattedAddress = value.Replace(Environment.NewLine,"<br />");
+        _formattedAddress = value.Replace(Environment.NewLine, "<br />");
         GenerateEmailHtml();
     }
     private string _formattedAddress = string.Empty;
@@ -152,7 +182,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
                 <a href="https://devoncc.sharepoint.com/sites/ICTKB/Public/DCC%20Mobile%20Phone%20Service%20-%20Setting%20up%20Apple%20(iOS)%20Smartphone.docx?d=w5a23e7d6e2404401a5039a4936743875"
                    style="font-size:12px; font-family:Verdana";>
                 Setting up your Apple (iOS) Smartphone.docx (devoncc.sharepoint.com)</a></p>
-                """);            
+                """);
         }
         else
         {
@@ -200,7 +230,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         {
             case DayOfWeek.Sunday:
                 addDays = 1;
-                break;  
+                break;
             case DayOfWeek.Saturday:
                 addDays = 2;
                 break;
@@ -235,7 +265,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
                     ordinalDay = number.ToString() + "<sup>th</sup>";
                     break;
             }
-        }        
+        }
         string from = weekDay.ToString("dddd * MMMM yyyy");
         from = from.Replace("*", ordinalDay);
 
@@ -260,7 +290,7 @@ public static class WebBrowserHelper
 
     public static void NavigateToPropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
     {
-        if (o is WebBrowser browser)            
+        if (o is WebBrowser browser)
             if (e.NewValue is string html)
                 if (!string.IsNullOrEmpty(html))
                     browser.NavigateToString(html);

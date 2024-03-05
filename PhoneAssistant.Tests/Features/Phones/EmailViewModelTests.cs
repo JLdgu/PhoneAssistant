@@ -4,17 +4,20 @@ using Xunit;
 using Moq.AutoMock;
 using Moq;
 using PhoneAssistant.WPF.Application.Repositories;
+using System.Text;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
 public sealed class EmailViewModelTests
 {
-    private readonly Phone _phone = new()
+    private Phone _phone = new()
     {
         PhoneNumber = "phoneNumber",
         SimNumber = "simNumber",
         Status = "status",
-        AssetTag = "at",
+        AssetTag = "at",       
+        Collection = 0,
+        DespatchDetails = "dd",
         FormerUser = "fu",
         Imei = "imei",
         LastUpdate = "lastupdate",
@@ -33,17 +36,22 @@ public sealed class EmailViewModelTests
 
     public EmailViewModelTests()
     {
-        _mocker.Use(_phone);
         _repository = _mocker.GetMock<IPhonesRepository>();
         _vm = _mocker.CreateInstance<EmailViewModel>();
         
-        OrderDetails orderDetails = new(_phone);
+    }
+
+    public void TestSetup(Phone phone)
+    {
+        OrderDetails orderDetails = new(phone);
         _vm.OrderDetails = orderDetails;
     }
 
     [Fact]
     private void Constructor_SetsGeneratingEmail_True()
     {
+        TestSetup(_phone);
+
         Assert.True(_vm.GeneratingEmail);
     }
 
@@ -55,8 +63,77 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    private void EmailHtml_BoilerPlate()
+    private void DeliveryAddress_Update_SaveChanges()
     {
+        _phone.DespatchDetails = null;
+        TestSetup(_phone);
+
+        _vm.DeliveryAddress = "Address Changed";
+
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+    }
+
+    [Fact]
+    private void DespatchMethod_CollectGMH_SetsGMHDeliveryAddress()
+    {
+        _phone.DespatchDetails = null;
+        TestSetup(_phone);
+        StringBuilder expected = new();
+        expected.AppendLine("Collection from");
+        expected.AppendLine("Hardware Room GMH");
+        expected.AppendLine($"by {_phone.NewUser}");
+        expected.AppendLine($"SR {_phone.SR}");
+        expected.AppendLine($"{_phone.PhoneNumber}");
+
+        _vm.DespatchMethod = DespatchMethod.CollectGMH;
+
+        Assert.Equal(expected.ToString(), _vm.DeliveryAddress);
+    }
+
+    [Fact]
+    private void DespatchMethod_CollectL87_SetsL87DeliveryAddress()
+    {
+        _phone.DespatchDetails = null;
+        TestSetup(_phone);
+        StringBuilder expected = new ();
+        expected.AppendLine("Collection from L87");
+        expected.AppendLine($"by {_phone.NewUser}");
+        expected.AppendLine($"SR {_phone.SR}");
+        expected.AppendLine($"{_phone.PhoneNumber}");
+
+        _vm.DespatchMethod = DespatchMethod.CollectL87;
+
+        Assert.Equal(expected.ToString(), _vm.DeliveryAddress);
+    }
+
+    [Fact]
+    private void DespatchMethod_Delivery_SetsDeliveryAddress()
+    {
+        _phone.DespatchDetails = null;
+        TestSetup(_phone);
+        StringBuilder expected = new(_phone.NewUser);
+
+        _vm.DespatchMethod = DespatchMethod.Delivery;
+
+        Assert.Equal(expected.ToString(), _vm.DeliveryAddress);
+    }
+
+    [Fact]
+    private void DespatchMethod_Update_SaveChanges()
+    {
+        _phone.DespatchDetails = null;
+        TestSetup(_phone);
+
+        _vm.DespatchMethod = DespatchMethod.CollectGMH;
+
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Exactly(2));
+    }
+
+    [Fact]
+    private void EmailHtml_DefaultBoilerPlate()
+    {
+        TestSetup(_phone);
+
         Assert.Contains(
             """
             <span style="font-size:12px; font-family:Verdana;">
@@ -73,6 +150,7 @@ public sealed class EmailViewModelTests
     [Fact]
     private void EmailHtml_WithOrderTypeNew()
     {
+        TestSetup(_phone);
 
         _vm.OrderType = OrderType.New;
 
@@ -82,6 +160,8 @@ public sealed class EmailViewModelTests
     [Fact]
     private void EmailHtml_WithOrderTypeReplacement()
     {
+        TestSetup(_phone);
+
         _vm.OrderType = OrderType.Replacement;
 
         Assert.Contains("Don't forget to transfer your old sim", _vm.EmailHtml);
@@ -91,6 +171,8 @@ public sealed class EmailViewModelTests
     [Fact]
     private void DespatchMethod_CollectGMH()
     {
+        TestSetup(_phone);
+
         _vm.DespatchMethod = DespatchMethod.CollectGMH;
 
         Assert.Contains("Your phone can be collected from", _vm.EmailHtml);
@@ -101,6 +183,8 @@ public sealed class EmailViewModelTests
     [Fact]
     private void EmailHtml_WithDespatchMethodColletL87()
     {
+        TestSetup(_phone);
+
         _vm.DespatchMethod = DespatchMethod.CollectL87;
 
         Assert.Contains("Your phone can be collected from", _vm.EmailHtml);
@@ -111,6 +195,8 @@ public sealed class EmailViewModelTests
     [Fact]
     private void EmailHtml_WithDespatchDelivery()
     {
+        TestSetup(_phone);
+
         _vm.DespatchMethod = DespatchMethod.Delivery;
 
         Assert.Contains("Your phone has been sent to", _vm.EmailHtml);
@@ -131,6 +217,8 @@ public sealed class EmailViewModelTests
     [Fact]
     private void EmailHtml_WithNoneAppleOEM()
     {
+        TestSetup(_phone);
+
         Assert.Contains("Android Smartphone", _vm.EmailHtml);
     }
 
@@ -159,6 +247,8 @@ public sealed class EmailViewModelTests
     [Fact]
     private void EmailHtml_WithPhoneNumber()
     {
+        TestSetup(_phone);
+
         Assert.Contains($"<tr><td>Phone number:</td><td>{_phone.PhoneNumber}</td></tr></table>", _vm.EmailHtml);
     }
 

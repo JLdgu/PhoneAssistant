@@ -14,7 +14,13 @@ public interface IUserSettings
 
     string Printer { get; set; }
 
-    string PrintFile { get; set; }    
+    string PrintFile { get; set; }
+
+    bool DymoPrintToFile { get; set; }
+
+    string DymoPrinter { get; set; }
+
+    string DymoPrintFile { get; set; }
 
     void Save() { }
 

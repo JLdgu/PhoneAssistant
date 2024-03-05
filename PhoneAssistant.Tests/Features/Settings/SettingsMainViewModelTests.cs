@@ -11,9 +11,9 @@ namespace PhoneAssistant.Tests.Features.Settings;
 public sealed class SettingsMainViewModelTests
 {
     [Theory]
-    [InlineData(true,true)]
-    [InlineData(false,false)]
-    public void Constructor_SetsVMProperties(bool printToFile, bool darkMode)
+    [InlineData(true, false, true)]
+    [InlineData(false, true ,false)]
+    public void Constructor_SetsVMProperties(bool printToFile, bool dymoPrintToFile, bool darkMode)
     {
         const string VERSION = "0.0.0.1";
         AutoMocker mocker = new AutoMocker();
@@ -22,6 +22,9 @@ public sealed class SettingsMainViewModelTests
         userSettings.Setup(s => s.PrintToFile).Returns(printToFile);
         userSettings.Setup(s => s.Printer).Returns("Printer");
         userSettings.Setup(s => s.PrintFile).Returns("PrintFile");
+        userSettings.Setup(s => s.DymoPrintToFile).Returns(dymoPrintToFile);
+        userSettings.Setup(s => s.DymoPrinter).Returns("DymoPrinter");
+        userSettings.Setup(s => s.DymoPrintFile).Returns("DymoPrintFile");
         userSettings.Setup(s => s.DarkMode).Returns(darkMode);
         userSettings.Setup(s => s.AssemblyVersion).Returns(new Version(VERSION));
         SettingsMainViewModel vm = mocker.CreateInstance<SettingsMainViewModel>();
@@ -30,8 +33,15 @@ public sealed class SettingsMainViewModelTests
         Assert.Equal(!printToFile, vm.PrintToPrinter);
         Assert.Equal("Printer", vm.Printer);
         Assert.Equal("PrintFile", vm.PrintFile);
+
+        Assert.Equal(dymoPrintToFile, vm.DymoPrintToFile);
+        Assert.Equal(!dymoPrintToFile, vm.DymoPrintToPrinter);
+        Assert.Equal("DymoPrinter", vm.DymoPrinter);
+        Assert.Equal("DymoPrintFile", vm.DymoPrintFile);
+
         Assert.Equal(darkMode,vm.ColourThemeDark);
         Assert.Equal(!darkMode,vm.ColourThemeLight);
+
         Assert.Equal(VERSION, vm.VersionDescription);
         userSettings.VerifyGet(s => s.AssemblyVersion);
     }
@@ -78,6 +88,35 @@ public sealed class SettingsMainViewModelTests
         vm.PrintFile = NEW_VALUE;
 
         userStettingsMock.VerifySet(s => s.PrintFile = NEW_VALUE);
+        userStettingsMock.Verify(s => s.Save(), Times.Once());
+    }
+    [Fact]
+    public void DymoPrinter_PropertyChanged_SavesUpdatedSettings()
+    {
+        AutoMocker mocker = new AutoMocker();
+        Mock<IUserSettings> userStettingsMock = mocker.GetMock<IUserSettings>();
+        userStettingsMock.Setup(s => s.DymoPrinter).Returns("DymoPrinter");
+        SettingsMainViewModel vm = mocker.CreateInstance<SettingsMainViewModel>();
+
+        const string NEW_VALUE = "Printer Changed";
+        vm.DymoPrinter = NEW_VALUE;
+
+        userStettingsMock.VerifySet(s => s.DymoPrinter = NEW_VALUE);
+        userStettingsMock.Verify(s => s.Save(), Times.Once());
+    }
+
+    [Fact]
+    public void DymoPrinterFile_PropertyChanged_SavesUpdatedSettings()
+    {
+        AutoMocker mocker = new AutoMocker();
+        Mock<IUserSettings> userStettingsMock = mocker.GetMock<IUserSettings>();
+        userStettingsMock.Setup(s => s.DymoPrintFile).Returns("DymoPrintFile");
+        SettingsMainViewModel vm = mocker.CreateInstance<SettingsMainViewModel>();
+
+        const string NEW_VALUE = "PrintFile Changed";
+        vm.DymoPrintFile = NEW_VALUE;
+
+        userStettingsMock.VerifySet(s => s.DymoPrintFile = NEW_VALUE);
         userStettingsMock.Verify(s => s.Save(), Times.Once());
     }
 

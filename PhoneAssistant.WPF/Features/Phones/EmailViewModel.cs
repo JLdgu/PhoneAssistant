@@ -9,13 +9,15 @@ using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
-public partial class EmailViewModel(IPhonesRepository phonesRepository, 
-                                    IPrintEnvelope printEnvelope) : ObservableObject
+public partial class EmailViewModel(IPhonesRepository phonesRepository,
+                                    IPrintEnvelope printEnvelope,
+                                    IPrintDymoLabel dymoLabel
+                                   ) : ObservableObject
 {
     private readonly IPhonesRepository _phonesRepository = phonesRepository ?? throw new ArgumentNullException();
-    private readonly IPrintEnvelope _printEnvelope = printEnvelope ?? throw new ArgumentNullException();   
-
-    private OrderDetails _orderDetails;
+    private readonly IPrintEnvelope _printEnvelope = printEnvelope ?? throw new ArgumentNullException();
+    private readonly IPrintDymoLabel _dymoLabel = dymoLabel ?? throw new ArgumentNullException();
+    private OrderDetails? _orderDetails;
     
     public OrderDetails OrderDetails
     {
@@ -58,6 +60,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     private DespatchMethod _despatchMethod;
     partial void OnDespatchMethodChanged(DespatchMethod value)
     {
+        if (_orderDetails is null) return;
+
         _orderDetails.Phone.Collection = (int)value;
         
         GenerateEmailHtml();
@@ -78,13 +82,24 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             _printEnvelope.Execute(_orderDetails);
         });
     }
-    
+
+    [RelayCommand]
+    private async Task PrintDymoLabel()
+    {
+        await Task.Run(() =>
+        {
+            _dymoLabel.Execute(DeliveryAddress);
+        });
+    }
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(EmailHtml))]
     private string _deliveryAddress = string.Empty;
 
     partial void OnDeliveryAddressChanged(string value)
     {
+        if (_orderDetails is null) return;
+
         _orderDetails.Phone.DespatchDetails = value;
 
         _formattedAddress = value.Replace(Environment.NewLine,"<br />");

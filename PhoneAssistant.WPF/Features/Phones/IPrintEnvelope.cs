@@ -1,6 +1,4 @@
-﻿using PhoneAssistant.WPF.Application.Entities;
-
-namespace PhoneAssistant.WPF.Features.Phones;
+﻿namespace PhoneAssistant.WPF.Features.Phones;
 
 public interface IPrintEnvelope
 {

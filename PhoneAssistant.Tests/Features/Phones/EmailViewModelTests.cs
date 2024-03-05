@@ -42,7 +42,7 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    private void Constructor_SetsGeneratingEmail_False()
+    private void Constructor_SetsGeneratingEmail_True()
     {
         Assert.True(_vm.GeneratingEmail);
     }

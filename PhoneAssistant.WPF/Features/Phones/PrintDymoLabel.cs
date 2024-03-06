@@ -61,22 +61,39 @@ namespace PhoneAssistant.WPF.Features.Phones
             if (ev.Graphics is null) return;
             Graphics graphics = ev.Graphics;
 
-            Brush brush = new SolidBrush(Color.Black);
-            Font font = new("Segoe UI", 18);
+            Font dateFont = new("Segoe UI", 10);
+            int dateFontHeight = (int)dateFont.GetHeight(graphics);
 
-            Rectangle rectangle = new(MarginLeft, MarginTop, BodyWidth, BodyHeight);
-            graphics.DrawString(_address!, font, brush, rectangle);
+            int maxHeight = BodyHeight;
+            if (_includeDate is not null)
+                maxHeight -= dateFontHeight;
+
+            float fontSize = 22;
+            Font font = new("Segoe UI", fontSize);
+            while (true)
+            {
+                SizeF stringSize = new SizeF();
+                stringSize = ev.Graphics.MeasureString(_address, font, BodyWidth);
+
+                if (stringSize.Height <= maxHeight)
+                    break;
+
+                fontSize = (float)(fontSize - 0.5);
+                font = new("Segoe UI", fontSize);
+            }            
+
+            Brush brush = new SolidBrush(Color.Black);
+            Rectangle rectangle = new(MarginLeft, MarginTop, BodyWidth, maxHeight);
+            graphics.DrawString(_address, font, brush, rectangle);
+
             if (_includeDate is not null)
             {
-                font = new("Segoe UI", 10);
-                int fontHeight = (int)font.GetHeight(graphics);
-
                 StringFormat sf = new StringFormat();
                 sf.LineAlignment = StringAlignment.Far;
-                sf.Alignment = StringAlignment.Center;
+                sf.Alignment = StringAlignment.Far;
 
-                rectangle = new(MarginLeft, (MarginTop + BodyHeight - fontHeight), BodyWidth, fontHeight);
-                graphics.DrawString(_includeDate, font, brush, rectangle, sf);
+                rectangle = new(MarginLeft, (MarginTop + BodyHeight - dateFontHeight), BodyWidth, dateFontHeight);
+                graphics.DrawString(_includeDate, dateFont, brush, rectangle, sf);
             }
 
             ev.HasMorePages = false;

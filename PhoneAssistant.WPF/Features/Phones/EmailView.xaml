@@ -120,14 +120,14 @@
             </StackPanel>
 
             <StackPanel
-                Grid.Row="1"
-                Grid.RowSpan="3"
+                Grid.Row="0"
+                Grid.RowSpan="4"
                 Grid.Column="1"
                 Orientation="Horizontal">
 
                 <TextBox
-                    MinWidth="300"
-                    MinHeight="50"
+                    Width="300"
+                    Height="193"
                     Margin="10,0,0,20"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Stretch"
@@ -135,7 +135,7 @@
                     materialDesign:HintAssist.Hint="Delivery Address"
                     AcceptsReturn="True"
                     BorderThickness="1"
-                    FontSize="16"
+                    FontSize="18"
                     Text="{Binding DeliveryAddress}"
                     TextWrapping="Wrap"
                     VerticalScrollBarVisibility="Auto" />

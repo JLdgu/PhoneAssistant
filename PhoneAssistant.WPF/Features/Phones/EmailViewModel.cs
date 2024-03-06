@@ -177,7 +177,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             DCC mobile phone data usage guidance and policies</a></p>
             """);
 
-        html.AppendLine($"<p><br />To find out how to set up your {_orderDetails.DeviceType.ToString().ToLower()}, please go here:</br>");
+        html.AppendLine($"<p><br />To find out how to set up your {_orderDetails!.DeviceType.ToString().ToLower()}, please go here:</br>");
         if (_orderDetails.Phone.OEM == "Apple")
         {
             html.Append(

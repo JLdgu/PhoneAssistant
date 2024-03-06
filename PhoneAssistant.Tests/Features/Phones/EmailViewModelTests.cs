@@ -10,7 +10,7 @@ namespace PhoneAssistant.Tests.Features.Phones;
 
 public sealed class EmailViewModelTests
 {
-    private Phone _phone = new()
+    private readonly Phone _phone = new()
     {
         PhoneNumber = "phoneNumber",
         SimNumber = "simNumber",
@@ -41,7 +41,7 @@ public sealed class EmailViewModelTests
         
     }
 
-    public void TestSetup(Phone phone)
+    private void TestSetup(Phone phone)
     {
         OrderDetails orderDetails = new(phone);
         _vm.OrderDetails = orderDetails;

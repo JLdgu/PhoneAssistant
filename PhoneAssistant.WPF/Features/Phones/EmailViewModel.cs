@@ -9,17 +9,19 @@ using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
-public partial class EmailViewModel(IPhonesRepository phonesRepository, 
-                                    IPrintEnvelope printEnvelope) : ObservableObject
+public partial class EmailViewModel(IPhonesRepository phonesRepository,
+                                    IPrintEnvelope printEnvelope,
+                                    IPrintDymoLabel dymoLabel
+                                   ) : ObservableObject
 {
     private readonly IPhonesRepository _phonesRepository = phonesRepository ?? throw new ArgumentNullException();
-    private readonly IPrintEnvelope _printEnvelope = printEnvelope ?? throw new ArgumentNullException();   
+    private readonly IPrintEnvelope _printEnvelope = printEnvelope ?? throw new ArgumentNullException();
+    private readonly IPrintDymoLabel _dymoLabel = dymoLabel ?? throw new ArgumentNullException();
+    private OrderDetails? _orderDetails;
 
-    private OrderDetails _orderDetails;
-    
     public OrderDetails OrderDetails
     {
-        get => _orderDetails;             
+        get => _orderDetails ?? throw new ArgumentNullException();
         set
         {
             _orderDetails = value;
@@ -29,13 +31,13 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             AssetTag = value.Phone.AssetTag ?? string.Empty;
             OrderType = value.OrderType;
             DespatchMethod = value.DespatchMethod;
-            DeliveryAddress = value.Phone.DespatchDetails ?? value.Phone.NewUser ?? string.Empty;
-            
+            DeliveryAddress = value.Phone.DespatchDetails ?? string.Empty;
+
             GeneratingEmail = true;
             GenerateEmailHtml();
         }
     }
-        
+
     [ObservableProperty]
     private string _imei = string.Empty;
 
@@ -56,10 +58,37 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
     [ObservableProperty]
     private DespatchMethod _despatchMethod;
-    partial void OnDespatchMethodChanged(DespatchMethod value)
+    async partial void OnDespatchMethodChanged(DespatchMethod value)
     {
+        if (_orderDetails is null) return;
+        if (_orderDetails.Phone.Collection == (int?)value) return;
+
+        StringBuilder deliveryAddress = new();
+        switch (value)
+        {
+            case DespatchMethod.CollectGMH:
+                deliveryAddress.AppendLine("Collection from");
+                deliveryAddress.AppendLine("Hardware Room GMH");
+                deliveryAddress.AppendLine($"by {OrderDetails.Phone.NewUser}");
+                deliveryAddress.AppendLine($"SR {OrderDetails.Phone.SR}");
+                deliveryAddress.AppendLine($"{OrderDetails.Phone.PhoneNumber}");
+                break;
+            case DespatchMethod.CollectL87:
+                deliveryAddress.AppendLine("Collection from L87");
+                deliveryAddress.AppendLine($"by {OrderDetails.Phone.NewUser}");
+                deliveryAddress.AppendLine($"SR {OrderDetails.Phone.SR}");
+                deliveryAddress.AppendLine($"{OrderDetails.Phone.PhoneNumber}");
+                break;
+            case DespatchMethod.Delivery:
+                deliveryAddress.Append(OrderDetails.Phone.NewUser);
+                break;
+        }
+
+        DeliveryAddress = deliveryAddress.ToString();
+
         _orderDetails.Phone.Collection = (int)value;
-        
+        await _phonesRepository.UpdateAsync(_orderDetails.Phone);
+
         GenerateEmailHtml();
     }
 
@@ -70,24 +99,43 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     }
 
     private bool CanPrintEnvelope() => OrderType != OrderType.None;
-    [RelayCommand(CanExecute=nameof(CanPrintEnvelope))]
+    [RelayCommand(CanExecute = nameof(CanPrintEnvelope))]
     private async Task PrintEnvelope()
     {
+        if (_orderDetails is null) return;
+
         await Task.Run(() =>
         {
             _printEnvelope.Execute(_orderDetails);
         });
     }
-    
+
+    [RelayCommand]
+    private async Task PrintDymoLabel()
+    {
+        await Task.Run(() =>
+        {
+            string? includeDate = null;
+            if (DespatchMethod == DespatchMethod.CollectGMH || DespatchMethod == DespatchMethod.CollectL87)
+                includeDate = ToOrdinalWorkingDate(DateTime.Now,true);
+            
+            _dymoLabel.Execute(DeliveryAddress,includeDate);
+        });
+    }
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(EmailHtml))]
     private string _deliveryAddress = string.Empty;
 
-    partial void OnDeliveryAddressChanged(string value)
+    async partial void OnDeliveryAddressChanged(string value)
     {
-        _orderDetails.Phone.DespatchDetails = value;
+        if (_orderDetails is null) return;
+        if (_orderDetails.Phone.DespatchDetails == value) return;
 
-        _formattedAddress = value.Replace(Environment.NewLine,"<br />");
+        _orderDetails.Phone.DespatchDetails = value;
+        await _phonesRepository.UpdateAsync(_orderDetails.Phone);
+
+        _formattedAddress = value.Replace(Environment.NewLine, "<br />");
         GenerateEmailHtml();
     }
     private string _formattedAddress = string.Empty;
@@ -108,17 +156,17 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         switch (DespatchMethod)
         {
             case DespatchMethod.CollectGMH:
-                html.AppendLine($"<p>Your {_orderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
+                html.AppendLine($"<p>Your {_orderDetails!.DeviceType.ToString().ToLower()} can be collected from</br>");
                 html.AppendLine("DTS End User Compute Team, Hardware Room, Great Moor House, Bittern Road, Exeter, EX2 7FW</br>");
                 html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now.AddDays(2))}</p>");
                 break;
             case DespatchMethod.CollectL87:
-                html.AppendLine($"<p>Your {_orderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
+                html.AppendLine($"<p>Your {_orderDetails!.DeviceType.ToString().ToLower()} can be collected from</br>");
                 html.AppendLine("DTS End User Compute Team, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
                 html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now)}</p>");
                 break;
             case DespatchMethod.Delivery:
-                html.AppendLine($"<p>Your {_orderDetails.DeviceType.ToString().ToLower()} has been sent to<br />{_formattedAddress}</br>");
+                html.AppendLine($"<p>Your {_orderDetails!.DeviceType.ToString().ToLower()} has been sent to<br />{_formattedAddress}</br>");
                 html.AppendLine($"It was sent on {ToOrdinalWorkingDate(DateTime.Now)}</p>");
                 break;
         }
@@ -137,7 +185,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
                 <a href="https://devoncc.sharepoint.com/sites/ICTKB/Public/DCC%20Mobile%20Phone%20Service%20-%20Setting%20up%20Apple%20(iOS)%20Smartphone.docx?d=w5a23e7d6e2404401a5039a4936743875"
                    style="font-size:12px; font-family:Verdana";>
                 Setting up your Apple (iOS) Smartphone.docx (devoncc.sharepoint.com)</a></p>
-                """);            
+                """);
         }
         else
         {
@@ -178,14 +226,14 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         EmailHtml = html.ToString();
     }
 
-    public static string ToOrdinalWorkingDate(DateTime date)
+    public static string ToOrdinalWorkingDate(DateTime date, bool hexSuperscript = false)
     {
         int addDays = 0;
         switch (date.DayOfWeek)
         {
             case DayOfWeek.Sunday:
                 addDays = 1;
-                break;  
+                break;
             case DayOfWeek.Saturday:
                 addDays = 2;
                 break;
@@ -199,7 +247,10 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             case 11:
             case 12:
             case 13:
-                ordinalDay = number.ToString() + "<sup>th</sup>";
+                if (hexSuperscript)
+                    ordinalDay = number.ToString() + "\x1D57\x02B0";
+                else
+                    ordinalDay = number.ToString() + "<sup>th</sup>";
                 break;
         }
 
@@ -208,19 +259,31 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             switch (number % 10)
             {
                 case 1:
-                    ordinalDay = number.ToString() + "<sup>st</sup>";
+                    if (hexSuperscript)
+                        ordinalDay = number.ToString() + "\x02E2\x1D57";
+                    else
+                        ordinalDay = number.ToString() + "<sup>st</sup>";
                     break;
                 case 2:
-                    ordinalDay = number.ToString() + "<sup>nd</sup>";
+                    if (hexSuperscript)
+                        ordinalDay = number.ToString() + "\x207F\x1D48";
+                    else
+                        ordinalDay = number.ToString() + "<sup>nd</sup>";
                     break;
                 case 3:
-                    ordinalDay = number.ToString() + "<sup>rd</sup>";
+                    if (hexSuperscript)
+                        ordinalDay = number.ToString() + "\x02B3\x1D48";
+                    else
+                        ordinalDay = number.ToString() + "<sup>rd</sup>";
                     break;
                 default:
-                    ordinalDay = number.ToString() + "<sup>th</sup>";
+                    if (hexSuperscript)
+                        ordinalDay = number.ToString() + "\x1D57\x02B0";
+                    else
+                        ordinalDay = number.ToString() + "<sup>th</sup>";
                     break;
             }
-        }        
+        }
         string from = weekDay.ToString("dddd * MMMM yyyy");
         from = from.Replace("*", ordinalDay);
 
@@ -245,32 +308,9 @@ public static class WebBrowserHelper
 
     public static void NavigateToPropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
     {
-        if (o is WebBrowser browser)            
+        if (o is WebBrowser browser)
             if (e.NewValue is string html)
                 if (!string.IsNullOrEmpty(html))
                     browser.NavigateToString(html);
     }
 }
-
-//public enum OrderType
-//{
-//    None = 0,
-//    New = 1,
-//    Replacement
-//}
-
-//public enum DeviceType
-//{
-//    None = 0,
-//    Phone = 1,
-//    Tablet = 2
-//}
-
-//public enum DespatchMethod
-//{
-//    None = 0,
-//    CollectGMH = 1,
-//    CollectL87 = 2,
-//    Delivery = 3
-//}
-

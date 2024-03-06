@@ -20,15 +20,22 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
         _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
         _themeWrapper = themeWrapper ?? throw new ArgumentNullException(nameof(themeWrapper));
         Database = _userSettings.Database;
+
         PrintToFile = _userSettings.PrintToFile;
         PrintToPrinter = !PrintToFile;
         Printer = _userSettings.Printer;
         PrintFile = _userSettings.PrintFile;
+
+        DymoPrintToFile = _userSettings.DymoPrintToFile;
+        DymoPrintToPrinter = !DymoPrintToFile;
+        DymoPrinter = _userSettings.DymoPrinter;
+        DymoPrintFile = _userSettings.DymoPrintFile;
+
+
         ColourThemeDark = _userSettings.DarkMode;
         ColourThemeLight = !_userSettings.DarkMode;
 
         VersionDescription = _userSettings.AssemblyVersion?.ToString();
-
     }
 #pragma warning restore CS8618
 
@@ -97,15 +104,45 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
 
         _userSettings.PrintFile = value;
         _userSettings.Save();
+    }
+    #endregion
 
+    #region DymoPrinter Settings
+    [ObservableProperty]
+    private bool _dymoPrintToPrinter;
+
+    [ObservableProperty]
+    private bool _dymoPrintToFile;
+
+    partial void OnDymoPrintToFileChanged(bool value)
+    {
+        _userSettings.DymoPrintToFile = value;
+        _userSettings.Save();
     }
 
     [ObservableProperty]
-    private bool canSavePrintFile;
+    private string _dymoPrinter;
+    partial void OnDymoPrinterChanged(string value)
+    {
+        if (_userSettings.DymoPrinter == value) return;
+
+        _userSettings.DymoPrinter = value;
+        _userSettings.Save();
+    }
+
+    [ObservableProperty]
+    private string _dymoPrintFile;
+
+    partial void OnDymoPrintFileChanged(string value)
+    {
+        if (_userSettings.DymoPrintFile == value) return;
+
+        _userSettings.DymoPrintFile = value;
+        _userSettings.Save();
+    }
     #endregion
 
     #region Mode Setting
-
     [ObservableProperty]
     private bool colourThemeDark;
 

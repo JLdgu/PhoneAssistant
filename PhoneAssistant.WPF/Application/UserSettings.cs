@@ -37,6 +37,30 @@ public sealed class UserSettings : ApplicationSettingsBase, IUserSettings
     }
 
     [UserScopedSetting()]
+    [DefaultSettingValue("Dymo LabelWriter 450")]
+    public string DymoPrinter
+    {
+        get => (string)this[nameof(DymoPrinter)];
+        set => this[nameof(DymoPrinter)] = value;
+    }
+
+    [UserScopedSetting()]
+    [DefaultSettingValue("false")]
+    public bool DymoPrintToFile
+    {
+        get => (bool)this[nameof(DymoPrintToFile)];
+        set => this[nameof(DymoPrintToFile)] = value;
+    }
+
+    [UserScopedSetting()]
+    public string DymoPrintFile
+    {
+        get => (string)this[nameof(DymoPrintFile)];
+        set => this[nameof(DymoPrintFile)] = value;
+    }
+
+
+    [UserScopedSetting()]
     [DefaultSettingValue("false")]
     public bool DarkMode
     {

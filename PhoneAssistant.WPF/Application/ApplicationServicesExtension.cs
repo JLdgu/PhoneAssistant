@@ -48,6 +48,7 @@ public static class ApplicationServicesExtensions
             services.AddSingleton<EmailViewModel>();
             services.AddTransient<PhonesItemViewModel>();
             services.AddTransient<IPrintEnvelope, PrintEnvelope>();
+            services.AddTransient<IPrintDymoLabel, PrintDymoLabel>();
             services.AddTransient<IPhonesMainViewModel, PhonesMainViewModel>();
 
             services.AddSingleton<ISettingsMainViewModel, SettingsMainViewModel>();

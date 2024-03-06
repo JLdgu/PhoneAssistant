@@ -269,4 +269,22 @@ public sealed class EmailViewModelTests
 
         Assert.Equal(expected,actual);
     }
+
+    [Theory]
+    [InlineData("2/12/2023", "Monday 4\x1D57\x02B0 December 2023")]
+    [InlineData("3/12/2023", "Monday 4\x1D57\x02B0 December 2023")]
+    [InlineData("1/1/2024", "Monday 1\x02E2\x1D57 January 2024")]
+    [InlineData("2/1/2024", "Tuesday 2\x207F\x1D48 January 2024")]
+    [InlineData("3/1/2024", "Wednesday 3\x02B3\x1D48 January 2024")]
+    [InlineData("21/12/2023", "Thursday 21\x02E2\x1D57 December 2023")]
+    [InlineData("22/12/2023", "Friday 22\x207F\x1D48 December 2023")]
+    [InlineData("23/1/2024", "Tuesday 23\x02B3\x1D48 January 2024")]
+    [InlineData("31/1/2024", "Wednesday 31\x02E2\x1d57 January 2024")]
+    [InlineData("12/02/2024", "Monday 12\x1D57\x02B0 February 2024")] // Issue #40
+    private void ToOrdinalWorkingDate_WithHexSuperscript(string date, string expected)
+    {
+        string actual = EmailViewModel.ToOrdinalWorkingDate(DateTime.Parse(date), true);
+
+        Assert.Equal(expected, actual);
+    }
 }

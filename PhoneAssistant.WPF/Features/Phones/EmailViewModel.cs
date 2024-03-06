@@ -5,7 +5,6 @@ using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.Phones;
@@ -22,7 +21,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
     public OrderDetails OrderDetails
     {
-        get => _orderDetails;
+        get => _orderDetails ?? throw new ArgumentNullException();
         set
         {
             _orderDetails = value;
@@ -116,7 +115,11 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     {
         await Task.Run(() =>
         {
-            _dymoLabel.Execute(DeliveryAddress);
+            string? includeDate = null;
+            if (DespatchMethod == DespatchMethod.CollectGMH || DespatchMethod == DespatchMethod.CollectL87)
+                includeDate = ToOrdinalWorkingDate(DateTime.Now,true);
+            
+            _dymoLabel.Execute(DeliveryAddress,includeDate);
         });
     }
 
@@ -153,17 +156,17 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         switch (DespatchMethod)
         {
             case DespatchMethod.CollectGMH:
-                html.AppendLine($"<p>Your {_orderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
+                html.AppendLine($"<p>Your {_orderDetails!.DeviceType.ToString().ToLower()} can be collected from</br>");
                 html.AppendLine("DTS End User Compute Team, Hardware Room, Great Moor House, Bittern Road, Exeter, EX2 7FW</br>");
                 html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now.AddDays(2))}</p>");
                 break;
             case DespatchMethod.CollectL87:
-                html.AppendLine($"<p>Your {_orderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
+                html.AppendLine($"<p>Your {_orderDetails!.DeviceType.ToString().ToLower()} can be collected from</br>");
                 html.AppendLine("DTS End User Compute Team, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
                 html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now)}</p>");
                 break;
             case DespatchMethod.Delivery:
-                html.AppendLine($"<p>Your {_orderDetails.DeviceType.ToString().ToLower()} has been sent to<br />{_formattedAddress}</br>");
+                html.AppendLine($"<p>Your {_orderDetails!.DeviceType.ToString().ToLower()} has been sent to<br />{_formattedAddress}</br>");
                 html.AppendLine($"It was sent on {ToOrdinalWorkingDate(DateTime.Now)}</p>");
                 break;
         }
@@ -223,7 +226,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         EmailHtml = html.ToString();
     }
 
-    public static string ToOrdinalWorkingDate(DateTime date)
+    public static string ToOrdinalWorkingDate(DateTime date, bool hexSuperscript = false)
     {
         int addDays = 0;
         switch (date.DayOfWeek)
@@ -244,7 +247,10 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             case 11:
             case 12:
             case 13:
-                ordinalDay = number.ToString() + "<sup>th</sup>";
+                if (hexSuperscript)
+                    ordinalDay = number.ToString() + "\x1D57\x02B0";
+                else
+                    ordinalDay = number.ToString() + "<sup>th</sup>";
                 break;
         }
 
@@ -253,16 +259,28 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             switch (number % 10)
             {
                 case 1:
-                    ordinalDay = number.ToString() + "<sup>st</sup>";
+                    if (hexSuperscript)
+                        ordinalDay = number.ToString() + "\x02E2\x1D57";
+                    else
+                        ordinalDay = number.ToString() + "<sup>st</sup>";
                     break;
                 case 2:
-                    ordinalDay = number.ToString() + "<sup>nd</sup>";
+                    if (hexSuperscript)
+                        ordinalDay = number.ToString() + "\x207F\x1D48";
+                    else
+                        ordinalDay = number.ToString() + "<sup>nd</sup>";
                     break;
                 case 3:
-                    ordinalDay = number.ToString() + "<sup>rd</sup>";
+                    if (hexSuperscript)
+                        ordinalDay = number.ToString() + "\x02B3\x1D48";
+                    else
+                        ordinalDay = number.ToString() + "<sup>rd</sup>";
                     break;
                 default:
-                    ordinalDay = number.ToString() + "<sup>th</sup>";
+                    if (hexSuperscript)
+                        ordinalDay = number.ToString() + "\x1D57\x02B0";
+                    else
+                        ordinalDay = number.ToString() + "<sup>th</sup>";
                     break;
             }
         }
@@ -296,26 +314,3 @@ public static class WebBrowserHelper
                     browser.NavigateToString(html);
     }
 }
-
-//public enum OrderType
-//{
-//    None = 0,
-//    New = 1,
-//    Replacement
-//}
-
-//public enum DeviceType
-//{
-//    None = 0,
-//    Phone = 1,
-//    Tablet = 2
-//}
-
-//public enum DespatchMethod
-//{
-//    None = 0,
-//    CollectGMH = 1,
-//    CollectL87 = 2,
-//    Delivery = 3
-//}
-

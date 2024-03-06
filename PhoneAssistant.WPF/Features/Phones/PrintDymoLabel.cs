@@ -20,6 +20,7 @@ namespace PhoneAssistant.WPF.Features.Phones
 
         private readonly IUserSettings _userSettings;
         private string? _address;
+        private string?  _includeDate; 
 
         public PrintDymoLabel(IUserSettings userSettings)
         {
@@ -27,9 +28,10 @@ namespace PhoneAssistant.WPF.Features.Phones
         }
 
 
-        public void Execute(string address)
+        public void Execute(string address, string? includeDate)
         {
             _address = address;
+            _includeDate = includeDate;
 
             PrintDocument pd = new();
             pd.DefaultPageSettings.Landscape = true;
@@ -61,15 +63,21 @@ namespace PhoneAssistant.WPF.Features.Phones
 
             Brush brush = new SolidBrush(Color.Black);
             Font font = new("Segoe UI", 18);
-            float fontLineHeight = font.GetHeight(graphics);
 
-            StringFormat sf = new StringFormat();
-            sf.LineAlignment = StringAlignment.Center;
-            sf.Alignment = StringAlignment.Center;
+            Rectangle rectangle = new(MarginLeft, MarginTop, BodyWidth, BodyHeight);
+            graphics.DrawString(_address!, font, brush, rectangle);
+            if (_includeDate is not null)
+            {
+                font = new("Segoe UI", 10);
+                int fontHeight = (int)font.GetHeight(graphics);
 
-            Rectangle bodyRectangle = new(MarginLeft, MarginTop, BodyWidth, BodyHeight);
-            //graphics.DrawString(bodyText.ToString(), font, brush, bodyRectangle, sf);
-            graphics.DrawString(_address!, font, brush, bodyRectangle, sf);
+                StringFormat sf = new StringFormat();
+                sf.LineAlignment = StringAlignment.Far;
+                sf.Alignment = StringAlignment.Center;
+
+                rectangle = new(MarginLeft, (MarginTop + BodyHeight - fontHeight), BodyWidth, fontHeight);
+                graphics.DrawString(_includeDate, font, brush, rectangle, sf);
+            }
 
             ev.HasMorePages = false;
         }

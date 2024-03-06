@@ -2,5 +2,5 @@
 
 public interface IPrintDymoLabel
 {
-    void Execute(string address);
+    void Execute(string address, string? includeDate);
 }

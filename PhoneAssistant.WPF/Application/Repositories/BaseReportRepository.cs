@@ -15,7 +15,7 @@ public sealed class BaseReportRepository(PhoneAssistantDbContext dbContext)
 
     public async Task CreateAsync(EEBaseReport report)
     {
-        await _dbContext.BaseReport.AddAsync(report);
+        _dbContext.BaseReport.Add(report);
         await _dbContext.SaveChangesAsync();
     }
 

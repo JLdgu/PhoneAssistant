@@ -162,11 +162,20 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     [NotifyCanExecuteChangedFor(nameof(ImportCommand))]
     private string? _devonBaseReport;
 
-    private bool CanImport() => !string.IsNullOrWhiteSpace(DevonBaseReport);
+    private bool CanImport()
+    {
+        if (_loaded && string.IsNullOrWhiteSpace(DevonBaseReport))
+            return false;
+
+        return true;
+    } 
 
     [RelayCommand(CanExecute = nameof(CanImport))]
     private async Task Import()
     {
+        _loaded = false;
+        
+        await Task.Delay(100);
 
         using FileStream? stream = new FileStream(DevonBaseReport!, FileMode.Open, FileAccess.Read);
         using HSSFWorkbook workbook = new HSSFWorkbook(stream);
@@ -212,7 +221,6 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         DevonBaseReport = string.Empty;
 
         BaseReport.Clear();
-        _loaded = false;
         await LoadAsync();
     }
 

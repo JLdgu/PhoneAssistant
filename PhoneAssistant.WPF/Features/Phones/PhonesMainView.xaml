@@ -42,7 +42,8 @@
                 <viewmodel:EmailView DataContext="{Binding EmailViewModel}" />
             </materialDesign:DrawerHost.TopDrawerContent>
 
-            <DataGrid Margin="10,5,0,0"
+            <DataGrid x:Name="PhonesDataGrid"
+                      Margin="10,5,0,0"
                       materialDesign:DataGridAssist.CellPadding="4 5 2 5"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="4 5 2 18"
                       AlternatingRowBackground="{DynamicResource MaterialDesignChipBackground}"
@@ -60,7 +61,7 @@
                                                            SelectedValueBinding="{Binding NorR, Converter={StaticResource NorRConverter}, UpdateSourceTrigger=LostFocus}">
                         <DataGridComboBoxColumn.HeaderTemplate>
                             <DataTemplate>
-                                <StackPanel>
+                                <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="80"
                                              materialDesign:HintAssist.Hint="Filter"
@@ -78,7 +79,7 @@
                                                            SelectedValueBinding="{Binding Status, UpdateSourceTrigger=LostFocus}">
                         <DataGridComboBoxColumn.HeaderTemplate>
                             <DataTemplate>
-                                <StackPanel>
+                                <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="80"
                                              materialDesign:HintAssist.Hint="Filter"
@@ -108,7 +109,7 @@
                     <DataGridTextColumn Header="Ticket #">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
-                                <StackPanel>
+                                <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="55"
                                              materialDesign:HintAssist.Hint="Filter"
@@ -128,6 +129,7 @@
                         </DataGridTextColumn.Binding>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+                                <Setter Property="materialDesign:TextFieldAssist.CharacterCounterVisibility" Value="Hidden" />
                                 <Setter Property="MaxLength" Value="7" />
                             </Style>
                         </DataGridTextColumn.EditingElementStyle>
@@ -136,11 +138,13 @@
                     <DataGridTextColumn Header="IMEI">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
-                                <StackPanel>
+                                <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="110"
                                              materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                                              materialDesign:TextFieldAssist.HasClearButton="True"
+                                             MaxLength="15"
                                              Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterImei, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
                                 </StackPanel>
                             </DataTemplate>
@@ -154,6 +158,7 @@
                         </DataGridTextColumn.Binding>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+                                <Setter Property="materialDesign:TextFieldAssist.CharacterCounterVisibility" Value="Hidden" />
                                 <Setter Property="MaxLength" Value="15" />
                             </Style>
                         </DataGridTextColumn.EditingElementStyle>
@@ -162,11 +167,13 @@
                     <DataGridTextColumn Header="Phone Number">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
-                                <StackPanel>
+                                <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="110"
                                              materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                                              materialDesign:TextFieldAssist.HasClearButton="True"
+                                             MaxLength="11"
                                              Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterPhoneNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
                                 </StackPanel>
                             </DataTemplate>
@@ -180,6 +187,7 @@
                         </DataGridTextColumn.Binding>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+                                <Setter Property="materialDesign:TextFieldAssist.CharacterCounterVisibility" Value="Hidden" />
                                 <Setter Property="MaxLength" Value="11" />
                             </Style>
                         </DataGridTextColumn.EditingElementStyle>
@@ -203,11 +211,13 @@
                     <DataGridTextColumn Header="SIM Number">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
-                                <StackPanel>
+                                <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="140"
                                              materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                                              materialDesign:TextFieldAssist.HasClearButton="True"
+                                             MaxLength="19"
                                              Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterSimNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
                                 </StackPanel>
                             </DataTemplate>
@@ -221,6 +231,7 @@
                         </DataGridTextColumn.Binding>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+                                <Setter Property="materialDesign:TextFieldAssist.CharacterCounterVisibility" Value="Hidden" />
                                 <Setter Property="MaxLength" Value="19" />
                             </Style>
                         </DataGridTextColumn.EditingElementStyle>
@@ -229,7 +240,7 @@
                     <DataGridTextColumn Binding="{Binding NewUser, UpdateSourceTrigger=LostFocus}" Header="New User">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
-                                <StackPanel>
+                                <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="130"
                                              materialDesign:HintAssist.Hint="Filter"
@@ -243,7 +254,7 @@
                     <DataGridTextColumn Binding="{Binding AssetTag, UpdateSourceTrigger=LostFocus}" Header="Asset Tag">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
-                                <StackPanel>
+                                <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="90"
                                              materialDesign:HintAssist.Hint="Filter"
@@ -256,6 +267,7 @@
                         </DataGridTextColumn.HeaderTemplate>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+                                <Setter Property="materialDesign:TextFieldAssist.CharacterCounterVisibility" Value="Hidden" />
                                 <Setter Property="MaxLength" Value="7" />
                             </Style>
                         </DataGridTextColumn.EditingElementStyle>
@@ -266,7 +278,7 @@
                                                            SelectedValueBinding="{Binding OEM, UpdateSourceTrigger=LostFocus}">
                         <DataGridComboBoxColumn.HeaderTemplate>
                             <DataTemplate>
-                                <StackPanel>
+                                <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="60"
                                              materialDesign:HintAssist.Hint="Filter"
@@ -280,7 +292,7 @@
                     <DataGridTextColumn Binding="{Binding Model, UpdateSourceTrigger=LostFocus}" Header="Model">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
-                                <StackPanel>
+                                <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="60"
                                              materialDesign:HintAssist.Hint="Filter"
@@ -294,7 +306,7 @@
                     <DataGridTextColumn Binding="{Binding FormerUser, UpdateSourceTrigger=LostFocus}" Header="Former User">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
-                                <StackPanel>
+                                <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="130"
                                              materialDesign:HintAssist.Hint="Filter"
@@ -310,7 +322,7 @@
                                         Header="Notes">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
-                                <StackPanel>
+                                <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="130"
                                              MaxWidth="400"
@@ -327,7 +339,7 @@
                                         IsReadOnly="True">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
-                                <StackPanel>
+                                <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="120"
                                              materialDesign:HintAssist.Hint="Filter"

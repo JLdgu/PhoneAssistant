@@ -30,20 +30,22 @@
         </StackPanel>
 
         <DataGrid Grid.Row="2"
+                  MaxHeight="940"
                   Margin="10,0,0,0"
-                  materialDesign:DataGridAssist.CellPadding="4 5 2 5"
-                  materialDesign:DataGridAssist.ColumnHeaderPadding="4 5 2 18"
+                  materialDesign:DataGridAssist.CellPadding="4 5 2 3"
+                  materialDesign:DataGridAssist.ColumnHeaderPadding="4 5 2 7"
                   AlternatingRowBackground="{DynamicResource MaterialDesignChipBackground}"
                   AutoGenerateColumns="False"
                   ItemsSource="{Binding SimItems}"
                   SelectedItem="{Binding SelectedSim}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Phone Number" Binding="{Binding PhoneNumber}">
+                <DataGridTextColumn Binding="{Binding PhoneNumber}" Header="Phone Number">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
                             <StackPanel>
                                 <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                 <TextBox MinWidth="110"
+                                         Margin="0"
                                          materialDesign:HintAssist.Hint="Filter"
                                          materialDesign:TextFieldAssist.HasClearButton="True"
                                          Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterPhoneNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />

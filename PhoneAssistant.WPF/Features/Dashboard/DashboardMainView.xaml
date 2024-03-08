@@ -1,15 +1,14 @@
-﻿<UserControl
-    x:Class="PhoneAssistant.WPF.Features.Dashboard.DashboardMainView"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
-    MaxHeight="1080"
-    d:DesignHeight="500"
-    d:DesignWidth="800"
-    mc:Ignorable="d">
+﻿<UserControl x:Class="PhoneAssistant.WPF.Features.Dashboard.DashboardMainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
+             MaxHeight="1080"
+             d:DesignHeight="500"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -23,21 +22,20 @@
                 <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="Release Notes" />
             </materialDesign:Card>
 
-            <materialDesign:Card
-                Grid.Row="2"
-                Margin="5,5"
-                Padding="4,2">
+            <materialDesign:Card Grid.Row="2"
+                                 Margin="5,5"
+                                 Padding="4,2">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="vNext" />
+                    <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.403.8" />
+                    <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #33 Make filter work in more instances (Reqires clicking in filter cell before clear button after cell edit)" />
                     <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Print Dymo labels" />
                     <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Remember current view between sessions" />
                 </StackPanel>
             </materialDesign:Card>
 
-            <materialDesign:Card
-                Grid.Row="3"
-                Margin="5,5"
-                Padding="4,2">
+            <materialDesign:Card Grid.Row="3"
+                                 Margin="5,5"
+                                 Padding="4,2">
                 <StackPanel Orientation="Vertical">
                     <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.402.16" />
                     <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #34 Username not shown on email view" />
@@ -50,10 +48,9 @@
                     <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add ability to import Base Report to base view" />
                 </StackPanel>
             </materialDesign:Card>
-            <materialDesign:Card
-                Grid.Row="4"
-                Margin="5,5"
-                Padding="4,2">
+            <materialDesign:Card Grid.Row="4"
+                                 Margin="5,5"
+                                 Padding="4,2">
                 <StackPanel Orientation="Vertical">
                     <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.401.24.0" />
                     <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #8 Add EE Base Report view" />
@@ -63,10 +60,9 @@
                 </StackPanel>
             </materialDesign:Card>
 
-            <materialDesign:Card
-                Grid.Row="5"
-                Margin="5,5"
-                Padding="4,2">
+            <materialDesign:Card Grid.Row="5"
+                                 Margin="5,5"
+                                 Padding="4,2">
                 <StackPanel Orientation="Vertical">
                     <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.401.11.0" />
                     <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #3 Complete edit phone functionality" />

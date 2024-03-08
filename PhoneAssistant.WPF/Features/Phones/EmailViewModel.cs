@@ -71,16 +71,16 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
                 deliveryAddress.AppendLine("Hardware Room GMH");
                 deliveryAddress.AppendLine($"by {OrderDetails.Phone.NewUser}");
                 deliveryAddress.AppendLine($"SR {OrderDetails.Phone.SR}");
-                deliveryAddress.AppendLine($"{OrderDetails.Phone.PhoneNumber}");
+                deliveryAddress.Append(OrderDetails.Phone.PhoneNumber);
                 break;
             case DespatchMethod.CollectL87:
                 deliveryAddress.AppendLine("Collection from L87");
                 deliveryAddress.AppendLine($"by {OrderDetails.Phone.NewUser}");
                 deliveryAddress.AppendLine($"SR {OrderDetails.Phone.SR}");
-                deliveryAddress.AppendLine($"{OrderDetails.Phone.PhoneNumber}");
+                deliveryAddress.Append(OrderDetails.Phone.PhoneNumber);
                 break;
             case DespatchMethod.Delivery:
-                deliveryAddress.Append(OrderDetails.Phone.NewUser);
+                deliveryAddress.AppendLine(OrderDetails.Phone.NewUser);
                 break;
         }
 
@@ -150,7 +150,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     {
         StringBuilder html = new StringBuilder(
             """
-            <span style="font-size:12px; font-family:Verdana;">
+            <span style="font-size:14px; font-family:Verdana;">
             """);
 
         switch (DespatchMethod)

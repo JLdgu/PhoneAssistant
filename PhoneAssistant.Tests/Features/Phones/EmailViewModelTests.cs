@@ -5,6 +5,7 @@ using Moq.AutoMock;
 using Moq;
 using PhoneAssistant.WPF.Application.Repositories;
 using System.Text;
+using System.ComponentModel;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -220,6 +221,33 @@ public sealed class EmailViewModelTests
         TestSetup(_phone);
 
         Assert.Contains("Android Smartphone", _vm.EmailHtml);
+    }
+
+    [Fact]
+    [Description("Issue 43")]
+    private void EmailHtml_WithNokiaOEM()
+    {
+        _phone.OEM = "Nokia";
+        TestSetup(_phone);
+        string notExpected = """
+            <p><br /><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1">
+            DCC mobile phone data usage guidance and policies</a></p>
+            """;
+
+        Assert.DoesNotContain(notExpected, _vm.EmailHtml);
+    }
+
+    [Fact]
+    [Description("Issue 43")]
+    private void EmailHtml_WithNoneNokiaOEM()
+    {
+        TestSetup(_phone);
+        string expected = """
+            <p><br /><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1">
+            DCC mobile phone data usage guidance and policies</a></p>
+            """;
+
+        Assert.Contains(expected, _vm.EmailHtml);
     }
 
     [Theory]

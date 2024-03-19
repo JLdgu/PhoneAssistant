@@ -117,9 +117,9 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         {
             string? includeDate = null;
             if (DespatchMethod == DespatchMethod.CollectGMH || DespatchMethod == DespatchMethod.CollectL87)
-                includeDate = ToOrdinalWorkingDate(DateTime.Now,true);
-            
-            _dymoLabel.Execute(DeliveryAddress,includeDate);
+                includeDate = ToOrdinalWorkingDate(DateTime.Now, true);
+
+            _dymoLabel.Execute(DeliveryAddress, includeDate);
         });
     }
 
@@ -170,31 +170,33 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
                 html.AppendLine($"It was sent on {ToOrdinalWorkingDate(DateTime.Now)}</p>");
                 break;
         }
-        html.AppendLine(
+
+        if (_orderDetails!.Phone.OEM != "Nokia")
+        {
+            html.AppendLine(
             """
             <p><br /><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1">
             DCC mobile phone data usage guidance and policies</a></p>
             """);
-
-        html.AppendLine($"<p><br />To find out how to set up your {_orderDetails!.DeviceType.ToString().ToLower()}, please go here:</br>");
-        if (_orderDetails.Phone.OEM == "Apple")
-        {
-            html.Append(
-                """
+            html.AppendLine($"<p><br />To find out how to set up your {_orderDetails!.DeviceType.ToString().ToLower()}, please go here:</br>");
+            if (_orderDetails.Phone.OEM == "Apple")
+            {
+                html.Append(
+                    """
                 <a href="https://devoncc.sharepoint.com/sites/ICTKB/Public/DCC%20Mobile%20Phone%20Service%20-%20Setting%20up%20Apple%20(iOS)%20Smartphone.docx?d=w5a23e7d6e2404401a5039a4936743875">
                 Setting up your Apple (iOS) Smartphone.docx (devoncc.sharepoint.com)</a></p>
                 """);
-        }
-        else
-        {
-            html.AppendLine(
-                """
-                <a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/Android%20Enterprise%20-%20Setting%20up%20your%20Android%20Phone.docx?d=w64bb3f0a09e44557a64bb78311ee513b&csf=1&web=1"
-                   style="font-size:12px; font-family:Verdana;">
+            }
+            else
+            {
+                html.AppendLine(
+                    """
+                <a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/Android%20Enterprise%20-%20Setting%20up%20your%20Android%20Phone.docx?d=w64bb3f0a09e44557a64bb78311ee513b&csf=1&web=1">
                 Android Enterprise - Setting up your Android Smartphone.docx (devoncc.sharepoint.com)</a></p>
                 """);
+            }
+            html.AppendLine("<p>To setup the phone either use Gov Wi-Fi, tether the phone to another phone, setup at another site or setup at home.</p>");
         }
-        html.AppendLine("<p>To setup the phone either use Gov Wi-Fi, tether the phone to another phone, setup at another site or setup at home.</p>");
 
         if (OrderType == OrderType.Replacement && _orderDetails.DeviceType == DeviceType.Phone)
         {

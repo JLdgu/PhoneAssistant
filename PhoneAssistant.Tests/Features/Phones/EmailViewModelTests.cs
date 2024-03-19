@@ -83,7 +83,7 @@ public sealed class EmailViewModelTests
         expected.AppendLine("Hardware Room GMH");
         expected.AppendLine($"by {_phone.NewUser}");
         expected.AppendLine($"SR {_phone.SR}");
-        expected.AppendLine($"{_phone.PhoneNumber}");
+        expected.Append(_phone.PhoneNumber);
 
         _vm.DespatchMethod = DespatchMethod.CollectGMH;
 
@@ -99,7 +99,7 @@ public sealed class EmailViewModelTests
         expected.AppendLine("Collection from L87");
         expected.AppendLine($"by {_phone.NewUser}");
         expected.AppendLine($"SR {_phone.SR}");
-        expected.AppendLine($"{_phone.PhoneNumber}");
+        expected.Append(_phone.PhoneNumber);
 
         _vm.DespatchMethod = DespatchMethod.CollectL87;
 
@@ -111,7 +111,8 @@ public sealed class EmailViewModelTests
     {
         _phone.DespatchDetails = null;
         TestSetup(_phone);
-        StringBuilder expected = new(_phone.NewUser);
+        StringBuilder expected = new();
+        expected.AppendLine(_phone.NewUser);
 
         _vm.DespatchMethod = DespatchMethod.Delivery;
 
@@ -136,12 +137,11 @@ public sealed class EmailViewModelTests
 
         Assert.Contains(
             """
-            <span style="font-size:12px; font-family:Verdana;">
+            <span style="font-size:14px; font-family:Verdana;">
             """, _vm.EmailHtml);
         Assert.Contains(
             """
-            <p><br /><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1"
-                  style="font-size:12px; font-family:Verdana";>
+            <p><br /><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1">
             DCC mobile phone data usage guidance and policies</a></p>
             """, _vm.EmailHtml);
         Assert.Contains("</span>",_vm.EmailHtml);

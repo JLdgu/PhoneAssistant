@@ -38,6 +38,13 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         ReportViewVisibility = Visibility.Visible;
     }
 
+    [RelayCommand]
+    private async Task Refresh()
+    {
+        await LoadAsync();
+        _filterView.Refresh();
+    }
+
     [ObservableProperty]
     private Visibility _importViewVisibility;
     

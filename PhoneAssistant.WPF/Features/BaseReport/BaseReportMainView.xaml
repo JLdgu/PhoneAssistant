@@ -23,6 +23,13 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <Button Margin="5,5"
+                    Command="{Binding RefreshCommand}"
+                    Content="{materialDesign:PackIcon Kind=Refresh,
+                                                      Size=25}"
+                    Style="{StaticResource MaterialDesignOutlinedLightButton}"
+                    ToolTip="Refresh" />
+
+            <Button Margin="5,5"
                     Command="{Binding ShowImportCommand}"
                     Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
                                                       Size=25}"

@@ -34,9 +34,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migrations", "Migrations", 
 	ProjectSection(SolutionItems) = preProject
 		Database\Migrations\M20240117_Disposals.sql = Database\Migrations\M20240117_Disposals.sql
 		Database\Migrations\M20240212_BaseReport.sql = Database\Migrations\M20240212_BaseReport.sql
-		Database\Migrations\WIP_Disposals.sql = Database\Migrations\WIP_Disposals.sql
-		Database\Migrations\WIP_Migration_Link.sql = Database\Migrations\WIP_Migration_Link.sql
-		Database\Migrations\WIP_Migration_UpdateHistory.sql = Database\Migrations\WIP_Migration_UpdateHistory.sql
+		Database\Migrations\M20240223_Disposals.sql = Database\Migrations\M20240223_Disposals.sql
+		Database\Migrations\M20240320_Locations.sql = Database\Migrations\M20240320_Locations.sql
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BaseReport", "BaseReport", "{0EF8AF1C-E2E1-4047-9207-663ED2697B17}"

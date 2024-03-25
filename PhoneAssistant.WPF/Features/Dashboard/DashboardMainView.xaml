@@ -30,6 +30,7 @@
         <materialDesign:Card Margin="5,5" Padding="4,2">
             <StackPanel Orientation="Vertical">
                 <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.403.8" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #29 Add predefined locations to email view" />
                 <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #33 Make filter work in more instances (Reqires clicking in filter cell before clear button after cell edit)" />
                 <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Print Dymo labels" />
                 <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Remember current view between sessions" />

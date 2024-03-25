@@ -267,6 +267,8 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
 
     public async Task LoadAsync()
     {
+        await EmailViewModel.LoadAsync();
+
         if (CanRefeshPhones) return;
 
         PhoneItems.Clear();

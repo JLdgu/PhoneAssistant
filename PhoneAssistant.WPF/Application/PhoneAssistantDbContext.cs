@@ -8,13 +8,13 @@ public sealed class PhoneAssistantDbContext : DbContext
 {
     public DbSet<EEBaseReport> BaseReport => Set<EEBaseReport>();
 
-    //public DbSet<Link> Links => Set<Link>();
+    public DbSet<Disposal> Disposals => Set<Disposal>();
+
+    public DbSet<Location> Locations => Set<Location>();
 
     public DbSet<Phone> Phones => Set<Phone>();
 
     public DbSet<Sim> Sims => Set<Sim>();
-
-    public DbSet<Disposal> Disposals => Set<Disposal>();
 
     public DbSet<ServiceRequest> ServiceRequests => Set<ServiceRequest>();
 
@@ -45,8 +45,13 @@ public sealed class PhoneAssistantDbContext : DbContext
         {
             b.HasKey(b => b.PhoneNumber);
             b.ToTable("BaseReport");
-        });            
+        });
 
+        modelBuilder.Entity<Location>(l =>
+        {
+            l.HasKey(l => l.Name);
+        });
+        
         modelBuilder.Entity<Phone>(
             p => 
             {

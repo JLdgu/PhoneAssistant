@@ -14,7 +14,6 @@ public class Phone
     public string? AssetTag { get; set; }
     public string? NewUser { get; set; }
     public string? Notes { get; set; }
-    public int? Collection { get; set; }
     public string? DespatchDetails { get; set; }
     public string LastUpdate { get; set; }
 

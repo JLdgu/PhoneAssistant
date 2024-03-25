@@ -15,15 +15,10 @@ public sealed class OrderDetails
         DeviceType = DeviceType.Phone;
         if (Phone.Model != null && Phone.Model.Contains("ipad",StringComparison.InvariantCultureIgnoreCase))
             DeviceType  = DeviceType.Phone;
-
-        DespatchMethod = DespatchMethod.CollectL87;
-        if (Phone.Collection is not null)
-            DespatchMethod = (DespatchMethod)phone.Collection!;
     }
 
     public OrderType OrderType { get; set; } = OrderType.None;
     public DeviceType DeviceType { get; }
-    public DespatchMethod DespatchMethod { get; }
 
     public string OrderedItem
     {
@@ -56,12 +51,4 @@ public enum DeviceType
     None = 0,
     Phone = 1,
     Tablet = 2
-}
-
-public enum DespatchMethod
-{
-    None = 0,
-    CollectGMH = 1,
-    CollectL87 = 2,
-    Delivery = 3
 }

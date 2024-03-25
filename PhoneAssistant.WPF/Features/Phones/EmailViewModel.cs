@@ -1,24 +1,27 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Collections.ObjectModel;
+using System.Text;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
+using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
 public partial class EmailViewModel(IPhonesRepository phonesRepository,
+                                    ILocationsRepository locationsRepository,
                                     IPrintEnvelope printEnvelope,
                                     IPrintDymoLabel dymoLabel
-                                   ) : ObservableObject
+                                   ) : ObservableObject, IViewModel
 {
     private readonly IPhonesRepository _phonesRepository = phonesRepository ?? throw new ArgumentNullException();
+    private readonly ILocationsRepository _locationsRepository = locationsRepository ?? throw new ArgumentNullException();
     private readonly IPrintEnvelope _printEnvelope = printEnvelope ?? throw new ArgumentNullException();
     private readonly IPrintDymoLabel _dymoLabel = dymoLabel ?? throw new ArgumentNullException();
-    private OrderDetails? _orderDetails;
 
+    private OrderDetails? _orderDetails;
     public OrderDetails OrderDetails
     {
         get => _orderDetails ?? throw new ArgumentNullException();
@@ -30,8 +33,15 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             PhoneNumber = value.Phone.PhoneNumber ?? string.Empty;
             AssetTag = value.Phone.AssetTag ?? string.Empty;
             OrderType = value.OrderType;
-            DespatchMethod = value.DespatchMethod;
-            DeliveryAddress = value.Phone.DespatchDetails ?? string.Empty;
+            SelectedLocation = null;
+            if (value.Phone.DespatchDetails is null)
+            {
+                StringBuilder user = new();
+                user.AppendLine(value.Phone.NewUser!);
+                DeliveryAddress = user.ToString();
+            }
+            else
+                DeliveryAddress = value.Phone.DespatchDetails;            
 
             GeneratingEmail = true;
             GenerateEmailHtml();
@@ -56,45 +66,10 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         GenerateEmailHtml();
     }
 
-    [ObservableProperty]
-    private DespatchMethod _despatchMethod;
-    async partial void OnDespatchMethodChanged(DespatchMethod value)
-    {
-        if (_orderDetails is null) return;
-        if (_orderDetails.Phone.Collection == (int?)value) return;
-
-        StringBuilder deliveryAddress = new();
-        switch (value)
-        {
-            case DespatchMethod.CollectGMH:
-                deliveryAddress.AppendLine("Collection from");
-                deliveryAddress.AppendLine("Hardware Room GMH");
-                deliveryAddress.AppendLine($"by {OrderDetails.Phone.NewUser}");
-                deliveryAddress.AppendLine($"SR {OrderDetails.Phone.SR}");
-                deliveryAddress.Append(OrderDetails.Phone.PhoneNumber);
-                break;
-            case DespatchMethod.CollectL87:
-                deliveryAddress.AppendLine("Collection from L87");
-                deliveryAddress.AppendLine($"by {OrderDetails.Phone.NewUser}");
-                deliveryAddress.AppendLine($"SR {OrderDetails.Phone.SR}");
-                deliveryAddress.Append(OrderDetails.Phone.PhoneNumber);
-                break;
-            case DespatchMethod.Delivery:
-                deliveryAddress.AppendLine(OrderDetails.Phone.NewUser);
-                break;
-        }
-
-        DeliveryAddress = deliveryAddress.ToString();
-
-        _orderDetails.Phone.Collection = (int)value;
-        await _phonesRepository.UpdateAsync(_orderDetails.Phone);
-
-        GenerateEmailHtml();
-    }
-
     [RelayCommand]
-    private void Close()
+    private async Task CloseAsync()
     {
+        await _phonesRepository.UpdateAsync(_orderDetails!.Phone);
         GeneratingEmail = false;
     }
 
@@ -116,24 +91,40 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         await Task.Run(() =>
         {
             string? includeDate = null;
-            if (DespatchMethod == DespatchMethod.CollectGMH || DespatchMethod == DespatchMethod.CollectL87)
+            if (SelectedLocation is not null && SelectedLocation.PrintDate)
                 includeDate = ToOrdinalWorkingDate(DateTime.Now, true);
 
             _dymoLabel.Execute(DeliveryAddress, includeDate);
         });
     }
 
+    private bool loaded = false;
+    public ObservableCollection<Location> Locations { get; set; } = new();
+
+    [ObservableProperty]
+    private Location? _selectedLocation;
+    partial void OnSelectedLocationChanged(Location? value)
+    {
+        if (value is null) return;
+
+        string deliveryAddress = value.Address;
+        deliveryAddress = deliveryAddress.Replace("{NewUser}", _orderDetails!.Phone.NewUser);
+        deliveryAddress = deliveryAddress.Replace("{SR}", _orderDetails!.Phone.SR.ToString());
+        deliveryAddress = deliveryAddress.Replace("{PhoneNumber}", PhoneNumber);
+
+        DeliveryAddress = deliveryAddress;
+        GenerateEmailHtml();
+    }
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(EmailHtml))]
     private string _deliveryAddress = string.Empty;
 
-    async partial void OnDeliveryAddressChanged(string value)
+    partial void OnDeliveryAddressChanged(string value)
     {
         if (_orderDetails is null) return;
-        if (_orderDetails.Phone.DespatchDetails == value) return;
 
         _orderDetails.Phone.DespatchDetails = value;
-        await _phonesRepository.UpdateAsync(_orderDetails.Phone);
 
         _formattedAddress = value.Replace(Environment.NewLine, "<br />");
         GenerateEmailHtml();
@@ -152,23 +143,24 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             """
             <span style="font-size:14px; font-family:Verdana;">
             """);
-
-        switch (DespatchMethod)
+        if (SelectedLocation is not null && SelectedLocation.PrintDate)
         {
-            case DespatchMethod.CollectGMH:
-                html.AppendLine($"<p>Your {_orderDetails!.DeviceType.ToString().ToLower()} can be collected from</br>");
+            html.AppendLine($"<p>Your {_orderDetails!.DeviceType.ToString().ToLower()} can be collected from</br>");
+            if (SelectedLocation.Name.Contains("GMH"))
+            {
                 html.AppendLine("DTS End User Compute Team, Hardware Room, Great Moor House, Bittern Road, Exeter, EX2 7FW</br>");
                 html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now.AddDays(2))}</p>");
-                break;
-            case DespatchMethod.CollectL87:
-                html.AppendLine($"<p>Your {_orderDetails!.DeviceType.ToString().ToLower()} can be collected from</br>");
+            }
+            else
+            {
                 html.AppendLine("DTS End User Compute Team, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
                 html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now)}</p>");
-                break;
-            case DespatchMethod.Delivery:
-                html.AppendLine($"<p>Your {_orderDetails!.DeviceType.ToString().ToLower()} has been sent to<br />{_formattedAddress}</br>");
-                html.AppendLine($"It was sent on {ToOrdinalWorkingDate(DateTime.Now)}</p>");
-                break;
+            }
+        }
+        else
+        {
+            html.AppendLine($"<p>Your {_orderDetails!.DeviceType.ToString().ToLower()} has been sent to<br />{_formattedAddress}</br>");
+            html.AppendLine($"It was sent on {ToOrdinalWorkingDate(DateTime.Now)}</p>");
         }
 
         if (_orderDetails!.Phone.OEM != "Nokia")
@@ -288,28 +280,18 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
         return from;
     }
-}
 
-public static class WebBrowserHelper
-{
-    public static readonly DependencyProperty NavigateToProperty =
-        DependencyProperty.RegisterAttached("NavigateTo", typeof(string), typeof(WebBrowserHelper), new UIPropertyMetadata(null, NavigateToPropertyChanged));
-
-    public static string GetNavigateTo(DependencyObject obj)
+    public async Task LoadAsync()
     {
-        return (string)obj.GetValue(NavigateToProperty);
-    }
+        if (loaded) return;
 
-    public static void SetNavigateTo(DependencyObject obj, string value)
-    {
-        obj.SetValue(NavigateToProperty, value);
-    }
+        IEnumerable<Location> locations = await _locationsRepository.GetAllLocationsAsync();
 
-    public static void NavigateToPropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
-    {
-        if (o is WebBrowser browser)
-            if (e.NewValue is string html)
-                if (!string.IsNullOrEmpty(html))
-                    browser.NavigateToString(html);
+        foreach (Location location in locations)
+        {
+            Locations.Add(location);
+        }
+
+        loaded = true;
     }
 }

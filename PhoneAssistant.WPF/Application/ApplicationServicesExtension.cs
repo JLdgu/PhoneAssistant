@@ -43,6 +43,7 @@ public static class ApplicationServicesExtensions
             services.AddSingleton<DisposalsRepository>();
             services.AddSingleton<IDisposalsMainViewModel, DisposalsMainViewModel>();
 
+            services.AddSingleton<ILocationsRepository, LocationsRepository>();
             services.AddSingleton<IPhonesRepository, PhonesRepository>();
             services.AddTransient<IPhonesItemViewModelFactory, PhonesItemViewModelFactory>();
             services.AddSingleton<EmailViewModel>();

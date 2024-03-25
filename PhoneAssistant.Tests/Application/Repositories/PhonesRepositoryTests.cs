@@ -199,7 +199,6 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Phone? expected = new()
         {
             Imei = _phone.Imei,
-            Collection = 3,
             DespatchDetails = "despatch",
             Model = "model2",
             NorR = "N",
@@ -214,7 +213,6 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Phone? actual = await _helper.DbContext.Phones.FindAsync(_phone.Imei);
         Assert.NotNull(actual);
         Assert.Equal(expected.AssetTag, actual.AssetTag);
-        Assert.Equal(3,actual.Collection);
         Assert.Equal(expected.DespatchDetails, actual.DespatchDetails);
         Assert.Equal(expected.FormerUser, actual.FormerUser);
         Assert.Equal(expected.Imei, actual.Imei);

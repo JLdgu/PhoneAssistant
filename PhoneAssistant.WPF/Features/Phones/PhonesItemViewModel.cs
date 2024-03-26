@@ -34,7 +34,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         NewUser = phone.NewUser ?? string.Empty;
         NorR = phone.NorR ?? string.Empty;
         Notes = phone.Notes ?? string.Empty;
-        OEM = phone.OEM ?? string.Empty;
+        OEM = phone.OEM;
         PhoneNumber = phone.PhoneNumber ?? string.Empty;
         SimNumber = phone.SimNumber ?? string.Empty;
         SR = phone.SR.ToString() ?? string.Empty;
@@ -165,8 +165,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     }
 
     [ObservableProperty]
-    private string _oEM;
-    async partial void OnOEMChanged(string value)
+    private OEMs _oEM;
+    async partial void OnOEMChanged(OEMs value)
     {
         if (value == _phone.OEM) return;
 

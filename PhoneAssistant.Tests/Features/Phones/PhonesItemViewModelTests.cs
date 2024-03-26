@@ -22,7 +22,7 @@ public sealed class PhonesItemViewModelTests
         NewUser = "nu",
         NorR = "norr",
         Notes = "note",
-        OEM = "oem",
+        OEM = OEMs.Apple,
         SR = 123456
     };
     private readonly Phone _updatedPhone = new()
@@ -38,7 +38,7 @@ public sealed class PhonesItemViewModelTests
         NewUser = "nu",
         NorR = "norr",
         Notes = "note",
-        OEM = "oem",
+        OEM = OEMs.Apple,
         SR = 123456
     };
 
@@ -158,10 +158,10 @@ public sealed class PhonesItemViewModelTests
     [Fact]
     private void OnOEMChanged_CallsUpdateAsync_WithChangedValue()
     {
-        _vm.OEM = "new OEM";
+        _vm.OEM = OEMs.Nokia;
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        Assert.Equal("new OEM", _phone.OEM);
+        Assert.Equal(OEMs.Nokia, _phone.OEM);
         Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
     

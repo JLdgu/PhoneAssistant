@@ -15,15 +15,18 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
 {
     private readonly IPhonesItemViewModelFactory _phonesItemViewModelFactory;
     private readonly IPhonesRepository _phonesRepository;
-    
-    public ObservableCollection<PhonesItemViewModel> PhoneItems { get; } = new();    
+
+    public ObservableCollection<PhonesItemViewModel> PhoneItems { get; } = new();
 
     public EmailViewModel EmailViewModel { get; }
 
     private readonly ICollectionView _filterView;
 
     public List<string> NorRs { get; init; } = new();
-    public List<string> OEMs { get; init; } = new();
+    public IEnumerable<OEMs> OEMs
+    {
+        get { return Enum.GetValues(typeof(OEMs)).Cast<OEMs>(); }
+    }
     public List<string> Statuses { get; init; } = new();
 
     public PhonesMainViewModel(IPhonesItemViewModelFactory phonesItemViewModelFactory,
@@ -36,15 +39,15 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
         EmailViewModel = emailViewModel ?? throw new ArgumentNullException(nameof(emailViewModel));
         _filterView = CollectionViewSource.GetDefaultView(PhoneItems);
         _filterView.Filter = new Predicate<object>(FilterView);
-               
+
         messenger.RegisterAll(this);
 
         NorRs.Add("N(ew)");
         NorRs.Add("R(epurposed)");
 
-        OEMs.Add("Apple");
-        OEMs.Add("Nokia");
-        OEMs.Add("Samsung");
+        //OEMs.Add("Apple");
+        //OEMs.Add("Nokia");
+        //OEMs.Add("Samsung");
 
         Statuses.Add("Production");
         Statuses.Add("In Stock");
@@ -65,7 +68,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
 
     [ObservableProperty]
     private bool canRefeshPhones;
-        
+
     #region Filtering View
     public bool FilterView(object item)
     {
@@ -113,10 +116,9 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
             else if (!vm.AssetTag.Contains(FilterAssetTag, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
-        if (FilterOEM is not null && FilterOEM.Length > 0)
-            if (vm.OEM is null)
-                return false;
-            else if (!vm.OEM.Contains(FilterOEM, StringComparison.InvariantCultureIgnoreCase))
+        if (FilterOEM is not null)
+            //if (vm.OEM.Contains(FilterOEM, StringComparison.InvariantCultureIgnoreCase))
+            if (vm.OEM != FilterOEM)
                 return false;
 
         if (FilterModel is not null && FilterModel.Length > 0)
@@ -147,8 +149,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     }
 
     [ObservableProperty]
-    //[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterNorR;
+    private string? _filterNorR;
 
     partial void OnFilterNorRChanged(string? value)
     {
@@ -156,8 +157,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     }
 
     [ObservableProperty]
-    //[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterStatus;
+    private string? _filterStatus;
 
     partial void OnFilterStatusChanged(string? value)
     {
@@ -165,8 +165,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterSR;
+    private string? _filterSR;
 
     partial void OnFilterSRChanged(string? value)
     {
@@ -174,8 +173,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterImei;
+    private string? _filterImei;
 
     partial void OnFilterImeiChanged(string? value)
     {
@@ -183,8 +181,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterPhoneNumber;
+    private string? _filterPhoneNumber;
 
     partial void OnFilterPhoneNumberChanged(string? value)
     {
@@ -192,8 +189,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterSimNumber;
+    private string? _filterSimNumber;
 
     partial void OnFilterSimNumberChanged(string? value)
     {
@@ -201,8 +197,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterNewUser;
+    private string? _filterNewUser;
 
     partial void OnFilterNewUserChanged(string? value)
     {
@@ -210,8 +205,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterAssetTag;
+    private string? _filterAssetTag;
 
     partial void OnFilterAssetTagChanged(string? value)
     {
@@ -219,17 +213,15 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterOEM;
+    private OEMs? _filterOEM;
 
-    partial void OnFilterOEMChanged(string? value)
+    partial void OnFilterOEMChanged(OEMs? value)
     {
         _filterView.Refresh();
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterModel;
+    private string? _filterModel;
 
     partial void OnFilterModelChanged(string? value)
     {
@@ -237,8 +229,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterFormerUser;
+    private string? _filterFormerUser;
 
     partial void OnFilterFormerUserChanged(string? value)
     {
@@ -247,8 +238,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
 
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterNotes;
+    private string? _filterNotes;
 
     partial void OnFilterNotesChanged(string? value)
     {
@@ -256,8 +246,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterLastUpdate;
+    private string? _filterLastUpdate;
 
     partial void OnFilterLastUpdateChanged(string? value)
     {
@@ -274,7 +263,7 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
         PhoneItems.Clear();
         IEnumerable<Phone> phones = await _phonesRepository.GetActivePhonesAsync();
 
-        foreach (Phone phone in phones) 
+        foreach (Phone phone in phones)
         {
             PhoneItems.Add(_phonesItemViewModelFactory.Create(phone));
         }

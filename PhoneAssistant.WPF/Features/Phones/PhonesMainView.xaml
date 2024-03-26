@@ -280,11 +280,16 @@
                         <DataGridComboBoxColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                    <TextBox MinWidth="60"
+                                    <TextBlock MinWidth="90"
+                                               VerticalAlignment="Center"
+                                               Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <ComboBox materialDesign:TextFieldAssist.HasClearButton="True"
+                                              ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.OEMs}"
+                                              SelectedValue="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterOEM, UpdateSourceTrigger=PropertyChanged}" />
+                                    <!--<TextBox MinWidth="60"
                                              materialDesign:HintAssist.Hint="Filter"
                                              materialDesign:TextFieldAssist.HasClearButton="True"
-                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterOEM, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterOEM, UpdateSourceTrigger=PropertyChanged, Delay=200}" />-->
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridComboBoxColumn.HeaderTemplate>

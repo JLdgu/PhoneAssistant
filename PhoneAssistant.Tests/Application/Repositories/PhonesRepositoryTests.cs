@@ -16,11 +16,12 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Imei = "imei",
         Model = "model",
         NorR = "R",
-        OEM = "Nokia",
+        OEM = OEMs.Nokia,
         PhoneNumber = "phoneNumber",
         SimNumber = "simNumber",
-        Status = "status"
-    };
+        Status = "status",
+        LastUpdate = "2023-06-15 00:00:00"
+};
 
     public PhonesRepositoryTests()
     {
@@ -70,6 +71,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         const string SIM_NUMBER = "sim number";
         _phone.PhoneNumber = PHONE_NUMBER;
         _phone.SimNumber = SIM_NUMBER;
+        _phone.LastUpdate = "2023-06-15 00:00:00";
         await _helper.DbContext.Phones.AddAsync(_phone);
         Sim? sim = new Sim() { PhoneNumber = PHONE_NUMBER, SimNumber = SIM_NUMBER };
         await _helper.DbContext.Sims.AddAsync(sim);
@@ -100,6 +102,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         const string SIM_NUMBER = "sim number";
         _phone.PhoneNumber = PHONE_NUMBER;
         _phone.SimNumber = SIM_NUMBER;
+        _phone.LastUpdate = "2023-06-15 00:00:00";
         await _helper.DbContext.Phones.AddAsync(_phone);
         await _helper.DbContext.SaveChangesAsync();
 
@@ -131,7 +134,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         const string EXPECTED_NEW_USER = "new user";
         const string EXPECTED_NORR = "R";
         const string EXPECTED_NOTES = "notes";
-        const string EXPECTED_OEM = "Samsung";
+        const OEMs EXPECTED_OEM = OEMs.Samsung;
         const int EXPECTED_SR = 12345;
         const string EXPECTED_STATUS = "status";
         Phone? phone = new()
@@ -147,7 +150,8 @@ public sealed class PhonesRepositoryTests : DbTestHelper
             Notes = EXPECTED_NOTES,
             OEM = EXPECTED_OEM,
             SR = EXPECTED_SR,
-            Status = EXPECTED_STATUS
+            Status = EXPECTED_STATUS,
+            LastUpdate = "2023-06-15 00:00:00"
         };
         await _helper.DbContext.Phones.AddAsync(phone);
         await _helper.DbContext.SaveChangesAsync();
@@ -202,7 +206,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
             DespatchDetails = "despatch",
             Model = "model2",
             NorR = "N",
-            OEM = "Apple",
+            OEM = OEMs.Apple,
             PhoneNumber = "phone2",
             SimNumber = "sim2",
             Status = "status2"

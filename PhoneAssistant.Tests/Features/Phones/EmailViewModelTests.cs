@@ -25,7 +25,7 @@ public sealed class EmailViewModelTests
         NewUser = "nu", 
         NorR = "norr",
         Notes = "note",
-        OEM = "oem",
+        OEM = OEMs.Apple,
         SR = 123456
     };
 
@@ -137,7 +137,7 @@ public sealed class EmailViewModelTests
     [Fact]
     private void OEM_Apple_Includes_AppleDetails()
     {
-        _phone.OEM = "Apple";
+        _phone.OEM = OEMs.Apple;
         TestSetup(_phone);
 
         Assert.Contains(DataUsage, _vm.EmailHtml);
@@ -148,7 +148,7 @@ public sealed class EmailViewModelTests
     [Description("Issue 43")]
     private void OEM_Nokia_Includes_NokiaDetails()
     {
-        _phone.OEM = "Nokia";
+        _phone.OEM = OEMs.Nokia;
         TestSetup(_phone);
 
         Assert.DoesNotContain(DataUsage, _vm.EmailHtml);
@@ -158,7 +158,7 @@ public sealed class EmailViewModelTests
     [Fact]
     private void OEM_Samsung_Includes_SamsungDetails()
     {
-        _phone.OEM = "Samsung";
+        _phone.OEM = OEMs.Samsung;
         TestSetup(_phone);
 
         Assert.Contains(DataUsage, _vm.EmailHtml);

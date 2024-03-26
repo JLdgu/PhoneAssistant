@@ -49,10 +49,11 @@ public sealed class PhoneAssistantDbContext : DbContext
             b.HasKey(b => b.PhoneNumber);
         });
 
-        modelBuilder.Entity<ImportHistory>(d =>
+        modelBuilder.Entity<ImportHistory>(i =>
         {
-            d.ToTable("ImportHistory");
-            d.Property(i => i.Name).HasConversion(n => n.ToString(), n => (ImportType)Enum.Parse(typeof(ImportType), n));
+            i.ToTable("ImportHistory");
+            i.Property(i => i.Name).HasConversion(n => n.ToString(), n => (ImportType)Enum.Parse(typeof(ImportType), n));
+            i.Property(i => i.ImportDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
 
         modelBuilder.Entity<Location>(l =>
@@ -64,19 +65,23 @@ public sealed class PhoneAssistantDbContext : DbContext
             p => 
             {
                 p.HasKey(p => p.Imei);
-                p.Property(p => p.SR).HasColumnName("SRNumber");                
-                p.HasIndex(p => p.AssetTag).IsUnique();
+                p.ToTable(p => p.HasCheckConstraint("CK_NorR", "\"NorR\" = 'N' OR \"NorR\" = 'R'"));
+                p.Property(p => p.SR).HasColumnName("SRNumber");
+                p.Property(p => p.OEM).HasConversion(o => o.ToString(), o => (OEMs)Enum.Parse(typeof(OEMs), o));
+                p.ToTable(p => p.HasCheckConstraint("CK_OEM", "\"OEM\" = 'Apple' OR \"OEM\" = 'Nokia' OR \"OEM\" = 'Samsung' OR \"OEM\" = 'Other'"));
                 p.Property(p => p.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                p.HasIndex(p => p.AssetTag).IsUnique();
             });
         modelBuilder.Entity<Phone>()
-            .ToTable(p => p.HasCheckConstraint("CK_NorR", "\"NorR\" = 'N' OR \"NorR\" = 'R'"))
-            .ToTable(p => p.HasCheckConstraint("CK_OEM", "\"OEM\" = 'Apple' OR \"OEM\" = 'Nokia' OR \"OEM\" = 'Samsung'"))
 ;
 
         modelBuilder.Entity<Sim>(
             s =>
             {
                 s.HasKey(s => s.PhoneNumber);
+                s.Property(s => s.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                 s.HasIndex(s => s.SimNumber).IsUnique();
             });
 

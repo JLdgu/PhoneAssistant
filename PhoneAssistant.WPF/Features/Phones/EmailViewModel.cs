@@ -163,7 +163,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             html.AppendLine($"It was sent on {ToOrdinalWorkingDate(DateTime.Now)}</p>");
         }
 
-        if (_orderDetails!.Phone.OEM != "Nokia")
+        if (_orderDetails!.Phone.OEM != OEMs.Nokia)
         {
             html.AppendLine(
             """
@@ -171,7 +171,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             DCC mobile phone data usage guidance and policies</a></p>
             """);
             html.AppendLine($"<p><br />To find out how to set up your {_orderDetails!.DeviceType.ToString().ToLower()}, please go here:</br>");
-            if (_orderDetails.Phone.OEM == "Apple")
+            if (_orderDetails.Phone.OEM == OEMs.Apple)
             {
                 html.Append(
                     """

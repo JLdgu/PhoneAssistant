@@ -20,7 +20,7 @@ namespace PhoneAssistant.WPF.Features.BaseReport;
 public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMainViewModel
 {
     private readonly BaseReportRepository _repository;
-
+    private readonly ImportHistoryRepository _import;
     private bool _loaded;
     
     public ObservableCollection<string> LogItems { get; } = new();
@@ -29,9 +29,10 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     
     private readonly ICollectionView _filterView;
 
-    public BaseReportMainViewModel(BaseReportRepository repository)
+    public BaseReportMainViewModel(BaseReportRepository repository, ImportHistoryRepository importHistory)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _import = importHistory ?? throw new ArgumentNullException(nameof(importHistory));
         _filterView = CollectionViewSource.GetDefaultView(BaseReport);
         _filterView.Filter = new Predicate<object>(FilterView);
         ImportViewVisibility = Visibility.Collapsed;
@@ -224,6 +225,8 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
 
         LogItems.Add($"Added {added} disposals");
         LogItems.Add("Import complete");
+                
+        await _import.CreateAsync(Path.GetFileName(DevonBaseReport!));
 
         DevonBaseReport = string.Empty;
 

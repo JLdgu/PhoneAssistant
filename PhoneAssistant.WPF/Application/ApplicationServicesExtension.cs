@@ -34,17 +34,21 @@ public static class ApplicationServicesExtensions
             services.AddSingleton<WeakReferenceMessenger>();
             services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider => provider.GetRequiredService<WeakReferenceMessenger>());
 
-            // Features
+            // Reposotories
             services.AddSingleton<BaseReportRepository>();
+            services.AddSingleton<DisposalsRepository>();
+            services.AddSingleton<ImportHistoryRepository>();
+            services.AddSingleton<ILocationsRepository, LocationsRepository>();
+            services.AddSingleton<IPhonesRepository, PhonesRepository>();
+            services.AddSingleton<ISimsRepository, SimsRepository>();
+
+            // Features
             services.AddSingleton<IBaseReportMainViewModel, BaseReportMainViewModel>();
 
             services.AddSingleton<IDashboardMainViewModel, DashboardMainViewModel>();
 
-            services.AddSingleton<DisposalsRepository>();
             services.AddSingleton<IDisposalsMainViewModel, DisposalsMainViewModel>();
 
-            services.AddSingleton<ILocationsRepository, LocationsRepository>();
-            services.AddSingleton<IPhonesRepository, PhonesRepository>();
             services.AddTransient<IPhonesItemViewModelFactory, PhonesItemViewModelFactory>();
             services.AddSingleton<EmailViewModel>();
             services.AddTransient<PhonesItemViewModel>();
@@ -58,7 +62,6 @@ public static class ApplicationServicesExtensions
             services.AddTransient<IUsersMainViewModel, UsersMainViewModel>();
             services.AddTransient<IUsersItemViewModelFactory, UsersItemViewModelFactory>();
             
-            services.AddSingleton<ISimsRepository, SimsRepository>();
             services.AddSingleton<ISimsMainViewModel, SimsMainViewModel>();
             services.AddTransient<ISimsItemViewModelFactory, SimsItemViewModelFactory>();
             services.AddTransient<SimsItemViewModel>();

@@ -72,9 +72,9 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         _phone.PhoneNumber = PHONE_NUMBER;
         _phone.SimNumber = SIM_NUMBER;
         _phone.LastUpdate = "2023-06-15 00:00:00";
-        await _helper.DbContext.Phones.AddAsync(_phone);
+        _helper.DbContext.Phones.Add(_phone);
         Sim? sim = new Sim() { PhoneNumber = PHONE_NUMBER, SimNumber = SIM_NUMBER };
-        await _helper.DbContext.Sims.AddAsync(sim);
+        _helper.DbContext.Sims.Add(sim);
         await _helper.DbContext.SaveChangesAsync();
 
         Phone updatedPhone = await _repository.RemoveSimFromPhone(_phone);

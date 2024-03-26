@@ -10,6 +10,8 @@ public sealed class PhoneAssistantDbContext : DbContext
 
     public DbSet<Disposal> Disposals => Set<Disposal>();
 
+    public DbSet<ImportHistory> Imports => Set<ImportHistory>();
+
     public DbSet<Location> Locations => Set<Location>();
 
     public DbSet<Phone> Phones => Set<Phone>();
@@ -37,14 +39,20 @@ public sealed class PhoneAssistantDbContext : DbContext
     {
         modelBuilder.Entity<Disposal>(d =>
         {
-            d.HasKey(d => d.Imei);
             d.ToTable("ReconcileDisposals");
+            d.HasKey(d => d.Imei);
         });
 
         modelBuilder.Entity<EEBaseReport>(b => 
         {
-            b.HasKey(b => b.PhoneNumber);
             b.ToTable("BaseReport");
+            b.HasKey(b => b.PhoneNumber);
+        });
+
+        modelBuilder.Entity<ImportHistory>(d =>
+        {
+            d.ToTable("ImportHistory");
+            d.Property(i => i.Name).HasConversion(n => n.ToString(), n => (ImportType)Enum.Parse(typeof(ImportType), n));
         });
 
         modelBuilder.Entity<Location>(l =>
@@ -70,7 +78,6 @@ public sealed class PhoneAssistantDbContext : DbContext
             {
                 s.HasKey(s => s.PhoneNumber);
                 s.HasIndex(s => s.SimNumber).IsUnique();
-                //s.Property(s => s.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
 
         modelBuilder.Entity<ServiceRequest>(
@@ -78,16 +85,7 @@ public sealed class PhoneAssistantDbContext : DbContext
             {
                 sr.HasKey(sr => sr.ServiceRequestNumber);
                 sr.Property(sr => sr.ServiceRequestNumber).HasColumnName("SRNumber");
-                //sr.Property(sr => sr.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
-
-        //modelBuilder.Entity<Link>(
-        //    l =>
-        //    {
-        //        l.Property("PhoneImei").HasColumnName("Imei");
-        //        l.Property("SimPhoneNumber").HasColumnName("PhoneNumber");
-        //        l.Property("ServiceRequestNumber").HasColumnName("SRNumber");
-        //    });
 
         base.OnModelCreating(modelBuilder);
     }

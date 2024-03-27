@@ -1,8 +1,7 @@
 ﻿namespace PhoneAssistant.WPF.Shared;
 
 /// <summary>
-/// Use Interface rather than class as CommunityToolkit.MVVM objects
-/// must be inherited as base classes
+/// Ensures view models with repositories load data
 /// </summary>
 public interface IViewModel
 {

@@ -57,7 +57,7 @@
                     <viewmodel:NorRConverter x:Key="NorRConverter" />
                 </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <materialDesign:DataGridComboBoxColumn Header="Age"
+                    <materialDesign:DataGridComboBoxColumn Header="Condition"
                                                            ItemsSourceBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.NorRs}"
                                                            SelectedValueBinding="{Binding NorR, Converter={StaticResource NorRConverter}, UpdateSourceTrigger=LostFocus}">
                         <DataGridComboBoxColumn.HeaderTemplate>

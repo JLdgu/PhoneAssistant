@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 
 using PhoneAssistant.WPF.Application;
+using PhoneAssistant.WPF.Features.AddItem;
 using PhoneAssistant.WPF.Features.BaseReport;
 using PhoneAssistant.WPF.Features.Dashboard;
 using PhoneAssistant.WPF.Features.Disposals;
@@ -16,6 +17,7 @@ namespace PhoneAssistant.WPF.Features.MainWindow;
 public enum ViewModelType
 {
     None = 0,
+    AddItem,
     BaseReport,
     Dashboard,
     Disposals,
@@ -27,6 +29,7 @@ public enum ViewModelType
 
 public sealed partial class MainWindowViewModel : ObservableObject
 {
+    private readonly AddItemViewModel _addItemViewModel;
     private readonly IBaseReportMainViewModel _baseReportMainViewModel;
     private readonly IDashboardMainViewModel _dashboardMainViewModel;
     private readonly IDisposalsMainViewModel _disposalsMainViewModel;
@@ -39,7 +42,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private IViewModel? _selectedViewModel;
 
-    public MainWindowViewModel(IBaseReportMainViewModel baseReportMainViewModel,
+    public MainWindowViewModel(AddItemViewModel addItemViewModel,
+                               IBaseReportMainViewModel baseReportMainViewModel,
                                IDashboardMainViewModel dashboardMainViewModel,
                                IDisposalsMainViewModel disposalsMainViewModel,
                                IPhonesMainViewModel phonesMainViewModel,
@@ -48,6 +52,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
                                IUsersMainViewModel usersMainViewModel,
                                IUserSettings userSettings)
     {
+        _addItemViewModel = addItemViewModel ?? throw new ArgumentNullException(nameof(addItemViewModel));
         _baseReportMainViewModel = baseReportMainViewModel ?? throw new ArgumentNullException(nameof(baseReportMainViewModel));
         _dashboardMainViewModel = dashboardMainViewModel ?? throw new ArgumentNullException(nameof(dashboardMainViewModel));
         _disposalsMainViewModel = disposalsMainViewModel ?? throw new ArgumentNullException(nameof(disposalsMainViewModel));
@@ -74,6 +79,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         SelectedViewModel = viewType switch
         {
             ViewModelType.None => _dashboardMainViewModel,
+            ViewModelType.AddItem => _addItemViewModel,
             ViewModelType.BaseReport => _baseReportMainViewModel,
             ViewModelType.Dashboard => _dashboardMainViewModel,
             ViewModelType.Disposals => _disposalsMainViewModel,
@@ -85,6 +91,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
         };
         _userSettings.CurrentView = viewType;
         _userSettings.Save();
-        await SelectedViewModel.LoadAsync();
+
+        
+            await SelectedViewModel.LoadAsync();
     }
 }

@@ -29,10 +29,8 @@
                              Foreground="{DynamicResource SecondaryHueLightForegroundBrush}">
             <StackPanel Orientation="Horizontal">
 
-                <TextBlock Margin="0,0,10,0"
-                           VerticalAlignment="Center"
-                           Text="AD User Name" />
                 <TextBox MinWidth="250"
+                         materialDesign:HintAssist.Hint="AD User Name"
                          materialDesign:TextFieldAssist.HasClearButton="True"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          Text="{Binding SearchUser, UpdateSourceTrigger=PropertyChanged}">
@@ -63,11 +61,6 @@
                                     Binding="{Binding User.Name, Mode=OneTime}"
                                     Header="Name" />
                 <DataGridTemplateColumn CanUserSort="False">
-                    <!--<DataGridTemplateColumn.CellStyle>
-                        <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="DataGridCell">
-                            <Setter Property="materialDesign:DataGridAssist.CellPadding" Value="0" />
-                        </Style>
-                    </DataGridTemplateColumn.CellStyle>-->
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="{x:Type viewmodel:UsersItemViewModel}">
                             <Button Height="20"
@@ -86,11 +79,6 @@
                                     Binding="{Binding User.Email, Mode=OneTime}"
                                     Header="Email" />
                 <DataGridTemplateColumn CanUserSort="False">
-                    <!--<DataGridTemplateColumn.CellStyle>
-                        <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="DataGridCell">
-                            <Setter Property="materialDesign:DataGridAssist.CellPadding" Value="0" />
-                        </Style>
-                    </DataGridTemplateColumn.CellStyle>-->
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="{x:Type viewmodel:UsersItemViewModel}">
                             <Button Height="20"
@@ -122,6 +110,7 @@
                                     Header="Description" />
             </DataGrid.Columns>
         </DataGrid>
+
         <StackPanel Grid.Row="3"
                     Margin="0,10,0,0"
                     HorizontalAlignment="Center"
@@ -130,11 +119,5 @@
                     Visibility="{Binding NoResultsFound, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="No Results Found" />
         </StackPanel>
-        <!--<ProgressBar Grid.Row="3"
-                     IsIndeterminate="True"
-                     Style="{StaticResource MaterialDesignCircularProgressBar}"
-                     Visibility="{Binding IsSearchRunning, Converter={StaticResource BooleanToVisibilityConverter}}"
-                     Value="0" />-->
-
     </Grid>
 </UserControl>

@@ -18,8 +18,6 @@ public sealed class PhoneAssistantDbContext : DbContext
 
     public DbSet<Sim> Sims => Set<Sim>();
 
-    public DbSet<ServiceRequest> ServiceRequests => Set<ServiceRequest>();
-
     public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -83,13 +81,6 @@ public sealed class PhoneAssistantDbContext : DbContext
                 s.Property(s => s.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                 s.HasIndex(s => s.SimNumber).IsUnique();
-            });
-
-        modelBuilder.Entity<ServiceRequest>(
-            sr =>
-            {
-                sr.HasKey(sr => sr.ServiceRequestNumber);
-                sr.Property(sr => sr.ServiceRequestNumber).HasColumnName("SRNumber");
             });
 
         base.OnModelCreating(modelBuilder);

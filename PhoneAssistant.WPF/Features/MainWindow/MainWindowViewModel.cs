@@ -21,7 +21,6 @@ public enum ViewModelType
     Disposals,
     Phones,
     Sims,
-    ServiceRequests,
     Settings,
     Users
 }
@@ -80,7 +79,6 @@ public sealed partial class MainWindowViewModel : ObservableObject
             ViewModelType.Disposals => _disposalsMainViewModel,
             ViewModelType.Phones => _phonesMainViewModel,
             ViewModelType.Sims => _simsMainViewModel,
-            ViewModelType.ServiceRequests => throw new NotImplementedException(),
             ViewModelType.Settings => _settingsMainViewModel,
             ViewModelType.Users => _usersMainViewModel,
             _ => throw new NotImplementedException()

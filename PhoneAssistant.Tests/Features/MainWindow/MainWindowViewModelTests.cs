@@ -2,7 +2,6 @@
 using PhoneAssistant.WPF.Features.MainWindow;
 using Moq;
 using PhoneAssistant.WPF.Features.Phones;
-using PhoneAssistant.WPF.Features.ServiceRequests;
 using PhoneAssistant.WPF.Features.Sims;
 using PhoneAssistant.WPF.Features.Dashboard;
 using PhoneAssistant.WPF.Features.Users;
@@ -40,7 +39,6 @@ public sealed class MainWindowViewModelTests
     [InlineData(ViewModelType.Dashboard)]  
     [InlineData(ViewModelType.Phones)]
     [InlineData(ViewModelType.Sims)]
-    //[InlineData(ViewModelType.ServiceRequests)]
     [InlineData(ViewModelType.Settings)]
     [InlineData(ViewModelType.Users)]
     public async Task UpdateViewAsync_WithValidViewModelType_CallUpdateAsync(ViewModelType viewModelType)
@@ -49,7 +47,6 @@ public sealed class MainWindowViewModelTests
         Mock<IDashboardMainViewModel> dashboard = mocker.GetMock<IDashboardMainViewModel>();
         Mock<IPhonesMainViewModel> phones = mocker.GetMock<IPhonesMainViewModel>();
         Mock<ISimsMainViewModel> sims =  mocker.GetMock<ISimsMainViewModel>();
-        Mock<IServiceRequestsMainViewModel> srs = mocker.GetMock<IServiceRequestsMainViewModel>();
         Mock<ISettingsMainViewModel> settings = mocker.GetMock<ISettingsMainViewModel>();
         Mock<IUsersMainViewModel> users = mocker.GetMock<IUsersMainViewModel>();
         MainWindowViewModel vm = mocker.CreateInstance<MainWindowViewModel>();

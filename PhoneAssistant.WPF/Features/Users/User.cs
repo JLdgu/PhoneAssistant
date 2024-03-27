@@ -7,11 +7,11 @@ public class User
 
     public string? Email { get; set; }
 
-    public string LastLogonDate { get; set; }
+    public string LastLogonDate { get; set; } = string.Empty;
 
-    public string PasswordLastSet { get; set; }
+    public string PasswordLastSet { get; set; } = string.Empty;
 
-    public string WhenCreated { get; set; }
+    public string WhenCreated { get; set; } = string.Empty;
 
     public bool Enabled { get; set; } = false;
 }

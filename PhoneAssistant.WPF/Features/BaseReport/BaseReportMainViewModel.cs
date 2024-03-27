@@ -53,7 +53,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     private Visibility _reportViewVisibility;
 
     [ObservableProperty]
-    private string _LatestImport;
+    private string _LatestImport = string.Empty;
 
 
     #region Filter

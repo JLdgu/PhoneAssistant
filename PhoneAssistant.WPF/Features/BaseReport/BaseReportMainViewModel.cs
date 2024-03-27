@@ -23,10 +23,6 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     private readonly ImportHistoryRepository _import;
     private bool _loaded;
     
-    public ObservableCollection<string> LogItems { get; } = new();
-    
-    public ObservableCollection<EEBaseReport> BaseReport { get; } = new();
-    
     private readonly ICollectionView _filterView;
 
     public BaseReportMainViewModel(BaseReportRepository repository, ImportHistoryRepository importHistory)
@@ -38,6 +34,10 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         ImportViewVisibility = Visibility.Collapsed;
         ReportViewVisibility = Visibility.Visible;
     }
+
+    public ObservableCollection<string> LogItems { get; } = new();
+
+    public ObservableCollection<EEBaseReport> BaseReport { get; } = new();
 
     [RelayCommand]
     private async Task Refresh()
@@ -51,6 +51,10 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     
     [ObservableProperty]
     private Visibility _reportViewVisibility;
+
+    [ObservableProperty]
+    private string _LatestImport;
+
 
     #region Filter
     public bool FilterView(object item)
@@ -225,8 +229,10 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
 
         LogItems.Add($"Added {added} disposals");
         LogItems.Add("Import complete");
-                
-        await _import.CreateAsync(Path.GetFileName(DevonBaseReport!));
+
+        ImportHistory importHistory = await _import.CreateAsync(Path.GetFileName(DevonBaseReport!));
+        
+        LatestImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
 
         DevonBaseReport = string.Empty;
 
@@ -246,6 +252,12 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         if (_loaded) return;
 
         _loaded = true;
+
+        ImportHistory? importHistory = _import.GetLatestImport();
+        if (importHistory is null)
+            LatestImport = $"Latest Import: None";
+        else
+            LatestImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})"; 
 
         IEnumerable<EEBaseReport> report = await _repository.GetBaseReportAsync();
 

@@ -28,7 +28,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
         _filterView = CollectionViewSource.GetDefaultView(SimItems);
         _filterView.Filter = new Predicate<object>(FilterView);
 
-        LoadAsync();
+        _ = LoadAsync();
     }
 
     [RelayCommand]
@@ -41,7 +41,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
     }
 
     [ObservableProperty]
-    private bool canRefeshSims;
+    private bool _canRefeshSims;
 
     #region Filter View
     private bool FilterView(object item)
@@ -88,8 +88,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterPhoneNumber;
+    private string? _filterPhoneNumber;
 
     partial void OnFilterPhoneNumberChanged(string? value)
     {
@@ -97,8 +96,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterSimNumber;
+    private string? _filterSimNumber;
 
     partial void OnFilterSimNumberChanged(string? value)
     {
@@ -106,8 +104,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterStatus;
+    private string? _filterStatus;
 
     partial void OnFilterStatusChanged(string? value)
     {
@@ -115,8 +112,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterAssetTag;
+    private string? _filterAssetTag;
 
     partial void OnFilterAssetTagChanged(string? value)
     {
@@ -124,8 +120,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterNotes;
+    private string? _filterNotes;
 
     partial void OnFilterNotesChanged(string? value)
     {
@@ -133,8 +128,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterLastUpdate;
+    private string? _filterLastUpdate;
 
     partial void OnFilterLastUpdateChanged(string? value)
     {
@@ -160,10 +154,6 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
             new Sim { PhoneNumber = "56789", SimNumber = "43210" },
             new Sim { PhoneNumber = "6789", SimNumber = "3210" },
         };
-        //if (simCards == null)
-        //{
-        //    throw new ArgumentNullException(nameof(simCards));
-        //}
 
         foreach (Sim simcard in simCards)
         {
@@ -171,5 +161,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
         }
 
         CanRefeshSims = true;
+
+        await Task.CompletedTask;
     }
 }

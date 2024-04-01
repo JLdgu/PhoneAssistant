@@ -13,4 +13,8 @@ public partial class SimsMainView : UserControl
         InitializeComponent();
         MaxHeight = System.Windows.SystemParameters.VirtualScreenHeight;
     }
+    private void StackPanel_GotKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+    {
+        SimsDataGrid.CommitEdit(DataGridEditingUnit.Row, true);
+    }
 }

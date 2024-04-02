@@ -25,7 +25,7 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
 
         UserItems.Clear();
 
-        string person = SearchUser.Replace(" ", "*");
+        string person = SearchUser.Trim().Replace(" ", "*");
 
         using SearchResultCollection results = PersonSearch(person);
 

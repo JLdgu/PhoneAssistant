@@ -4,12 +4,12 @@ using System.Windows.Data;
 namespace PhoneAssistant.WPF.Features.Phones;
 
 [ValueConversion(typeof(string), typeof(string))]
-public class NorRConverter : IValueConverter
+public class ConditionConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         string? nOrR = value as string;
-        nOrR = nOrR == "N" ? "N(ew)" : "R(epurposed)";
+        nOrR = nOrR == "N" ? "New" : "Repurposed";
 
         return nOrR;
     }

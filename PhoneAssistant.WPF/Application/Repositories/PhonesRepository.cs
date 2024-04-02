@@ -14,6 +14,13 @@ public sealed class PhonesRepository : IPhonesRepository
         _dbContext = dbContext;
     }
 
+    public async Task<Phone> Create(Phone phone)
+    {
+        _dbContext.Phones.Add(phone);
+        await _dbContext.SaveChangesAsync();
+        return phone;
+    }
+
     public async Task<IEnumerable<Phone>> GetActivePhonesAsync()
     {
         IEnumerable<Phone> phones = await _dbContext.Phones
@@ -29,6 +36,47 @@ public sealed class PhonesRepository : IPhonesRepository
         IEnumerable<Phone> phones = await _dbContext.Phones
             .ToListAsync();
         return phones;
+    }
+    public async Task<Phone> RemoveSimFromPhone(Phone phone)
+    {
+        if (phone is null)
+        {
+            throw new ArgumentNullException(nameof(phone));
+        }
+        if (string.IsNullOrEmpty(phone.PhoneNumber))
+        {
+            throw new ArgumentException($"'{nameof(phone.PhoneNumber)}' cannot be null or empty.", nameof(phone.PhoneNumber));
+        }
+        if (string.IsNullOrEmpty(phone.SimNumber))
+        {
+            throw new ArgumentException($"'{nameof(phone.SimNumber)}' cannot be null or empty.", nameof(phone.SimNumber));
+        }
+
+        Phone dbPhone = await _dbContext.Phones.SingleAsync(x => x.Imei == phone.Imei);
+        Sim? sim = await _dbContext.Sims.FindAsync(phone.PhoneNumber);
+        if (sim is not null)
+        {
+            sim.SimNumber = phone.SimNumber;
+            sim.Status = "In Stock";
+            _dbContext.Sims.Update(sim);
+        }
+        else
+        {
+            sim = new()
+            {
+                PhoneNumber = phone.PhoneNumber,
+                SimNumber = phone.SimNumber,
+                Status = "In Stock"
+            };
+            _dbContext.Sims.Add(sim);
+        }
+        dbPhone.PhoneNumber = null;
+        dbPhone.SimNumber = null;
+        _dbContext.Phones.Update(dbPhone);
+        await _dbContext.SaveChangesAsync();
+
+        Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
+        return updatedPhone;
     }
 
     public async Task<string> UpdateAsync(Phone phone)
@@ -91,47 +139,5 @@ public sealed class PhonesRepository : IPhonesRepository
 
         Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
         return updatedPhone.LastUpdate;
-    }
-
-    public async Task<Phone> RemoveSimFromPhone(Phone phone)
-    {
-        if (phone is null)
-        {
-            throw new ArgumentNullException(nameof(phone));
-        }
-        if (string.IsNullOrEmpty(phone.PhoneNumber))
-        {
-            throw new ArgumentException($"'{nameof(phone.PhoneNumber)}' cannot be null or empty.", nameof(phone.PhoneNumber));
-        }
-        if (string.IsNullOrEmpty(phone.SimNumber))
-        {
-            throw new ArgumentException($"'{nameof(phone.SimNumber)}' cannot be null or empty.", nameof(phone.SimNumber));
-        }
-
-        Phone dbPhone = await _dbContext.Phones.SingleAsync(x => x.Imei == phone.Imei);
-        Sim? sim = await _dbContext.Sims.FindAsync(phone.PhoneNumber);
-        if (sim is not null)
-        {
-            sim.SimNumber = phone.SimNumber;
-            sim.Status = "In Stock";
-            _dbContext.Sims.Update(sim);
-        }
-        else
-        {
-            sim = new()
-            {
-                PhoneNumber = phone.PhoneNumber,
-                SimNumber = phone.SimNumber,
-                Status = "In Stock"
-            };
-            _dbContext.Sims.Add(sim);
-        }
-        dbPhone.PhoneNumber = null;
-        dbPhone.SimNumber = null;
-        _dbContext.Phones.Update(dbPhone);
-        await _dbContext.SaveChangesAsync();
-
-        Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
-        return updatedPhone;
     }
 }

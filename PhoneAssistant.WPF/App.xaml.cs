@@ -40,11 +40,11 @@ public partial class App : System.Windows.Application
 #if DEBUG
         var helper = new PaletteHelper();
         var theme = helper.GetTheme();
+        theme.SetBaseTheme(BaseTheme.Inherit);
         theme.SetPrimaryColor(Colors.Orange);
-        theme.SetSecondaryColor(Colors.DarkOrange);
+        theme.SetSecondaryColor(Colors.Yellow);
         helper.SetTheme(theme);
 #endif
-
 
         MainWindow = _host.Services.GetRequiredService<MainWindow>();
         MainWindow.Show();

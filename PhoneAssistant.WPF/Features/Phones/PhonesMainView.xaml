@@ -54,12 +54,12 @@
                       HeadersVisibility="Column"
                       ItemsSource="{Binding PhoneItems}">
                 <DataGrid.Resources>
-                    <viewmodel:NorRConverter x:Key="NorRConverter" />
+                    <viewmodel:ConditionConverter x:Key="ConditionConverter" />
                 </DataGrid.Resources>
                 <DataGrid.Columns>
                     <materialDesign:DataGridComboBoxColumn Header="Condition"
-                                                           ItemsSourceBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.NorRs}"
-                                                           SelectedValueBinding="{Binding NorR, Converter={StaticResource NorRConverter}, UpdateSourceTrigger=LostFocus}">
+                                                           ItemsSourceBinding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.Conditions}"
+                                                           SelectedValueBinding="{Binding NorR, Converter={StaticResource ConditionConverter}, UpdateSourceTrigger=LostFocus}">
                         <DataGridComboBoxColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">

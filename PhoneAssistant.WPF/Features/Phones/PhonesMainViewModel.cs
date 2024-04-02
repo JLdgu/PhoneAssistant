@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
+using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
@@ -22,12 +23,14 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
 
     private readonly ICollectionView _filterView;
 
-    public List<string> NorRs { get; init; } = new();
+    public List<string> Conditions { get; } = ApplicationSettings.Conditions;
+
     public IEnumerable<OEMs> OEMs
     {
         get { return Enum.GetValues(typeof(OEMs)).Cast<OEMs>(); }
     }
-    public List<string> Statuses { get; init; } = new();
+    
+    public List<string> Statuses { get; } = ApplicationSettings.Statuses;
 
     public PhonesMainViewModel(IPhonesItemViewModelFactory phonesItemViewModelFactory,
                                IPhonesRepository phonesRepository,
@@ -41,20 +44,6 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
         _filterView.Filter = new Predicate<object>(FilterView);
 
         messenger.RegisterAll(this);
-
-        NorRs.Add("N(ew)");
-        NorRs.Add("R(epurposed)");
-
-        //OEMs.Add("Apple");
-        //OEMs.Add("Nokia");
-        //OEMs.Add("Samsung");
-
-        Statuses.Add("Production");
-        Statuses.Add("In Stock");
-        Statuses.Add("In Repair");
-        Statuses.Add("Decommissioned");
-        Statuses.Add("Disposed");
-        Statuses.Add("Misplaced");
     }
 
     [RelayCommand]

@@ -9,7 +9,6 @@ namespace PhoneAssistant.WPF.Features.AddItem;
 public partial class AddItemViewModel : ObservableValidator, IViewModel
 {
     private readonly IPhonesRepository _phonesRepository;
-    private bool _isValidated = false;
 
     public AddItemViewModel(IPhonesRepository phonesRepository)
     {
@@ -22,14 +21,10 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
     private string _phoneCondition = string.Empty;
 
-    partial void OnPhoneConditionChanged(string value)
-    {
-        _isValidated = true;
-    }
-
     public List<string> Statuses { get; } = ApplicationSettings.Statuses;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
     private string _phoneStatus = string.Empty;
 
     [ObservableProperty]
@@ -44,7 +39,11 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
 
     public bool CanSavePhone()
     {
-        return !HasErrors && _isValidated;
+        if (HasErrors) return false;
+        if (PhoneCondition == string.Empty) return false;
+        //if (PhoneStatus == string.Empty) return false;
+
+        return true;
     }
 
 

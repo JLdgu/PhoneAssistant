@@ -62,7 +62,7 @@
                     </ComboBox.SelectedItem>
                 </ComboBox>
 
-                <!--<ComboBox MinWidth="80"
+                <ComboBox MinWidth="80"
                           Margin="10,0,0,0"
                           materialDesign:HintAssist.Hint="Status"
                           ItemsSource="{Binding Statuses}"
@@ -79,7 +79,7 @@
                     </ComboBox.SelectedItem>
                 </ComboBox>
 
-                <TextBox MinWidth="130"
+                <!--<TextBox MinWidth="130"
                          Margin="10,0,0,0"
                          materialDesign:HintAssist.Hint="IMEI"
                          materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"

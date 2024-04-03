@@ -21,6 +21,12 @@ public sealed class PhonesRepository : IPhonesRepository
         return phone;
     }
 
+    public async Task<bool> ExistsAsync(string imei)
+    {
+        Phone? found = await _dbContext.Phones.FindAsync(imei);
+        return found != null;
+    }
+
     public async Task<IEnumerable<Phone>> GetActivePhonesAsync()
     {
         IEnumerable<Phone> phones = await _dbContext.Phones

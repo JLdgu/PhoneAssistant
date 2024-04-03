@@ -29,6 +29,25 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     }
 
     [Fact]
+    async Task Exists_ShouldReturnFalse_WhenPhoneDoesNotExist()
+    {
+        bool actual = await _repository.ExistsAsync("DoesNotExist");
+        
+        Assert.False(actual);
+    }
+
+    [Fact]
+    async Task Exists_ShouldReturnTrue_WhenPhoneDoesExistAsync()
+    {
+        _helper.DbContext.Phones.Add(_phone);
+        await _helper.DbContext.SaveChangesAsync();
+
+        bool actual = await _repository.ExistsAsync(_phone.Imei);
+
+        Assert.True(actual);
+    }
+
+    [Fact]
     public async Task RemoveSimFromPhone_WithNullPhone_ThrowsException()
     {
 #pragma warning disable CS8600, CS8604 // Converting null literal or possible null value to non-nullable type.

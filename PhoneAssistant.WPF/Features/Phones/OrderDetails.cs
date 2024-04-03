@@ -31,7 +31,7 @@ public sealed class OrderDetails
     {
         get
         {
-            if (Phone.NorR == "N")
+            if (Phone.Condition == "N")
                 return $"New {Phone.OEM} {Phone.Model}";
             return $"Repurposed {Phone.OEM} {Phone.Model}";            
         }

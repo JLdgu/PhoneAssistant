@@ -15,12 +15,11 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     {
         Imei = "imei",
         Model = "model",
-        NorR = "R",
+        Condition = "R",
         OEM = OEMs.Nokia,
         PhoneNumber = "phoneNumber",
         SimNumber = "simNumber",
         Status = "status",
-        LastUpdate = "2023-06-15 00:00:00"
 };
 
     public PhonesRepositoryTests()
@@ -52,7 +51,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     {
 #pragma warning disable CS8600, CS8604 // Converting null literal or possible null value to non-nullable type.
         Phone phone = null;
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.RemoveSimFromPhone(phone));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.RemoveSimFromPhoneAsync(phone));
 #pragma warning restore CS8600, CS8604 // Converting null literal or possible null value to non-nullable type.
     }
 
@@ -63,7 +62,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     {
         _phone.PhoneNumber = phoneNumber;
 
-        await Assert.ThrowsAsync<ArgumentException>(() => _repository.RemoveSimFromPhone(_phone));
+        await Assert.ThrowsAsync<ArgumentException>(() => _repository.RemoveSimFromPhoneAsync(_phone));
     }
 
     [Theory]
@@ -73,13 +72,13 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     {
         _phone.SimNumber = simNumber;
 
-        await Assert.ThrowsAsync<ArgumentException>(() => _repository.RemoveSimFromPhone(_phone));
+        await Assert.ThrowsAsync<ArgumentException>(() => _repository.RemoveSimFromPhoneAsync(_phone));
     }
 
     [Fact]
     public async Task RemoveSimFromPhone_WithMissingPhone_ThrowsException()
     {
-        await Assert.ThrowsAsync<InvalidOperationException>(() => _repository.RemoveSimFromPhone(_phone));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _repository.RemoveSimFromPhoneAsync(_phone));
     }
 
     [Fact]
@@ -90,18 +89,16 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         const string SIM_NUMBER = "sim number";
         _phone.PhoneNumber = PHONE_NUMBER;
         _phone.SimNumber = SIM_NUMBER;
-        _phone.LastUpdate = "2023-06-15 00:00:00";
         _helper.DbContext.Phones.Add(_phone);
         Sim? sim = new Sim() { PhoneNumber = PHONE_NUMBER, SimNumber = SIM_NUMBER };
         _helper.DbContext.Sims.Add(sim);
         await _helper.DbContext.SaveChangesAsync();
 
-        Phone updatedPhone = await _repository.RemoveSimFromPhone(_phone);
+        await _repository.RemoveSimFromPhoneAsync(_phone);
 
-        Assert.Null(updatedPhone.PhoneNumber);
-        Assert.Null(updatedPhone.SimNumber);
-        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", updatedPhone.LastUpdate);
-
+        Assert.Null(_phone.PhoneNumber);
+        Assert.Null(_phone.SimNumber);
+        
         Sim? dbSim = await _helper.DbContext.Sims.FindAsync(PHONE_NUMBER);
         Assert.NotNull(dbSim);
         Assert.Equal(PHONE_NUMBER, dbSim.PhoneNumber);
@@ -121,12 +118,10 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         const string SIM_NUMBER = "sim number";
         _phone.PhoneNumber = PHONE_NUMBER;
         _phone.SimNumber = SIM_NUMBER;
-        _phone.LastUpdate = "2023-06-15 00:00:00";
         await _helper.DbContext.Phones.AddAsync(_phone);
         await _helper.DbContext.SaveChangesAsync();
 
-        Phone updatedPhone = await _repository.RemoveSimFromPhone(_phone);
-        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", updatedPhone.LastUpdate);
+        await _repository.RemoveSimFromPhoneAsync(_phone);
 
         Sim? sim = await _helper.DbContext.Sims.FindAsync(PHONE_NUMBER);
         Assert.NotNull(sim);
@@ -165,19 +160,17 @@ public sealed class PhonesRepositoryTests : DbTestHelper
             FormerUser = EXPECTED_FORMER_USER,
             Model = EXPECTED_MODEL,
             NewUser = EXPECTED_NEW_USER,
-            NorR = EXPECTED_NORR,
+            Condition = EXPECTED_NORR,
             Notes = EXPECTED_NOTES,
             OEM = EXPECTED_OEM,
             SR = EXPECTED_SR,
-            Status = EXPECTED_STATUS,
-            LastUpdate = "2023-06-15 00:00:00"
+            Status = EXPECTED_STATUS
         };
         await _helper.DbContext.Phones.AddAsync(phone);
         await _helper.DbContext.SaveChangesAsync();
 
-        Phone updatedPhone = await _repository.RemoveSimFromPhone(phone);
+        await _repository.RemoveSimFromPhoneAsync(phone);
 
-        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", updatedPhone.LastUpdate);
         Sim? sim = await _helper.DbContext.Sims.FindAsync(MOVE_PHONE_NUMBER);
         Assert.NotNull(sim);
         Assert.Equal(MOVE_PHONE_NUMBER, sim.PhoneNumber);
@@ -192,7 +185,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Assert.Equal(EXPECTED_FORMER_USER, actual.FormerUser);
         Assert.Equal(EXPECTED_MODEL, actual.Model);
         Assert.Equal(EXPECTED_NEW_USER, actual.NewUser);
-        Assert.Equal(EXPECTED_NORR, actual.NorR);
+        Assert.Equal(EXPECTED_NORR, actual.Condition);
         Assert.Equal(EXPECTED_NOTES, actual.Notes);
         Assert.Equal(EXPECTED_OEM, actual.OEM);
         Assert.Equal(EXPECTED_SR, actual.SR);
@@ -224,14 +217,14 @@ public sealed class PhonesRepositoryTests : DbTestHelper
             Imei = _phone.Imei,
             DespatchDetails = "despatch",
             Model = "model2",
-            NorR = "N",
+            Condition = "N",
             OEM = OEMs.Apple,
             PhoneNumber = "phone2",
             SimNumber = "sim2",
             Status = "status2"
         };
 
-        string lastUpdate = await _repository.UpdateAsync(expected);
+        await _repository.UpdateAsync(expected);
 
         Phone? actual = await _helper.DbContext.Phones.FindAsync(_phone.Imei);
         Assert.NotNull(actual);
@@ -241,54 +234,56 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Assert.Equal(expected.Imei, actual.Imei);
         Assert.Equal(expected.Model, actual.Model);
         Assert.Equal(expected.NewUser, actual.NewUser);
-        Assert.Equal(expected.NorR, actual.NorR);
+        Assert.Equal(expected.Condition, actual.Condition);
         Assert.Equal(expected.Notes, actual.Notes);
         Assert.Equal(expected.OEM, actual.OEM);
         Assert.Equal(expected.PhoneNumber, actual.PhoneNumber);
         Assert.Equal(expected.SimNumber, actual.SimNumber);
         Assert.Equal(expected.SR, actual.SR);
         Assert.Equal(expected.Status, actual.Status);
-        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", lastUpdate);
+
+        UpdateHistoryPhone? history = await _helper.DbContext.UpdateHistoryPhones.FindAsync(1);
+        Assert.NotNull(history);
     }
 
-    [Fact]
-    public async Task UpdateKeyAsync_WithNullOldImei_ThrowsException()
-    {
-#pragma warning disable CS8625 // Converting null literal or possible null value to non-nullable type.
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.UpdateKeyAsync(null, "new"));
-#pragma warning restore CS8625 // Possible null reference argument.
-    }
+//    [Fact]
+//    public async Task UpdateKeyAsync_WithNullOldImei_ThrowsException()
+//    {
+//#pragma warning disable CS8625 // Converting null literal or possible null value to non-nullable type.
+//        await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.UpdateKeyAsync(null, "new"));
+//#pragma warning restore CS8625 // Possible null reference argument.
+//    }
 
-    [Fact]
-    public async Task UpdateKeyAsync_WithNullNewImei_ThrowsException()
-    {
-#pragma warning disable CS8625 // Converting null literal or possible null value to non-nullable type.
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.UpdateKeyAsync("old", null));
-#pragma warning restore CS8625 // Possible null reference argument.
-    }
+//    [Fact]
+//    public async Task UpdateKeyAsync_WithNullNewImei_ThrowsException()
+//    {
+//#pragma warning disable CS8625 // Converting null literal or possible null value to non-nullable type.
+//        await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.UpdateKeyAsync("old", null));
+//#pragma warning restore CS8625 // Possible null reference argument.
+//    }
 
-    [Fact]
-    public async Task UpdateKeyAsync_WithPhoneNotFound_ThrowsException()
-    {
-        await Assert.ThrowsAsync<ArgumentException>(() => _repository.UpdateAsync(_phone));
-    }
+//    [Fact]
+//    public async Task UpdateKeyAsync_WithPhoneNotFound_ThrowsException()
+//    {
+//        await Assert.ThrowsAsync<ArgumentException>(() => _repository.UpdateAsync(_phone));
+//    }
 
-    [Fact]
-    public async Task UpdateKeyAsync_WithPhoneFound_Succeeds()
-    {
-        const string OLD_IMEI = "old IMEI";
-        _phone.Imei = OLD_IMEI;
-        await _helper.DbContext.Phones.AddAsync(_phone);
-        await _helper.DbContext.SaveChangesAsync();
-        const string NEW_IMEI = "new IMEI";
+//    [Fact]
+//    public async Task UpdateKeyAsync_WithPhoneFound_Succeeds()
+//    {
+//        const string OLD_IMEI = "old IMEI";
+//        _phone.Imei = OLD_IMEI;
+//        await _helper.DbContext.Phones.AddAsync(_phone);
+//        await _helper.DbContext.SaveChangesAsync();
+//        const string NEW_IMEI = "new IMEI";
 
-        string lastUpdate = await _repository.UpdateKeyAsync(OLD_IMEI, NEW_IMEI);
+//        string lastUpdate = await _repository.UpdateKeyAsync(OLD_IMEI, NEW_IMEI);
 
-        Phone? removed = await _helper.DbContext.Phones.FindAsync(OLD_IMEI);
-        Assert.Null(removed);
-        Phone? actual = await _helper.DbContext.Phones.FindAsync(NEW_IMEI);
-        Assert.NotNull(actual);
-        Assert.Equal(NEW_IMEI, actual.Imei);
-        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", lastUpdate);
-    }
+//        Phone? removed = await _helper.DbContext.Phones.FindAsync(OLD_IMEI);
+//        Assert.Null(removed);
+//        Phone? actual = await _helper.DbContext.Phones.FindAsync(NEW_IMEI);
+//        Assert.NotNull(actual);
+//        Assert.Equal(NEW_IMEI, actual.Imei);
+//        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", lastUpdate);
+//    }
 }

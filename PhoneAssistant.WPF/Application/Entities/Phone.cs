@@ -2,11 +2,15 @@
 
 public class Phone
 {
+    public Phone()
+    {
+        LastUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+    }
     public required string Imei { get; set; }
     public string? PhoneNumber { get; set; }
     public string? SimNumber { get; set; }
     public string? FormerUser { get; set; }
-    public required string NorR { get; set; }
+    public required string Condition { get; set; }
     public required string Status { get; set; }
     public required OEMs OEM { get; set; }
     public required string Model { get; set; }
@@ -15,10 +19,9 @@ public class Phone
     public string? NewUser { get; set; }
     public string? Notes { get; set; }
     public string? DespatchDetails { get; set; }
-    public string LastUpdate { get; set; } = string.Empty;
+    public string LastUpdate { get; private set; }
 
-    // Navigation properties
-    //public virtual ICollection<Link> Links { get; set; } = null!;
+    public void SetLastUpdate() => LastUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 }
 
 public enum OEMs

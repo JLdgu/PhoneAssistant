@@ -18,6 +18,8 @@ public sealed class PhoneAssistantDbContext : DbContext
 
     public DbSet<Sim> Sims => Set<Sim>();
 
+    public DbSet<UpdateHistoryPhone> UpdateHistoryPhones => Set<UpdateHistoryPhone>();
+
     public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -59,10 +61,10 @@ public sealed class PhoneAssistantDbContext : DbContext
             l.HasKey(l => l.Name);
         });
         
-        modelBuilder.Entity<Phone>(
-            p => 
+        modelBuilder.Entity<Phone>(p => 
             {
                 p.HasKey(p => p.Imei);
+                p.Property(p => p.Condition).HasColumnName("NorR");
                 p.ToTable(p => p.HasCheckConstraint("CK_NorR", "\"NorR\" = 'N' OR \"NorR\" = 'R'"));
                 p.Property(p => p.SR).HasColumnName("SRNumber");
                 p.Property(p => p.OEM).HasConversion(o => o.ToString(), o => (OEMs)Enum.Parse(typeof(OEMs), o));
@@ -71,17 +73,22 @@ public sealed class PhoneAssistantDbContext : DbContext
 
                 p.HasIndex(p => p.AssetTag).IsUnique();
             });
-        modelBuilder.Entity<Phone>()
-;
 
-        modelBuilder.Entity<Sim>(
-            s =>
+        modelBuilder.Entity<Sim>(s =>
             {
                 s.HasKey(s => s.PhoneNumber);
                 s.Property(s => s.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                 s.HasIndex(s => s.SimNumber).IsUnique();
             });
+
+        modelBuilder.Entity<UpdateHistoryPhone>(p =>
+            {
+                p.Property(p => p.UpdateType).HasConversion(u => u.ToString(), u => (UpdateTypes)Enum.Parse(typeof(UpdateTypes), u));
+                p.Property(p => p.Condition).HasColumnName("NorR");
+                p.Property(p => p.SR).HasColumnName("SRNumber");
+                p.Property(p => p.OEM).HasConversion(o => o.ToString(), o => (OEMs)Enum.Parse(typeof(OEMs), o));
+    });
 
         base.OnModelCreating(modelBuilder);
     }

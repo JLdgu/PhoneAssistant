@@ -15,7 +15,9 @@ public class EmptyOrNumericValidationRuleTests
     {
         EmptyOrNumericValidationRule vr = new ();
 
+#pragma warning disable CS8604 // Possible null reference argument.
         var actual = vr.Validate(value, CultureInfo.InvariantCulture);
+#pragma warning restore CS8604 // Possible null reference argument.
 
         Assert.True(actual.IsValid);
     }

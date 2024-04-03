@@ -17,10 +17,9 @@ public sealed class PhonesItemViewModelTests
         AssetTag = "at",
         FormerUser = "fu",
         Imei = "imei",  
-        LastUpdate = "lastupdate",
         Model = "model",
         NewUser = "nu",
-        NorR = "norr",
+        Condition = "norr",
         Notes = "note",
         OEM = OEMs.Apple,
         SR = 123456
@@ -33,10 +32,9 @@ public sealed class PhonesItemViewModelTests
         AssetTag = "at",
         FormerUser = "fu",
         Imei = "imei",
-        LastUpdate = "updated",
         Model = "model",
         NewUser = "nu",
-        NorR = "norr",
+        Condition = "norr",
         Notes = "note",
         OEM = OEMs.Apple,
         SR = 123456
@@ -52,10 +50,8 @@ public sealed class PhonesItemViewModelTests
         _vm = _mocker.CreateInstance<PhonesItemViewModel>();
         _repository = _mocker.GetMock<IPhonesRepository>();
         _repository.Setup(r => r.UpdateAsync(It.IsAny<Phone>()))
-            .Callback<Phone>((p) => _phone = p)
-            .ReturnsAsync("LastUpdate");
-        _repository.Setup(r => r.RemoveSimFromPhone(It.IsAny<Phone>()))            
-            .ReturnsAsync(_updatedPhone);
+            .Callback<Phone>((p) => _phone = p);
+        _repository.Setup(r => r.RemoveSimFromPhoneAsync(It.IsAny<Phone>()));
     }
 
     [Theory]
@@ -79,7 +75,7 @@ public sealed class PhonesItemViewModelTests
         Assert.Equal(_phone.Imei, _vm.Imei);
         Assert.Equal(_phone.Model, _vm.Model);
         Assert.Equal(_phone.NewUser, _vm.NewUser);
-        Assert.Equal(_phone.NorR, _vm.NorR);
+        Assert.Equal(_phone.Condition, _vm.NorR);
         Assert.Equal(_phone.Notes, _vm.Notes);
         Assert.Equal(_phone.OEM, _vm.OEM);
         Assert.Equal(_phone.PhoneNumber ?? string.Empty, _vm.PhoneNumber);
@@ -96,7 +92,6 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         Assert.Equal("Updated", _phone.AssetTag);
-        Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
 
     [Theory]
@@ -108,7 +103,6 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         Assert.Equal(expected, _phone.FormerUser);
-        Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
 
     [Fact]
@@ -118,7 +112,6 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         Assert.Equal("Updated", _phone.Model);
-        Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
 
     [Theory]
@@ -130,7 +123,6 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         Assert.Equal(expected, _phone.NewUser);
-        Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
 
     [Fact]
@@ -139,8 +131,7 @@ public sealed class PhonesItemViewModelTests
         _vm.NorR = "changed";
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        Assert.Equal("changed", _phone.NorR);
-        Assert.Equal("LastUpdate", _vm.LastUpdate);
+        Assert.Equal("changed", _phone.Condition);
     }
 
     [Theory]
@@ -152,7 +143,6 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         Assert.Equal(expected, _phone.Notes);
-        Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
 
     [Fact]
@@ -162,7 +152,6 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         Assert.Equal(OEMs.Nokia, _phone.OEM);
-        Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
     
     [Theory]
@@ -174,7 +163,6 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         Assert.Equal(expected, _phone.SR);
-        Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
 
     [Fact]
@@ -184,7 +172,6 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         Assert.Equal("changed", _phone.Status);
-        Assert.Equal("LastUpdate", _vm.LastUpdate);
     }
 
     #endregion
@@ -201,7 +188,7 @@ public sealed class PhonesItemViewModelTests
     }
 
     [Fact]
-    private void RemoveSimCaooand_SetsCanExecute_False()
+    private void RemoveSimCommand_SetsCanExecute_False()
     {
 
         _vm.RemoveSimCommand.Execute(null);

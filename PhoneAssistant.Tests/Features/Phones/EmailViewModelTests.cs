@@ -20,10 +20,9 @@ public sealed class EmailViewModelTests
         DespatchDetails = "dd",
         FormerUser = "fu",
         Imei = "imei",
-        LastUpdate = "lastupdate",
         Model = "model",
         NewUser = "nu", 
-        NorR = "norr",
+        Condition = "norr",
         Notes = "note",
         OEM = OEMs.Apple,
         SR = 123456
@@ -105,7 +104,7 @@ public sealed class EmailViewModelTests
     [InlineData("R", "Repurposed")]
     private void NorR_Includes_DeviceSupplied(string norr, string norrDescription)
     {
-        _phone.NorR = norr;
+        _phone.Condition = norr;
         OrderDetails orderDetails = new(_phone);
         _vm.OrderDetails = orderDetails;
 

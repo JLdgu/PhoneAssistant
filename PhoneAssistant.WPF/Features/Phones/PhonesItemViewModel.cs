@@ -12,15 +12,13 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     private readonly IPhonesRepository _repository;
     private readonly IPrintEnvelope _printEnvelope;
     private readonly IMessenger _messenger;
-    private Phone _phone;
+    private readonly Phone _phone;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public PhonesItemViewModel(IPhonesRepository repository,
                                IPrintEnvelope printEnvelope,
                                IMessenger messenger,
                                Phone phone)
     {
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
@@ -32,7 +30,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         LastUpdate = phone.LastUpdate ?? string.Empty;
         Model = phone.Model ?? string.Empty;
         NewUser = phone.NewUser ?? string.Empty;
-        NorR = phone.NorR ?? string.Empty;
+        NorR = phone.Condition ?? string.Empty;
         Notes = phone.Notes ?? string.Empty;
         OEM = phone.OEM;
         PhoneNumber = phone.PhoneNumber ?? string.Empty;
@@ -51,8 +49,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         if (string.IsNullOrEmpty(value) && _phone.AssetTag is null) return;
 
         _phone.AssetTag = value;
-        var lastUpdate = await _repository.UpdateAsync(_phone);
-        LastUpdate = lastUpdate;
+        await _repository.UpdateAsync(_phone);
+        LastUpdate = _phone.LastUpdate;
     }
 
     [ObservableProperty]
@@ -77,8 +75,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
             _phone.FormerUser = value;
         }
 
-        var lastUpdate = await _repository.UpdateAsync(_phone);
-        LastUpdate = lastUpdate;
+        await _repository.UpdateAsync(_phone);
+        LastUpdate = _phone.LastUpdate;
     }
 
     [ObservableProperty]
@@ -96,8 +94,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         if (string.IsNullOrEmpty(value) && _phone.AssetTag is null) return;
 
         _phone.Model = value;
-        var lastUpdate = await _repository.UpdateAsync(_phone);
-        LastUpdate = lastUpdate;
+        await _repository.UpdateAsync(_phone);
+        LastUpdate = _phone.LastUpdate;
     }
 
     [ObservableProperty]
@@ -123,19 +121,19 @@ public sealed partial class PhonesItemViewModel : ObservableObject
             _phone.NewUser = value;
         }
 
-        var lastUpdate = await _repository.UpdateAsync(_phone);
-        LastUpdate = lastUpdate;
+        await _repository.UpdateAsync(_phone);
+        LastUpdate = _phone.LastUpdate;
     }
 
     [ObservableProperty]
     private string _norR;
     async partial void OnNorRChanged(string value)
     {
-        if (value == _phone.NorR) return;
+        if (value == _phone.Condition) return;
 
-        _phone.NorR = value;
-        var lastUpdate = await _repository.UpdateAsync(_phone);
-        LastUpdate = lastUpdate;
+        _phone.Condition = value;
+        await _repository.UpdateAsync(_phone);
+        LastUpdate = _phone.LastUpdate;
     }
 
     [ObservableProperty]
@@ -160,8 +158,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
             _phone.Notes = value;
         }
 
-        var lastUpdate = await _repository.UpdateAsync(_phone);
-        LastUpdate = lastUpdate;
+        await _repository.UpdateAsync(_phone);
+        LastUpdate = _phone.LastUpdate;
     }
 
     [ObservableProperty]
@@ -171,8 +169,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         if (value == _phone.OEM) return;
 
         _phone.OEM = value;
-        var lastUpdate = await _repository.UpdateAsync(_phone);
-        LastUpdate = lastUpdate;
+        await _repository.UpdateAsync(_phone);
+        LastUpdate = _phone.LastUpdate;
     }
 
     [ObservableProperty]
@@ -197,8 +195,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
             _phone.PhoneNumber = value;
         }
 
-        var lastUpdate = await _repository.UpdateAsync(_phone);
-        LastUpdate = lastUpdate;
+        await _repository.UpdateAsync(_phone);
+        LastUpdate = _phone.LastUpdate;
     }
 
     [ObservableProperty]
@@ -223,8 +221,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
             _phone.SimNumber = value;
         }
 
-        var lastUpdate = await _repository.UpdateAsync(_phone);
-        LastUpdate = lastUpdate;
+        await _repository.UpdateAsync(_phone);
+        LastUpdate = _phone.LastUpdate;
     }
 
     [ObservableProperty]
@@ -250,8 +248,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
             _phone.SR = int.Parse(value);
         }
 
-        var lastUpdate = await _repository.UpdateAsync(_phone);
-        LastUpdate = lastUpdate;
+        await _repository.UpdateAsync(_phone);
+        LastUpdate = _phone.LastUpdate;
     }
 
     [ObservableProperty]
@@ -262,8 +260,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         if (value == _phone.Status) return;
 
         _phone.Status = value;
-        var lastUpdate = await _repository.UpdateAsync(_phone);
-        LastUpdate = lastUpdate;
+        await _repository.UpdateAsync(_phone);
+        LastUpdate = _phone.LastUpdate;
     }
     #endregion
 
@@ -289,7 +287,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanRemoveSim))]
     private async Task RemoveSimAsync()
     {
-        _phone = await _repository.RemoveSimFromPhone(_phone);
+        await _repository.RemoveSimFromPhoneAsync(_phone);
         PhoneNumber = string.Empty;
         SimNumber = string.Empty;
         LastUpdate = _phone.LastUpdate;

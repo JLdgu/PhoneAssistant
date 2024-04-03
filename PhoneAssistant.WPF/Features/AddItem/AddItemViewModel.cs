@@ -6,43 +6,53 @@ using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.AddItem;
-public partial class AddItemViewModel : ObservableObject, IViewModel
+public partial class AddItemViewModel : ObservableValidator, IViewModel
 {
     private readonly IPhonesRepository _phonesRepository;
-
-    public List<string> Statuses { get; } = ApplicationSettings.Statuses;
+    private bool _isValidated = false;
 
     public AddItemViewModel(IPhonesRepository phonesRepository)
     {
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
     }
 
-    [ObservableProperty]
-    private bool _conditionNew;
+    public List<string> Conditions { get; } = ApplicationSettings.Conditions;
 
     [ObservableProperty]
-    private bool _conditionRepurposed;
+    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
+    private string _phoneCondition = string.Empty;
+
+    partial void OnPhoneConditionChanged(string value)
+    {
+        _isValidated = true;
+    }
+
+    public List<string> Statuses { get; } = ApplicationSettings.Statuses;
+
+    [ObservableProperty]
+    private string _phoneStatus = string.Empty;
+
+    [ObservableProperty]
+    private string _phoneImei = string.Empty;
 
     [RelayCommand]
     private void PhoneClear()
     {
-
+        PhoneStatus = string.Empty;
+        PhoneImei = string.Empty;
     }
 
-    private bool CanSavePhone() => false;
+    public bool CanSavePhone()
+    {
+        return !HasErrors && _isValidated;
+    }
+
 
     [RelayCommand(CanExecute = nameof(CanSavePhone))]
     private void PhoneSave()
     {
 
-    }
-
-    private bool CanPrintEnvelope() => false;
-    [RelayCommand(CanExecute = nameof(CanPrintEnvelope))]
-    private void PrintEnvelope()
-    {
-    }
-
+    }   
 
     public Task LoadAsync()
     {

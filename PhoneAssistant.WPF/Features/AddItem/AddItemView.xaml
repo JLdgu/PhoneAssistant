@@ -44,23 +44,62 @@
             </materialDesign:Card>
 
             <StackPanel Grid.Row="1"
-                        Margin="10,0,0,0"
-                        VerticalAlignment="Top"
+                        Margin="10,10,0,0"
                         Orientation="Horizontal">
-                <TextBlock VerticalAlignment="Center" Text="Condition" />
+                <ComboBox MinWidth="80"
+                          materialDesign:HintAssist.Hint="Condition"
+                          ItemsSource="{Binding Conditions}"
+                          SelectedValue="{Binding PhoneCondition}"
+                          Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                    <ComboBox.SelectedItem>
+                        <Binding Mode="TwoWay"
+                                 Path="PhoneCondition"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <shared:NotEmptyValidationRule ValidatesOnTargetUpdated="True" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.SelectedItem>
+                </ComboBox>
 
-                <RadioButton d:IsChecked="True"
-                             Content="New"
-                             GroupName="Condition"
-                             IsChecked="{Binding ConditionNew}"
-                             Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}" />
-                <RadioButton Content="Repurposed"
-                             GroupName="Condition"
-                             IsChecked="{Binding ConditionRepurposed}"
-                             Style="{StaticResource MaterialDesignChoiceChipSecondaryOutlineRadioButton}" />
+                <!--<ComboBox MinWidth="80"
+                          Margin="10,0,0,0"
+                          materialDesign:HintAssist.Hint="Status"
+                          ItemsSource="{Binding Statuses}"
+                          SelectedValue="{Binding PhoneStatus}"
+                          Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                    <ComboBox.SelectedItem>
+                        <Binding Mode="TwoWay"
+                                 Path="PhoneStatus"
+                                 UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <shared:NotEmptyValidationRule ValidatesOnTargetUpdated="True" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.SelectedItem>
+                </ComboBox>
+
+                <TextBox MinWidth="130"
+                         Margin="10,0,0,0"
+                         materialDesign:HintAssist.Hint="IMEI"
+                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                         MaxLength="15"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         TextAlignment="Left">
+                    <TextBox.Text>
+                        <Binding Path="PhoneImei" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <shared:RequiredIMEIValidationRule ValidatesOnTargetUpdated="True" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>-->
+
             </StackPanel>
 
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <StackPanel Grid.Row="2"
+                        Margin="0,20"
+                        Orientation="Horizontal">
                 <Button Margin="10,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"

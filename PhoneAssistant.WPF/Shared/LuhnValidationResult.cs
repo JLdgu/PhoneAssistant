@@ -1,4 +1,41 @@
-﻿namespace PhoneAssistant.WPF.Shared;
+﻿using System.Globalization;
+using System.Windows.Controls;
+
+namespace PhoneAssistant.WPF.Shared;
+
+public class IMEIValidationRule : ValidationRule
+{
+    public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+    {
+        if (value is null) return ValidationResult.ValidResult;
+
+        if (value is not string) return new ValidationResult(false, "IMEI must be empty or 15 digits");
+
+        string? imei = value.ToString();
+
+        if (string.IsNullOrWhiteSpace(imei)) return ValidationResult.ValidResult;
+
+        bool luhn = LuhnValidator.IsValid(imei, 15);
+
+        return luhn ? ValidationResult.ValidResult : new ValidationResult(false, "IMEI must be empty or 15 digits");
+    }
+}
+
+public class RequiredIMEIValidationRule : ValidationRule
+{
+    public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+    {
+        if (value is not string) return new ValidationResult(false, "IMEI must be 15 digits");
+
+        string? imei = value.ToString();
+
+        if (string.IsNullOrWhiteSpace(imei)) return new ValidationResult(false, "IMEI must be 15 digits");
+
+        bool luhn = LuhnValidator.IsValid(imei, 15);
+
+        return luhn ? ValidationResult.ValidResult : new ValidationResult(false, "IMEI must be 15 digits");
+    }
+}
 
 public static  class LuhnValidator
 {

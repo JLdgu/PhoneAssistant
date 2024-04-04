@@ -1,75 +1,92 @@
-﻿using PhoneAssistant.WPF.Shared;
+﻿using System.Globalization;
+using System.Windows.Controls;
+
+using PhoneAssistant.WPF.Application.Repositories;
+using PhoneAssistant.WPF.Shared;
 
 using Xunit;
 
 namespace PhoneAssistant.Tests.Shared;
 
-public sealed class LuhnValidatorTests
+public sealed class IMEIValidationRuleTests
 {
-    [Theory]
-    [InlineData(0)]
-    [InlineData(1)]
-    public void IsValid_ReturnsFalse_When_requiredLength_Invalid(int requiredLength)
+    private readonly IMEIValidationRule _validationRule;
+    public IMEIValidationRuleTests()
     {
-        const string luhn = "1234";
-
-        var actual = LuhnValidator.IsValid(luhn, requiredLength);
-
-        Xunit.Assert.False(actual);
-    }
-
-    [Theory]
-    [InlineData("361568", 3)]
-    [InlineData("361568", 9)]
-    public void IsValid_ReturnFalse_When_luhnString_ShorterThan_RequiredLength(string luhn, int requiredLength)
-    {       
-        var actual = LuhnValidator.IsValid(luhn, requiredLength);
-
-        Xunit.Assert.False(actual);
+        _validationRule = new IMEIValidationRule();
     }
 
     [Fact]
-    public void IsValid_ReturnsFalse_WhenInputNull()
+    public void Validate_NullValue_ReturnsValidResult()
     {
-        string? input = null;
-
-        var actual = LuhnValidator.IsValid(input);
-
-        Xunit.Assert.False(actual);
+        ValidationResult result = _validationRule.Validate(null, CultureInfo.InvariantCulture);
+        Assert.Equal(ValidationResult.ValidResult, result);
     }
 
     [Fact]
-    public void IsValid_ReturnsFalse_WhenInputOneDigit()
+    public void Validate_NonStringInput_ReturnsInvalidResult()
     {
-        string input = "7";
-
-        var actual = LuhnValidator.IsValid(input);
-
-        Xunit.Assert.False(actual);
-
+        var result = _validationRule.Validate(12345, CultureInfo.InvariantCulture);
+        Assert.False(result.IsValid);
+        Assert.Equal("IMEI must be empty or 15 digits", result.ErrorContent);
     }
+
     [Fact]
-    public void IsValid_ReturnsFalse_WhenInputNotNumeric()
+    public void Validate_EmptyOrWhitespaceIMEI_ReturnsValidResult()
     {
-        string input = "6a";
+        var result1 = _validationRule.Validate("", CultureInfo.InvariantCulture);
+        var result2 = _validationRule.Validate("   ", CultureInfo.InvariantCulture);
 
-        var actual = LuhnValidator.IsValid(input);
-
-        Xunit.Assert.False(actual);
+        Assert.Equal(ValidationResult.ValidResult, result1);
+        Assert.Equal(ValidationResult.ValidResult, result2);
     }
 
-    [Theory]
-    [InlineData("79927398713")]
-    [InlineData("35145120840121")]
-    [InlineData("361568")]
-    [InlineData("361576")]
-    [InlineData("4012888888881881")]
-    public void IsValid_ReturnsTrue_WhenInputValid(string luhnString)
-    {        
-        // Act
-        var actual = LuhnValidator.IsValid(luhnString);
+    [Fact]
+    public void Validate_ValidIMEI_ReturnsValidResult()
+    {
+        var validIMEI = "355808981132845"; // A valid 15-digit IMEI
+        var result = _validationRule.Validate(validIMEI, CultureInfo.InvariantCulture);
 
-        //Assert
-        Xunit.Assert.True(actual);
+        Assert.Equal(ValidationResult.ValidResult, result);
     }
+
+    [Fact]
+    public void Validate_InvalidIMEI_ReturnsInvalidResult()
+    {
+        var invalidIMEI = "12345678901234"; // An invalid 14-digit IMEI
+        var result = _validationRule.Validate(invalidIMEI, CultureInfo.InvariantCulture);
+
+        Assert.False(result.IsValid);
+        Assert.Equal("IMEI must be empty or 15 digits", result.ErrorContent);
+    }
+}
+
+public sealed class RequiredIMEIValidationRuleTests
+{
+    private readonly RequiredIMEIValidationRule _validationRule;
+    public RequiredIMEIValidationRuleTests()
+    {
+        _validationRule = new RequiredIMEIValidationRule();
+    }
+
+    [Fact]
+    public void Validate_NullValue_ReturnsInvalidResult()
+    {
+        ValidationResult result = _validationRule.Validate(null, CultureInfo.InvariantCulture);
+        Assert.False(result.IsValid);
+        Assert.Equal("IMEI must be 15 digits", result.ErrorContent);
+    }
+
+    [Fact]
+    public void Validate_EmptyOrWhitespaceIMEI_ReturnsInvalidResult()
+    {
+        var result1 = _validationRule.Validate("", CultureInfo.InvariantCulture);
+        var result2 = _validationRule.Validate("   ", CultureInfo.InvariantCulture);
+
+        Assert.False(result1.IsValid);
+        Assert.Equal("IMEI must be 15 digits", result1.ErrorContent);
+        Assert.False(result2.IsValid);
+        Assert.Equal("IMEI must be 15 digits", result2.ErrorContent);
+    }
+
 }

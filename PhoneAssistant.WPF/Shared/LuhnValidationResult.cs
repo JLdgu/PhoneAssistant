@@ -11,11 +11,9 @@ public class IMEIValidationRule : ValidationRule
 
         if (value is not string) return new ValidationResult(false, "IMEI must be empty or 15 digits");
 
-        string? imei = value.ToString();
+        if (string.IsNullOrWhiteSpace(value.ToString())) return ValidationResult.ValidResult;
 
-        if (string.IsNullOrWhiteSpace(imei)) return ValidationResult.ValidResult;
-
-        bool luhn = LuhnValidator.IsValid(imei, 15);
+        bool luhn = LuhnValidator.IsValid(value.ToString() ?? "", 15);
 
         return luhn ? ValidationResult.ValidResult : new ValidationResult(false, "IMEI must be empty or 15 digits");
     }
@@ -27,13 +25,11 @@ public class RequiredIMEIValidationRule : ValidationRule
     {
         if (value is not string) return new ValidationResult(false, "IMEI must be 15 digits");
 
-        string? imei = value.ToString();
+        if (string.IsNullOrWhiteSpace(value.ToString())) return new ValidationResult(false, "IMEI must be 15 digits");
 
-        if (string.IsNullOrWhiteSpace(imei)) return new ValidationResult(false, "IMEI must be 15 digits");
+        IMEIValidationRule validationRule = new();
 
-        bool luhn = LuhnValidator.IsValid(imei, 15);
-
-        return luhn ? ValidationResult.ValidResult : new ValidationResult(false, "IMEI must be 15 digits");
+        return validationRule.Validate(value.ToString() ?? "", CultureInfo.InvariantCulture);
     }
 }
 
@@ -46,7 +42,7 @@ public static  class LuhnValidator
     /// 
     /// <param name="length">The expected length of the luhn parameter</param>
     /// <returns>bool</returns>
-    public static bool IsValid(string? luhn, int length = -1)
+    internal static bool IsValid(string? luhn, int length = -1)
     {
         if (luhn is null)
             return false;

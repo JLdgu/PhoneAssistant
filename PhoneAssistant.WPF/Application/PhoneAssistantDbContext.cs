@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 using PhoneAssistant.WPF.Application.Entities;
 
@@ -6,6 +7,8 @@ namespace PhoneAssistant.WPF.Application;
 
 public sealed class PhoneAssistantDbContext : DbContext
 {
+    private static readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(builder => { });
+
     public DbSet<EEBaseReport> BaseReport => Set<EEBaseReport>();
 
     public DbSet<Disposal> Disposals => Set<Disposal>();
@@ -22,12 +25,14 @@ public sealed class PhoneAssistantDbContext : DbContext
 
     public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
 
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
             throw new ArgumentException("DbContextOptionsBuilder has not been configured");
 
 #if DEBUG
+        optionsBuilder.UseLoggerFactory(_loggerFactory);
         //optionsBuilder.EnableSensitiveDataLogging();        
 #endif
       

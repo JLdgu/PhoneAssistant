@@ -1,6 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿namespace PhoneAssistant.WPF.Application;
 
-namespace PhoneAssistant.WPF.Application;
 public static class ApplicationSettings
 {
     public static readonly List<string> Conditions = new() { "New", "Repurposed" };

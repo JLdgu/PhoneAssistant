@@ -4,7 +4,7 @@ namespace PhoneAssistant.WPF.Application.Repositories;
 
 public interface IPhonesRepository
 {
-    Task<Phone> Create(Phone phone);
+    Task<Phone> CreateAsync(Phone phone);
     Task<bool> ExistsAsync(string imei);
     Task<IEnumerable<Phone>> GetActivePhonesAsync();
     Task<IEnumerable<Phone>> GetAllPhonesAsync();

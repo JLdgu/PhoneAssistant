@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.ComponentModel.DataAnnotations;
+
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using PhoneAssistant.WPF.Application;
@@ -28,7 +30,36 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     private string _phoneStatus = string.Empty;
 
     [ObservableProperty]
+    [NotifyDataErrorInfo]
+    [CustomValidation(typeof(AddItemViewModel), nameof(ValidateImeiAsync))]
     private string _phoneImei = string.Empty;
+
+    partial void OnPhoneImeiChanged(string value)
+    {
+
+    }
+
+    public static ValidationResult ValidateImeiAsync(string imei, ValidationContext context)
+    {   
+        if (string.IsNullOrWhiteSpace(imei)) return new ValidationResult("IMEI is required");
+
+        if(!LuhnValidator.IsValid(imei, 15)) return new ValidationResult("IMEI must be 15 digits");
+
+        AddItemViewModel vm = (AddItemViewModel)context.ObjectInstance;
+
+        bool unique = Task.Run(() => vm.IsIMEIUniqueAsync(imei)).GetAwaiter().GetResult();
+        //var task = vm.IsIMEIUniqueAsync(imei);
+        //task.Wait();
+        //bool unique = task.Result;
+
+#pragma warning disable CS8603 // Possible null reference return.
+        if (unique) return ValidationResult.Success;
+#pragma warning restore CS8603 // Possible null reference return.
+        
+        return new ValidationResult("IMEI must be unique");
+    }
+
+    private async Task<bool> IsIMEIUniqueAsync(string imei) => !await _phonesRepository.ExistsAsync(imei);
 
     [RelayCommand]
     private void PhoneClear()
@@ -51,7 +82,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     private void PhoneSave()
     {
 
-    }   
+    }
 
     public Task LoadAsync()
     {

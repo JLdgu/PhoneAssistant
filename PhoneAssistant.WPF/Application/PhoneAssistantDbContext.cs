@@ -5,9 +5,13 @@ using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Application;
 
-public sealed class PhoneAssistantDbContext : DbContext
+public partial class PhoneAssistantDbContext : DbContext
 {
     private static readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(builder => { });
+    
+    public PhoneAssistantDbContext() { }
+
+    public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
 
     public DbSet<EEBaseReport> BaseReport => Set<EEBaseReport>();
 
@@ -22,14 +26,11 @@ public sealed class PhoneAssistantDbContext : DbContext
     public DbSet<Sim> Sims => Set<Sim>();
 
     public DbSet<UpdateHistoryPhone> UpdateHistoryPhones => Set<UpdateHistoryPhone>();
-
-    public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
-
-
+        
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
-            throw new ArgumentException("DbContextOptionsBuilder has not been configured");
+            optionsBuilder.UseSqlite(@"DataSource=c:\temp\PhoneAssistant.db;");        
 
 #if DEBUG
         optionsBuilder.UseLoggerFactory(_loggerFactory);
@@ -42,59 +43,83 @@ public sealed class PhoneAssistantDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Disposal>(d =>
+        modelBuilder.Entity<Disposal>(entity =>
         {
-            d.ToTable("ReconcileDisposals");
-            d.HasKey(d => d.Imei);
+            entity.ToTable("ReconcileDisposals");
+
+            entity.HasKey(d => d.Imei);
         });
 
-        modelBuilder.Entity<EEBaseReport>(b => 
+        modelBuilder.Entity<EEBaseReport>(entity =>
         {
-            b.ToTable("BaseReport");
-            b.HasKey(b => b.PhoneNumber);
+            entity.ToTable("BaseReport");
+
+            entity.HasKey(e => e.PhoneNumber);
         });
 
-        modelBuilder.Entity<ImportHistory>(i =>
+        modelBuilder.Entity<ImportHistory>(entity =>
         {
-            i.ToTable("ImportHistory");
-            i.Property(i => i.Name).HasConversion(n => n.ToString(), n => (ImportType)Enum.Parse(typeof(ImportType), n));
-            i.Property(i => i.ImportDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.ToTable("ImportHistory");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Name).HasConversion(n => n.ToString(), n => (ImportType)Enum.Parse(typeof(ImportType), n));
+            entity.Property(e => e.ImportDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
 
-        modelBuilder.Entity<Location>(l =>
+        modelBuilder.Entity<Location>(entity =>
         {
-            l.HasKey(l => l.Name);
+            entity.HasKey(e => e.Name);
         });
-        
-        modelBuilder.Entity<Phone>(p => 
-            {
-                p.HasKey(p => p.Imei);
-                p.Property(p => p.Condition).HasColumnName("NorR");
-                p.ToTable(p => p.HasCheckConstraint("CK_NorR", "\"NorR\" = 'N' OR \"NorR\" = 'R'"));
-                p.Property(p => p.SR).HasColumnName("SRNumber");
-                p.Property(p => p.OEM).HasConversion(o => o.ToString(), o => (OEMs)Enum.Parse(typeof(OEMs), o));
-                p.ToTable(p => p.HasCheckConstraint("CK_OEM", "\"OEM\" = 'Apple' OR \"OEM\" = 'Nokia' OR \"OEM\" = 'Samsung' OR \"OEM\" = 'Other'"));
-                p.Property(p => p.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                p.HasIndex(p => p.AssetTag).IsUnique();
-            });
+        modelBuilder.Entity<Phone>(entity =>
+        {
+            entity.HasKey(e => e.Imei);
 
-        modelBuilder.Entity<Sim>(s =>
-            {
-                s.HasKey(s => s.PhoneNumber);
-                s.Property(s => s.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.HasIndex(e => e.AssetTag, "IX_Phones_AssetTag").IsUnique();
 
-                s.HasIndex(s => s.SimNumber).IsUnique();
-            });
+            entity.Property(e => e.Imei).HasColumnName("IMEI");
+            entity.Property(e => e.Collection).HasColumnType("INTEGER");
+            entity.Property(e => e.Condition).HasColumnName("NorR");
+            entity.Property(e => e.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.OEM).HasConversion(o => o.ToString(), o => (OEMs)Enum.Parse(typeof(OEMs), o));
+            entity.Property(e => e.SR)
+                .HasColumnType("INTEGER")
+                .HasColumnName("SRNumber");
 
-        modelBuilder.Entity<UpdateHistoryPhone>(p =>
-            {
-                p.Property(p => p.UpdateType).HasConversion(u => u.ToString(), u => (UpdateTypes)Enum.Parse(typeof(UpdateTypes), u));
-                p.Property(p => p.Condition).HasColumnName("NorR");
-                p.Property(p => p.SR).HasColumnName("SRNumber");
-                p.Property(p => p.OEM).HasConversion(o => o.ToString(), o => (OEMs)Enum.Parse(typeof(OEMs), o));
-    });
+            entity.ToTable(p => p.HasCheckConstraint("CK_NorR", "\"NorR\" = 'N' OR \"NorR\" = 'R'"));
+            entity.ToTable(p => p.HasCheckConstraint("CK_OEM", "\"OEM\" = 'Apple' OR \"OEM\" = 'Nokia' OR \"OEM\" = 'Samsung' OR \"OEM\" = 'Other'"));
+        });
 
-        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Sim>(entity =>
+        {
+            entity.HasKey(e => e.PhoneNumber);
+
+            entity.ToTable("SIMs");
+
+            entity.HasIndex(e => e.SimNumber, "IX_Sims_SimNumber").IsUnique();
+
+            entity.Property(e => e.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.SR)
+                .HasColumnType("INTEGER");
+        });
+
+        modelBuilder.Entity<UpdateHistoryPhone>(entity =>
+        {
+            entity.Property(e => e.Condition).HasColumnName("NorR");
+            entity.Property(e => e.Imei).HasColumnName("IMEI");
+            entity.Property(e => e.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.OEM).HasConversion(o => o.ToString(), o => (OEMs)Enum.Parse(typeof(OEMs), o));
+            entity.Property(e => e.SimNumber)
+                .HasColumnType("INTEGER")
+                .HasColumnName("SIMNumber");
+            entity.Property(e => e.SR)
+                .HasColumnType("INTEGER")
+                .HasColumnName("SRNumber");
+            entity.Property(e => e.UpdateType).HasConversion(u => u.ToString(), u => (UpdateTypes)Enum.Parse(typeof(UpdateTypes), u));
+        });
+
+        OnModelCreatingPartial(modelBuilder);
     }
+
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

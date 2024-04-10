@@ -39,9 +39,6 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private readonly IUsersMainViewModel _usersMainViewModel;
     private readonly IUserSettings _userSettings;
     
-    [ObservableProperty]
-    private IViewModel? _selectedViewModel;
-
     public MainWindowViewModel(AddItemViewModel addItemViewModel,
                                IBaseReportMainViewModel baseReportMainViewModel,
                                IDashboardMainViewModel dashboardMainViewModel,
@@ -62,9 +59,20 @@ public sealed partial class MainWindowViewModel : ObservableObject
         _usersMainViewModel = usersMainViewModel ?? throw new ArgumentNullException(nameof(usersMainViewModel));
         _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
 
+#if DEBUG
+        Development = true;
+#endif
+
         ViewModelType currentView = _userSettings.CurrentView;
         _ = UpdateViewAsync(currentView);        
     }
+
+    [ObservableProperty]
+    private bool _development = false;
+
+    [ObservableProperty]
+    private IViewModel? _selectedViewModel;
+
 
     [RelayCommand]
     private async Task UpdateViewAsync(object selectedViewModelType)

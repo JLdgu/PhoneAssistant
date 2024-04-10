@@ -136,7 +136,7 @@
                          Command="{Binding UpdateViewCommand}"
                          CommandParameter="{x:Static viewmodel:ViewModelType.Disposals}"
                          DockPanel.Dock="Top"
-                         IsEnabled="false"
+                         IsEnabled="{Binding Development}"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon Width="24"
@@ -150,7 +150,7 @@
             <RadioButton Command="{Binding UpdateViewCommand}"
                          CommandParameter="{x:Static viewmodel:ViewModelType.AddItem}"
                          DockPanel.Dock="Top"
-                         IsEnabled="true"
+                         IsEnabled="{Binding Development}"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel HorizontalAlignment="Center">
                     <materialDesign:PackIcon Width="24"

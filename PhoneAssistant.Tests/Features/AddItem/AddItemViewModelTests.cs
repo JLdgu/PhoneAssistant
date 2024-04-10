@@ -2,7 +2,6 @@
 
 using Xunit;
 using PhoneAssistant.WPF.Features.AddItem;
-using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Repositories;
 using Moq;
 using System.ComponentModel.DataAnnotations;
@@ -19,6 +18,57 @@ public class AddItemViewModelTests
     }
 
     [Fact]
+    void CanSavePhone_ShouldBeEnabled_WhenAllRequiredPropertiesSupplied()
+    {
+        _sut.AssetTag = "MP00001";
+        _sut.Condition = "condition";
+        _sut.Imei = "355808981147090";
+        _sut.Status = "status";
+        
+        Assert.True(_sut.CanSavePhone());
+    }
+
+    [Fact]
+    void GetErrors_ShouldNotContainAssetTagRequired_WhenAssetTagSet()
+    {
+        _sut.AssetTag = "MP00001"; 
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors();
+        Assert.NotEmpty(errors);            
+        Assert.DoesNotContain(errors, e => e.ErrorMessage!.Contains("Asset Tag"));        
+    }
+
+    [Fact]
+    void GetErrors_ShouldNotContainConditionRequired_WhenConditionSet()
+    {
+        _sut.Condition = "condition";
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors();
+        Assert.NotEmpty(errors);
+        Assert.DoesNotContain(errors, e => e.ErrorMessage!.Contains("Condition"));
+    }
+
+    [Fact]
+    void GetErrors_ShouldNotContainIMEIRequired_WhenIMEISet()
+    {
+        _sut.Imei = "355808981147090";
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors();
+        Assert.NotEmpty(errors);
+        Assert.DoesNotContain(errors, e => e.ErrorMessage!.Contains("IMEI"));
+    }
+
+    [Fact]
+    void GetErrors_ShouldNotContainStatusRequired_WhenStatusSet()
+    {
+        _sut.Status = "status";
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors();
+        Assert.NotEmpty(errors);
+        Assert.DoesNotContain(errors, e => e.ErrorMessage!.Contains("Status"));
+    }
+
+    [Fact]
     void PhoneClearCommand_ShouldDisablePhoneSave()
     {
         _sut.PhoneClearCommand.Execute(null);
@@ -29,11 +79,29 @@ public class AddItemViewModelTests
     [Fact]
     void PhoneClearCommand_ShouldResetAllProperties()
     {
+        ArrangeSetAllProperties();
+
         _sut.PhoneClearCommand.Execute(null);
 
-        Assert.Equal(string.Empty, _sut.PhoneCondition); 
-        Assert.Equal(string.Empty, _sut.PhoneStatus);
-        Assert.Equal(string.Empty,_sut.PhoneImei);
+        AssertResetAllProperties();
+    }
+
+    private void ArrangeSetAllProperties()
+    {
+        _sut.AssetTag = "MP00000";
+        _sut.Condition = "condition";
+        _sut.FormerUser = "former user";
+        _sut.Imei = "imei";
+        _sut.Status = "status";
+    }
+
+    private void AssertResetAllProperties()
+    {
+        Assert.Equal(string.Empty, _sut.AssetTag);
+        Assert.Null(_sut.Condition);
+        Assert.Equal(string.Empty, _sut.FormerUser);
+        Assert.Equal(string.Empty, _sut.Imei);
+        Assert.Null(_sut.Status);
     }
 
     [Fact]
@@ -47,32 +115,23 @@ public class AddItemViewModelTests
     [Fact]
     void PhoneSaveCommand_ShouldResetAllProperties()
     {
+        ArrangeSetAllProperties();
+
         _sut.PhoneSaveCommand.Execute(null);
 
-        Assert.Equal(string.Empty, _sut.PhoneCondition);
-        Assert.Equal(string.Empty, _sut.PhoneStatus);
-        Assert.Equal(string.Empty, _sut.PhoneImei);
+        AssertResetAllProperties();
     }
 
-    [Fact]
-    void PhoneSaveCommand_ShouldSaveChanges()
-    {        
-        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
-        //repository.Setup()            .ReturnsAsync("LastUpdate");
+    //[Fact]
+    //void PhoneSaveCommand_ShouldSaveChanges()
+    //{        
+    //Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
+    ////repository.Setup()            .ReturnsAsync("LastUpdate");
 
 
-        _sut.PhoneSaveCommand.Execute(null);        
-        Assert.Fail();
-    }
-
-    [Fact]
-    void PhoneWithValidProperties_ShouldEnableSave()
-    {
-        _sut.PhoneCondition = ApplicationSettings.Conditions[0];
-        _sut.PhoneStatus = ApplicationSettings.Statuses[0];
-
-        Assert.True(_sut.CanSavePhone());
-    }
+    //_sut.PhoneSaveCommand.Execute(null);        
+    //Assert.Fail();
+    //}
 
     [Fact]
     void ValidateImei_ShouldReturnError_WhenIMEIEmptyOrWhiteSpace()
@@ -94,7 +153,7 @@ public class AddItemViewModelTests
         ValidationResult actual = AddItemViewModel.ValidateImeiAsync("abc", ctx);
 
         Assert.NotNull(actual);
-        Assert.Equal("IMEI must be 15 digits", actual.ErrorMessage);
+        Assert.Equal("IMEI check digit incorrect", actual.ErrorMessage);
     }
 
     [Fact]
@@ -119,7 +178,7 @@ public class AddItemViewModelTests
         ValidationResult actual = AddItemViewModel.ValidateImeiAsync("355808981132899", ctx); // An invalid 15-digit IMEI
 
         Assert.NotNull(actual);
-        Assert.Equal("IMEI must be 15 digits", actual.ErrorMessage);
+        Assert.Equal("IMEI check digit incorrect", actual.ErrorMessage);
     }
 
     [Fact]

@@ -15,42 +15,44 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     public AddItemViewModel(IPhonesRepository phonesRepository)
     {
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
+        ValidateAllProperties();
     }
 
     public List<string> Conditions { get; } = ApplicationSettings.Conditions;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
-    private string _phoneCondition = string.Empty;
-
-    public List<string> Statuses { get; } = ApplicationSettings.Statuses;
+    [NotifyDataErrorInfo]
+    [Required(ErrorMessage = "Asset Tag is required")]
+    [RegularExpression(@"MP\d{5}",ErrorMessage = "Asset Tag format MPnnnnn")]
+    private string _assetTag = string.Empty;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
-    private string _phoneStatus = string.Empty;
+    [NotifyDataErrorInfo]
+    [Required(ErrorMessage = "Condition is required")]
+    [DisplayFormat(ConvertEmptyStringToNull = false)]
+    private string? _condition = string.Empty;
 
     [ObservableProperty]
+    private string _formerUser = string.Empty;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
     [NotifyDataErrorInfo]
+    [Required(ErrorMessage = "IMEI is required")]
     [CustomValidation(typeof(AddItemViewModel), nameof(ValidateImeiAsync))]
-    private string _phoneImei = string.Empty;
-
-    partial void OnPhoneImeiChanged(string value)
-    {
-
-    }
+    private string _imei = string.Empty;
 
     public static ValidationResult ValidateImeiAsync(string imei, ValidationContext context)
     {   
         if (string.IsNullOrWhiteSpace(imei)) return new ValidationResult("IMEI is required");
 
-        if(!LuhnValidator.IsValid(imei, 15)) return new ValidationResult("IMEI must be 15 digits");
+        if(!LuhnValidator.IsValid(imei, 15)) return new ValidationResult("IMEI check digit incorrect");
 
         AddItemViewModel vm = (AddItemViewModel)context.ObjectInstance;
 
         bool unique = Task.Run(() => vm.IsIMEIUniqueAsync(imei)).GetAwaiter().GetResult();
-        //var task = vm.IsIMEIUniqueAsync(imei);
-        //task.Wait();
-        //bool unique = task.Result;
 
 #pragma warning disable CS8603 // Possible null reference return.
         if (unique) return ValidationResult.Success;
@@ -61,27 +63,32 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
 
     private async Task<bool> IsIMEIUniqueAsync(string imei) => !await _phonesRepository.ExistsAsync(imei);
 
+    public List<string> Statuses { get; } = ApplicationSettings.Statuses;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
+    [NotifyDataErrorInfo]
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Status is required")]
+    private string? _status = string.Empty;
+
     [RelayCommand]
     private void PhoneClear()
     {
-        PhoneStatus = string.Empty;
-        PhoneImei = string.Empty;
+        AssetTag = string.Empty;
+        Condition = null;
+        FormerUser = string.Empty;
+        Imei = string.Empty;
+        Status = null;
+
+        ValidateAllProperties();
     }
 
-    public bool CanSavePhone()
-    {
-        if (HasErrors) return false;
-        if (PhoneCondition == string.Empty) return false;
-        //if (PhoneStatus == string.Empty) return false;
-
-        return true;
-    }
-
+    public bool CanSavePhone() => !HasErrors;
 
     [RelayCommand(CanExecute = nameof(CanSavePhone))]
     private void PhoneSave()
     {
-
+        PhoneClear();
     }
 
     public Task LoadAsync()

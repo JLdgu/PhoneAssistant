@@ -9,7 +9,7 @@ public static  class LuhnValidator
     /// 
     /// <param name="length">The expected length of the luhn parameter</param>
     /// <returns>bool</returns>
-    internal static bool IsValid(string? luhn, int length = -1)
+    public static bool IsValid(string? luhn, int length = -1)
     {
         if (luhn is null)
             return false;

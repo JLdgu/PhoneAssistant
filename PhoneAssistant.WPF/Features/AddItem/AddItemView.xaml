@@ -50,35 +50,15 @@
                 <ComboBox MinWidth="90"
                           materialDesign:HintAssist.Hint="Condition"
                           ItemsSource="{Binding Conditions}"
-                          SelectedValue="{Binding PhoneCondition}"
-                          Style="{StaticResource MaterialDesignOutlinedComboBox}">
-                    <ComboBox.SelectedItem>
-                        <Binding Mode="TwoWay"
-                                 Path="PhoneCondition"
-                                 UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <shared:NotEmptyValidationRule ValidatesOnTargetUpdated="True" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </ComboBox.SelectedItem>
-                </ComboBox>
+                          SelectedItem="{Binding Condition, UpdateSourceTrigger=PropertyChanged}"
+                          Style="{StaticResource MaterialDesignOutlinedComboBox}" />
 
                 <ComboBox MinWidth="80"
                           Margin="10,0,0,0"
                           materialDesign:HintAssist.Hint="Status"
                           ItemsSource="{Binding Statuses}"
-                          SelectedValue="{Binding PhoneStatus}"
-                          Style="{StaticResource MaterialDesignOutlinedComboBox}">
-                    <ComboBox.SelectedItem>
-                        <Binding Mode="TwoWay"
-                                 Path="PhoneStatus"
-                                 UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <shared:NotEmptyValidationRule ValidatesOnTargetUpdated="True" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </ComboBox.SelectedItem>
-                </ComboBox>
+                          SelectedItem="{Binding Status, UpdateSourceTrigger=PropertyChanged}"
+                          Style="{StaticResource MaterialDesignOutlinedComboBox}" />
 
                 <TextBox MinWidth="150"
                          Margin="10,0,0,0"
@@ -86,12 +66,25 @@
                          materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                          MaxLength="15"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding PhoneImei}"
-                         TextAlignment="Left" />
+                         Text="{Binding Imei}" />
+
+                <TextBox Margin="10,0,0,0"
+                         materialDesign:HintAssist.Hint="Asset Tag"
+                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding AssetTag}" />
+
+                <TextBox MinWidth="150"
+                         Margin="10,0,0,0"
+                         materialDesign:HintAssist.Hint="Former User"
+                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding FormerUser}" />
+
             </StackPanel>
 
             <StackPanel Grid.Row="2"
-                        Margin="0,20"
+                        Margin="0,30,0,10"
                         Orientation="Horizontal">
                 <Button Margin="10,0"
                         HorizontalAlignment="Left"

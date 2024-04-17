@@ -10,10 +10,11 @@
              d:DataContext="{d:DesignInstance Type=local:AddItemViewModel,
                                               IsDesignTimeCreatable=False}"
              d:DesignHeight="450"
-             d:DesignWidth="800"
+             d:DesignWidth="1400"
              mc:Ignorable="d">
 
     <UserControl.Resources>
+        <shared:ConditionConverter x:Key="ConditionConverter" />
         <Style x:Key="CardHeader" TargetType="{x:Type TextBlock}">
             <Style.Resources>
                 <Style BasedOn="{StaticResource MaterialDesignHeadline6Hyperlink}" TargetType="Hyperlink" />
@@ -47,17 +48,17 @@
             <StackPanel Grid.Row="1"
                         Margin="10,10,0,0"
                         Orientation="Horizontal">
-                <ComboBox MinWidth="90"
+                <ComboBox MinWidth="120"
                           materialDesign:HintAssist.Hint="Condition"
                           ItemsSource="{Binding Conditions}"
-                          SelectedItem="{Binding Condition, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedItem="{Binding Condition, Converter={StaticResource ConditionConverter}, UpdateSourceTrigger=LostFocus}"
                           Style="{StaticResource MaterialDesignOutlinedComboBox}" />
 
-                <ComboBox MinWidth="80"
+                <ComboBox MinWidth="150"
                           Margin="10,0,0,0"
                           materialDesign:HintAssist.Hint="Status"
                           ItemsSource="{Binding Statuses}"
-                          SelectedItem="{Binding Status, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedItem="{Binding Status, UpdateSourceTrigger=LostFocus}"
                           Style="{StaticResource MaterialDesignOutlinedComboBox}" />
 
                 <TextBox MinWidth="150"
@@ -68,11 +69,25 @@
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          Text="{Binding Imei}" />
 
-                <TextBox Margin="10,0,0,0"
+                <TextBox MinWidth="95"
+                         Margin="10,0,0,0"
                          materialDesign:HintAssist.Hint="Asset Tag"
                          materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          Text="{Binding AssetTag}" />
+
+                <ComboBox MinWidth="110"
+                          Margin="10,0,0,0"
+                          ItemsSource="{Binding OEMs}"
+                          SelectedValue="{Binding OEM}"
+                          Style="{StaticResource MaterialDesignOutlinedComboBox}" />
+
+                <TextBox MinWidth="75"
+                         Margin="10,0,0,0"
+                         materialDesign:HintAssist.Hint="Model"
+                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding Model}" />
 
                 <TextBox MinWidth="150"
                          Margin="10,0,0,0"
@@ -81,6 +96,12 @@
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          Text="{Binding FormerUser}" />
 
+                <TextBox MinWidth="200"
+                         Margin="10,0,0,0"
+                         materialDesign:HintAssist.Hint="Notes"
+                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding Notes}" />
             </StackPanel>
 
             <StackPanel Grid.Row="2"

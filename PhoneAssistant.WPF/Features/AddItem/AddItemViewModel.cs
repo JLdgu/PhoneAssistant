@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using PhoneAssistant.WPF.Application;
+using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Shared;
 
@@ -18,8 +19,6 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         ValidateAllProperties();
     }
 
-    public List<string> Conditions { get; } = ApplicationSettings.Conditions;
-
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
     [NotifyDataErrorInfo]
@@ -27,12 +26,10 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     [RegularExpression(@"MP\d{5}",ErrorMessage = "Asset Tag format MPnnnnn")]
     private string _assetTag = string.Empty;
 
+    public List<string> Conditions { get; } = ApplicationSettings.Conditions;
+
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
-    [NotifyDataErrorInfo]
-    [Required(ErrorMessage = "Condition is required")]
-    [DisplayFormat(ConvertEmptyStringToNull = false)]
-    private string? _condition = string.Empty;
+    private string _condition = ApplicationSettings.Conditions[0];
 
     [ObservableProperty]
     private string _formerUser = string.Empty;
@@ -63,22 +60,39 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
 
     private async Task<bool> IsIMEIUniqueAsync(string imei) => !await _phonesRepository.ExistsAsync(imei);
 
-    public List<string> Statuses { get; } = ApplicationSettings.Statuses;
-
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
     [NotifyDataErrorInfo]
-    [Required(AllowEmptyStrings = false, ErrorMessage = "Status is required")]
-    private string? _status = string.Empty;
+    [Required(ErrorMessage = "Model is required")]
+    private string _model = string.Empty;
+
+    [ObservableProperty]
+    private string _notes = string.Empty;
+
+    public IEnumerable<OEMs> OEMs
+    {
+        get { return Enum.GetValues(typeof(OEMs)).Cast<OEMs>(); }
+    }
+
+    [ObservableProperty]
+    private OEMs _oEM;
+
+    public List<string> Statuses { get; } = ApplicationSettings.Statuses;
+
+    [ObservableProperty]
+    private string _status = ApplicationSettings.Statuses[1];
 
     [RelayCommand]
     private void PhoneClear()
     {
         AssetTag = string.Empty;
-        Condition = null;
+        Condition = ApplicationSettings.Conditions[0];
         FormerUser = string.Empty;
         Imei = string.Empty;
-        Status = null;
+        Model = string.Empty;
+        Notes = string.Empty;
+        OEM = Application.Entities.OEMs.Apple;
+        Status = ApplicationSettings.Statuses[1];
 
         ValidateAllProperties();
     }
@@ -86,8 +100,11 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     public bool CanSavePhone() => !HasErrors;
 
     [RelayCommand(CanExecute = nameof(CanSavePhone))]
-    private void PhoneSave()
+    private async Task PhoneSaveAsync()
     {
+        Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, OEM = OEM, Status = Status };
+        await _phonesRepository.CreateAsync(phone);
+
         PhoneClear();
     }
 

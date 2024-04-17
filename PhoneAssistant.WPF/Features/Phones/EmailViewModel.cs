@@ -170,7 +170,13 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             <p><br /><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1">
             DCC mobile phone data usage guidance and policies</a></p>
             """);
-            html.AppendLine($"<p><br />To find out how to set up your {_orderDetails!.DeviceType.ToString().ToLower()}, please go here:</br>");
+
+            html.AppendLine("""
+                <p><br />Before setting up your phone please ensure you register with <a href="https://www.wifi.service.gov.uk/connect-to-govwifi/">GovWifi</a></p>
+                """);
+            //html.AppendLine("<p><br />To setup the phone either use Gov Wi-Fi, tether the phone to another phone, setup at another site or setup at home.</p>");
+            
+            html.AppendLine($"<p><br />Detailed setup instructions for your {_orderDetails!.DeviceType.ToString().ToLower()}, are available here:</br>");
             if (_orderDetails.Phone.OEM == OEMs.Apple)
             {
                 html.Append(
@@ -187,7 +193,6 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
                 Android Enterprise - Setting up your Android Smartphone.docx (devoncc.sharepoint.com)</a></p>
                 """);
             }
-            html.AppendLine("<p>To setup the phone either use Gov Wi-Fi, tether the phone to another phone, setup at another site or setup at home.</p>");
         }
 
         if (OrderType == OrderType.Replacement && _orderDetails.DeviceType == DeviceType.Phone)

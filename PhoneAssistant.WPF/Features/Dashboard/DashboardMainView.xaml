@@ -20,6 +20,13 @@
 
         <materialDesign:Card Margin="5,5" Padding="4,2">
             <StackPanel Orientation="Vertical">
+                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="vNext" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #49 Add GovWifi regertration" />
+            </StackPanel>
+        </materialDesign:Card>
+
+        <materialDesign:Card Margin="5,5" Padding="4,2">
+            <StackPanel Orientation="Vertical">
                 <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.404.2" />
                 <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Trim input to user view" />
                 <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #45 Remove mention of DCC Wi-Fi" />

@@ -6,6 +6,7 @@ using Moq;
 using PhoneAssistant.WPF.Application.Repositories;
 using System.Text;
 using System.ComponentModel;
+using System.Security.Policy;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -86,6 +87,10 @@ public sealed class EmailViewModelTests
             <span style="font-size:14px; font-family:Verdana;">
             """, _vm.EmailHtml);
         Assert.Contains("</span>", _vm.EmailHtml);
+
+        Assert.Contains(@"<p><br />Before setting up your phone please ensure you register with <a href=""https://www.wifi.service.gov.uk/connect-to-govwifi/"">GovWifi</a></p>", _vm.EmailHtml);
+
+        //Assert.Contains("<p>To setup the phone either use GovWiFi, tether the phone to another phone, setup at another site or setup at home.</p>",_vm.EmailHtml);
     }
 
     [Fact]

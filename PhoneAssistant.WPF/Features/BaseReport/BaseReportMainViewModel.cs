@@ -215,7 +215,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
             {
                 PhoneNumber = row.GetCell(3).StringCellValue,
                 UserName = row.GetCell(4).StringCellValue,
-                ContractEndDate = row.GetCell(7).DateCellValue.ToShortDateString(),
+                ContractEndDate = row.GetCell(7).DateCellValue.ToString() ?? string.Empty,
                 TalkPlan = row.GetCell(8).StringCellValue,
                 Handset = row.GetCell(9).StringCellValue,
                 SIMNumber = row.GetCell(10).StringCellValue,

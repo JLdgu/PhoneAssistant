@@ -52,6 +52,33 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     }
 
     [Fact]
+    async Task AssetTagUnique_ShouldReturnTrue_WhenAssetTagNull()
+    {
+        bool actual = await _repository.AssetTagUniqueAsync(null);
+
+        Assert.True(actual);
+    }
+
+    [Fact]
+    async Task AssetTagUnique_ShouldReturnTrue_WhenPhoneDoesNotExist()
+    {
+        bool actual = await _repository.AssetTagUniqueAsync("DoesNotExist");
+
+        Assert.True(actual);
+    }
+
+    [Fact]
+    async Task AssetTagUnique_ShouldReturnFalse_WhenPhoneDoesExistAsync()
+    {
+        _helper.DbContext.Phones.Add(_phone);
+        await _helper.DbContext.SaveChangesAsync();
+
+        bool actual = await _repository.AssetTagUniqueAsync(_phone.AssetTag);
+
+        Assert.False(actual);
+    }
+
+    [Fact]
     async Task Exists_ShouldReturnFalse_WhenPhoneDoesNotExist()
     {
         bool actual = await _repository.ExistsAsync("DoesNotExist");

@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
 
-namespace PhoneAssistant.WPF.Features.Phones;
+namespace PhoneAssistant.WPF.Shared;
 
 [ValueConversion(typeof(string), typeof(string))]
 public class ConditionConverter : IValueConverter

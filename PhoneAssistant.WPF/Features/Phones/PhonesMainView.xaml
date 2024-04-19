@@ -10,7 +10,7 @@
              d:DataContext="{d:DesignInstance Type=viewmodel:PhonesMainViewModel,
                                               IsDesignTimeCreatable=False}"
              d:DesignHeight="200"
-             d:DesignWidth="900"
+             d:DesignWidth="1400"
              mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -54,7 +54,7 @@
                       HeadersVisibility="Column"
                       ItemsSource="{Binding PhoneItems}">
                 <DataGrid.Resources>
-                    <viewmodel:ConditionConverter x:Key="ConditionConverter" />
+                    <shared:ConditionConverter x:Key="ConditionConverter" />
                 </DataGrid.Resources>
                 <DataGrid.Columns>
                     <materialDesign:DataGridComboBoxColumn Header="Condition"

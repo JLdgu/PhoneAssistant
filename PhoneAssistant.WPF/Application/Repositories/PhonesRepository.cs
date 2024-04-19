@@ -14,11 +14,16 @@ public sealed class PhonesRepository : IPhonesRepository
         _dbContext = dbContext;
     }
 
-    public async Task<Phone> CreateAsync(Phone phone)
+    public async Task<bool> AssetTagUniqueAsync(string? assetTag)
+    {
+        Phone? found = await _dbContext.Phones.Where(p => p.AssetTag == assetTag).FirstOrDefaultAsync();
+        return found == null;
+    }
+
+    public async Task CreateAsync(Phone phone)
     {
         _dbContext.Phones.Add(phone);
         await _dbContext.SaveChangesAsync();
-        return phone;
     }
 
     public async Task<bool> ExistsAsync(string imei)

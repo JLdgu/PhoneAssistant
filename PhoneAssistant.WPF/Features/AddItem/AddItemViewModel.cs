@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using PhoneAssistant.WPF.Application;
+using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Shared;
 
@@ -18,24 +19,34 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         ValidateAllProperties();
     }
 
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
+    [NotifyDataErrorInfo]    
+    [RegularExpression(@"MP\d{5}",ErrorMessage = "Asset Tag format MPnnnnn")]
+    [CustomValidation(typeof(AddItemViewModel), nameof(ValidateAssetTag))]
+    private string _assetTag = string.Empty;
+
+    public static ValidationResult ValidateAssetTag(string assetTag, ValidationContext context)
+    {
+        AddItemViewModel vm = (AddItemViewModel)context.ObjectInstance;
+
+        bool unique = Task.Run(() => vm.IsAssetTagUniqueAsync()).GetAwaiter().GetResult();
+                
+#pragma warning disable CS8603 // Possible null reference return.
+        if (unique) return ValidationResult.Success;
+#pragma warning restore CS8603 // Possible null reference return.
+
+        return new ValidationResult("Asset Tag must be unique");
+    }
+    private async Task<bool> IsAssetTagUniqueAsync() => await _phonesRepository.AssetTagUniqueAsync(AssetTag);
+
     public List<string> Conditions { get; } = ApplicationSettings.Conditions;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
-    [NotifyDataErrorInfo]
-    [Required(ErrorMessage = "Asset Tag is required")]
-    [RegularExpression(@"MP\d{5}",ErrorMessage = "Asset Tag format MPnnnnn")]
-    private string _assetTag = string.Empty;
+    private string _condition = ApplicationSettings.Conditions[1].Substring(0,1);
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
-    [NotifyDataErrorInfo]
-    [Required(ErrorMessage = "Condition is required")]
-    [DisplayFormat(ConvertEmptyStringToNull = false)]
-    private string? _condition = string.Empty;
-
-    [ObservableProperty]
-    private string _formerUser = string.Empty;
+    private string? _formerUser;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
@@ -63,22 +74,39 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
 
     private async Task<bool> IsIMEIUniqueAsync(string imei) => !await _phonesRepository.ExistsAsync(imei);
 
-    public List<string> Statuses { get; } = ApplicationSettings.Statuses;
-
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
     [NotifyDataErrorInfo]
-    [Required(AllowEmptyStrings = false, ErrorMessage = "Status is required")]
-    private string? _status = string.Empty;
+    [Required(ErrorMessage = "Model is required")]
+    private string _model = string.Empty;
+
+    [ObservableProperty]
+    private string? _notes;
+
+    public IEnumerable<OEMs> OEMs
+    {
+        get { return Enum.GetValues(typeof(OEMs)).Cast<OEMs>(); }
+    }
+
+    [ObservableProperty]
+    private OEMs _oEM;
+
+    public List<string> Statuses { get; } = ApplicationSettings.Statuses;
+
+    [ObservableProperty]
+    private string _status = ApplicationSettings.Statuses[1];
 
     [RelayCommand]
     private void PhoneClear()
     {
         AssetTag = string.Empty;
-        Condition = null;
-        FormerUser = string.Empty;
+        Condition = ApplicationSettings.Conditions[1].Substring(0, 1);
+        FormerUser = null;
         Imei = string.Empty;
-        Status = null;
+        Model = string.Empty;
+        Notes = null;
+        OEM = Application.Entities.OEMs.Apple;
+        Status = ApplicationSettings.Statuses[1];
 
         ValidateAllProperties();
     }
@@ -86,8 +114,11 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     public bool CanSavePhone() => !HasErrors;
 
     [RelayCommand(CanExecute = nameof(CanSavePhone))]
-    private void PhoneSave()
+    private async Task PhoneSaveAsync()
     {
+        Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, Notes = Notes, OEM = OEM, Status = Status };
+        await _phonesRepository.CreateAsync(phone);
+
         PhoneClear();
     }
 

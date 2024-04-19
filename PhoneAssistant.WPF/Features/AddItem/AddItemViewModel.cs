@@ -21,18 +21,32 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
-    [NotifyDataErrorInfo]
-    [Required(ErrorMessage = "Asset Tag is required")]
+    [NotifyDataErrorInfo]    
     [RegularExpression(@"MP\d{5}",ErrorMessage = "Asset Tag format MPnnnnn")]
+    [CustomValidation(typeof(AddItemViewModel), nameof(ValidateAssetTag))]
     private string _assetTag = string.Empty;
+
+    public static ValidationResult ValidateAssetTag(string assetTag, ValidationContext context)
+    {
+        AddItemViewModel vm = (AddItemViewModel)context.ObjectInstance;
+
+        bool unique = Task.Run(() => vm.IsAssetTagUniqueAsync()).GetAwaiter().GetResult();
+                
+#pragma warning disable CS8603 // Possible null reference return.
+        if (unique) return ValidationResult.Success;
+#pragma warning restore CS8603 // Possible null reference return.
+
+        return new ValidationResult("Asset Tag must be unique");
+    }
+    private async Task<bool> IsAssetTagUniqueAsync() => await _phonesRepository.AssetTagUniqueAsync(AssetTag);
 
     public List<string> Conditions { get; } = ApplicationSettings.Conditions;
 
     [ObservableProperty]
-    private string _condition = ApplicationSettings.Conditions[0];
+    private string _condition = ApplicationSettings.Conditions[1].Substring(0,1);
 
     [ObservableProperty]
-    private string _formerUser = string.Empty;
+    private string? _formerUser;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
@@ -67,7 +81,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     private string _model = string.Empty;
 
     [ObservableProperty]
-    private string _notes = string.Empty;
+    private string? _notes;
 
     public IEnumerable<OEMs> OEMs
     {
@@ -86,11 +100,11 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     private void PhoneClear()
     {
         AssetTag = string.Empty;
-        Condition = ApplicationSettings.Conditions[0];
-        FormerUser = string.Empty;
+        Condition = ApplicationSettings.Conditions[1].Substring(0, 1);
+        FormerUser = null;
         Imei = string.Empty;
         Model = string.Empty;
-        Notes = string.Empty;
+        Notes = null;
         OEM = Application.Entities.OEMs.Apple;
         Status = ApplicationSettings.Statuses[1];
 
@@ -102,7 +116,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     [RelayCommand(CanExecute = nameof(CanSavePhone))]
     private async Task PhoneSaveAsync()
     {
-        Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, OEM = OEM, Status = Status };
+        Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, Notes = Notes, OEM = OEM, Status = Status };
         await _phonesRepository.CreateAsync(phone);
 
         PhoneClear();

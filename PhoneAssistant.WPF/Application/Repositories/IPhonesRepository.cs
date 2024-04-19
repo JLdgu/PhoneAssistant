@@ -4,6 +4,7 @@ namespace PhoneAssistant.WPF.Application.Repositories;
 
 public interface IPhonesRepository
 {
+    Task<bool> AssetTagUniqueAsync(string? assetTag);
     Task CreateAsync(Phone phone);
     Task<bool> ExistsAsync(string imei);
     Task<IEnumerable<Phone>> GetActivePhonesAsync();

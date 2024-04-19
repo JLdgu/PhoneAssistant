@@ -22,18 +22,53 @@ public class AddItemViewModelTests
     [Fact]
     void CanSavePhone_ShouldBeEnabled_WhenAllRequiredPropertiesSupplied()
     {
+        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
+        _repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
+
         _sut.AssetTag = "MP00001";
         _sut.Condition = "condition";
         _sut.Imei = "355808981147090";
         _sut.Model = "model";
         _sut.Status = "status";
         
+        _mocker.VerifyAll();
         Assert.True(_sut.CanSavePhone());
+    }
+
+    [Fact]
+    void GetErrors_ShouldContainAssetTagError_WhenAssetTagNotUnique()
+    {
+        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
+        _repository.Setup(r => r.AssetTagUniqueAsync("MP99999")).ReturnsAsync(false);
+
+        _sut.AssetTag = "MP99999";
+
+        _mocker.VerifyAll();
+        IEnumerable<ValidationResult> errors = _sut.GetErrors();
+        Assert.NotEmpty(errors);
+        Assert.Contains(errors, e => e.ErrorMessage!.Contains("Asset Tag must be unique"));
+    }
+
+    [Fact]
+    void GetErrors_ShouldNotContainAssetTagError_WhenAssetTagUnique()
+    {
+        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
+        _repository.Setup(r => r.AssetTagUniqueAsync("MP99999")).ReturnsAsync(true);
+
+        _sut.AssetTag = "MP99999";
+
+        _mocker.VerifyAll();
+        IEnumerable<ValidationResult> errors = _sut.GetErrors();
+        Assert.NotEmpty(errors);
+        Assert.DoesNotContain(errors, e => e.ErrorMessage!.Contains("Asset Tag must be unique"));
     }
 
     [Fact]
     void GetErrors_ShouldNotContainAssetTagRequired_WhenAssetTagSet()
     {
+        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
+        _repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
+
         _sut.AssetTag = "MP00001"; 
 
         IEnumerable<ValidationResult> errors = _sut.GetErrors();
@@ -94,11 +129,11 @@ public class AddItemViewModelTests
     private void AssertResetAllProperties()
     {
         Assert.Equal(string.Empty, _sut.AssetTag);
-        Assert.Equal(ApplicationSettings.Conditions[0], _sut.Condition);
-        Assert.Equal(string.Empty, _sut.FormerUser);
+        Assert.Equal(ApplicationSettings.Conditions[1].Substring(0, 1), _sut.Condition);
+        Assert.Null( _sut.FormerUser);
         Assert.Equal(string.Empty, _sut.Imei);
         Assert.Equal(string.Empty, _sut.Model);
-        Assert.Equal(string.Empty, _sut.Notes);
+        Assert.Null(_sut.Notes);
         Assert.Equal(OEMs.Apple,_sut.OEM);
         Assert.Equal(ApplicationSettings.Statuses[1], _sut.Status);
     }
@@ -107,7 +142,8 @@ public class AddItemViewModelTests
     void PhoneSaveCommand_ShouldCallRepository()
     {
         Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
-            _repository.Setup(r => r.CreateAsync(It.IsAny<Phone>()));
+        _repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
+        _repository.Setup(r => r.CreateAsync(It.IsAny<Phone>()));
 
         _sut.AssetTag = "MP00001";
         _sut.Imei = "355808981147090";

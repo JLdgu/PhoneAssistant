@@ -150,7 +150,6 @@
             <RadioButton Command="{Binding UpdateViewCommand}"
                          CommandParameter="{x:Static viewmodel:ViewModelType.AddItem}"
                          DockPanel.Dock="Top"
-                         IsEnabled="{Binding Development}"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel HorizontalAlignment="Center">
                     <materialDesign:PackIcon Width="24"

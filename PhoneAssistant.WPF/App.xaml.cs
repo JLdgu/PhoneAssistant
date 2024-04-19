@@ -33,6 +33,7 @@ public partial class App : System.Windows.Application
         {
             Trace.Close();
             Current.Shutdown();
+            return;
         }
 
         ConfigureDatabase();
@@ -61,7 +62,6 @@ public partial class App : System.Windows.Application
         PhoneAssistantDbContext dbContext = _host.Services.GetRequiredService<PhoneAssistantDbContext>();
 
         dbContext.Database.EnsureCreated();
-        //dbContext.Database.Migrate();
     }
 
     protected override void OnExit(ExitEventArgs e)

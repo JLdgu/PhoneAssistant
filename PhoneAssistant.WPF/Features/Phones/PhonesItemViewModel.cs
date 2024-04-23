@@ -10,16 +10,19 @@ namespace PhoneAssistant.WPF.Features.Phones;
 public sealed partial class PhonesItemViewModel : ObservableObject
 {
     private readonly IPhonesRepository _repository;
+    private readonly ISimsRepository _simsRepository;
     private readonly IPrintEnvelope _printEnvelope;
     private readonly IMessenger _messenger;
     private readonly Phone _phone;
 
     public PhonesItemViewModel(IPhonesRepository repository,
+                               ISimsRepository simsRepository,
                                IPrintEnvelope printEnvelope,
                                IMessenger messenger,
                                Phone phone)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _simsRepository = simsRepository ?? throw new ArgumentNullException(nameof(simsRepository));
         _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         _phone = phone ?? throw new ArgumentNullException(nameof(phone));
@@ -47,8 +50,11 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         if (value == _phone.AssetTag) return;
 
         if (string.IsNullOrEmpty(value) && _phone.AssetTag is null) return;
+        if (string.IsNullOrEmpty(value))
+            _phone.AssetTag = null;
+        else
+            _phone.AssetTag = value;
 
-        _phone.AssetTag = value;
         await _repository.UpdateAsync(_phone);
         LastUpdate = _phone.LastUpdate;
     }
@@ -174,25 +180,26 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SimNumber))]
     [NotifyCanExecuteChangedFor(nameof(RemoveSimCommand))]
     private string _phoneNumber;
     async partial void OnPhoneNumberChanged(string value)
     {
         if (value == _phone.PhoneNumber) return;
+
+        if (string.IsNullOrEmpty(value) && _phone.PhoneNumber is null) return;
         if (string.IsNullOrEmpty(value))
-        {
-            if (_phone.PhoneNumber is null)
-            {
-                return;
-            }
-            else
-            {
-                _phone.PhoneNumber = null;
-            }
-        }
+             _phone.PhoneNumber = null;
         else
         {
             _phone.PhoneNumber = value;
+            string? simNumber = await _simsRepository.DeleteSIMAsync(value);
+            if (simNumber is not null)
+            {
+                _phone.SimNumber = simNumber;
+                SimNumber = simNumber;
+            }
+
         }
 
         await _repository.UpdateAsync(_phone);
@@ -205,21 +212,12 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     async partial void OnSimNumberChanged(string value)
     {
         if (value == _phone.SimNumber) return;
-        if (string.IsNullOrEmpty(value))
-        {
-            if (_phone.SimNumber is null)
-            {
-                return;
-            }
-            else
-            {
-                _phone.SimNumber = null;
-            }
-        }
+
+        if (string.IsNullOrEmpty(value) && _phone.SimNumber is null) return;
+        if (string.IsNullOrEmpty(value))           
+            _phone.SimNumber = null;
         else
-        {
             _phone.SimNumber = value;
-        }
 
         await _repository.UpdateAsync(_phone);
         LastUpdate = _phone.LastUpdate;

@@ -145,6 +145,7 @@ public sealed class PhonesItemViewModelTests
         Assert.Equal(expected, _phone.Notes);
     }
 
+
     [Fact]
     private void OnOEMChanged_CallsUpdateAsync_WithChangedValue()
     {
@@ -153,7 +154,42 @@ public sealed class PhonesItemViewModelTests
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         Assert.Equal(OEMs.Nokia, _phone.OEM);
     }
-    
+
+    [Theory]
+    [InlineData("phone number", "phone number")]
+    [InlineData("", null)]
+    private void OnPhoneNumberChanged_CallsUpdateAsync_WithChangedValue(string actual, string? expected)
+    {
+        _vm.PhoneNumber = actual;
+
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+        Assert.Equal(expected, _phone.PhoneNumber);
+    }
+
+    [Fact]
+    private void OnPhoneNumberChanged_ShouldDeleteSim_WhenSimExists()
+    {
+        Mock<ISimsRepository> sims = _mocker.GetMock<ISimsRepository>();
+        sims.Setup(r => r.DeleteSIMAsync("0123456789")).ReturnsAsync("sim number");
+
+        _vm.PhoneNumber = "0123456789";
+
+        sims.Verify(r => r.DeleteSIMAsync("0123456789"), Times.Once);
+
+        Assert.Equal("sim number", _phone.SimNumber);
+    }
+
+    [Theory]
+    [InlineData("sim number", "sim number")]
+    [InlineData("", null)]
+    private void OnSimNumberChanged_CallsUpdateAsync_WithChangedValue(string actual, string? expected)
+    {
+        _vm.SimNumber = actual;
+
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+        Assert.Equal(expected, _phone.SimNumber);
+    }
+
     [Theory]
     [InlineData("345", 345)]
     [InlineData("", null)]

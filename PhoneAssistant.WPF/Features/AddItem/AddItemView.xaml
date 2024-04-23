@@ -39,9 +39,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <materialDesign:Card Grid.Row="0"
-                                 Margin="5,5"
-                                 Padding="4,2">
+
+            <materialDesign:Card Margin="5,5" Padding="4,2">
                 <TextBlock Style="{StaticResource CardHeader}" Text="Add new phone" />
             </materialDesign:Card>
 
@@ -101,7 +100,7 @@
                          materialDesign:HintAssist.Hint="Notes"
                          materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding Notes}" />
+                         Text="{Binding PhoneNotes}" />
             </StackPanel>
 
             <StackPanel Grid.Row="2"
@@ -121,10 +120,63 @@
                         Style="{StaticResource MaterialDesignRaisedButton}" />
             </StackPanel>
         </Grid>
-        <materialDesign:Card Grid.Row="2"
-                             Margin="5,10"
-                             Padding="4,2">
-            <TextBlock Style="{StaticResource CardHeader}" Text="Add new SIM Card" />
-        </materialDesign:Card>
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <materialDesign:Card Margin="5,10" Padding="4,2">
+                <TextBlock Style="{StaticResource CardHeader}" Text="Add new SIM Card" />
+            </materialDesign:Card>
+
+
+            <StackPanel Grid.Row="1"
+                        Margin="10,10,0,0"
+                        Orientation="Horizontal">
+
+                <TextBox MinWidth="150"
+                         Margin="10,0,0,0"
+                         materialDesign:HintAssist.Hint="Phone Number"
+                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                         MaxLength="11"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding PhoneNumber}" />
+
+                <TextBox MinWidth="150"
+                         Margin="10,0,0,0"
+                         materialDesign:HintAssist.Hint="SIM Number"
+                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                         MaxLength="19"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding SimNumber}" />
+
+                <TextBox MinWidth="200"
+                         Margin="10,0,0,0"
+                         materialDesign:HintAssist.Hint="Notes"
+                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding SimNotes}" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="2"
+                        Margin="0,30,0,10"
+                        Orientation="Horizontal">
+                <Button Margin="10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Command="{Binding SIMSaveCommand}"
+                        Content="Save Changes"
+                        Style="{StaticResource MaterialDesignRaisedButton}" />
+                <Button Margin="10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Command="{Binding SIMClearCommand}"
+                        Content="Clear Changes"
+                        Style="{StaticResource MaterialDesignRaisedButton}" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

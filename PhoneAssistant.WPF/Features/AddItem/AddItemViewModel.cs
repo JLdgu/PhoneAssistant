@@ -12,24 +12,28 @@ namespace PhoneAssistant.WPF.Features.AddItem;
 public partial class AddItemViewModel : ObservableValidator, IViewModel
 {
     private readonly IPhonesRepository _phonesRepository;
+    private readonly ISimsRepository _simsRepository;
 
-    public AddItemViewModel(IPhonesRepository phonesRepository)
+    public AddItemViewModel(IPhonesRepository phonesRepository,
+                            ISimsRepository simsRepository)
     {
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
+        _simsRepository = simsRepository ?? throw new ArgumentNullException(nameof(simsRepository));
         ValidateAllProperties();
     }
 
     #region NewPhone
-
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
     [NotifyDataErrorInfo]    
     [RegularExpression(@"MP\d{5}",ErrorMessage = "Asset Tag format MPnnnnn")]
     [CustomValidation(typeof(AddItemViewModel), nameof(ValidateAssetTag))]
-    private string _assetTag = string.Empty;
+    private string? _assetTag;
 
     public static ValidationResult ValidateAssetTag(string assetTag, ValidationContext context)
     {
+        if (assetTag is null) return ValidationResult.Success;
+
         AddItemViewModel vm = (AddItemViewModel)context.ObjectInstance;
 
         bool unique = Task.Run(() => vm.IsAssetTagUniqueAsync()).GetAwaiter().GetResult();
@@ -101,7 +105,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     [RelayCommand]
     private void PhoneClear()
     {
-        AssetTag = string.Empty;
+        AssetTag = null;
         Condition = ApplicationSettings.Conditions[1].Substring(0, 1);
         FormerUser = null;
         Imei = string.Empty;
@@ -113,7 +117,13 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         ValidateAllProperties();
     }
 
-    public bool CanSavePhone() => !HasErrors;
+    public bool CanSavePhone()
+    {
+        if (GetErrors(nameof(AssetTag)).Count() != 0) return false;
+        if (GetErrors(nameof(Imei)).Count() != 0) return false;
+        if (GetErrors(nameof(Model)).Count() != 0) return false;
+        return true;
+    }
 
     [RelayCommand(CanExecute = nameof(CanSavePhone))]
     private async Task PhoneSaveAsync()
@@ -127,40 +137,43 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
 
     #region NewSIM
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SIMSaveCommand))]
+    [NotifyDataErrorInfo]
+    [Required]
+    [RegularExpression(@"0\d{9,10}", ErrorMessage = "Phone Number must be 10 or 11 digits")]
+    private string? _phoneNumber;
+
+    async partial void OnPhoneNumberChanged(string? value)
+    {
+
+        //string? simNumber = await _simsRepository.GetSIMNumberAsync(value);
+
+        //if (simNumber is not null)
+        //    SimNumber = simNumber;
+    }
+
+    [ObservableProperty]
     private string? _simNotes;
 
     [ObservableProperty]
-    //[NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SIMSaveCommand))]
     [NotifyDataErrorInfo]
-    [RegularExpression(@"0\d{9,10}", ErrorMessage = "Phone Number must be 9 or 10 digits")]
+    [RegularExpression(@"8944\d{15}", ErrorMessage = "SIM Number must be 19 digits")]
     //[CustomValidation(typeof(AddItemViewModel), nameof(ValidateAssetTag))]
-    private string _phoneNumber = string.Empty;
+    private string? _simNumber;
 
-    //    public static ValidationResult ValidateAssetTag(string assetTag, ValidationContext context)
-    //    {
-    //        AddItemViewModel vm = (AddItemViewModel)context.ObjectInstance;
-
-    //        bool unique = Task.Run(() => vm.IsAssetTagUniqueAsync()).GetAwaiter().GetResult();
-
-    //#pragma warning disable CS8603 // Possible null reference return.
-    //        if (unique) return ValidationResult.Success;
-    //#pragma warning restore CS8603 // Possible null reference return.
-
-    //        return new ValidationResult("Asset Tag must be unique");
-    //    }
-    //    private async Task<bool> IsAssetTagUniqueAsync() => await _phonesRepository.AssetTagUniqueAsync(AssetTag);
-    [ObservableProperty]
-    //[NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
-    //[NotifyDataErrorInfo]
-    //[RegularExpression(@"0\d{9,10}", ErrorMessage = "Phone Number must be 9 or 10 digits")]
-    //[CustomValidation(typeof(AddItemViewModel), nameof(ValidateAssetTag))]
-    private string _simNumber = string.Empty;
     [RelayCommand]
     private void SIMClear()
     {
+        PhoneNumber = null;
+        SimNotes = null;
+        SimNumber = null;
     }
 
-    public bool CanSaveSIM() => !HasErrors;
+    public bool CanSaveSIM()
+    {
+        return !HasErrors;
+    }
 
     [RelayCommand(CanExecute = nameof(CanSaveSIM))]
     private async Task SIMSaveAsync()

@@ -178,7 +178,7 @@
         <StackPanel Grid.Column="1"
                     d:Background="Aquamarine"
                     Orientation="Vertical">
-            <ContentControl Content="{Binding SelectedViewModel}" />
+            <ContentControl Content="{Binding SelectedViewModel}" Validation.ErrorTemplate="{x:Null}" />
         </StackPanel>
     </Grid>
 </Window>

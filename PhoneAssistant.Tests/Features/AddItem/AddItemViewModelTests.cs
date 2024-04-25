@@ -19,6 +19,7 @@ public class AddItemViewModelTests
         _sut = _mocker.CreateInstance<AddItemViewModel>();
     }
 
+    #region NewPhone
     [Fact]
     void CanSavePhone_ShouldBeEnabled_WhenAllRequiredPropertiesSupplied()
     {
@@ -44,13 +45,12 @@ public class AddItemViewModelTests
         _sut.AssetTag = "MP99999";
 
         _mocker.VerifyAll();
-        IEnumerable<ValidationResult> errors = _sut.GetErrors();
-        Assert.NotEmpty(errors);
-        Assert.Contains(errors, e => e.ErrorMessage!.Contains("Asset Tag must be unique"));
+        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.AssetTag));
+        Assert.Equal("Asset Tag must be unique", errors.First().ToString());
     }
 
     [Fact]
-    void GetErrors_ShouldNotContainAssetTagError_WhenAssetTagUnique()
+    void GetErrors_ShouldBeEmpty_WhenAssetTagUnique()
     {
         Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
         _repository.Setup(r => r.AssetTagUniqueAsync("MP99999")).ReturnsAsync(true);
@@ -58,42 +58,38 @@ public class AddItemViewModelTests
         _sut.AssetTag = "MP99999";
 
         _mocker.VerifyAll();
-        IEnumerable<ValidationResult> errors = _sut.GetErrors();
-        Assert.NotEmpty(errors);
-        Assert.DoesNotContain(errors, e => e.ErrorMessage!.Contains("Asset Tag must be unique"));
+        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.AssetTag));
+        Assert.Empty(errors);
     }
 
     [Fact]
-    void GetErrors_ShouldNotContainAssetTagRequired_WhenAssetTagSet()
-    {
-        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
-        _repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
-
-        _sut.AssetTag = "MP00001"; 
-
-        IEnumerable<ValidationResult> errors = _sut.GetErrors();
-        Assert.NotEmpty(errors);            
-        Assert.DoesNotContain(errors, e => e.ErrorMessage!.Contains("Asset Tag"));        
-    }
-
-    [Fact]
-    void GetErrors_ShouldNotContainIMEIRequired_WhenIMEISet()
+    void GetErrors_ShouldBeEmpty_WhenIMEISet()
     {
         _sut.Imei = "355808981147090";
 
-        IEnumerable<ValidationResult> errors = _sut.GetErrors();
-        Assert.NotEmpty(errors);
-        Assert.DoesNotContain(errors, e => e.ErrorMessage!.Contains("IMEI"));
+        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Imei));
+        Assert.Empty(errors);
     }
 
     [Fact]
-    void GetErrors_ShouldNotContainModelRequired_WhenModelSet()
+    void GetErrors_ShouldBeEmpty_WhenModelSet()
     {
         _sut.Model = "model";
 
-        IEnumerable<ValidationResult> errors = _sut.GetErrors();
-        Assert.NotEmpty(errors);
-        Assert.DoesNotContain(errors, e => e.ErrorMessage!.Contains("Model"));
+        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Model));
+        Assert.Empty(errors);
+    }
+
+    [Fact]
+    void OnPhoneNumberChanged_ShouldSetSimNumber_WhenSIMExists()
+    {
+        Mock<ISimsRepository> _repository = _mocker.GetMock<ISimsRepository>();
+        _repository.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync("sim number");
+
+        _sut.PhoneNumber = "07123456789";
+
+        _repository.VerifyAll();
+        Assert.Equal("sim number", _sut.SimNumber);
     }
 
     [Fact]
@@ -107,33 +103,33 @@ public class AddItemViewModelTests
     [Fact]
     void PhoneClearCommand_ShouldResetAllProperties()
     {
-        ArrangeSetAllProperties();
+        ArrangeSetAllPhoneProperties();
 
         _sut.PhoneClearCommand.Execute(null);
 
-        AssertResetAllProperties();
+        AssertResetAllPhoneProperties();
     }
 
-    private void ArrangeSetAllProperties()
+    private void ArrangeSetAllPhoneProperties()
     {
         _sut.AssetTag = "MP00000";
         _sut.Condition = "condition";
         _sut.FormerUser = "former user";
         _sut.Imei = "imei";
         _sut.Model = "model";
-        _sut.Notes = "notes";
+        _sut.PhoneNotes = "notes";
         _sut.OEM = OEMs.Samsung;
         _sut.Status = "status";
     }
 
-    private void AssertResetAllProperties()
+    private void AssertResetAllPhoneProperties()
     {
-        Assert.Equal(string.Empty, _sut.AssetTag);
+        Assert.Null(_sut.AssetTag);
         Assert.Equal(ApplicationSettings.Conditions[1].Substring(0, 1), _sut.Condition);
         Assert.Null( _sut.FormerUser);
         Assert.Equal(string.Empty, _sut.Imei);
         Assert.Equal(string.Empty, _sut.Model);
-        Assert.Null(_sut.Notes);
+        Assert.Null(_sut.PhoneNotes);
         Assert.Equal(OEMs.Apple,_sut.OEM);
         Assert.Equal(ApplicationSettings.Statuses[1], _sut.Status);
     }
@@ -163,25 +159,14 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void PhoneSaveCommand_ShouldResetAllProperties()
+    void PhoneSaveCommand_ShouldResetAllPhoneProperties()
     {
-        ArrangeSetAllProperties();
+        ArrangeSetAllPhoneProperties();
 
         _sut.PhoneSaveCommand.Execute(null);
 
-        AssertResetAllProperties();
+        AssertResetAllPhoneProperties();
     }
-
-    //[Fact]
-    //void PhoneSaveCommand_ShouldSaveChanges()
-    //{        
-    //Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
-    ////repository.Setup()            .ReturnsAsync("LastUpdate");
-
-
-    //_sut.PhoneSaveCommand.Execute(null);        
-    //Assert.Fail();
-    //}
 
     [Fact]
     void ValidateImei_ShouldReturnError_WhenIMEIEmptyOrWhiteSpace()
@@ -240,4 +225,44 @@ public class AddItemViewModelTests
 
         Assert.Equal(ValidationResult.Success, actual);
     }
+    #endregion
+
+    #region NewSIM
+    [Fact]
+    void CanSaveSIM_ShouldBeEnabled_WhenAllRequiredPropertiesSupplied()
+    {
+        //Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
+        //_repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
+
+        //_sut.AssetTag = "MP00001";
+        //_sut.Condition = "condition";
+        //_sut.Imei = "355808981147090";
+        //_sut.Model = "model";
+        //_sut.Status = "status";
+
+        //_mocker.VerifyAll();
+        //Assert.True(_sut.CanSavePhone());
+    }
+    [Fact]
+    void SIMClearCommand_ShouldDisableSIMSave()
+    {
+        _sut.SIMClearCommand.Execute(null);
+
+        Assert.False(_sut.CanSaveSIM());
+    }
+
+    [Fact]
+    void SIMClearCommand_ShouldResetAllSIMProperties()
+    {
+        _sut.PhoneNumber = "1234567890";
+        _sut.SimNumber = "1234567890123456789";
+        _sut.SimNotes = "Notes";
+
+        _sut.SIMClearCommand.Execute(null);
+
+        Assert.Null(_sut.PhoneNumber);
+        Assert.Null(_sut.SimNumber);
+        Assert.Null(_sut.SimNotes);
+    }
+    #endregion
 }

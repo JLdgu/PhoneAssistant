@@ -25,9 +25,13 @@ public sealed class SimsRepository : ISimsRepository
         return sim.SimNumber;
     }
 
-    public Task<Sim?> GetSIMAsync(string phoneNumber)
+    public async Task<string?> GetSIMNumberAsync(string phoneNumber)
     {
-        throw new NotImplementedException();
+        Sim? sim = await _dbContext.Sims.FindAsync(phoneNumber);
+
+        if (sim is null) return null;
+
+        return sim.SimNumber;
     }
 
     public async Task<IEnumerable<Sim>> GetSimsAsync()

@@ -78,7 +78,6 @@ public partial class PhoneAssistantDbContext : DbContext
             entity.HasIndex(e => e.AssetTag, "IX_Phones_AssetTag").IsUnique();
 
             entity.Property(e => e.Imei).HasColumnName("IMEI");
-            entity.Property(e => e.Collection).HasColumnType("INTEGER");
             entity.Property(e => e.Condition).HasColumnName("NorR");
             entity.Property(e => e.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.OEM).HasConversion(o => o.ToString(), o => (OEMs)Enum.Parse(typeof(OEMs), o));
@@ -110,7 +109,6 @@ public partial class PhoneAssistantDbContext : DbContext
             entity.Property(e => e.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.OEM).HasConversion(o => o.ToString(), o => (OEMs)Enum.Parse(typeof(OEMs), o));
             entity.Property(e => e.SimNumber)
-                .HasColumnType("INTEGER")
                 .HasColumnName("SIMNumber");
             entity.Property(e => e.SR)
                 .HasColumnType("INTEGER")

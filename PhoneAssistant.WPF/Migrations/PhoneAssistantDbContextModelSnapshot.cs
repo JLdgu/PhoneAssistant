@@ -133,9 +133,6 @@ namespace PhoneAssistant.WPF.Migrations
                     b.Property<string>("AssetTag")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("Collection")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Condition")
                         .IsRequired()
                         .HasColumnType("TEXT")
@@ -282,7 +279,7 @@ namespace PhoneAssistant.WPF.Migrations
                         .HasColumnName("SRNumber");
 
                     b.Property<string>("SimNumber")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("TEXT")
                         .HasColumnName("SIMNumber");
 
                     b.Property<string>("Status")

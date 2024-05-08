@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Application.Repositories;
@@ -12,6 +11,13 @@ public sealed class SimsRepository : ISimsRepository
     public SimsRepository(PhoneAssistantDbContext dbContext)
     {
         _dbContext = dbContext;
+    }
+
+    public async Task CreateAsync(Sim sim)
+    {
+        _dbContext.Sims.Add(sim);
+        await _dbContext.SaveChangesAsync();
+
     }
 
     public async Task<string?> DeleteSIMAsync(string phoneNumber)

@@ -47,6 +47,14 @@ public sealed class PhonesRepository : IPhonesRepository
             .ToListAsync();
         return phones;
     }
+
+    public async Task<bool> PhoneNumberExistsAsync(string phoneNumber)
+    {
+        Phone? phone = await _dbContext.Phones.FirstOrDefaultAsync(p => p.PhoneNumber == phoneNumber);
+
+        return phone is not null;
+    }
+
     public async Task RemoveSimFromPhoneAsync(Phone phone)
     {
         if (phone is null)
@@ -62,7 +70,7 @@ public sealed class PhonesRepository : IPhonesRepository
             throw new ArgumentException($"'{nameof(phone.SimNumber)}' cannot be null or empty.", nameof(phone.SimNumber));
         }
 
-        //await UpdateHistoryAsync(phone, UpdateTypes.UPDATE);        
+        await UpdateHistoryAsync(phone, UpdateTypes.UPDATE);        
 
         Phone dbPhone = await _dbContext.Phones.SingleAsync(x => x.Imei == phone.Imei);
         Sim? sim = await _dbContext.Sims.FindAsync(phone.PhoneNumber);
@@ -104,7 +112,7 @@ public sealed class PhonesRepository : IPhonesRepository
             throw new ArgumentException($"IMEI {phone.Imei} not found.");
         }
 
-        //await UpdateHistoryAsync(phone, UpdateTypes.UPDATE);        
+        await UpdateHistoryAsync(phone, UpdateTypes.UPDATE);        
 
         dbPhone.AssetTag = phone.AssetTag;
         dbPhone.DespatchDetails = phone.DespatchDetails;

@@ -9,8 +9,8 @@
              d:Background="AntiqueWhite"
              d:DataContext="{d:DesignInstance Type=local:AddItemViewModel,
                                               IsDesignTimeCreatable=False}"
-             d:DesignHeight="450"
-             d:DesignWidth="1400"
+             d:DesignHeight="650"
+             d:DesignWidth="1500"
              mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -29,24 +29,30 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <shared:HeaderMainView HeaderIcon="Plus" HeaderText="Add Phones and SIMs" />
 
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-            <materialDesign:Card Margin="5,5" Padding="4,2">
-                <TextBlock Style="{StaticResource CardHeader}" Text="Add new phone" />
-            </materialDesign:Card>
-
-            <StackPanel Grid.Row="1"
-                        Margin="10,10,0,0"
-                        Orientation="Horizontal">
+        <GroupBox Grid.Row="1"
+                  Margin="5"
+                  materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                  Style="{StaticResource MaterialDesignGroupBox}">
+            <GroupBox.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Width="32"
+                                                 Height="32"
+                                                 VerticalAlignment="Center"
+                                                 Kind="CellphoneScreenshot" />
+                        <TextBlock Margin="8,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Style="{StaticResource CardHeader}"
+                                   Text="Phone Details" />
+                    </StackPanel>
+                </DataTemplate>
+            </GroupBox.HeaderTemplate>
+            <StackPanel Margin="0,0,0,25" Orientation="Horizontal">
                 <ComboBox MinWidth="120"
                           materialDesign:HintAssist.Hint="Condition"
                           ItemsSource="{Binding Conditions}"
@@ -101,42 +107,43 @@
                          materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          Text="{Binding PhoneNotes}" />
-            </StackPanel>
-
-            <StackPanel Grid.Row="2"
-                        Margin="0,30,0,10"
-                        Orientation="Horizontal">
-                <Button Margin="10,0"
+                <Button Margin="10,0,0,0"
                         HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
+                        VerticalAlignment="Center"
                         Command="{Binding PhoneSaveCommand}"
-                        Content="Save Changes"
+                        Content="Add Phone"
                         Style="{StaticResource MaterialDesignRaisedButton}" />
-                <Button Margin="10,0"
+
+                <Button Margin="10,0,0,0"
                         HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
+                        VerticalAlignment="Center"
                         Command="{Binding PhoneClearCommand}"
-                        Content="Clear Changes"
+                        Content="Clear Phone Changes"
                         Style="{StaticResource MaterialDesignRaisedButton}" />
+
             </StackPanel>
-        </Grid>
 
-        <Grid Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+        </GroupBox>
 
-            <materialDesign:Card Margin="5,10" Padding="4,2">
-                <TextBlock Style="{StaticResource CardHeader}" Text="Add new SIM Card" />
-            </materialDesign:Card>
-
-
-            <StackPanel Grid.Row="1"
-                        Margin="10,10,0,0"
-                        Orientation="Horizontal">
-
+        <GroupBox Grid.Row="2"
+                  Margin="5"
+                  materialDesign:ColorZoneAssist.Mode="SecondaryLight"
+                  Style="{StaticResource MaterialDesignGroupBox}">
+            <GroupBox.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Width="32"
+                                                 Height="32"
+                                                 VerticalAlignment="Center"
+                                                 Kind="SimOutline" />
+                        <TextBlock Margin="8,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Style="{StaticResource CardHeader}"
+                                   Text="SIM Details" />
+                    </StackPanel>
+                </DataTemplate>
+            </GroupBox.HeaderTemplate>
+            <StackPanel Margin="0,0,0,25" Orientation="Horizontal">
                 <TextBox MinWidth="150"
                          Margin="10,0,0,0"
                          materialDesign:HintAssist.Hint="Phone Number"
@@ -159,24 +166,42 @@
                          materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          Text="{Binding SimNotes}" />
-            </StackPanel>
 
-            <StackPanel Grid.Row="2"
-                        Margin="0,30,0,10"
-                        Orientation="Horizontal">
-                <Button Margin="10,0"
+                <Button Margin="10,0,0,0"
                         HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
+                        VerticalAlignment="Center"
                         Command="{Binding SIMSaveCommand}"
-                        Content="Save Changes"
-                        Style="{StaticResource MaterialDesignRaisedButton}" />
+                        Content="Add SIM"
+                        Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}" />
+
                 <Button Margin="10,0"
                         HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
+                        VerticalAlignment="Center"
+                        Command="{Binding SIMDeleteCommand}"
+                        Content="Delete SIM"
+                        Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}" />
+
+                <Button Margin="10,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
                         Command="{Binding SIMClearCommand}"
-                        Content="Clear Changes"
-                        Style="{StaticResource MaterialDesignRaisedButton}" />
+                        Content="Clear SIM Changes"
+                        Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}" />
             </StackPanel>
-        </Grid>
+        </GroupBox>
+
+        <StackPanel Grid.Row="3"
+                    Margin="0,10,0,10"
+                    Orientation="Horizontal">
+            <Button Margin="10,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Command="{Binding PhoneWithSIMSaveCommand}"
+                    Content="Add Phone with SIM"
+                    Style="{StaticResource MaterialDesignRaisedLightButton}" />
+
+        </StackPanel>
+
     </Grid>
+
 </UserControl>

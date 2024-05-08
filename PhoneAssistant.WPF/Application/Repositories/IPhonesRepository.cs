@@ -9,6 +9,7 @@ public interface IPhonesRepository
     Task<bool> ExistsAsync(string imei);
     Task<IEnumerable<Phone>> GetActivePhonesAsync();
     Task<IEnumerable<Phone>> GetAllPhonesAsync();
+    Task<bool> PhoneNumberExistsAsync(string phoneNumber);
     Task RemoveSimFromPhoneAsync(Phone phone);
     Task UpdateAsync(Phone phone);
     //Task UpdateKeyAsync(string oldImei, string newImei);

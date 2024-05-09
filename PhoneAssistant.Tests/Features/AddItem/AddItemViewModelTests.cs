@@ -289,6 +289,7 @@ public class AddItemViewModelTests
 
         _mocker.VerifyAll();
         Assert.Equal("sim number", _sut.SimNumber);
+        Assert.False(_sut.CanSaveSIM());
     }
 
     [Fact]

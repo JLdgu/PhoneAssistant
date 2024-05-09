@@ -224,6 +224,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
 
     public bool CanSaveSIM()
     {
+        if (!_newSIM) return false;
         if (GetErrors(nameof(PhoneNumber)).Count() != 0) return false;
         if (GetErrors(nameof(SimNumber)).Count() != 0) return false;
         return true;

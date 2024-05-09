@@ -6,6 +6,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
              xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.BaseReport"
+             d:Background="Aqua"
              d:DataContext="{d:DesignInstance Type=viewmodel:BaseReportMainView,
                                               IsDesignTimeCreatable=False}"
              d:DesignHeight="450"
@@ -13,6 +14,7 @@
              mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -43,17 +45,17 @@
                                                       Size=25}"
                     Style="{StaticResource MaterialDesignOutlinedLightButton}"
                     ToolTip="Select Base Report to import" />
-
-            <TextBlock Grid.Column="2"
-                       Margin="0,0,10,0"
-                       VerticalAlignment="Bottom"
-                       d:Text="Latest Import"
-                       Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                       Text="{Binding LatestImport}"
-                       TextAlignment="Right" />
         </Grid>
 
-        <materialDesign:Card Grid.Row="1"
+        <TextBlock Grid.Row="1"
+                   Margin="0,0,10,0"
+                   VerticalAlignment="Bottom"
+                   d:Text="Latest Import"
+                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                   Text="{Binding LatestImport}"
+                   TextAlignment="Right" />
+
+        <materialDesign:Card Grid.Row="2"
                              Margin="0,5,0,0"
                              Padding="5,5"
                              Visibility="{Binding ImportViewVisibility}">
@@ -118,7 +120,7 @@
         </materialDesign:Card>
 
         <DataGrid x:Name="BaseReportDataGrid"
-                  Grid.Row="2"
+                  Grid.Row="3"
                   MaxHeight="930"
                   Margin="10,5,0,0"
                   materialDesign:DataGridAssist.CellPadding="0 5 0 3"

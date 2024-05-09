@@ -34,6 +34,7 @@ public partial class PhoneAssistantDbContext : DbContext
 
 #if DEBUG
         optionsBuilder.UseLoggerFactory(_loggerFactory);
+        //optionsBuilder.EnableDetailedErrors();
         //optionsBuilder.EnableSensitiveDataLogging();        
 #endif
       

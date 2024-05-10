@@ -1,6 +1,6 @@
 #Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
 
-$newRelease = "K:\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application\v1.405.10"
+$newRelease = "K:\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application\v1.405.11"
 
 If (!(Test-Path -Path $newRelease))
 {   

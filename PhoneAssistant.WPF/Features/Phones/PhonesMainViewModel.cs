@@ -55,12 +55,19 @@ public sealed partial class PhonesMainViewModel :
     {
         CanRefeshPhones = false;
         await LoadAsync();
-        _filterView.Refresh();
-        CanRefeshPhones = true;
     }
 
     [ObservableProperty]
     private bool canRefeshPhones;
+
+    [ObservableProperty]
+    private bool includeDisposals;
+
+    async partial void OnIncludeDisposalsChanged(bool value)
+    {
+        CanRefeshPhones = false;
+        await LoadAsync();
+    }
 
     #region Filtering View
     public bool FilterView(object item)
@@ -254,12 +261,20 @@ public sealed partial class PhonesMainViewModel :
         if (CanRefeshPhones) return;
 
         PhoneItems.Clear();
-        IEnumerable<Phone> phones = await _phonesRepository.GetActivePhonesAsync();
+        IEnumerable<Phone> phones;
+        if (IncludeDisposals)
+            phones = await _phonesRepository.GetAllPhonesAsync();
+        else
+            phones = await _phonesRepository.GetActivePhonesAsync();
 
         foreach (Phone phone in phones)
         {
             PhoneItems.Add(_phonesItemViewModelFactory.Create(phone));
         }
+
+        _filterView.SortDescriptions.Clear();
+        _filterView.SortDescriptions.Add(new SortDescription("LastUpdate", ListSortDirection.Descending));
+        _filterView.Refresh();
 
         CanRefeshPhones = true;
     }

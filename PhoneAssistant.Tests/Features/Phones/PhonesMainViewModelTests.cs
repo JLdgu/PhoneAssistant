@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Windows.Data;
 
 using CommunityToolkit.Mvvm.Messaging;
@@ -31,15 +31,53 @@ public sealed class PhonesMainViewModelTests
     [Fact]
     public async Task RefreshPhonesCommand_AfterCRUDChanges_UpdatesViewAsync()
     {
-        List<Phone> phones = new List<Phone>() {
-            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() { Imei = "2" , AssetTag = "Tag Bb2", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() {Imei = "321", AssetTag = "Tag Ccc3", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""}
-        };
+        List<Phone> phones = [
+            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = OEMs.Apple, Status = "In Stock"},
+            new Phone() { Imei = "2" , AssetTag = "Tag B2", Model = "", Condition = "", OEM = OEMs.Samsung, Status = "In Repair"},
+            new Phone() { Imei = "3" , AssetTag = "Tag C3", Model = "", Condition = "", OEM = OEMs.Nokia, Status = "Production"},
+        ];
+
+        PhonesMainViewModel vm = ViewModelMockSetup(phones, false);
+        await vm.LoadAsync();
+        index = 0;
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+
+        vm.IncludeDisposals = false;
+
+        Mock.VerifyAll();
+    }
+
+    [Fact]
+    public async Task IncludeDisposals_ShouldGetAllPhones_WhenTrue()
+    {
+        List<Phone> phones = [
+            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = OEMs.Apple, Status = "In Stock"},
+            new Phone() { Imei = "2" , AssetTag = "Tag B2", Model = "", Condition = "", OEM = OEMs.Samsung, Status = "In Repair"},
+            new Phone() { Imei = "3" , AssetTag = "Tag C3", Model = "", Condition = "", OEM = OEMs.Nokia, Status = "Production"},
+            new Phone() { Imei = "4" , AssetTag = "Tag D4", Model = "", Condition = "", OEM = OEMs.Other, Status = "Decommissioned"},
+            new Phone() { Imei = "5" , AssetTag = "Tag E5", Model = "", Condition = "", OEM = OEMs.Apple, Status = "Disposed"},
+        ];
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
         index = 0;
+
+        vm.IncludeDisposals = true;        
+
+        Mock.VerifyAll();
+    }
+
+    [Fact]
+    public async Task RefreshPhonesCommand_ShouldUpdateView_WhenDatabaseChanged()
+    {
+        List<Phone> phones = [
+            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
+            new Phone() { Imei = "2" , AssetTag = "Tag Bb2", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
+            new Phone() { Imei = "3" , AssetTag = "Tag Ccc3", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""}
+        ];
+        PhonesMainViewModel vm = ViewModelMockSetup(phones);
+        await vm.LoadAsync();
+        index = 0;
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
         phones.Add(new Phone() { Imei = "444", AssetTag = "Tag ddd4", Model = "", Condition = "", OEM = OEMs.Apple, Status = "" });
 
         vm.RefreshPhonesCommand.Execute(null);
@@ -260,12 +298,15 @@ public sealed class PhonesMainViewModelTests
     }
 
     private int index = 0;
-    private PhonesMainViewModel ViewModelMockSetup(List<Phone> phones)
+    private PhonesMainViewModel ViewModelMockSetup(List<Phone> phones, bool getActive = true)
     {
         AutoMocker mocker = new AutoMocker();
 
         Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.GetActivePhonesAsync()).ReturnsAsync(phones);
+        if (getActive ) 
+            repository.Setup(r => r.GetActivePhonesAsync()).ReturnsAsync(phones);
+        else
+            repository.Setup(r => r.GetAllPhonesAsync()).ReturnsAsync(phones);
         Mock<ISimsRepository> sims = mocker.GetMock<ISimsRepository>();
         Mock<IPrintEnvelope> print = mocker.GetMock<IPrintEnvelope>();
         Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();

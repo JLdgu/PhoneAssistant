@@ -36,7 +36,6 @@ public sealed class PhonesRepository : IPhonesRepository
         IEnumerable<Phone> phones = await _dbContext.Phones
             .Where(p => p.Status != "Disposed" &&  p.Status != "Decommissioned")                               
             .AsNoTracking()
-            .OrderByDescending(p => p.LastUpdate)
             .ToListAsync();
         return phones;
     }

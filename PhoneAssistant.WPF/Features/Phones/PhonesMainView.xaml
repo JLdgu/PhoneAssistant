@@ -32,6 +32,10 @@
                         IsEnabled="{Binding CanRefeshPhones}"
                         Style="{StaticResource MaterialDesignOutlinedLightButton}"
                         ToolTip="Refresh" />
+
+                <CheckBox Content="Include Disposals"
+                          Foreground="#F5FFFFFF"
+                          IsChecked="{Binding IncludeDisposals}" />
             </StackPanel>
         </Grid>
 

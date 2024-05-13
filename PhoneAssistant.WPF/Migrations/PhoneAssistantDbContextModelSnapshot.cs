@@ -17,34 +17,6 @@ namespace PhoneAssistant.WPF.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.4");
 
-            modelBuilder.Entity("PhoneAssistant.WPF.Application.Entities.Disposal", b =>
-                {
-                    b.Property<string>("Imei")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Action")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("Certificate")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("SR")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("StatusMS")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("StatusPA")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("StatusSCC")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Imei");
-
-                    b.ToTable("ReconcileDisposals", (string)null);
-                });
-
             modelBuilder.Entity("PhoneAssistant.WPF.Application.Entities.EEBaseReport", b =>
                 {
                     b.Property<string>("PhoneNumber")

@@ -7,13 +7,14 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
+using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
-using PhoneAssistant.WPF.Features.Phones;
 
 namespace PhoneAssistant.WPF.Features.Disposals;
 public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMessage>, IDisposalsMainViewModel
 {
     private readonly DisposalsRepository _disposalsRepository;
+    private readonly ImportHistoryRepository _importHistory;
     private readonly IPhonesRepository _phonesRepository;
     private readonly IMessenger _messenger;
     private readonly ILogger<DisposalsMainViewModel> _logger;
@@ -21,17 +22,22 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     public ObservableCollection<string> LogItems { get; } = new();
 
     public DisposalsMainViewModel(DisposalsRepository disposalsRepository,
+                                  ImportHistoryRepository importHistory,
                                   IPhonesRepository phonesRepository,
                                   IMessenger messenger,
                                   ILogger<DisposalsMainViewModel> logger)
     {
         _disposalsRepository = disposalsRepository ?? throw new ArgumentNullException(nameof(disposalsRepository));
+        _importHistory = importHistory ?? throw new ArgumentNullException(nameof(importHistory));
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         messenger.RegisterAll(this);
     }
+
+    [ObservableProperty]
+    private bool _importingFiles;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ExecuteMyScomisImportCommand))]
@@ -73,7 +79,7 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     }
 
     [ObservableProperty]
-    private bool _importingFiles;
+    private string? _latestMSImport;
 
     private bool CanImportMyScomis() => !string.IsNullOrEmpty(ScomisFile)  && !ImportingFiles;
     [RelayCommand(CanExecute = nameof(CanImportMyScomis))]
@@ -86,9 +92,16 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
                                     _messenger);
         await import.Execute();
 
+        ImportHistory importHistory = await _importHistory.CreateAsync(ImportType.DisposalMS, ScomisFile!);
+
+        LatestMSImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
+
         ScomisFile = string.Empty;
         ImportingFiles = false;
     }
+
+    [ObservableProperty]
+    private string? _latestPAImport;
 
     private bool CanImportPA() => !ImportingFiles;
     [RelayCommand(CanExecute=nameof(CanImportPA))]
@@ -101,6 +114,9 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
         await import.Execute();
         ImportingFiles = false;
     }
+
+    [ObservableProperty]
+    private string? _latestSCCImport;
 
     private bool CanImportSCC() => !string.IsNullOrEmpty(SCCFile) && !ImportingFiles;
     [RelayCommand(CanExecute = nameof(CanImportSCC))]
@@ -119,9 +135,13 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     [ObservableProperty]
     private string? _log;
 
-    public Task LoadAsync()
+    public async Task LoadAsync()
     {
-        return Task.CompletedTask;
+        ImportHistory? importHistory = await _importHistory.GetLatestImportAsync(ImportType.DisposalMS);
+        if (importHistory is null)
+            LatestMSImport = $"Latest Import: None";
+        else
+            LatestMSImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
     }
 
     public void Receive(LogMessage message)

@@ -3,7 +3,6 @@
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
-using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
 using System.IO;
@@ -56,6 +55,7 @@ public sealed class ImportMyScomis(string importFile,
                     break;
             }
         }
+
         messenger.Send(new LogMessage($"Added {added} disposals"));
         messenger.Send(new LogMessage($"Updated {updated} disposals"));
         messenger.Send(new LogMessage($"Unchanged {unchanged} disposals"));

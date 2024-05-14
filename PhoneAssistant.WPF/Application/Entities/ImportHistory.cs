@@ -10,5 +10,7 @@ public class ImportHistory
 public enum ImportType
 {
     BaseReport,
-    Disposal
+    DisposalMS,
+    DisposalPA,
+    DisposalSCC
 }

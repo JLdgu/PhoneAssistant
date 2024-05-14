@@ -1,4 +1,5 @@
 ﻿using PhoneAssistant.WPF.Application.Entities;
+using PhoneAssistant.WPF.Features.Disposals;
 
 namespace PhoneAssistant.WPF.Application.Repositories;
 
@@ -56,6 +57,8 @@ public sealed class DisposalsRepository : IDisposalsRepository
 
         disposal.StatusPA = status;
         disposal.SR = sr;
+        Reconciliation.PAUpdate(disposal);
+
         await UpdateAsync(disposal);
         return Result.Updated;
     }

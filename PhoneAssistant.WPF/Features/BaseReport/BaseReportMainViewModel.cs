@@ -230,7 +230,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         LogItems.Add($"Added {added} disposals");
         LogItems.Add("Import complete");
 
-        ImportHistory importHistory = await _import.CreateAsync(Path.GetFileName(DevonBaseReport!));
+        ImportHistory importHistory = await _import.CreateAsync(ImportType.BaseReport, Path.GetFileName(DevonBaseReport!));
         
         LatestImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
 
@@ -253,7 +253,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
 
         _loaded = true;
 
-        ImportHistory? importHistory = _import.GetLatestImport();
+        ImportHistory? importHistory = await _import.GetLatestImportAsync(ImportType.BaseReport);
         if (importHistory is null)
             LatestImport = $"Latest Import: None";
         else

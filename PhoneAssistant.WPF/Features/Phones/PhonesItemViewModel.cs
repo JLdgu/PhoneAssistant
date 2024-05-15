@@ -81,7 +81,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
             _phone.FormerUser = value;
         }
 
-        await _repository.UpdateAsync(_phone);
+        await UpdatePhone();
         LastUpdate = _phone.LastUpdate;
     }
 
@@ -127,7 +127,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
             _phone.NewUser = value;
         }
 
-        await _repository.UpdateAsync(_phone);
+        await UpdatePhone();
         LastUpdate = _phone.LastUpdate;
     }
 
@@ -246,7 +246,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
             _phone.SR = int.Parse(value);
         }
 
-        await _repository.UpdateAsync(_phone);
+        await UpdatePhone();
         LastUpdate = _phone.LastUpdate;
     }
 
@@ -257,9 +257,27 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     {
         if (value == _phone.Status) return;
 
+        if (value == "In Stock" || value == "In Repair")
+        {
+            _multiUpdate = true;
+            _phone.DespatchDetails = null;
+            FormerUser = NewUser;
+            NewUser = string.Empty;
+            SR = string.Empty;
+            _multiUpdate = false;
+        }
+
         _phone.Status = value;
         await _repository.UpdateAsync(_phone);
-        LastUpdate = _phone.LastUpdate;
+        LastUpdate = _phone.LastUpdate;        
+    }
+
+    private bool _multiUpdate = false;
+    private async Task UpdatePhone()
+    {
+        if (_multiUpdate) return;
+
+        await _repository.UpdateAsync(_phone);
     }
     #endregion
 

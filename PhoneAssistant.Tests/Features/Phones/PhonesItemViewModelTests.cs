@@ -15,6 +15,7 @@ public sealed class PhonesItemViewModelTests
         SimNumber = "simNumber",
         Status = "status",
         AssetTag = "at",
+        DespatchDetails = "despatch",
         FormerUser = "fu",
         Imei = "imei",  
         Model = "model",
@@ -145,7 +146,6 @@ public sealed class PhonesItemViewModelTests
         Assert.Equal(expected, _phone.Notes);
     }
 
-
     [Fact]
     private void OnOEMChanged_CallsUpdateAsync_WithChangedValue()
     {
@@ -210,6 +210,37 @@ public sealed class PhonesItemViewModelTests
         Assert.Equal("changed", _phone.Status);
     }
 
+    [Theory]
+    [InlineData("In Stock")]
+    [InlineData("In Repair")]
+    private void OnStatusChanged_ShouldClearProductionFields_WhenNewStatusInStockOrInRepair(string status)
+    {
+        string? expectedFormerUser = _phone.NewUser;
+        _vm.Status = status;
+
+        Assert.Null(_phone.DespatchDetails);
+        Assert.Equal(expectedFormerUser, _vm.FormerUser);
+        Assert.Null(_phone.NewUser);
+        Assert.Equal(string.Empty, _vm.SR);
+
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+    }
+
+    [Theory]
+    [InlineData("Decommissioned")]
+    [InlineData("Disposed")]
+    [InlineData("Misplaced")]
+    [InlineData("Production")]
+    private void OnStatusChanged_ShouldKeepProductionFields_WhenNewStatusNotInStockOrInRepair(string status)
+    {
+        _vm.Status = status;
+
+        Assert.Equal("despatch", _phone.DespatchDetails);
+        Assert.Equal(_phone.FormerUser, _vm.FormerUser);
+        Assert.Equal(_phone.NewUser, _vm.NewUser);
+        Assert.Equal(_phone.SR.ToString(), _vm.SR);
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+    }
     #endregion
 
     #region RemoveSim

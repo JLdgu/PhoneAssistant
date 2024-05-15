@@ -49,6 +49,34 @@ public class AddItemViewModelTests
         Assert.Equal("Asset Tag must be unique", errors.First().ToString());
     }
 
+    [Theory]
+    [InlineData("Decommissioned")]
+    [InlineData("Disposed")]
+    void GetErrors_ShouldContainTicketError_WhenDisposal(string status)
+    {
+        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
+
+        _sut.Status = status;
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Ticket));
+        Assert.Equal("Ticket required when disposal", errors.First().ToString());
+    }
+
+    [Theory]
+    [InlineData(" ")]
+    [InlineData("12345")]
+    [InlineData("12345678")]
+    [InlineData("1A345")]
+    void GetErrors_ShouldContainTicketError_WhenTicketInvalid(string ticket)
+    {
+        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
+
+        _sut.Ticket = ticket;
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Ticket));
+        Assert.Equal("Ticket must 6 or 7 digits", errors.First().ToString());
+    }
+
     [Fact]
     void GetErrors_ShouldBeEmpty_WhenAssetTagUnique()
     {
@@ -108,6 +136,7 @@ public class AddItemViewModelTests
         _sut.PhoneNotes = "notes";
         _sut.OEM = OEMs.Samsung;
         _sut.Status = "status";
+        _sut.Ticket = 7654321.ToString();
     }
 
     private void AssertResetAllPhoneProperties()
@@ -120,6 +149,7 @@ public class AddItemViewModelTests
         Assert.Null(_sut.PhoneNotes);
         Assert.Equal(OEMs.Samsung,_sut.OEM);
         Assert.Equal(ApplicationSettings.Statuses[1], _sut.Status);
+        Assert.Null(_sut.Ticket);
     }
 
     [Fact]
@@ -239,7 +269,9 @@ public class AddItemViewModelTests
     void CanDeleteSIM_ShouldBeDisabled_WhenSIMDoesNotExist()
     {
         Mock<ISimsRepository> _repository = _mocker.GetMock<ISimsRepository>();
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
         _repository.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync((string)null);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
         _sut.PhoneNumber = "07123456789";
         _sut.SimNumber = "8944122605566849402";
@@ -252,7 +284,9 @@ public class AddItemViewModelTests
     void CanSaveSIM_ShouldBeEnabled_WhenAllRequiredPropertiesSupplied()
     {
         Mock<ISimsRepository> _repository = _mocker.GetMock<ISimsRepository>();
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
         _repository.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync((string)null);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
         _sut.PhoneNumber = "07123456789";
         _sut.SimNumber = "8944122605566849402";
@@ -332,7 +366,9 @@ public class AddItemViewModelTests
     {
         Sim newSIM = new() { PhoneNumber = "", SimNumber = "" };
         Mock<ISimsRepository> _repository = _mocker.GetMock<ISimsRepository>();
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
         _repository.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync((string)null);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
         _repository.Setup(r => r.CreateAsync(It.IsAny<Sim>())).Callback<Sim>(s => newSIM = s);
         _sut.PhoneNumber = "07123456789";
         _sut.SimNumber = "8944122605566849402";
@@ -421,7 +457,9 @@ public class AddItemViewModelTests
         Mock<IPhonesRepository> _phones = _mocker.GetMock<IPhonesRepository>();
         _phones.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
         Mock<ISimsRepository> sims = _mocker.GetMock<ISimsRepository>();
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
         sims.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync((string)null);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
         _sut.AssetTag = "MP00001";
         _sut.Condition = "condition";
@@ -443,7 +481,9 @@ public class AddItemViewModelTests
         _phones.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
         _phones.Setup(r => r.CreateAsync(It.IsAny<Phone>())).Callback<Phone>(p => actual = p); 
         Mock<ISimsRepository> sims = _mocker.GetMock<ISimsRepository>();
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
         sims.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync((string)null);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
         _sut.AssetTag = "MP00001";
         _sut.Condition = "condition";

@@ -103,7 +103,44 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     public List<string> Statuses { get; } = ApplicationSettings.Statuses;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Ticket))]
     private string _status = ApplicationSettings.Statuses[1];
+
+    partial void OnStatusChanged(string value)
+    {
+        ValidateProperty(Ticket, "Ticket");
+    }
+
+    [ObservableProperty]
+    [NotifyDataErrorInfo]
+    [CustomValidation(typeof(AddItemViewModel), nameof(ValidateTicket))]
+    private string? _ticket;
+
+    public static ValidationResult ValidateTicket(string? ticket, ValidationContext context)
+    {
+        if (!string.IsNullOrEmpty(ticket))
+        {
+            if (int.TryParse(ticket, out int result))
+            {
+                if (result < 100000 || result > 9999999)
+                    return new ValidationResult("Ticket must 6 or 7 digits");
+            }
+            else
+            {
+                return new ValidationResult("Ticket must 6 or 7 digits");
+            }
+        }
+
+        AddItemViewModel vm = (AddItemViewModel)context.ObjectInstance;
+
+        if (vm.Status == "Decommissioned" || vm.Status == "Disposed")
+            if (ticket is null)
+                return new ValidationResult("Ticket required when disposal");
+
+#pragma warning disable CS8603 // Possible null reference return.
+        return ValidationResult.Success;
+#pragma warning restore CS8603 // Possible null reference return.
+    }
 
     [RelayCommand]
     private void PhoneClear()
@@ -116,6 +153,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         PhoneNotes = null;
         OEM = Application.Entities.OEMs.Samsung;
         Status = ApplicationSettings.Statuses[1];
+        Ticket = null;
 
         ValidateAllProperties();
     }
@@ -131,7 +169,10 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     [RelayCommand(CanExecute = nameof(CanSavePhone))]
     private async Task PhoneSaveAsync()
     {
-        Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, Notes = PhoneNotes, OEM = OEM, PhoneNumber = PhoneNumber, SimNumber = SimNumber, Status = Status };
+        int? sr = null;
+        if (Ticket is not null)
+            sr = int.Parse(Ticket);
+        Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, Notes = PhoneNotes, OEM = OEM, PhoneNumber = PhoneNumber, SimNumber = SimNumber, SR = sr, Status = Status };
         await _phonesRepository.CreateAsync(phone);
 
         PhoneClear();

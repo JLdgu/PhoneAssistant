@@ -66,6 +66,14 @@
                           SelectedItem="{Binding Status, UpdateSourceTrigger=LostFocus}"
                           Style="{StaticResource MaterialDesignOutlinedComboBox}" />
 
+                <TextBox MinWidth="55"
+                         Margin="10,0,0,0"
+                         materialDesign:HintAssist.Hint="Ticket #"
+                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                         MaxLength="7"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding Ticket}" />
+
                 <TextBox MinWidth="150"
                          Margin="10,0,0,0"
                          materialDesign:HintAssist.Hint="IMEI"

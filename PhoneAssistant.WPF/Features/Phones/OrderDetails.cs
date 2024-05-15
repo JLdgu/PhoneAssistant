@@ -14,7 +14,12 @@ public sealed class OrderDetails
 
         DeviceType = DeviceType.Phone;
         if (Phone.Model != null && Phone.Model.Contains("ipad",StringComparison.InvariantCultureIgnoreCase))
-            DeviceType  = DeviceType.Phone;
+            DeviceType  = DeviceType.Tablet;
+
+        if (Phone.PhoneNumber is null)
+            OrderType = OrderType.Replacement;
+        else
+            OrderType = OrderType.New;
     }
 
     public OrderType OrderType { get; set; } = OrderType.None;

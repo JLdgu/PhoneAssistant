@@ -6,7 +6,6 @@ using Moq;
 using PhoneAssistant.WPF.Application.Repositories;
 using System.Text;
 using System.ComponentModel;
-using System.Security.Policy;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -114,6 +113,41 @@ public sealed class EmailViewModelTests
         _vm.OrderDetails = orderDetails;
 
         Assert.Contains($"<td>Device supplied:</td><td>{norrDescription} {_phone.OEM} {_phone.Model}</td>", _vm.EmailHtml);
+    }
+
+    [Fact]
+    void OrderDetails_ShouldSetDeviceTypePhone_WhenModelDoesNotContanIPad()
+    {
+        TestSetup(_phone);
+
+        Assert.Equal(DeviceType.Phone, _vm.OrderDetails.DeviceType);
+    }
+
+    [Fact]
+    void OrderDetails_ShouldSetDeviceTypeTable_WhenModelContainsIPad()
+    {
+        _phone.Model = "iPad";
+        TestSetup(_phone);
+
+        Assert.Equal(DeviceType.Tablet, _vm.OrderDetails.DeviceType);
+    }
+
+    [Fact]
+    void OrderDetails_ShouldSetOrderTypeNew_WhenPhoneDetailsSupplied()
+    {
+        TestSetup(_phone);
+
+        Assert.Equal(OrderType.New, _vm.OrderType);
+    }
+
+    [Fact]
+    void OrderDetails_ShouldSetOrderTypeReplacement_WhenPhoneDetailsNotSupplied()
+    {
+        _phone.PhoneNumber = null;
+        _phone.SimNumber = null;
+        TestSetup(_phone);
+
+        Assert.Equal(OrderType.Replacement, _vm.OrderType);
     }
 
     [Fact]

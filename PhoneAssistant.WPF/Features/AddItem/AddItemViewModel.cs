@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
@@ -13,12 +14,15 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
 {
     private readonly IPhonesRepository _phonesRepository;
     private readonly ISimsRepository _simsRepository;
+    private readonly IMessenger _messenger;
 
     public AddItemViewModel(IPhonesRepository phonesRepository,
-                            ISimsRepository simsRepository)
+                            ISimsRepository simsRepository,
+                            IMessenger messenger)
     {
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
         _simsRepository = simsRepository ?? throw new ArgumentNullException(nameof(simsRepository));
+        _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         OEM = Application.Entities.OEMs.Samsung;
         ValidateAllProperties();
     }
@@ -160,9 +164,9 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
 
     public bool CanSavePhone()
     {
-        if (GetErrors(nameof(AssetTag)).Count() != 0) return false;
-        if (GetErrors(nameof(Imei)).Count() != 0) return false;
-        if (GetErrors(nameof(Model)).Count() != 0) return false;
+        if (GetErrors(nameof(AssetTag)).Any()) return false;
+        if (GetErrors(nameof(Imei)).Any()) return false;
+        if (GetErrors(nameof(Model)).Any()) return false;
         return true;
     }
 
@@ -174,6 +178,8 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
             sr = int.Parse(Ticket);
         Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, Notes = PhoneNotes, OEM = OEM, PhoneNumber = PhoneNumber, SimNumber = SimNumber, SR = sr, Status = Status };
         await _phonesRepository.CreateAsync(phone);
+
+        _messenger.Send(phone);
 
         PhoneClear();
     }
@@ -238,7 +244,6 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
 #pragma warning restore CS8603 // Possible null reference return.
     }
 
-
     [RelayCommand]
     private void SIMClear()
     {
@@ -250,8 +255,8 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     public bool CanDeleteSIM()
     {
         if (_newSIM) return false;
-        if (GetErrors(nameof(PhoneNumber)).Count() != 0) return false;
-        if (GetErrors(nameof(SimNumber)).Count() != 0) return false;
+        if (GetErrors(nameof(PhoneNumber)).Any()) return false;
+        if (GetErrors(nameof(SimNumber)).Any()) return false;
         return true;
     }
 
@@ -266,8 +271,8 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     public bool CanSaveSIM()
     {
         if (!_newSIM) return false;
-        if (GetErrors(nameof(PhoneNumber)).Count() != 0) return false;
-        if (GetErrors(nameof(SimNumber)).Count() != 0) return false;
+        if (GetErrors(nameof(PhoneNumber)).Any()) return false;
+        if (GetErrors(nameof(SimNumber)).Any()) return false;
         return true;
     }
 
@@ -277,8 +282,8 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         Sim sim = new() { PhoneNumber = PhoneNumber!, SimNumber = SimNumber!, Notes = PhoneNotes };
         await _simsRepository.CreateAsync(sim);
 
+        _messenger.Send(sim);
         SIMClear();
-
     }
     #endregion
 

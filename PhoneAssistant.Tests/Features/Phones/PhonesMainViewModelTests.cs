@@ -9,6 +9,7 @@ using Moq.AutoMock;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Features.Phones;
+using PhoneAssistant.WPF.Features.Sims;
 
 using Xunit;
 
@@ -16,6 +17,17 @@ namespace PhoneAssistant.Tests.Features.Phones;
 
 public sealed class PhonesMainViewModelTests
 {
+    [Fact]
+    void Receive_ShouldAddPhone()
+    {
+        AutoMocker mocker = new AutoMocker();
+        PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
+
+        vm.Receive(new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""});
+
+        Assert.True(vm.PhoneItems.Any());
+    }
+
     [Fact]
     public async Task RefreshPhonesCommand_AfterCRUDChanges_UpdatesViewAsync()
     {

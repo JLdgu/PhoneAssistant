@@ -5,12 +5,22 @@ using PhoneAssistant.WPF.Features.Sims;
 using System.ComponentModel;
 using System.Windows.Data;
 using Xunit;
-using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.Tests.Features.Sims;
 public sealed class SimsMainViewModelTests
 {
+    [Fact]
+    void Receive_ShouldAddSim()
+    {
+        AutoMocker mocker = new AutoMocker();
+        SimsMainViewModel vm = mocker.CreateInstance<SimsMainViewModel>();
+
+        vm.Receive(new Sim() { PhoneNumber = "1", SimNumber = "1.1", AssetTag = "B1" });
+
+        Assert.True(vm.SimItems.Any());
+    }
+
     [Fact]
     public async Task RefreshPhonesCommand_AfterCRUDChanges_UpdatesViewAsync()
     {

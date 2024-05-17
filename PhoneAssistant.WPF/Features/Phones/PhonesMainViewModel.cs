@@ -12,7 +12,11 @@ using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
-public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipient<Order>, IPhonesMainViewModel
+public sealed partial class PhonesMainViewModel : 
+    ObservableValidator, 
+    IRecipient<Order>, 
+    IRecipient<Phone>, 
+    IPhonesMainViewModel
 {
     private readonly IPhonesItemViewModelFactory _phonesItemViewModelFactory;
     private readonly IPhonesRepository _phonesRepository;
@@ -263,5 +267,10 @@ public sealed partial class PhonesMainViewModel : ObservableValidator, IRecipien
     public void Receive(Order message)
     {
         EmailViewModel.OrderDetails = message.OrderDetails;
+    }
+
+    public void Receive(Phone message)
+    {
+        PhoneItems.Add(_phonesItemViewModelFactory.Create(message));
     }
 }

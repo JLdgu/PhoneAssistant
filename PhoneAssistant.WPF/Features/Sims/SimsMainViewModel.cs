@@ -4,13 +4,14 @@ using System.Windows.Data;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.Sims;
 
-public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewModel
+public sealed partial class SimsMainViewModel : ObservableObject, IRecipient<Sim>, ISimsMainViewModel
 {
     private readonly ISimsItemViewModelFactory _simsItemViewModelFactory;
     private readonly ISimsRepository _simRepository;
@@ -18,13 +19,15 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
 
     public ObservableCollection<SimsItemViewModel> SimItems { get; } = new();
 
-    public SimsMainViewModel(ISimsItemViewModelFactory simsItemViewModelFactory, ISimsRepository simRepository)
+    public SimsMainViewModel(ISimsItemViewModelFactory simsItemViewModelFactory, ISimsRepository simRepository, IMessenger messenger)
     {
         _simsItemViewModelFactory = simsItemViewModelFactory ?? throw new ArgumentNullException(nameof(simsItemViewModelFactory));
         _simRepository = simRepository ?? throw new ArgumentNullException(nameof(simRepository));
 
         _filterView = CollectionViewSource.GetDefaultView(SimItems);
         _filterView.Filter = new Predicate<object>(FilterView);
+
+        messenger.Register<Sim>(this);
     }
 
     [RelayCommand]
@@ -159,5 +162,10 @@ public sealed partial class SimsMainViewModel : ObservableObject, ISimsMainViewM
         }
 
         CanRefeshSims = true;
+    }
+
+    public void Receive(Sim message)
+    {
+        SimItems.Add(_simsItemViewModelFactory.Create(message));
     }
 }

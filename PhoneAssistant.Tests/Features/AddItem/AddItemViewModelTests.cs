@@ -7,6 +7,7 @@ using PhoneAssistant.WPF.Application.Repositories;
 using Moq;
 using System.ComponentModel.DataAnnotations;
 using PhoneAssistant.WPF.Application;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace PhoneAssistant.Tests.Features.AddItem;
 public class AddItemViewModelTests
@@ -184,6 +185,21 @@ public class AddItemViewModelTests
         _sut.PhoneSaveCommand.Execute(null);
 
         AssertResetAllPhoneProperties();
+    }
+
+    [Fact]
+    void PhoneSaveCommand_ShouldSendPhoneMessage()
+    {
+        Mock<IMessenger> message = _mocker.GetMock<IMessenger>();
+        message.Setup(m => m.Send(It.IsAny<Phone>(), It.IsAny<IsAnyToken>()));
+
+        _sut.AssetTag = "MP00001";
+        _sut.Imei = "355808981147090";
+        _sut.Model = "model";
+
+        _sut.PhoneSaveCommand.Execute(null);
+
+        message.Verify(x => x.Send(It.IsAny<Phone>(), It.IsAny<IsAnyToken>()), Times.Once);
     }
 
     [Fact]
@@ -404,6 +420,20 @@ public class AddItemViewModelTests
     }
 
     [Fact]
+    void SimSaveCommand_ShouldSendSimMessage()
+    {
+        Mock<IMessenger> message = _mocker.GetMock<IMessenger>();
+        message.Setup(m => m.Send(It.IsAny<Sim>(), It.IsAny<IsAnyToken>()));
+        
+        _sut.PhoneNumber = "1234567890";
+        _sut.SimNumber = "1234567890123456789";
+
+        _sut.SIMSaveCommand.Execute(null);
+
+        message.Verify(x => x.Send(It.IsAny<Sim>(), It.IsAny<IsAnyToken>()), Times.Once);
+    }
+
+    [Fact]
     void ValidateSimNumber_ShouldReturnError_WhenSimNumberEmptyOrWhiteSpace()
     {
         ValidationContext ctx = new(_sut, null, null);
@@ -552,3 +582,12 @@ public class AddItemViewModelTests
     }
     #endregion
 }
+
+
+[TypeMatcher]
+public sealed class IsAnyToken : ITypeMatcher, IEquatable<IsAnyToken>
+{
+    public bool Matches(Type typeArgument) => true;
+    public bool Equals(IsAnyToken? other) => throw new NotImplementedException();
+}
+

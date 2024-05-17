@@ -22,27 +22,21 @@
 
         <shared:HeaderMainView HeaderIcon="AccountSearchOutline" HeaderText="Find User" />
 
-        <materialDesign:Card Grid.Row="1"
-                             Margin="10,10"
-                             Padding="5,5"
-                             Background="{DynamicResource SecondaryHueLightBrush}"
-                             Foreground="{DynamicResource SecondaryHueLightForegroundBrush}">
-            <StackPanel Orientation="Horizontal">
-
-                <TextBox MinWidth="250"
-                         materialDesign:HintAssist.Hint="AD User Name"
-                         materialDesign:TextFieldAssist.HasClearButton="True"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding SearchUser, UpdateSourceTrigger=PropertyChanged}">
-                    <TextBox.InputBindings>
-                        <KeyBinding Key="Enter" Command="{Binding EnterKeyCommand}" />
-                    </TextBox.InputBindings>
-                </TextBox>
-            </StackPanel>
-        </materialDesign:Card>
+        <TextBox Grid.Row="1"
+                 Width="250"
+                 Margin="0,5,0,5"
+                 HorizontalAlignment="Left"
+                 materialDesign:HintAssist.Hint="AD User Name"
+                 materialDesign:TextFieldAssist.HasClearButton="True"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 Text="{Binding SearchUser, UpdateSourceTrigger=PropertyChanged}">
+            <TextBox.InputBindings>
+                <KeyBinding Key="Enter" Command="{Binding EnterKeyCommand}" />
+            </TextBox.InputBindings>
+        </TextBox>
 
         <DataGrid Grid.Row="2"
-                  Margin="10,0,0,0"
+                  Margin="0,0,0,0"
                   materialDesign:DataGridAssist.CellPadding="4 5 5 5"
                   materialDesign:DataGridAssist.ColumnHeaderPadding="4 5 5 5"
                   AlternatingRowBackground="{DynamicResource MaterialDesignChipBackground}"

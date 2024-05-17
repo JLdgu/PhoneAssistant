@@ -32,6 +32,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             Imei = value.Phone.Imei;
             PhoneNumber = value.Phone.PhoneNumber ?? string.Empty;
             AssetTag = value.Phone.AssetTag ?? string.Empty;
+            Ticket = value.Phone.SR.ToString();
             OrderType = value.OrderType;
             SelectedLocation = null;
             if (value.Phone.DespatchDetails is null)
@@ -56,6 +57,9 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
     [ObservableProperty]
     private string _assetTag = string.Empty;
+
+    [ObservableProperty]
+    private string? _ticket;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]

@@ -34,40 +34,61 @@
 
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Margin="0,0,5,0"
+                        <TextBlock Margin="0,0,0,5"
                                    VerticalAlignment="Center"
+                                   Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                   Text="Ticket #" />
+
+                        <TextBlock Margin="5,0,0,5"
+                                   VerticalAlignment="Center"
+                                   d:Text="123456"
+                                   Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                   Text="{Binding Ticket}" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="0,0,0,5"
+                                   VerticalAlignment="Center"
+                                   Style="{StaticResource MaterialDesignBody2TextBlock}"
                                    Text="IMEI" />
 
-                        <TextBlock Margin="0,0,5,0"
+                        <TextBlock Margin="5,0,0,5"
                                    VerticalAlignment="Center"
-                                   d:Background="AntiqueWhite"
                                    d:Text="IMEI"
+                                   Style="{StaticResource MaterialDesignBody2TextBlock}"
                                    Text="{Binding Imei}" />
+                    </StackPanel>
 
-                        <TextBlock Margin="4"
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="0,0,0,5"
                                    VerticalAlignment="Center"
+                                   Style="{StaticResource MaterialDesignBody2TextBlock}"
                                    Text="PhoneNumber" />
 
-                        <TextBlock Margin="0,0,5,0"
+                        <TextBlock Margin="5,0,0,5"
                                    VerticalAlignment="Center"
-                                   d:Background="AntiqueWhite"
                                    d:Text="PhoneNumber"
+                                   Style="{StaticResource MaterialDesignBody2TextBlock}"
                                    Text="{Binding PhoneNumber}" />
+                    </StackPanel>
 
-                        <TextBlock Margin="4"
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="0,0,0,5"
                                    VerticalAlignment="Center"
+                                   Style="{StaticResource MaterialDesignBody2TextBlock}"
                                    Text="Asset Tag" />
 
-                        <TextBlock Margin="0,0,5,0"
+                        <TextBlock Margin="5,0,0,5"
                                    VerticalAlignment="Center"
-                                   d:Background="AntiqueWhite"
                                    d:Text="Asset Tag"
+                                   Style="{StaticResource MaterialDesignBody2TextBlock}"
                                    Text="{Binding AssetTag}" />
-
                     </StackPanel>
 
                     <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
-                        <TextBlock VerticalAlignment="Center" Text="Order Type" />
+                        <TextBlock VerticalAlignment="Center"
+                                   Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                   Text="Order Type" />
 
                         <RadioButton Content="New"
                                      GroupName="OrderType"

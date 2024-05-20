@@ -8,7 +8,7 @@ param
 
 $scriptPath = (Get-Item .).FullName
 
-$script = Join-Path $scriptPath "Migrations" 
+$script = Join-Path $scriptPath "../PhoneAssistant.WPF/Migrations" 
 $script = Join-Path $script "$name.sql"
 
 If (!(Test-Path -Path $script))
@@ -19,7 +19,7 @@ If (!(Test-Path -Path $script))
 
 if ($test)
 {
-    $dbPath =  "c:/temp/paTest.db"  
+    $dbPath =  "c:/dev/paTest.db"  
 }
 else
 {
@@ -31,6 +31,6 @@ else
     $dbPath = "K:/FITProject/ICTS/Mobile Phones/PhoneAssistant/PhoneAssistant.db" 
 }
 
-$env:Path += ';c:\temp\sqlite'
+$env:Path += ';c:/dev/SQLite'
 Write-Host "Database $dbPath" 
 sqlite3 $dbPath -init $script

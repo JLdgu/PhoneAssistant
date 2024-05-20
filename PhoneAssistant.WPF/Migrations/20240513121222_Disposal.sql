@@ -14,4 +14,4 @@ INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
 VALUES ('20240513121222_Disposal', '8.0.4');
 
 COMMIT;
-
+.exit 1

@@ -1,6 +1,6 @@
 # Copy Live PhoneAssistant db to c:/temp
 $live = "K:/FITProject/ICTS/Mobile Phones/PhoneAssistant/PhoneAssistant.db"
-$test =  "c:/temp/paTest.db" 
+$test =  "c:/dev/paTest.db" 
 
 If (Test-Path -Path $test) {
   Remove-Item $test

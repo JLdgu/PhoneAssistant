@@ -10,7 +10,7 @@
              d:Background="Beige"
              d:DataContext="{d:DesignInstance Type=viewmodel:DisposalsMainViewModel,
                                               IsDesignTimeCreatable=False}"
-             d:DesignHeight="500"
+             d:DesignHeight="700"
              d:DesignWidth="800"
              mc:Ignorable="d">
     <Grid>
@@ -18,10 +18,12 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <shared:HeaderMainView HeaderIcon="DeleteOutline" HeaderText="Disposals" />
+
         <GroupBox Grid.Row="1"
                   Margin="5"
                   materialDesign:ColorZoneAssist.Mode="PrimaryMid"
@@ -81,7 +83,6 @@
                            d:Text="Latest Import"
                            Style="{StaticResource MaterialDesignCaptionTextBlock}"
                            Text="{Binding LatestMSImport}" />
-
             </Grid>
         </GroupBox>
 
@@ -92,6 +93,7 @@
                   Style="{StaticResource MaterialDesignGroupBox}">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
@@ -118,79 +120,71 @@
                          Padding="5,10"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          Text="{Binding SCCFile}" />
+                <Button Grid.Row="2"
+                        Width="50"
+                        Margin="0,4,10,4"
+                        HorizontalAlignment="Left"
+                        Command="{Binding ExecuteSCCImportCommand}"
+                        Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
+                                                          Size=20}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        ToolTip="Start myScomis Import" />
+                <TextBlock Grid.Row="2"
+                           Grid.Column="2"
+                           Margin="0,0,10,0"
+                           VerticalAlignment="Center"
+                           d:Text="Latest Import"
+                           Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                           Text="{Binding LatestSCCImport}" />
+
             </Grid>
         </GroupBox>
 
-        <materialDesign:Card Grid.Row="3"
-                             Margin="0,5,0,0"
-                             Padding="5,5">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="5,0,5,0"
-                               VerticalAlignment="Center"
-                               Style="{StaticResource MaterialDesignBody2TextBlock}"
-                               Text="myScomis" />
-                    <Button Grid.Column="0"
-                            Width="50"
-                            Margin="0,4,10,4"
-                            HorizontalAlignment="Left"
-                            Command="{Binding ExecuteMyScomisImportCommand}"
-                            Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
-                                                              Size=20}"
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            ToolTip="Start myScomis Import" />
-                    <TextBlock Margin="20,0,5,0"
-                               VerticalAlignment="Center"
-                               Style="{StaticResource MaterialDesignBody2TextBlock}"
-                               Text="Phone Assistant" />
-                    <Button Grid.Column="0"
-                            Width="50"
-                            Margin="0,4,20,0"
-                            HorizontalAlignment="Left"
-                            Command="{Binding ExecutePAImportCommand}"
-                            Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
-                                                              Size=20}"
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            ToolTip="Start PA Import" />
-                    <TextBlock Margin="5"
-                               VerticalAlignment="Center"
-                               Style="{StaticResource MaterialDesignBody2TextBlock}"
-                               Text="SCC" />
-                    <Button Grid.Column="0"
-                            Width="50"
-                            Margin="0,4,20,0"
-                            HorizontalAlignment="Left"
-                            Command="{Binding ExecuteSCCImportCommand}"
-                            Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
-                                                              Size=20}"
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            ToolTip="Start myScomis Import" />
+        <GroupBox Grid.Row="3"
+                  Margin="5"
+                  Header="Phone Assistant Import">
+            <StackPanel Orientation="Horizontal">
+                <Button Width="50"
+                        Margin="0,4,10,0"
+                        HorizontalAlignment="Left"
+                        Command="{Binding ExecutePAImportCommand}"
+                        Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
+                                                          Size=20}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        ToolTip="Start PA Import" />
+                <TextBlock Grid.Row="2"
+                           Margin="0,0,10,0"
+                           VerticalAlignment="Center"
+                           d:Text="Latest Import: PhoneAssistant Database (some date)"
+                           Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                           Text="{Binding LatestPAImport}" />
 
-                </StackPanel>
-                <TextBlock Grid.Row="1"
-                           Margin="5,5"
-                           Style="{StaticResource MaterialDesignBody1TextBlock}"
-                           Text="Import Log" />
+                <Button Width="50"
+                        Margin="0,4,10,0"
+                        HorizontalAlignment="Left"
+                        Command="{Binding ReconcileCommand}"
+                        Content="{materialDesign:PackIcon Kind=HandshakeOutline,
+                                                          Size=20}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        ToolTip="Reconcile Imports" />
+            </StackPanel>
+        </GroupBox>
 
-                <!--<TextBlock Grid.Row="2"
-                           Margin="0,4,0,0"
-                           Style="{StaticResource MaterialDesignBody2TextBlock}"
-                           Text="{Binding Log}"
-                           TextWrapping="Wrap" />-->
-                <ListView Grid.Row="2" ItemsSource="{Binding LogItems, Mode=OneWay}">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="Margin" Value="0" />
-                            <Setter Property="Padding" Value="0" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                </ListView>
-            </Grid>
-        </materialDesign:Card>
+        <GroupBox Grid.Row="4"
+                  Margin="5"
+                  materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                  Header="Import Log"
+                  Style="{StaticResource MaterialDesignGroupBox}">
+
+            <ListView ItemsSource="{Binding LogItems, Mode=OneWay}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="Padding" Value="0" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+
+        </GroupBox>
     </Grid>
 </UserControl>

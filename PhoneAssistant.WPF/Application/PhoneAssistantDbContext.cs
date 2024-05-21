@@ -7,8 +7,6 @@ namespace PhoneAssistant.WPF.Application;
 
 public partial class PhoneAssistantDbContext : DbContext
 {
-    private static readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(builder => { });
-    
     public PhoneAssistantDbContext() { }
 
     public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
@@ -33,7 +31,6 @@ public partial class PhoneAssistantDbContext : DbContext
             optionsBuilder.UseSqlite(@"DataSource=c:\temp\PhoneAssistant.db;");        
 
 #if DEBUG
-        optionsBuilder.UseLoggerFactory(_loggerFactory);
         //optionsBuilder.EnableDetailedErrors();
         //optionsBuilder.EnableSensitiveDataLogging();        
 #endif
@@ -62,7 +59,7 @@ public partial class PhoneAssistantDbContext : DbContext
         {
             entity.ToTable("ImportHistory");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            //entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Name).HasConversion(n => n.ToString(), n => (ImportType)Enum.Parse(typeof(ImportType), n));
             entity.Property(e => e.ImportDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
         });

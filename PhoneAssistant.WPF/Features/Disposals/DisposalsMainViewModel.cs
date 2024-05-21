@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.IO;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -13,26 +14,23 @@ using PhoneAssistant.WPF.Application.Repositories;
 namespace PhoneAssistant.WPF.Features.Disposals;
 public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMessage>, IDisposalsMainViewModel
 {
-    private readonly DisposalsRepository _disposalsRepository;
-    private readonly ImportHistoryRepository _importHistory;
+    private readonly IDisposalsRepository _disposalsRepository;
+    private readonly IImportHistoryRepository _importHistory;
     private readonly IPhonesRepository _phonesRepository;
-    private readonly IMessenger _messenger;
-    private readonly ILogger<DisposalsMainViewModel> _logger;
+    private readonly IMessenger _messenger;    
 
     public ObservableCollection<string> LogItems { get; } = new();
 
-    public DisposalsMainViewModel(DisposalsRepository disposalsRepository,
-                                  ImportHistoryRepository importHistory,
+    public DisposalsMainViewModel(IDisposalsRepository disposalsRepository,
+                                  IImportHistoryRepository importHistory,
                                   IPhonesRepository phonesRepository,
-                                  IMessenger messenger,
-                                  ILogger<DisposalsMainViewModel> logger)
+                                  IMessenger messenger)
     {
         _disposalsRepository = disposalsRepository ?? throw new ArgumentNullException(nameof(disposalsRepository));
         _importHistory = importHistory ?? throw new ArgumentNullException(nameof(importHistory));
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
+        
         messenger.RegisterAll(this);
     }
 
@@ -56,7 +54,6 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
         {
             ScomisFile = openFileDialog.FileName;
         }
-        _logger.LogInformation(ScomisFile);
     }
 
     [ObservableProperty]
@@ -92,11 +89,10 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
                                     _messenger);
         await import.Execute();
 
-        ImportHistory importHistory = await _importHistory.CreateAsync(ImportType.DisposalMS, ScomisFile!);
-
+        ImportHistory importHistory = await _importHistory.CreateAsync(ImportType.DisposalMS, Path.GetFileName(ScomisFile!));
         LatestMSImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
+        ScomisFile = null;
 
-        ScomisFile = string.Empty;
         ImportingFiles = false;
     }
 
@@ -112,6 +108,10 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
                                           _phonesRepository,
                                           _messenger);
         await import.Execute();
+
+        ImportHistory importHistory = await _importHistory.CreateAsync(ImportType.DisposalPA, "PhoneAssistant Database");
+        LatestPAImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
+
         ImportingFiles = false;
     }
 
@@ -128,8 +128,26 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
                               _messenger);
         await import.Execute();
 
-        SCCFile = string.Empty;
+        ImportHistory importHistory = await _importHistory.CreateAsync(ImportType.DisposalSCC, Path.GetFileName(SCCFile!));
+        LatestSCCImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
+        SCCFile = null;
+
         ImportingFiles = false;
+    }
+
+    [RelayCommand]
+    private async Task Reconcile()
+    {
+        IEnumerable<Disposal> disposals = await _disposalsRepository.GetAllDisposalsAsync();
+
+        string? lastAction;
+        foreach(Disposal disposal in disposals)
+        {
+            lastAction = disposal.Action;
+            Reconciliation.Execute(disposal);
+            if (disposal.Action != lastAction)
+                await _disposalsRepository.UpdateAsync(disposal);
+        }
     }
 
     [ObservableProperty]
@@ -142,11 +160,22 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
             LatestMSImport = $"Latest Import: None";
         else
             LatestMSImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
+
+        importHistory = await _importHistory.GetLatestImportAsync(ImportType.DisposalPA);
+        if (importHistory is null)
+            LatestPAImport = $"Latest Import: None";
+        else
+            LatestPAImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
+
+        importHistory = await _importHistory.GetLatestImportAsync(ImportType.DisposalSCC);
+        if (importHistory is null)
+            LatestSCCImport = $"Latest Import: None";
+        else
+            LatestSCCImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
     }
 
     public void Receive(LogMessage message)
     {
         LogItems.Add($"{DateTime.Now}: {message.Text}");
-        _logger.LogInformation(message.Text);
     }
 }

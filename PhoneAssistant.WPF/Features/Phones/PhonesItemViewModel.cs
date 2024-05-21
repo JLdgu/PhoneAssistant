@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
+using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
@@ -288,9 +289,10 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         OrderDetails orderDetails = new(_phone);
         _messenger.Send(new Order(orderDetails));
     }
+
     private bool CanCreateEmail()
     {
-        if (!_phone.Status.Equals("Production", StringComparison.InvariantCultureIgnoreCase))
+        if (!_phone.Status.Equals(ApplicationSettings.StatusProduction, StringComparison.InvariantCultureIgnoreCase))
             return false;
         if (string.IsNullOrEmpty(SR))
             return false;

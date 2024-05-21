@@ -20,12 +20,12 @@ namespace PhoneAssistant.WPF.Features.BaseReport;
 public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMainViewModel
 {
     private readonly BaseReportRepository _repository;
-    private readonly ImportHistoryRepository _import;
+    private readonly IImportHistoryRepository _import;
     private bool _loaded;
     
     private readonly ICollectionView _filterView;
 
-    public BaseReportMainViewModel(BaseReportRepository repository, ImportHistoryRepository importHistory)
+    public BaseReportMainViewModel(BaseReportRepository repository, IImportHistoryRepository importHistory)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _import = importHistory ?? throw new ArgumentNullException(nameof(importHistory));

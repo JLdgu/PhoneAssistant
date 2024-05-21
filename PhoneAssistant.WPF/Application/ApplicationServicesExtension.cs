@@ -37,8 +37,8 @@ public static class ApplicationServicesExtensions
 
             // Reposotories
             services.AddSingleton<BaseReportRepository>();
-            services.AddSingleton<DisposalsRepository>();
-            services.AddSingleton<ImportHistoryRepository>();
+            services.AddSingleton<IDisposalsRepository, DisposalsRepository>();
+            services.AddSingleton<IImportHistoryRepository, ImportHistoryRepository>();
             services.AddSingleton<ILocationsRepository, LocationsRepository>();
             services.AddSingleton<IPhonesRepository, PhonesRepository>();
             services.AddSingleton<ISimsRepository, SimsRepository>();

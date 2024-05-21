@@ -1,4 +1,6 @@
-﻿using PhoneAssistant.WPF.Application.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+
+using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Features.Disposals;
 
 namespace PhoneAssistant.WPF.Application.Repositories;
@@ -10,12 +12,6 @@ public sealed class DisposalsRepository : IDisposalsRepository
     public DisposalsRepository(PhoneAssistantDbContext dbContext)
     {
         _dbContext = dbContext;
-    }
-
-    public async Task<Disposal?> GetDisposalAsync(string imei)
-    {
-        Disposal? disposal = await _dbContext.Disposals.FindAsync(imei);
-        return disposal;
     }
 
     public async Task AddAsync(Disposal disposal)
@@ -57,7 +53,6 @@ public sealed class DisposalsRepository : IDisposalsRepository
 
         disposal.StatusPA = status;
         disposal.SR = sr;
-        Reconciliation.PAUpdate(disposal);
 
         await UpdateAsync(disposal);
         return Result.Updated;
@@ -80,6 +75,18 @@ public sealed class DisposalsRepository : IDisposalsRepository
         disposal.Certificate = certificate;
         await UpdateAsync(disposal);
         return Result.Updated;
+    }
+
+    public async Task<IEnumerable<Disposal>> GetAllDisposalsAsync()
+    {
+        IEnumerable<Disposal> disposals = await _dbContext.Disposals.ToListAsync();
+        return disposals;
+    }
+
+    public async Task<Disposal?> GetDisposalAsync(string imei)
+    {
+        Disposal? disposal = await _dbContext.Disposals.FindAsync(imei);
+        return disposal;
     }
 
     public async Task UpdateAsync(Disposal disposal)

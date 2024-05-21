@@ -5,12 +5,14 @@ using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.Disposals;
 
-public sealed class ImportPhoneAssistant(DisposalsRepository disposalsRepository, 
+public sealed class ImportPhoneAssistant(IDisposalsRepository disposalsRepository, 
                                          IPhonesRepository phonesRepository,     
                                          IMessenger messenger)
 {    
     public async Task Execute()
     {
+        messenger.Send(new LogMessage($"Importing from PhoneAssistant database"));
+
         IEnumerable<Phone> phones = await phonesRepository.GetAllPhonesAsync();
 
         int added = 0;

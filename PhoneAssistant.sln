@@ -24,10 +24,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{94
 		Database\backupDatabase.ps1 = Database\backupDatabase.ps1
 		Database\dbUpdate.ps1 = Database\dbUpdate.ps1
 		Database\Live2Test.ps1 = Database\Live2Test.ps1
-		Database\Schema.ps1 = Database\Schema.ps1
-		Database\schema.sql = Database\schema.sql
-		Database\TriggerTest.ps1 = Database\TriggerTest.ps1
-		Database\triggertest.sql = Database\triggertest.sql
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migrations", "Migrations", "{7F8E736A-2CB8-49B4-A2FC-6136B4BEBBED}"

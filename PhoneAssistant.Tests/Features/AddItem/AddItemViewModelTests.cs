@@ -8,6 +8,7 @@ using Moq;
 using System.ComponentModel.DataAnnotations;
 using PhoneAssistant.WPF.Application;
 using CommunityToolkit.Mvvm.Messaging;
+using PhoneAssistant.Tests.Shared;
 
 namespace PhoneAssistant.Tests.Features.AddItem;
 public class AddItemViewModelTests
@@ -581,13 +582,5 @@ public class AddItemViewModelTests
         Assert.Equal(ValidationResult.Success, actual);
     }
     #endregion
-}
-
-
-[TypeMatcher]
-public sealed class IsAnyToken : ITypeMatcher, IEquatable<IsAnyToken>
-{
-    public bool Matches(Type typeArgument) => true;
-    public bool Equals(IsAnyToken? other) => throw new NotImplementedException();
 }
 

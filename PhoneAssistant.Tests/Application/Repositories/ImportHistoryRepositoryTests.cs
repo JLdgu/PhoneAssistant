@@ -24,7 +24,7 @@ public class ImportHistoryRepositoryTests
         _helper.DbContext.Imports.Add(import2);
         await _helper.DbContext.SaveChangesAsync();
 
-        ImportHistory? actual = _repository.GetLatestImport();
+        ImportHistory? actual = await _repository.GetLatestImportAsync(ImportType.BaseReport);
 
         Assert.Equal(import2, actual);
     }

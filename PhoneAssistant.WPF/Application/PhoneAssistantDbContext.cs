@@ -7,6 +7,8 @@ namespace PhoneAssistant.WPF.Application;
 
 public partial class PhoneAssistantDbContext : DbContext
 {
+    private static readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(builder => { });
+
     public PhoneAssistantDbContext() { }
 
     public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
@@ -28,13 +30,14 @@ public partial class PhoneAssistantDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
-            optionsBuilder.UseSqlite(@"DataSource=c:\temp\PhoneAssistant.db;");        
+            optionsBuilder.UseSqlite(@"DataSource=c:\temp\PhoneAssistant.db;");
 
 #if DEBUG
+        optionsBuilder.UseLoggerFactory(_loggerFactory);  // Comment out to log EF calls
         //optionsBuilder.EnableDetailedErrors();
         //optionsBuilder.EnableSensitiveDataLogging();        
 #endif
-      
+
         //optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         base.OnConfiguring(optionsBuilder);
     }

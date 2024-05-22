@@ -22,15 +22,15 @@ public sealed class ImportSCC(string importFile,
             using HSSFWorkbook workbook = new HSSFWorkbook(stream);
 
             ISheet sheet = workbook.GetSheetAt(0);
-            messenger.Send(new LogMessage($"Importing {importFile}"));
-            messenger.Send(new LogMessage($"Found sheet {sheet.SheetName}"));
-            messenger.Send(new LogMessage($"Processing {sheet.LastRowNum} rows"));
+            messenger.Send(new LogMessage(MessageType.Default, $"Importing {importFile}"));
+            messenger.Send(new LogMessage(MessageType.Default, $"Found sheet {sheet.SheetName}"));
+            messenger.Send(new LogMessage(MessageType.Default, $"Processing {sheet.LastRowNum} rows"));
 
             IRow header = sheet.GetRow(1);
             ICell cell = header.GetCell(0);
             if (cell is null || cell.StringCellValue != "Units")
             {
-                messenger.Send(new LogMessage("Unable to find 'Units' in cell A2, check you are importing a SCC export."));
+                messenger.Send(new LogMessage(MessageType.Default, "Unable to find 'Units' in cell A2, check you are importing a SCC export."));
                 return;
             }
             int added = 0;
@@ -44,7 +44,7 @@ public sealed class ImportSCC(string importFile,
 
                 if (row.GetCell(3).CellType != CellType.Numeric)
                 {
-                    messenger.Send(new LogMessage($"Ignored row {i} Serial Number is not numeric."));
+                    messenger.Send(new LogMessage(MessageType.Default, $"Ignored row {i} Serial Number is not numeric."));
                     continue;
                 }
                 string imei = row.GetCell(3).NumericCellValue.ToString();
@@ -73,17 +73,17 @@ public sealed class ImportSCC(string importFile,
                         break;
                 }
             }
-            messenger.Send(new LogMessage($"Added {added} disposals"));
-            messenger.Send(new LogMessage($"Updated {updated} disposals"));
-            messenger.Send(new LogMessage($"Unchanged {unchanged} disposals"));
-            messenger.Send(new LogMessage("Import complete"));
+            messenger.Send(new LogMessage(MessageType.Default, $"Added {added} disposals"));
+            messenger.Send(new LogMessage(MessageType.Default, $"Updated {updated} disposals"));
+            messenger.Send(new LogMessage(MessageType.Default, $"Unchanged {unchanged} disposals"));
+            messenger.Send(new LogMessage(MessageType.Default, "Import complete"));
         }
         catch (IOException ex)
         {
             if (ex.Message.StartsWith("Duplicate"))
             {
-                messenger.Send(new LogMessage($"Cannot read SCC spreadsheet"));
-                messenger.Send(new LogMessage($"Try opening and saving a copy"));
+                messenger.Send(new LogMessage(MessageType.Default, $"Cannot read SCC spreadsheet"));
+                messenger.Send(new LogMessage(MessageType.Default, $"Try opening and saving a copy"));
             }
             else
                 throw;

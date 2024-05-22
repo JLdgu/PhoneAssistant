@@ -11,7 +11,7 @@ public sealed class ImportPhoneAssistant(IDisposalsRepository disposalsRepositor
 {    
     public async Task Execute()
     {
-        messenger.Send(new LogMessage($"Importing from PhoneAssistant database"));
+        messenger.Send(new LogMessage(MessageType.Default, $"Importing from PhoneAssistant database"));
 
         IEnumerable<Phone> phones = await phonesRepository.GetAllPhonesAsync();
 
@@ -37,9 +37,9 @@ public sealed class ImportPhoneAssistant(IDisposalsRepository disposalsRepositor
             }
         }
 
-        messenger.Send(new LogMessage($"Added {added} disposals"));
-        messenger.Send(new LogMessage($"Updated {updated} disposals"));
-        messenger.Send(new LogMessage($"Unchanged {unchanged} disposals"));
-        messenger.Send(new LogMessage("Import complete"));
+        messenger.Send(new LogMessage(MessageType.Default, $"Added {added} disposals"));
+        messenger.Send(new LogMessage(MessageType.Default, $"Updated {updated} disposals"));
+        messenger.Send(new LogMessage(MessageType.Default, $"Unchanged {unchanged} disposals"));
+        messenger.Send(new LogMessage(MessageType.Default, "Import complete"));
     }
 }

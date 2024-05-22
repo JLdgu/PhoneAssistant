@@ -76,13 +76,26 @@
                                                           Size=20}"
                         Style="{StaticResource MaterialDesignOutlinedButton}"
                         ToolTip="Start myScomis Import" />
-                <TextBlock Grid.Row="2"
-                           Grid.Column="2"
-                           Margin="0,0,10,0"
-                           VerticalAlignment="Center"
-                           d:Text="Latest Import"
-                           Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                           Text="{Binding LatestMSImport}" />
+                <StackPanel Grid.Row="2"
+                            Grid.Column="2"
+                            VerticalAlignment="Center"
+                            Orientation="Vertical">
+
+                    <TextBlock Margin="0,0,10,0"
+                               VerticalAlignment="Center"
+                               d:Text="Latest Import"
+                               Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                               Text="{Binding LatestMSImport}"
+                               Visibility="{Binding ShowMSLatestImport}" />
+                    <ProgressBar VerticalAlignment="Center"
+                                 d:Maximum="9500"
+                                 d:Value="8250"
+                                 d:Visibility="Visible"
+                                 IsIndeterminate="False"
+                                 Maximum="{Binding MSMaxProgress}"
+                                 Visibility="{Binding ShowMSProgress}"
+                                 Value="{Binding MSProgress}" />
+                </StackPanel>
             </Grid>
         </GroupBox>
 
@@ -128,14 +141,15 @@
                         Content="{materialDesign:PackIcon Kind=DatabaseImportOutline,
                                                           Size=20}"
                         Style="{StaticResource MaterialDesignOutlinedButton}"
-                        ToolTip="Start myScomis Import" />
+                        ToolTip="Start SCC Import" />
                 <TextBlock Grid.Row="2"
                            Grid.Column="2"
                            Margin="0,0,10,0"
                            VerticalAlignment="Center"
                            d:Text="Latest Import"
                            Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                           Text="{Binding LatestSCCImport}" />
+                           Text="{Binding LatestSCCImport}"
+                           Visibility="{Binding ShowSCCLatestImport, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
             </Grid>
         </GroupBox>
@@ -157,7 +171,8 @@
                            VerticalAlignment="Center"
                            d:Text="Latest Import: PhoneAssistant Database (some date)"
                            Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                           Text="{Binding LatestPAImport}" />
+                           Text="{Binding LatestPAImport}"
+                           Visibility="{Binding ShowPALatestImport, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <Button Width="50"
                         Margin="0,4,10,0"

@@ -5,7 +5,7 @@ public static class ApplicationSettings
     public const string ConditionNew = "New";
     public const string ConditionRepurposed = "Repurposed";
 
-    public static readonly List<string> Conditions = new() { ConditionNew, ConditionRepurposed };
+    public static readonly List<string> Conditions = [ConditionNew, ConditionRepurposed];
 
     public const string StatusDecommissioned = "Decommissioned";
     public const string StatusDisposed = "Disposed";
@@ -14,6 +14,6 @@ public static class ApplicationSettings
     public const string StatusMisplaced = "Misplaced";
     public const string StatusProduction = "Production";
 
-    public static readonly List<string> Statuses = new() { StatusProduction, StatusInStock, StatusInRepair, StatusDecommissioned, StatusDisposed, StatusMisplaced };
+    public static readonly List<string> Statuses = [StatusProduction, StatusInStock, StatusInRepair, StatusDecommissioned, StatusDisposed, StatusMisplaced];
 
 }

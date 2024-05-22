@@ -12,10 +12,10 @@ using Xunit.Abstractions;
 
 namespace PhoneAssistant.Tests.Features.Disposals;
 
-public sealed class DisposalMainViewModelTests
+public sealed class DisposalMainViewModelTests()
 {
     [Fact]
-    public async Task LoadAsync_ShouldSetLatestImportNone_WhenPreviousImport()
+    public async Task LoadAsync_ShouldSetLatestImportNone_WhenNoPreviousImport()
     {
         AutoMocker _mocker = new AutoMocker();
         DisposalsMainViewModel sut = _mocker.CreateInstance<DisposalsMainViewModel>();
@@ -33,6 +33,7 @@ public sealed class DisposalMainViewModelTests
         Assert.Equal("Latest Import: None", sut.LatestSCCImport);
         history.VerifyAll();
     }
+    
     [Fact]
     public async Task LoadAsync_ShouldSetLatestImportDate_WhenPreviousImport()
     {
@@ -49,5 +50,88 @@ public sealed class DisposalMainViewModelTests
         Assert.Equal("Latest Import: File (PA)", sut.LatestPAImport);
         Assert.Equal("Latest Import: File (SCC)", sut.LatestSCCImport);
         history.VerifyAll();
+    }
+
+    [Fact]
+    public void Receive_ShouldSetMSMaxProgress_WhenMessageTypeMSMaxProgress()
+    {
+        AutoMocker _mocker = new AutoMocker();
+        DisposalsMainViewModel sut = _mocker.CreateInstance<DisposalsMainViewModel>();
+
+        sut.Receive(new LogMessage(MessageType.MSMaxProgress, "", 257));
+
+        Assert.Equal(257, sut.MSMaxProgress);
+        Assert.Single(sut.LogItems);
+    }
+
+    [Fact]
+    public void Receive_ShouldSetMSProgress_WhenMessageTypeMSProgress()
+    {
+        AutoMocker _mocker = new AutoMocker();
+        DisposalsMainViewModel sut = _mocker.CreateInstance<DisposalsMainViewModel>();
+
+        sut.Receive(new LogMessage(MessageType.MSProgress, "", 157));
+
+        Assert.Equal(157, sut.MSProgress);
+        Assert.Empty(sut.LogItems);
+    }
+
+    [Fact]
+    public void Receive_ShouldSetPAMaxProgress_WhenMessageTypePAMaxProgress()
+    {
+        AutoMocker _mocker = new AutoMocker();
+        DisposalsMainViewModel sut = _mocker.CreateInstance<DisposalsMainViewModel>();
+
+        sut.Receive(new LogMessage(MessageType.PAMaxProgress, "", 3257));
+
+        Assert.Equal(3257, sut.PAMaxProgress);
+        Assert.Single(sut.LogItems);
+    }
+
+    [Fact]
+    public void Receive_ShouldSetPAProgress_WhenMessageTypePAProgress()
+    {
+        AutoMocker _mocker = new AutoMocker();
+        DisposalsMainViewModel sut = _mocker.CreateInstance<DisposalsMainViewModel>();
+
+        sut.Receive(new LogMessage(MessageType.PAProgress, "", 1547));
+
+        Assert.Equal(1547, sut.PAProgress);
+        Assert.Empty(sut.LogItems);
+    }
+
+    [Fact]
+    public void Receive_ShouldSetSCCMaxProgress_WhenMessageTypeSCCMaxProgress()
+    {
+        AutoMocker _mocker = new AutoMocker();
+        DisposalsMainViewModel sut = _mocker.CreateInstance<DisposalsMainViewModel>();
+
+        sut.Receive(new LogMessage(MessageType.SCCMaxProgress, "", 57));
+
+        Assert.Equal(57, sut.SCCMaxProgress);
+        Assert.Single(sut.LogItems);
+    }
+
+    [Fact]
+    public void Receive_ShouldSetSCCProgress_WhenMessageTypeSCCProgress()
+    {
+        AutoMocker _mocker = new AutoMocker();
+        DisposalsMainViewModel sut = _mocker.CreateInstance<DisposalsMainViewModel>();
+
+        sut.Receive(new LogMessage(MessageType.SCCProgress, "", 457));
+
+        Assert.Equal(457, sut.SCCProgress);
+        Assert.Empty(sut.LogItems);
+    }
+
+    [Fact]
+    public void Receive_ShouldUpdateLogItems_WhenMessageTypeDefault()
+    {
+        AutoMocker _mocker = new AutoMocker();
+        DisposalsMainViewModel sut = _mocker.CreateInstance<DisposalsMainViewModel>();
+
+        sut.Receive(new LogMessage(MessageType.Default, "Some message"));
+
+        Assert.Single( sut.LogItems);
     }
 }

@@ -12,5 +12,6 @@ public enum ImportType
     BaseReport,
     DisposalMS,
     DisposalPA,
-    DisposalSCC
+    DisposalSCC,
+    Reconiliation
 }

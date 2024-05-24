@@ -8,6 +8,7 @@ using PhoneAssistant.WPF.Application.Repositories;
 using System.IO;
 
 namespace PhoneAssistant.WPF.Features.Disposals;
+
 public sealed class ImportMyScomis(string importFile,
                                    IDisposalsRepository disposalsRepository,
                                    IMessenger messenger)
@@ -20,8 +21,7 @@ public sealed class ImportMyScomis(string importFile,
         ISheet sheet = xssWorkbook.GetSheetAt(0);
         messenger.Send(new LogMessage(MessageType.Default, $"Importing {importFile}"));
         messenger.Send(new LogMessage(MessageType.Default, $"Found sheet {sheet.SheetName}"));
-        int totalRows = sheet.LastRowNum;
-        messenger.Send(new LogMessage(MessageType.MSMaxProgress, $"Processing {totalRows} rows",totalRows));
+        messenger.Send(new LogMessage(MessageType.MSMaxProgress, "", sheet.LastRowNum));
 
         IRow header = sheet.GetRow(0);
         ICell cell = header.GetCell(0);
@@ -33,12 +33,8 @@ public sealed class ImportMyScomis(string importFile,
         int added = 0;
         int unchanged = 0;
         int updated = 0;
-        int modProgess = 10;
-        if (totalRows > 100)
-        {
-            modProgess = (totalRows / 100) + 1;
-        }
-
+        TrackProgress progress = new(sheet.LastRowNum);
+        
         await Task.Run(async delegate
         {
             for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++)
@@ -62,7 +58,7 @@ public sealed class ImportMyScomis(string importFile,
                         updated++;
                         break;
                 }
-                if (i % modProgess == 0)
+                if (progress.Milestone(i))
                 {
                     messenger.Send(new LogMessage(MessageType.MSProgress, "", i));
                 }

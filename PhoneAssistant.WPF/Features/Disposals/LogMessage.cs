@@ -9,6 +9,8 @@ public enum MessageType
     MSProgress,
     PAMaxProgress,
     PAProgress,
+    ReconciliationMaxProgress,
+    ReconciliationProgress,
     SCCMaxProgress,
-    SCCProgress
+    SCCProgress,
 }

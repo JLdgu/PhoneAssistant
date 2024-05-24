@@ -1,12 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Data;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
-using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
 using PhoneAssistant.WPF.Application.Entities;
@@ -33,6 +33,8 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
 
         messenger.RegisterAll(this);
+
+        BindingOperations.EnableCollectionSynchronization(LogItems, new object());
     }
 
     [ObservableProperty]
@@ -127,18 +129,22 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     private async Task ExecuteSCCImport()
     {
         ImportingFiles = true;
+        ShowSCCLatestImport = Visibility.Collapsed;
+        ShowSCCProgress = Visibility.Visible;
         ImportSCC import = new(SCCFile!,
-                              _disposalsRepository,
-                              _messenger);
+                          _disposalsRepository,
+                          _messenger);
         await import.Execute();
 
         ImportHistory importHistory = await _importHistory.CreateAsync(ImportType.DisposalSCC, Path.GetFileName(SCCFile!));
         LatestSCCImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
         SCCFile = null;
 
+        ShowSCCProgress = Visibility.Collapsed;
+        ShowSCCLatestImport = Visibility.Visible;
         ImportingFiles = false;
     }
-    
+
     [ObservableProperty]
     private Visibility _showSCCProgress = Visibility.Collapsed;
 
@@ -149,18 +155,23 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     private int _sCCProgress = 0;
     #endregion
 
-    #region PhoneAssistant import
+    #region PhoneAssistant import and reconiliation
     [ObservableProperty]
     private string? _latestPAImport;
 
     [ObservableProperty]
-    private bool _showPALatestImport = true;
+    private Visibility _showPALatestImport = Visibility.Visible;
 
     private bool CanImportPA() => !ImportingFiles;
     [RelayCommand(CanExecute = nameof(CanImportPA))]
     private async Task ExecutePAImport()
     {
+        ReconcileCommand.NotifyCanExecuteChanged();
+
         ImportingFiles = true;
+        ShowPALatestImport = Visibility.Collapsed;
+        ShowPAProgress = Visibility.Visible;
+
         ImportPhoneAssistant import = new(_disposalsRepository,
                                           _phonesRepository,
                                           _messenger);
@@ -169,11 +180,13 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
         ImportHistory importHistory = await _importHistory.CreateAsync(ImportType.DisposalPA, "PhoneAssistant Database");
         LatestPAImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
 
+        ShowPAProgress = Visibility.Collapsed;
+        ShowPALatestImport = Visibility.Visible;
         ImportingFiles = false;
     }
 
     [ObservableProperty]
-    private bool _showPAProgress = false;
+    private Visibility _showPAProgress = Visibility.Collapsed;
 
     [ObservableProperty]
     private int _pAMaxProgress = 100;
@@ -181,29 +194,40 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     [ObservableProperty]
     private int _pAProgress = 0;
 
-    [RelayCommand]
+    private bool CanReconcile() => !ImportingFiles;
+    [RelayCommand(CanExecute = nameof(CanReconcile))]
     private async Task Reconcile()
     {
-        IEnumerable<Disposal> disposals = await _disposalsRepository.GetAllDisposalsAsync();
+        ImportingFiles = true;
+        ShowReconiliation = Visibility.Collapsed;
+        ShowReconiliationProgress = Visibility.Visible;
 
-        string? lastAction;
-        foreach (Disposal disposal in disposals)
-        {
-            lastAction = disposal.Action;
-            Reconciliation.Execute(disposal);
-            if (disposal.Action != lastAction)
-                await _disposalsRepository.UpdateAsync(disposal);
-        }
+        Reconciliation reconcile = new(_disposalsRepository,
+                                        _messenger);
+        await reconcile.Execute();
+
+        ImportHistory importHistory = await _importHistory.CreateAsync(ImportType.Reconiliation, "None");
+        LatestReconiliation = $"Latest Reconiliation: {importHistory.ImportDate}";
+
+        ShowReconiliationProgress = Visibility.Collapsed;
+        ShowReconiliation = Visibility.Visible;
+        ImportingFiles = false;
     }
 
     [ObservableProperty]
-    private bool _showReconcileProgress = false;
+    private string? _latestReconiliation;
 
     [ObservableProperty]
-    private int _reconcileMaxProgress = 100;
+    private Visibility _showReconiliation = Visibility.Visible;
 
     [ObservableProperty]
-    private int _reconcileProgress = 0;
+    private Visibility _showReconiliationProgress = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private int _reconiliationMaxProgress = 100;
+
+    [ObservableProperty]
+    private int _reconiliationProgress = 0;
     #endregion
 
     [ObservableProperty]
@@ -212,22 +236,16 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     public async Task LoadAsync()
     {
         ImportHistory? importHistory = await _importHistory.GetLatestImportAsync(ImportType.DisposalMS);
-        if (importHistory is null)
-            LatestMSImport = $"Latest Import: None";
-        else
-            LatestMSImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
+        LatestMSImport = importHistory is null ? $"Latest Import: None" : $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
 
         importHistory = await _importHistory.GetLatestImportAsync(ImportType.DisposalPA);
-        if (importHistory is null)
-            LatestPAImport = $"Latest Import: None";
-        else
-            LatestPAImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
+        LatestPAImport = importHistory is null ? $"Latest Import: None" : $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
 
         importHistory = await _importHistory.GetLatestImportAsync(ImportType.DisposalSCC);
-        if (importHistory is null)
-            LatestSCCImport = $"Latest Import: None";
-        else
-            LatestSCCImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
+        LatestSCCImport = importHistory is null ? $"Latest Import: None" : $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
+
+        importHistory = await _importHistory.GetLatestImportAsync(ImportType.Reconiliation);
+        LatestReconiliation = importHistory is null ? $"Latest Reconiliation: None" : $"Latest Reconiliation: {importHistory.ImportDate}";
     }
 
     public void Receive(LogMessage message)
@@ -250,6 +268,13 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
                 break;
             case MessageType.PAProgress:
                 PAProgress = message.Progress;
+                break;
+            case MessageType.ReconciliationMaxProgress:
+                ReconiliationMaxProgress = message.Progress;
+                LogItems.Add($"{DateTime.Now}: Reconciling {message.Progress} rows");
+                break;
+            case MessageType.ReconciliationProgress:
+                ReconiliationProgress = message.Progress;
                 break;
             case MessageType.SCCMaxProgress:
                 SCCMaxProgress = message.Progress;

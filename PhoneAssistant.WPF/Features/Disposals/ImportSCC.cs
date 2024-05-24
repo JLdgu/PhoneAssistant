@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 
-using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.Disposals;
@@ -16,16 +15,15 @@ public sealed class ImportSCC(string importFile,
 {
     public async Task Execute()
     {
-        using FileStream? stream = new FileStream(importFile, FileMode.Open, FileAccess.Read);
+        using FileStream? stream = new(importFile, FileMode.Open, FileAccess.Read);
         try
         {
-            using HSSFWorkbook workbook = new HSSFWorkbook(stream);
+            using HSSFWorkbook workbook = new(stream);
 
             ISheet sheet = workbook.GetSheetAt(0);
             messenger.Send(new LogMessage(MessageType.Default, $"Importing {importFile}"));
             messenger.Send(new LogMessage(MessageType.Default, $"Found sheet {sheet.SheetName}"));
-            messenger.Send(new LogMessage(MessageType.Default, $"Processing {sheet.LastRowNum} rows"));
-
+            messenger.Send(new LogMessage(MessageType.SCCMaxProgress, "", sheet.LastRowNum));
             IRow header = sheet.GetRow(1);
             ICell cell = header.GetCell(0);
             if (cell is null || cell.StringCellValue != "Units")
@@ -36,43 +34,53 @@ public sealed class ImportSCC(string importFile,
             int added = 0;
             int unchanged = 0;
             int updated = 0;
+            TrackProgress progress = new(sheet.LastRowNum);
 
-            for (int i = (sheet.FirstRowNum + 4); i <= sheet.LastRowNum; i++)
+            await Task.Run(async delegate
             {
-                IRow row = sheet.GetRow(i);
-                if (row == null) continue;
-
-                if (row.GetCell(3).CellType != CellType.Numeric)
+                for (int i = (sheet.FirstRowNum + 4); i <= sheet.LastRowNum; i++)
                 {
-                    messenger.Send(new LogMessage(MessageType.Default, $"Ignored row {i} Serial Number is not numeric."));
-                    continue;
-                }
-                string imei = row.GetCell(3).NumericCellValue.ToString();
+                    IRow row = sheet.GetRow(i);
+                    if (row == null) continue;
 
-                string status = row.GetCell(8).StringCellValue.ToLower();
-                if (status.Contains("despatched"))
-                    status = "Disposed";
+                    if (row.GetCell(3).CellType != CellType.Numeric)
+                    {
+                        messenger.Send(new LogMessage(MessageType.Default, $"Ignored row {i} Serial Number is not numeric."));
+                        continue;
+                    }
+                    string imei = row.GetCell(3).NumericCellValue.ToString();
 
-                int? certificate = null;
-                if (row.GetCell(2).CellType == CellType.Numeric)
-                {
-                    certificate = (int?)row.GetCell(2).NumericCellValue;
-                }
+                    string status = row.GetCell(8).StringCellValue.ToLower();
+                    if (status.Contains("despatched"))
+                        status = "Disposed";
 
-                Result result = await disposalsRepository.AddOrUpdateSCCAsync(imei, status, certificate);
-                switch (result)
-                {
-                    case Result.Added:
-                        added++;
-                        break;
-                    case Result.Unchanged:
-                        unchanged++;
-                        break;
-                    case Result.Updated:
-                        updated++;
-                        break;
+                    int? certificate = null;
+                    if (row.GetCell(2).CellType == CellType.Numeric)
+                    {
+                        certificate = (int?)row.GetCell(2).NumericCellValue;
+                    }
+
+                    Result result = await disposalsRepository.AddOrUpdateSCCAsync(imei, status, certificate);
+                    switch (result)
+                    {
+                        case Result.Added:
+                            added++;
+                            break;
+                        case Result.Unchanged:
+                            unchanged++;
+                            break;
+                        case Result.Updated:
+                            updated++;
+                            break;
+                    }
+
+                    if (progress.Milestone(i))
+                    {
+                        messenger.Send(new LogMessage(MessageType.SCCProgress, "", i));
+                    }
                 }
-            }
+            });
+
             messenger.Send(new LogMessage(MessageType.Default, $"Added {added} disposals"));
             messenger.Send(new LogMessage(MessageType.Default, $"Updated {updated} disposals"));
             messenger.Send(new LogMessage(MessageType.Default, $"Unchanged {unchanged} disposals"));

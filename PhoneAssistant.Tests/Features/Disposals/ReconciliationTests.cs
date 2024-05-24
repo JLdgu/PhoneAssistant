@@ -11,7 +11,7 @@ public sealed class ReconciliationTests
     [Fact]
     public void Execute_ShouldThrowException_WhenDisposalNull()
     {   
-        Assert.Throws<ArgumentNullException>(() => Reconciliation.Execute(null));
+        Assert.Throws<ArgumentNullException>(() => Reconciliation.CheckStatus(null));
     }
 
     [Theory]
@@ -29,7 +29,7 @@ public sealed class ReconciliationTests
     {
         Disposal actual = new () { Imei = "imei", StatusMS = statusMS, StatusPA = statusPA};
 
-        Reconciliation.Execute(actual);
+        Reconciliation.CheckStatus(actual);
 
         Assert.Equal(expectedAction, actual.Action);
     }

@@ -88,6 +88,12 @@ public sealed class DisposalsRepository : IDisposalsRepository
         return disposal;
     }
 
+    public async Task TruncateAsync()
+    {
+        await _dbContext.Database.ExecuteSqlRawAsync("DELETE FROM ReconcileDisposals;");
+        await _dbContext.Database.ExecuteSqlRawAsync("VACUUM;");
+    }
+
     public async Task UpdateAsync(Disposal disposal)
     {
         _dbContext.Disposals.Update(disposal);

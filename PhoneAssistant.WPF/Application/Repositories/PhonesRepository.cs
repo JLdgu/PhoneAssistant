@@ -47,6 +47,11 @@ public sealed class PhonesRepository : IPhonesRepository
         return phones;
     }
 
+    public async Task<Phone?> GetPhoneAsync(string imei)
+    {
+        return await _dbContext.Phones.FindAsync(imei);
+    }
+
     public async Task<bool> PhoneNumberExistsAsync(string phoneNumber)
     {
         Phone? phone = await _dbContext.Phones.FirstOrDefaultAsync(p => p.PhoneNumber == phoneNumber);

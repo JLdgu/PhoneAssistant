@@ -13,36 +13,41 @@ public sealed class ImportPhoneAssistant(IDisposalsRepository disposalsRepositor
     {
         messenger.Send(new LogMessage(MessageType.Default, $"Importing from PhoneAssistant database"));
 
-        IEnumerable<Phone> phones = await phonesRepository.GetAllPhonesAsync();
-        messenger.Send(new LogMessage(MessageType.PAMaxProgress, "", phones.Count()));
+
+        IEnumerable<Disposal> disposals = await disposalsRepository.GetAllDisposalsAsync();
+        messenger.Send(new LogMessage(MessageType.MaxProgress, "", disposals.Count()));
 
         int added = 0;
         int updated = 0;
         int unchanged = 0;
         int row = 1;
-        TrackProgress progress = new(phones.Count());
+        TrackProgress progress = new(disposals.Count());
 
         await Task.Run(async delegate
         {
-            foreach (Phone phone in phones)
+            foreach (Disposal disposal in disposals)
             {
-                Result result = await disposalsRepository.AddOrUpdatePAAsync(phone.Imei, phone.Status, phone.SR);
-                switch (result)
+                Phone? phone = await phonesRepository.GetPhoneAsync(disposal.Imei);
+                if (phone is not null)
                 {
-                    case Result.Added:
-                        added++;
-                        break;
-                    case Result.Updated:
-                        updated++;
-                        break;
-                    case Result.Unchanged:
-                        unchanged++;
-                        break;
+                    Result result = await disposalsRepository.AddOrUpdatePAAsync(disposal.Imei, phone.Status, phone.SR);
+                    switch (result)
+                    {
+                        case Result.Added:
+                            added++;
+                            break;
+                        case Result.Updated:
+                            updated++;
+                            break;
+                        case Result.Unchanged:
+                            unchanged++;
+                            break;
+                    }
                 }
 
                 if (progress.Milestone(row))
                 {
-                    messenger.Send(new LogMessage(MessageType.PAProgress, "", row));
+                    messenger.Send(new LogMessage(MessageType.Progress, "", row));
                 }
                 row++;
             }

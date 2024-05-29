@@ -12,7 +12,7 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository,
     public async Task Execute()
     {
         IEnumerable<Disposal> disposals = await disposalsRepository.GetAllDisposalsAsync();
-        messenger.Send(new LogMessage(MessageType.ReconciliationMaxProgress, "", disposals.Count()));
+        messenger.Send(new LogMessage(MessageType.MaxProgress, "", disposals.Count()));
 
         int row = 1;
         TrackProgress progress = new(disposals.Count());
@@ -28,7 +28,7 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository,
                     await disposalsRepository.UpdateAsync(disposal);
 
                 if (progress.Milestone(row))
-                    messenger.Send(new LogMessage(MessageType.ReconciliationProgress, "", row));
+                    messenger.Send(new LogMessage(MessageType.Progress, "", row));
 
                 row++;
             }
@@ -40,6 +40,18 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository,
     public static void CheckStatus(Disposal disposal)
     {
         ArgumentNullException.ThrowIfNull(disposal);
+        
+        if (disposal.StatusMS is null && disposal.StatusPA == ApplicationSettings.StatusDisposed && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
+        {
+            disposal.Action = null;
+            return;
+        }
+
+        if (disposal.StatusMS is null && disposal.StatusPA is null && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
+        {
+            disposal.Action = "Check CI linked to Disposal SR or add IMEI to Phones";
+            return;
+        }
 
         if (disposal.StatusMS == ApplicationSettings.StatusAwaitingReturn ||
             disposal.StatusMS == ApplicationSettings.StatusLost ||
@@ -60,13 +72,19 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository,
                 disposal.Action = null;
                 return;
             }
-            else if (disposal.StatusSCC == ApplicationSettings.StatusDisposed)
+            if (disposal.StatusSCC == ApplicationSettings.StatusDisposed)
             {
                 disposal.Action = "Update phone status in myScomis and PhoneAssistant";
                 return;
             }
         }
 
+        if (disposal.StatusMS == ApplicationSettings.StatusDecommissioned && disposal.StatusPA == ApplicationSettings.StatusDisposed && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
+        {
+            disposal.Action = "Update myScomis status to Disposed";
+            return;
+        }
+        
         if (disposal.StatusMS == ApplicationSettings.StatusDisposed)
         {
             if (disposal.StatusPA is null && disposal.StatusSCC is null)
@@ -74,7 +92,12 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository,
                 disposal.Action = "Check if phone is an SCC disposal";
                 return;
             }
-            else if (disposal.StatusPA == ApplicationSettings.StatusDisposed && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
+            if (disposal.StatusPA is null && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
+            {
+                disposal.Action = "Add phone to PhoneAssistant";
+                return;
+            }
+            if (disposal.StatusPA == ApplicationSettings.StatusDisposed && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
             {
                 disposal.Action = null;
                 return;
@@ -88,12 +111,11 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository,
                 disposal.Action = "Phone needs to be logged in PhoneAssistant";
                 return;
             }
-            else if (disposal.StatusPA == ApplicationSettings.StatusInStock && disposal.StatusSCC is null)
+            if (disposal.StatusPA == ApplicationSettings.StatusInStock && disposal.StatusSCC is null)
             {
                 disposal.Action = null;
                 return;
             }
-
         }
 
         if (disposal.StatusMS == ApplicationSettings.StatusProduction && disposal.StatusPA == ApplicationSettings.StatusProduction && disposal.StatusSCC is null)
@@ -101,11 +123,6 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository,
             disposal.Action = null;
             return;
         }
-
-        //if (disposal.StatusMS == ApplicationSettings.StatusProduction && disposal.StatusPA == ApplicationSettings.StatusInStock)
-        //    disposal.Action = "Reconcile";
-        //if (disposal.StatusMS == ApplicationSettings.StatusDisposed && disposal.StatusPA == ApplicationSettings.StatusDisposed)
-        //    disposal.Action = null;
 
         disposal.Action = "No matching reconcilation rule";
     }

@@ -1,4 +1,6 @@
-﻿using PhoneAssistant.WPF.Application.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+
+using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Application.Repositories;
 public interface IDisposalsRepository
@@ -9,5 +11,6 @@ public interface IDisposalsRepository
     Task<Result> AddOrUpdateSCCAsync(string imei, string status, int? certificate);
     Task<IEnumerable<Disposal>> GetAllDisposalsAsync();
     Task<Disposal?> GetDisposalAsync(string imei);
+    Task TruncateAsync();
     Task UpdateAsync(Disposal disposal);
 }

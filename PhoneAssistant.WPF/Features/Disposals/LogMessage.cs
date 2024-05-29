@@ -5,12 +5,6 @@ public sealed record class LogMessage(MessageType Type, string Text, int Progres
 public enum MessageType
 {
     Default,
-    MSMaxProgress,
-    MSProgress,
-    PAMaxProgress,
-    PAProgress,
-    ReconciliationMaxProgress,
-    ReconciliationProgress,
-    SCCMaxProgress,
-    SCCProgress,
+    MaxProgress,
+    Progress
 }

@@ -21,7 +21,7 @@ public sealed class ImportMyScomis(string importFile,
         ISheet sheet = xssWorkbook.GetSheetAt(0);
         messenger.Send(new LogMessage(MessageType.Default, $"Importing {importFile}"));
         messenger.Send(new LogMessage(MessageType.Default, $"Found sheet {sheet.SheetName}"));
-        messenger.Send(new LogMessage(MessageType.MSMaxProgress, "", sheet.LastRowNum));
+        messenger.Send(new LogMessage(MessageType.MaxProgress, "", sheet.LastRowNum));
 
         IRow header = sheet.GetRow(0);
         ICell cell = header.GetCell(0);
@@ -60,7 +60,7 @@ public sealed class ImportMyScomis(string importFile,
                 }
                 if (progress.Milestone(i))
                 {
-                    messenger.Send(new LogMessage(MessageType.MSProgress, "", i));
+                    messenger.Send(new LogMessage(MessageType.Progress, "", i));
                 }
             }
         });

@@ -16,14 +16,14 @@ public sealed class ImportSCC(string importFile,
     public async Task Execute()
     {
         using FileStream? stream = new(importFile, FileMode.Open, FileAccess.Read);
-        try
-        {
+        //try
+        //{
             using HSSFWorkbook workbook = new(stream);
 
             ISheet sheet = workbook.GetSheetAt(0);
             messenger.Send(new LogMessage(MessageType.Default, $"Importing {importFile}"));
             messenger.Send(new LogMessage(MessageType.Default, $"Found sheet {sheet.SheetName}"));
-            messenger.Send(new LogMessage(MessageType.SCCMaxProgress, "", sheet.LastRowNum));
+            messenger.Send(new LogMessage(MessageType.MaxProgress, "", sheet.LastRowNum));
             IRow header = sheet.GetRow(1);
             ICell cell = header.GetCell(0);
             if (cell is null || cell.StringCellValue != "Units")
@@ -43,15 +43,33 @@ public sealed class ImportSCC(string importFile,
                     IRow row = sheet.GetRow(i);
                     if (row == null) continue;
 
-                    if (row.GetCell(3).CellType != CellType.Numeric)
+                    string imei;
+                    if (row.GetCell(3).CellType == CellType.Numeric)
                     {
-                        messenger.Send(new LogMessage(MessageType.Default, $"Ignored row {i} Serial Number is not numeric."));
-                        continue;
+                        imei = row.GetCell(3).NumericCellValue.ToString("000000000000000");
                     }
-                    string imei = row.GetCell(3).NumericCellValue.ToString();
+                    else
+                    {
+                        if (row.GetCell(3).CellType == CellType.String)
+                        {
+                            imei = row.GetCell(3).StringCellValue.PadLeft(15,'0');
+                            
+                            bool isNumeric = long.TryParse(imei, out _);
+                            if (!isNumeric)
+                            {
+                                messenger.Send(new LogMessage(MessageType.Default, $"Ignored row {i} Serial Number is not numeric."));
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            messenger.Send(new LogMessage(MessageType.Default, $"Ignored row {i} Serial Number is not numeric."));
+                            continue;
+                        }                        
+                    }                    
 
-                    string status = row.GetCell(8).StringCellValue.ToLower();
-                    if (status.Contains("despatched"))
+                    string status = row.GetCell(8).StringCellValue;
+                    if (status.Contains("despatched", StringComparison.InvariantCultureIgnoreCase))
                         status = "Disposed";
 
                     int? certificate = null;
@@ -76,7 +94,7 @@ public sealed class ImportSCC(string importFile,
 
                     if (progress.Milestone(i))
                     {
-                        messenger.Send(new LogMessage(MessageType.SCCProgress, "", i));
+                        messenger.Send(new LogMessage(MessageType.Progress, "", i));
                     }
                 }
             });
@@ -85,16 +103,16 @@ public sealed class ImportSCC(string importFile,
             messenger.Send(new LogMessage(MessageType.Default, $"Updated {updated} disposals"));
             messenger.Send(new LogMessage(MessageType.Default, $"Unchanged {unchanged} disposals"));
             messenger.Send(new LogMessage(MessageType.Default, "Import complete"));
-        }
-        catch (IOException ex)
-        {
-            if (ex.Message.StartsWith("Duplicate"))
-            {
-                messenger.Send(new LogMessage(MessageType.Default, $"Cannot read SCC spreadsheet"));
-                messenger.Send(new LogMessage(MessageType.Default, $"Try opening and saving a copy"));
-            }
-            else
-                throw;
-        }
+        //}
+        //catch (IOException ex)
+        //{
+        //    if (ex.Message.StartsWith("Duplicate"))
+        //    {
+        //        messenger.Send(new LogMessage(MessageType.Default, $"Cannot read SCC spreadsheet"));
+        //        messenger.Send(new LogMessage(MessageType.Default, $"Try opening and saving a copy"));
+        //    }
+        //    else
+        //        throw;
+        //}
     }
 }

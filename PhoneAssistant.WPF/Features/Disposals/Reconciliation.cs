@@ -41,33 +41,72 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository,
     {
         ArgumentNullException.ThrowIfNull(disposal);
 
-        if (disposal.StatusMS is null)
+        if (disposal.StatusMS == ApplicationSettings.StatusAwaitingReturn ||
+            disposal.StatusMS == ApplicationSettings.StatusLost ||
+            disposal.StatusMS == ApplicationSettings.StatusProduction ||
+            disposal.StatusMS == ApplicationSettings.StatusUnlocated)
         {
-            if (disposal.StatusPA == ApplicationSettings.StatusDisposed)
+            if (disposal.StatusPA is null && disposal.StatusSCC is null)
             {
                 disposal.Action = null;
                 return;
             }
-            else
+        }
+
+        if (disposal.StatusMS == ApplicationSettings.StatusDecommissioned && disposal.StatusPA == ApplicationSettings.StatusDecommissioned)
+        {
+            if (disposal.StatusSCC == null)
             {
-                disposal.Action = "Phone CI missing from myScomis";
+                disposal.Action = null;
+                return;
+            }
+            else if (disposal.StatusSCC == ApplicationSettings.StatusDisposed)
+            {
+                disposal.Action = "Update phone status in myScomis and PhoneAssistant";
                 return;
             }
         }
 
-        if (disposal.StatusMS == ApplicationSettings.StatusProduction && disposal.StatusPA == ApplicationSettings.StatusInStock)
+        if (disposal.StatusMS == ApplicationSettings.StatusDisposed)
         {
-            disposal.Action = "Reconcile";
-            return;
+            if (disposal.StatusPA is null && disposal.StatusSCC is null)
+            {
+                disposal.Action = "Check if phone is an SCC disposal";
+                return;
+            }
+            else if (disposal.StatusPA == ApplicationSettings.StatusDisposed && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
+            {
+                disposal.Action = null;
+                return;
+            }
         }
-        if (disposal.StatusMS == ApplicationSettings.StatusDisposed && disposal.StatusPA == ApplicationSettings.StatusDisposed)
+
+        if (disposal.StatusMS == ApplicationSettings.StatusInStock)
+        {
+            if (disposal.StatusPA is null && disposal.StatusSCC is null)
+            {
+                disposal.Action = "Phone needs to be logged in PhoneAssistant";
+                return;
+            }
+            else if (disposal.StatusPA == ApplicationSettings.StatusInStock && disposal.StatusSCC is null)
+            {
+                disposal.Action = null;
+                return;
+            }
+
+        }
+
+        if (disposal.StatusMS == ApplicationSettings.StatusProduction && disposal.StatusPA == ApplicationSettings.StatusProduction && disposal.StatusSCC is null)
         {
             disposal.Action = null;
             return;
         }
 
+        //if (disposal.StatusMS == ApplicationSettings.StatusProduction && disposal.StatusPA == ApplicationSettings.StatusInStock)
+        //    disposal.Action = "Reconcile";
+        //if (disposal.StatusMS == ApplicationSettings.StatusDisposed && disposal.StatusPA == ApplicationSettings.StatusDisposed)
+        //    disposal.Action = null;
 
-        
         disposal.Action = "No matching reconcilation rule";
     }
 }

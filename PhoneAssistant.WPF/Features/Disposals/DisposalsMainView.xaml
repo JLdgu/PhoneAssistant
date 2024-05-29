@@ -46,7 +46,7 @@
                                Text="myScomis Phone CIs to import (.xlsx)" />
                     <Image Grid.Row="1"
                            Grid.Column="1"
-                           Width="500"
+                           Width="870"
                            Margin="15,0,0,0"
                            HorizontalAlignment="Left"
                            Source="/Features/Disposals/CISearch.png" />
@@ -55,7 +55,7 @@
                 <Button Grid.Row="1"
                         Grid.Column="0"
                         Margin="0,4,10,0"
-                        Command="{Binding SelectMyScomisFileCommand}"
+                        Command="{Binding SelectMSFileCommand}"
                         Content="{materialDesign:PackIcon Kind=FolderOpenOutline,
                                                           Size=20}"
                         Style="{StaticResource MaterialDesignOutlinedButton}"

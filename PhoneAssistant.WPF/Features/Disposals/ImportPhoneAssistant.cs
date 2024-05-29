@@ -14,7 +14,6 @@ public sealed class ImportPhoneAssistant(IDisposalsRepository disposalsRepositor
         messenger.Send(new LogMessage(MessageType.Default, $"Importing from PhoneAssistant database"));
 
         IEnumerable<Phone> phones = await phonesRepository.GetAllPhonesAsync();
-        phones.Count();
         messenger.Send(new LogMessage(MessageType.PAMaxProgress, "", phones.Count()));
 
         int added = 0;

@@ -45,8 +45,9 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     [NotifyCanExecuteChangedFor(nameof(ExecuteMyScomisImportCommand))]
     private string? _scomisFile;
 
-    [RelayCommand]
-    private void SelectMyScomisFile()
+    private bool CanSelectMSFile() => !ImportingFiles;
+    [RelayCommand(CanExecute = nameof(CanSelectMSFile))]
+    private void SelectMSFile()
     {
         OpenFileDialog openFileDialog = new()
         {
@@ -70,9 +71,11 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     [RelayCommand(CanExecute = nameof(CanImportMyScomis))]
     private async Task ExecuteMyScomisImport()
     {
-        ImportingFiles = true;
+        Importing(true);
+
         ShowMSLatestImport = Visibility.Collapsed;
         ShowMSProgress = Visibility.Visible;
+
 
         ImportMyScomis import = new(ScomisFile!,
                                     _disposalsRepository,
@@ -85,7 +88,8 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
 
         ShowMSProgress = Visibility.Collapsed;
         ShowMSLatestImport = Visibility.Visible;
-        ImportingFiles = false;
+
+        Importing(false);
     }
 
     [ObservableProperty]
@@ -103,7 +107,8 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     [NotifyCanExecuteChangedFor(nameof(ExecuteSCCImportCommand))]
     private string? _sCCFile;
 
-    [RelayCommand]
+    private bool CanSelectSCCFile() => !ImportingFiles;
+    [RelayCommand(CanExecute = nameof(CanSelectSCCFile))]
     private void SelectSCCFile()
     {
         OpenFileDialog openFileDialog = new()
@@ -128,9 +133,11 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     [RelayCommand(CanExecute = nameof(CanImportSCC))]
     private async Task ExecuteSCCImport()
     {
-        ImportingFiles = true;
+        Importing(true);
+
         ShowSCCLatestImport = Visibility.Collapsed;
         ShowSCCProgress = Visibility.Visible;
+
         ImportSCC import = new(SCCFile!,
                           _disposalsRepository,
                           _messenger);
@@ -142,7 +149,8 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
 
         ShowSCCProgress = Visibility.Collapsed;
         ShowSCCLatestImport = Visibility.Visible;
-        ImportingFiles = false;
+        
+        Importing(false);
     }
 
     [ObservableProperty]
@@ -166,9 +174,8 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     [RelayCommand(CanExecute = nameof(CanImportPA))]
     private async Task ExecutePAImport()
     {
-        ReconcileCommand.NotifyCanExecuteChanged();
+        Importing(true);
 
-        ImportingFiles = true;
         ShowPALatestImport = Visibility.Collapsed;
         ShowPAProgress = Visibility.Visible;
 
@@ -182,7 +189,8 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
 
         ShowPAProgress = Visibility.Collapsed;
         ShowPALatestImport = Visibility.Visible;
-        ImportingFiles = false;
+
+        Importing(false);
     }
 
     [ObservableProperty]
@@ -198,7 +206,8 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     [RelayCommand(CanExecute = nameof(CanReconcile))]
     private async Task Reconcile()
     {
-        ImportingFiles = true;
+        Importing(true);
+
         ShowReconiliation = Visibility.Collapsed;
         ShowReconiliationProgress = Visibility.Visible;
 
@@ -211,7 +220,8 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
 
         ShowReconiliationProgress = Visibility.Collapsed;
         ShowReconiliation = Visibility.Visible;
-        ImportingFiles = false;
+
+        Importing(false);
     }
 
     [ObservableProperty]
@@ -232,7 +242,6 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
 
     [ObservableProperty]
     private string? _log;
-
     public async Task LoadAsync()
     {
         ImportHistory? importHistory = await _importHistory.GetLatestImportAsync(ImportType.DisposalMS);
@@ -246,6 +255,16 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
 
         importHistory = await _importHistory.GetLatestImportAsync(ImportType.Reconiliation);
         LatestReconiliation = importHistory is null ? $"Latest Reconiliation: None" : $"Latest Reconiliation: {importHistory.ImportDate}";
+    }
+
+    private void Importing(bool running)
+    {
+        ImportingFiles = running;
+        SelectMSFileCommand.NotifyCanExecuteChanged();
+        SelectSCCFileCommand.NotifyCanExecuteChanged();
+        ExecuteSCCImportCommand.NotifyCanExecuteChanged();
+        ExecutePAImportCommand.NotifyCanExecuteChanged();
+        ReconcileCommand.NotifyCanExecuteChanged();
     }
 
     public void Receive(LogMessage message)
@@ -284,5 +303,5 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
                 SCCProgress = message.Progress;
                 break;
         }
-    }
+    } 
 }

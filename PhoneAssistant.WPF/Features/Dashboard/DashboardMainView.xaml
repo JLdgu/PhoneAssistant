@@ -9,99 +9,110 @@
              d:DesignHeight="500"
              d:DesignWidth="800"
              mc:Ignorable="d">
-
-    <StackPanel Grid.Row="1" Orientation="Vertical">
-
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
         <shared:HeaderMainView HeaderIcon="SimOutline" HeaderText="Dashboard" />
 
-        <materialDesign:Card Margin="5,5" Padding="4,2">
+        <materialDesign:Card Grid.Row="1"
+                             Margin="5,5"
+                             Padding="4,2">
             <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="Release Notes" />
         </materialDesign:Card>
 
-        <materialDesign:Card Margin="5,5" Padding="4,2">
+        <ScrollViewer Grid.Row="2"
+                      MaxHeight="880"
+                      VerticalScrollBarVisibility="Auto">
             <StackPanel Orientation="Vertical">
-                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.405.30" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #48 Clear SR/New User/Despatch Details when Status changed to In Stock or In Repair" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Set Order Type depending on phone details in email view" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Include option to display disposals on phone view" />
-            </StackPanel>
-        </materialDesign:Card>
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.405.30" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #48 Clear SR/New User/Despatch Details when Status changed to In Stock or In Repair" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Set Order Type depending on phone details in email view" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Include option to display disposals on phone view" />
+                    </StackPanel>
+                </materialDesign:Card>
 
-        <materialDesign:Card Margin="5,5" Padding="4,2">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.405.15" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add Ticket # to Add Item view" />
-            </StackPanel>
-        </materialDesign:Card>
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.405.15" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add Ticket # to Add Item view" />
+                    </StackPanel>
+                </materialDesign:Card>
 
-        <materialDesign:Card Margin="5,5" Padding="4,2">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.405.11" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Fix minor bug on adding SIM" />
-            </StackPanel>
-        </materialDesign:Card>
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.405.11" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Fix minor bug on adding SIM" />
+                    </StackPanel>
+                </materialDesign:Card>
 
-        <materialDesign:Card Margin="5,5" Padding="4,2">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.405.10" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #49 Add GovWifi regestration" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="New View (Beta) - Add Phones and SIMs" />
-            </StackPanel>
-        </materialDesign:Card>
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.405.10" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #49 Add GovWifi regestration" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="New View (Beta) - Add Phones and SIMs" />
+                    </StackPanel>
+                </materialDesign:Card>
 
-        <materialDesign:Card Margin="5,5" Padding="4,2">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.404.2" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Trim input to user view" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #45 Remove mention of DCC Wi-Fi" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #44 Show latestimport on base report" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #43 Remove usage and setup instructions for Nokia phones" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add Refresh button to BaseReport" />
-            </StackPanel>
-        </materialDesign:Card>
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.404.2" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Trim input to user view" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #45 Remove mention of DCC Wi-Fi" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #44 Show latestimport on base report" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #43 Remove usage and setup instructions for Nokia phones" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add Refresh button to BaseReport" />
+                    </StackPanel>
+                </materialDesign:Card>
 
-        <materialDesign:Card Margin="5,5" Padding="4,2">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.403.8" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #29 Add predefined locations to email view" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #33 Make filter work in more instances (Reqires clicking in filter cell before clear button after cell edit)" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Print Dymo labels" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Remember current view between sessions" />
-            </StackPanel>
-        </materialDesign:Card>
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.403.8" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #29 Add predefined locations to email view" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #33 Make filter work in more instances (Reqires clicking in filter cell before clear button after cell edit)" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Print Dymo labels" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Remember current view between sessions" />
+                    </StackPanel>
+                </materialDesign:Card>
 
-        <materialDesign:Card Margin="5,5" Padding="4,2">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.402.16" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #34 Username not shown on email view" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #35 email text appearing in html format" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #38 speed up 2nd and subsequent avtivation of views" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #39 Max length of Phone Number needs to be 11 not 10" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #40 Erroneous chevron appears in date on email view" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #41 Change save behaviour in email view" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Remove Device Type choice from email view" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add ability to import Base Report to base view" />
-            </StackPanel>
-        </materialDesign:Card>
-        <materialDesign:Card Margin="5,5" Padding="4,2">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.401.24.0" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #8 Add EE Base Report view" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #32 Max length of SR Number needs to be 7 not 6 as it can be used for Incidents" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add notes to Disposed table" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Exclude phones with status Disposed &amp; Decommissioned from Phones view" />
-            </StackPanel>
-        </materialDesign:Card>
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.402.16" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #34 Username not shown on email view" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #35 email text appearing in html format" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #38 speed up 2nd and subsequent avtivation of views" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #39 Max length of Phone Number needs to be 11 not 10" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #40 Erroneous chevron appears in date on email view" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #41 Change save behaviour in email view" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Remove Device Type choice from email view" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add ability to import Base Report to base view" />
+                    </StackPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.401.24.0" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #8 Add EE Base Report view" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #32 Max length of SR Number needs to be 7 not 6 as it can be used for Incidents" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add notes to Disposed table" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Exclude phones with status Disposed &amp; Decommissioned from Phones view" />
+                    </StackPanel>
+                </materialDesign:Card>
 
-        <materialDesign:Card Margin="5,5" Padding="4,2">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.401.11.0" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #3 Complete edit phone functionality" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #27 Envelope and Email contants differ" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #30 Add usage policy to email" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Retry finding database 3 times before prompting user" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add release notes to Dashboard" />
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.401.11.0" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #3 Complete edit phone functionality" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #27 Envelope and Email contants differ" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #30 Add usage policy to email" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Retry finding database 3 times before prompting user" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add release notes to Dashboard" />
+                    </StackPanel>
+                </materialDesign:Card>
             </StackPanel>
-        </materialDesign:Card>
-    </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </UserControl>

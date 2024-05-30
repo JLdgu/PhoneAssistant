@@ -20,9 +20,10 @@
 
         <materialDesign:Card Margin="5,5" Padding="4,2">
             <StackPanel Orientation="Vertical">
-                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="vNext" />
-                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Clear SR/New User/Despatch Details when Status changed to In Stock or In Repair" />
+                <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.405.30" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #48 Clear SR/New User/Despatch Details when Status changed to In Stock or In Repair" />
                 <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Set Order Type depending on phone details in email view" />
+                <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Include option to display disposals on phone view" />
             </StackPanel>
         </materialDesign:Card>
 

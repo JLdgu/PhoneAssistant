@@ -3,6 +3,7 @@
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
+using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.Disposals;
 
@@ -11,6 +12,8 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository,
 {
     public async Task Execute()
     {
+        messenger.Send(new LogMessage(MessageType.Default, $"Reconciling imports"));
+
         IEnumerable<Disposal> disposals = await disposalsRepository.GetAllDisposalsAsync();
         messenger.Send(new LogMessage(MessageType.MaxProgress, "", disposals.Count()));
 
@@ -40,6 +43,12 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository,
     public static void CheckStatus(Disposal disposal)
     {
         ArgumentNullException.ThrowIfNull(disposal);
+
+        if (!LuhnValidator.IsValid(disposal.Imei,15)) 
+        {
+            disposal.Action = "Imei invalid";
+            return;
+        }
         
         if (disposal.StatusMS is null && disposal.StatusPA == ApplicationSettings.StatusDisposed && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
         {

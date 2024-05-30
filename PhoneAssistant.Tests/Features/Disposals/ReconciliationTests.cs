@@ -9,11 +9,21 @@ namespace PhoneAssistant.Tests.Features.Disposals;
 public sealed class ReconciliationTests
 {
     [Fact]
-    public void Execute_ShouldThrowException_WhenDisposalNull()
+    public void CheckStatus_ShouldThrowException_WhenDisposalNull()
     {
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         Assert.Throws<ArgumentNullException>(() => Reconciliation.CheckStatus(null));
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+    }
+
+    [Fact]
+    public void CheckStatus_ShouldReturnAction_WhenImeiInvalid()
+    {
+        Disposal actual = new() { Imei = "355758060678286", StatusMS = null, StatusPA = null, StatusSCC = null };
+
+        Reconciliation.CheckStatus(actual);
+
+        Assert.Equal("Imei invalid", actual.Action);
     }
 
     [Theory]
@@ -32,9 +42,9 @@ public sealed class ReconciliationTests
     [InlineData(ApplicationSettings.StatusUnlocated, null, null, null)]
     [InlineData(null, ApplicationSettings.StatusDisposed, ApplicationSettings.StatusDisposed, null)]
     [InlineData(null, null, ApplicationSettings.StatusDisposed, "Check CI linked to Disposal SR or add IMEI to Phones")]
-    public void Execute_ShouldReturnAction_WhenMismatch(string? statusMS, string? statusPA, string? statusSCC, string? expectedAction)
+    public void CheckStatus_ShouldReturnAction_WhenMismatch(string? statusMS, string? statusPA, string? statusSCC, string? expectedAction)
     {
-        Disposal actual = new () { Imei = "imei", StatusMS = statusMS, StatusPA = statusPA, StatusSCC = statusSCC};
+        Disposal actual = new () { Imei = "355758060678186", StatusMS = statusMS, StatusPA = statusPA, StatusSCC = statusSCC};
 
         Reconciliation.CheckStatus(actual);
 

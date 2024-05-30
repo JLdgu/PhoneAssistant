@@ -225,7 +225,7 @@
                   Header="Import Log"
                   Style="{StaticResource MaterialDesignGroupBox}">
 
-            <ListView ItemsSource="{Binding LogItems, Mode=OneWay}">
+            <ListView MaxHeight="450" ItemsSource="{Binding LogItems, Mode=OneWay}">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="Margin" Value="0" />

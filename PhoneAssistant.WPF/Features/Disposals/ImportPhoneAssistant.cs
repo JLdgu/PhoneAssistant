@@ -13,7 +13,6 @@ public sealed class ImportPhoneAssistant(IDisposalsRepository disposalsRepositor
     {
         messenger.Send(new LogMessage(MessageType.Default, $"Importing from PhoneAssistant database"));
 
-
         IEnumerable<Disposal> disposals = await disposalsRepository.GetAllDisposalsAsync();
         messenger.Send(new LogMessage(MessageType.MaxProgress, "", disposals.Count()));
 

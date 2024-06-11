@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 using PhoneAssistant.WPF.Application;
 using CommunityToolkit.Mvvm.Messaging;
 using PhoneAssistant.Tests.Shared;
+using System.ComponentModel;
 
 namespace PhoneAssistant.Tests.Features.AddItem;
 public class AddItemViewModelTests
@@ -153,6 +154,29 @@ public class AddItemViewModelTests
         Assert.Equal(ApplicationSettings.Statuses[1], _sut.Status);
         Assert.Null(_sut.Ticket);
     }
+
+    [Fact]
+    [Description("Issue 53")]
+    void PhoneSaveCommand_ShouldNotSaveSimDetails()
+    {
+        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);        
+        Phone actual = new() { Condition = "", Imei = "", Model = "", OEM = OEMs.Apple, Status = "" };
+        repository.Setup(r => r.CreateAsync(It.IsAny<Phone>())).Callback<Phone>(p => actual = p);
+
+        _sut.AssetTag = "MP00001";
+        _sut.Imei = "355808981147090";
+        _sut.Model = "model";
+        _sut.PhoneNumber = "07123456789";
+        _sut.SimNumber = "8944122605566849402";
+
+        _sut.PhoneSaveCommand.Execute(null);
+
+        _mocker.VerifyAll();
+        Assert.Null(actual.PhoneNumber);
+        Assert.Null(actual.SimNumber);
+    }
+
 
     [Fact]
     void PhoneSaveCommand_ShouldCallRepository()

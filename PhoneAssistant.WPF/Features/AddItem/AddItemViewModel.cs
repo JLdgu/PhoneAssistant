@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -171,12 +171,17 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     }
 
     [RelayCommand(CanExecute = nameof(CanSavePhone))]
-    private async Task PhoneSaveAsync()
+    private async Task PhoneSaveAsync(bool? phoneOnly)
     {
         int? sr = null;
         if (Ticket is not null)
             sr = int.Parse(Ticket);
         Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, Notes = PhoneNotes, OEM = OEM, PhoneNumber = PhoneNumber, SimNumber = SimNumber, SR = sr, Status = Status };
+        if (phoneOnly is null)
+        {
+            phone.PhoneNumber = null;
+            phone.SimNumber = null;
+        }
         await _phonesRepository.CreateAsync(phone);
 
         _messenger.Send(phone);
@@ -299,7 +304,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         if (!_newSIM)
             await _simsRepository.DeleteSIMAsync(PhoneNumber!);
 
-        await PhoneSaveAsync();
+        await PhoneSaveAsync(false);
         SIMClear();
     }
 

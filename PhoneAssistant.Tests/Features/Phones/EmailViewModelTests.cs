@@ -52,8 +52,10 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    private void CloseCommand_SetsGeneratingEmail_False()
+    public void CloseCommand_SetsGeneratingEmail_False()
     {
+        TestSetup(_phone);
+
         _vm.CloseCommand.Execute(null);
 
         Assert.False(_vm.GeneratingEmail);

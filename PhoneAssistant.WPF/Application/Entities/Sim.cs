@@ -2,11 +2,6 @@
 
 public class Sim
 {
-    public Sim()
-    {
-        LastUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-    }
-
     public required string PhoneNumber { get; set; }
     public required string SimNumber { get; set; }
     public string? Status { get; set; }

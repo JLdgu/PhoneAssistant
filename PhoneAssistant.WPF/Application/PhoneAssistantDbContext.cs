@@ -30,7 +30,12 @@ public partial class PhoneAssistantDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
-            optionsBuilder.UseSqlite(@"DataSource=c:\temp\PhoneAssistant.db;");
+            optionsBuilder.UseSqlite(@"DataSource=c:\dev\PhoneAssistant.db;");
+
+        //optionsBuilder.UseTriggers(t => t.AddTrigger<PhoneTrigger>()); 
+        optionsBuilder.UseTriggers(t => t.AddTrigger<PhoneTrigger>())
+                      .UseTriggers(t => t.AddTrigger<SimTrigger>());
+        //optionsBuilder.UseTriggers(t => t.AddTrigger<SimTrigger>());
 
 #if DEBUG
         optionsBuilder.UseLoggerFactory(_loggerFactory);  // Comment out to log EF calls

@@ -2,10 +2,6 @@
 
 public class Phone
 {
-    public Phone()
-    {
-        LastUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-    }
     public required string Imei { get; set; }
     public string? PhoneNumber { get; set; }
     public string? SimNumber { get; set; }
@@ -19,9 +15,7 @@ public class Phone
     public string? NewUser { get; set; }
     public string? Notes { get; set; }
     public string? DespatchDetails { get; set; }
-    public string LastUpdate { get; private set; }
-
-    public void SetLastUpdate() => LastUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+    public string LastUpdate { get; set; }
 }
 
 public enum OEMs

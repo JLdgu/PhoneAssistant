@@ -15,17 +15,18 @@ public sealed class SimsRepositoryTests
     }
 
     [Fact]
-    void CreateAsync_ShouldSetLastUpdate()
+    public async Task CreateAsync_ShouldSetLastUpdate()
     {
-        string minLastUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         Sim actual = new() { PhoneNumber = "phonenumber", SimNumber = "sim number" };
+        string minLastUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        await _repository.CreateAsync(actual);
         string maxLastUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
         Assert.InRange(actual.LastUpdate, minLastUpdate, maxLastUpdate);
     }
 
     [Fact]
-    async Task DeleteSIM_ShouldReturnNull_WhenSIMDoesNotExist()
+    public async Task DeleteSIM_ShouldReturnNull_WhenSIMDoesNotExist()
     {
         string? actual = await _repository.DeleteSIMAsync("DoesNotExist");
 
@@ -33,7 +34,7 @@ public sealed class SimsRepositoryTests
     }
 
     [Fact]
-    async Task DeleteSIM_ShouldDeleteSIMAndReturnSIMNumber_WhenSIMDoesExist()
+    public async Task DeleteSIM_ShouldDeleteSIMAndReturnSIMNumber_WhenSIMDoesExist()
     {
         _helper.DbContext.Sims.Add(new Sim() { PhoneNumber = "phonenumber", SimNumber = "sim number" });
         await _helper.DbContext.SaveChangesAsync();
@@ -48,7 +49,7 @@ public sealed class SimsRepositoryTests
     }
 
     [Fact]
-    async Task GetSimNumber_ShouldReturnNull_WhenSIMDoesNotExist()
+    public async Task GetSimNumber_ShouldReturnNull_WhenSIMDoesNotExist()
     {
         string? actual = await _repository.GetSIMNumberAsync("DoesNotExist");
 
@@ -56,7 +57,7 @@ public sealed class SimsRepositoryTests
     }
 
     [Fact]
-    async Task GetSimNumber_ShouldReturnSIMNumber_WhenSIMDoesExist()
+    public async Task GetSimNumber_ShouldReturnSIMNumber_WhenSIMDoesExist()
     {
         _helper.DbContext.Sims.Add(new Sim() { PhoneNumber = "phonenumber", SimNumber = "sim number" });
         await _helper.DbContext.SaveChangesAsync();

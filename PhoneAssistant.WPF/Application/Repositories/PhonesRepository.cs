@@ -98,10 +98,9 @@ public sealed class PhonesRepository : IPhonesRepository
         phone.PhoneNumber = null;
         dbPhone.SimNumber = null;
         phone.SimNumber = null;
-        dbPhone.SetLastUpdate();
-        phone.SetLastUpdate();
         _dbContext.Phones.Update(dbPhone);
         await _dbContext.SaveChangesAsync();
+        phone.LastUpdate = dbPhone.LastUpdate;
     }
 
     public async Task UpdateAsync(Phone phone)
@@ -131,11 +130,10 @@ public sealed class PhonesRepository : IPhonesRepository
         dbPhone.SimNumber = phone.SimNumber;
         dbPhone.SR = phone.SR;
         dbPhone.Status = phone.Status;
-        dbPhone.SetLastUpdate();
-        phone.SetLastUpdate();
         _dbContext.Phones.Update(dbPhone);
 
         await _dbContext.SaveChangesAsync();
+        phone.LastUpdate = dbPhone.LastUpdate;
     }
 
     private async Task UpdateHistoryAsync(Phone phone, UpdateTypes updateType)

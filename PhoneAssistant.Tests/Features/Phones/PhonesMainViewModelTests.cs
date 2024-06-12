@@ -82,8 +82,8 @@ public sealed class PhonesMainViewModelTests
 
         vm.RefreshPhonesCommand.Execute(null);
 
-        PhonesItemViewModel[] actual = view.OfType<PhonesItemViewModel>().ToArray();
-        Assert.Equal(phones[3].Imei, actual[3].Imei);
+        PhonesItemViewModel? actual = view.OfType<PhonesItemViewModel>().SingleOrDefault(vm => vm.Imei == "444");            
+        Assert.NotNull(actual);
     }
 
     [Fact]

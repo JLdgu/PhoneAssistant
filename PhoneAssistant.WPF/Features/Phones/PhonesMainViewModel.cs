@@ -25,7 +25,7 @@ public sealed partial class PhonesMainViewModel :
 
     public EmailViewModel EmailViewModel { get; }
 
-    private readonly ICollectionView _filterView;
+    private readonly ListCollectionView _filterView;
 
     public List<string> Conditions { get; } = ApplicationSettings.Conditions;
 
@@ -44,7 +44,7 @@ public sealed partial class PhonesMainViewModel :
         _phonesItemViewModelFactory = phonesItemViewModelFactory ?? throw new ArgumentNullException(nameof(phonesItemViewModelFactory));
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
         EmailViewModel = emailViewModel ?? throw new ArgumentNullException(nameof(emailViewModel));
-        _filterView = CollectionViewSource.GetDefaultView(PhoneItems);
+        _filterView = (ListCollectionView)CollectionViewSource.GetDefaultView(PhoneItems);
         _filterView.Filter = new Predicate<object>(FilterView);
 
         messenger.RegisterAll(this);
@@ -57,12 +57,18 @@ public sealed partial class PhonesMainViewModel :
         await LoadAsync();
     }
 
-    [ObservableProperty]
-    private bool canRefeshPhones;
+    private void RefreshFilterView()
+    {
+        if (_filterView.IsEditingItem)
+            _filterView.CommitEdit();
+        _filterView.Refresh();
+    }
 
     [ObservableProperty]
-    private bool includeDisposals;
+    private bool _canRefeshPhones;
 
+    [ObservableProperty]
+    private bool _includeDisposals;
     async partial void OnIncludeDisposalsChanged(bool value)
     {
         CanRefeshPhones = false;
@@ -150,107 +156,93 @@ public sealed partial class PhonesMainViewModel :
 
     [ObservableProperty]
     private string? _filterNorR;
-
     partial void OnFilterNorRChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
     private string? _filterStatus;
-
     partial void OnFilterStatusChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
     private string? _filterSR;
-
     partial void OnFilterSRChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
     private string? _filterImei;
-
     partial void OnFilterImeiChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
     private string? _filterPhoneNumber;
-
     partial void OnFilterPhoneNumberChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
     private string? _filterSimNumber;
-
     partial void OnFilterSimNumberChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
     private string? _filterNewUser;
-
     partial void OnFilterNewUserChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
     private string? _filterAssetTag;
-
     partial void OnFilterAssetTagChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
     private OEMs? _filterOEM;
-
     partial void OnFilterOEMChanged(OEMs? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
     private string? _filterModel;
-
     partial void OnFilterModelChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
     private string? _filterFormerUser;
-
     partial void OnFilterFormerUserChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
-
 
     [ObservableProperty]
     private string? _filterNotes;
-
     partial void OnFilterNotesChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
     private string? _filterLastUpdate;
-
     partial void OnFilterLastUpdateChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
     #endregion
 
@@ -274,7 +266,7 @@ public sealed partial class PhonesMainViewModel :
 
         _filterView.SortDescriptions.Clear();
         _filterView.SortDescriptions.Add(new SortDescription("LastUpdate", ListSortDirection.Descending));
-        _filterView.Refresh();
+        RefreshFilterView();
 
         CanRefeshPhones = true;
     }

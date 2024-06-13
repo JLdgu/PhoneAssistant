@@ -31,6 +31,7 @@
                     <StackPanel Orientation="Vertical">
                         <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="vNext" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #53 Add Phone also incorrectly adding SIM details" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Fix clearing filter bug on all grid style views" />
                     </StackPanel>
                 </materialDesign:Card>
 

@@ -23,13 +23,13 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     private readonly IImportHistoryRepository _import;
     private bool _loaded;
     
-    private readonly ICollectionView _filterView;
+    private readonly ListCollectionView _filterView;
 
     public BaseReportMainViewModel(BaseReportRepository repository, IImportHistoryRepository importHistory)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _import = importHistory ?? throw new ArgumentNullException(nameof(importHistory));
-        _filterView = CollectionViewSource.GetDefaultView(BaseReport);
+        _filterView = (ListCollectionView)CollectionViewSource.GetDefaultView(BaseReport);
         _filterView.Filter = new Predicate<object>(FilterView);
         ImportViewVisibility = Visibility.Collapsed;
         ReportViewVisibility = Visibility.Visible;
@@ -43,6 +43,13 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     private async Task Refresh()
     {
         await LoadAsync();
+        RefreshFilterView();
+    }
+
+    private void RefreshFilterView()
+    {
+        if (_filterView.IsEditingItem)
+            _filterView.CommitEdit();
         _filterView.Refresh();
     }
 
@@ -54,7 +61,6 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
 
     [ObservableProperty]
     private string _LatestImport = string.Empty;
-
 
     #region Filter
     public bool FilterView(object item)
@@ -80,7 +86,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         return true;
     }
 
-    public bool FilterOutItem(string? filter, string item)
+    public static bool FilterOutItem(string? filter, string item)
     {
         if (filter is not null && filter.Length > 0)
             if (item is null)
@@ -92,59 +98,59 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     }
 
     [ObservableProperty]
-    private string? filterConnectedIMEI;
+    private string? _filterConnectedIMEI;
     partial void OnFilterConnectedIMEIChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
-    private string? filterContractEndDate;
+    private string? _filterContractEndDate;
     partial void OnFilterContractEndDateChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
-    private string? filterHandset;
+    private string? _filterHandset;
     partial void OnFilterHandsetChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
-    private string? filterLastUsedIMEI;
+    private string? _filterLastUsedIMEI;
     partial void OnFilterLastUsedIMEIChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
-    private string? filterPhoneNumber;
+    private string? _filterPhoneNumber;
     partial void OnFilterPhoneNumberChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
-    private string? filterSIMNumber;
+    private string? _filterSIMNumber;
     partial void OnFilterSIMNumberChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
-    private string? filterTalkPlan;
+    private string? _filterTalkPlan;
     partial void OnFilterTalkPlanChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
-    private string? filterUserName;
+    private string? _filterUserName;
     partial void OnFilterUserNameChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
     #endregion
 

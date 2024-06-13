@@ -12,9 +12,4 @@ public partial class PhonesMainView : UserControl
     {
         InitializeComponent();
     }
-
-    private void StackPanel_GotKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
-    {
-        PhonesDataGrid.CommitEdit(DataGridEditingUnit.Row, true);
-    }
 }

@@ -15,7 +15,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, IRecipient<Sim
 {
     private readonly ISimsItemViewModelFactory _simsItemViewModelFactory;
     private readonly ISimsRepository _simRepository;
-    private readonly ICollectionView _filterView;
+    private readonly ListCollectionView _filterView;
 
     public ObservableCollection<SimsItemViewModel> SimItems { get; } = new();
 
@@ -24,7 +24,7 @@ public sealed partial class SimsMainViewModel : ObservableObject, IRecipient<Sim
         _simsItemViewModelFactory = simsItemViewModelFactory ?? throw new ArgumentNullException(nameof(simsItemViewModelFactory));
         _simRepository = simRepository ?? throw new ArgumentNullException(nameof(simRepository));
 
-        _filterView = CollectionViewSource.GetDefaultView(SimItems);
+        _filterView = (ListCollectionView)CollectionViewSource.GetDefaultView(SimItems);
         _filterView.Filter = new Predicate<object>(FilterView);
 
         messenger.Register<Sim>(this);
@@ -35,13 +35,17 @@ public sealed partial class SimsMainViewModel : ObservableObject, IRecipient<Sim
     {
         CanRefeshSims = false;
         await LoadAsync();
-        _filterView.Refresh();
-        CanRefeshSims = true;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
+    private void RefreshFilterView()
+    {
+        if (_filterView.IsEditingItem)
+            _filterView.CommitEdit();
+        _filterView.Refresh();
+    }
+
     [ObservableProperty]
-    private bool canRefeshSims;
+    private bool _canRefeshSims;
 
     #region Filter View
     private bool FilterView(object item)
@@ -88,57 +92,45 @@ public sealed partial class SimsMainViewModel : ObservableObject, IRecipient<Sim
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterPhoneNumber;
-
+    private string? _filterPhoneNumber;
     partial void OnFilterPhoneNumberChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterSimNumber;
-
+    private string? _filterSimNumber;
     partial void OnFilterSimNumberChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterStatus;
-
+    private string? _filterStatus;
     partial void OnFilterStatusChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterAssetTag;
-
+    private string? _filterAssetTag;
     partial void OnFilterAssetTagChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterNotes;
-
+    private string? _filterNotes;
     partial void OnFilterNotesChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
 
     [ObservableProperty]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "CommunityToolkit.Mvvm")]
-    private string? filterLastUpdate;
-
+    private string? _filterLastUpdate;
     partial void OnFilterLastUpdateChanged(string? value)
     {
-        _filterView.Refresh();
+        RefreshFilterView();
     }
     #endregion
 

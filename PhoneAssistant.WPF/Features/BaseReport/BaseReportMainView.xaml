@@ -138,7 +138,7 @@
                 <DataGridTextColumn Binding="{Binding PhoneNumber}" Header="Phone Number">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
-                            <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
+                            <StackPanel>
                                 <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                 <TextBox MinWidth="120"
                                          materialDesign:HintAssist.Hint="Filter"
@@ -152,7 +152,7 @@
                 <DataGridTextColumn Binding="{Binding SIMNumber}" Header="SIM Number">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
-                            <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
+                            <StackPanel>
                                 <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                 <TextBox MinWidth="140"
                                          materialDesign:HintAssist.Hint="Filter"
@@ -166,7 +166,7 @@
                 <DataGridTextColumn Binding="{Binding ConnectedIMEI}" Header="Connected IMEI">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
-                            <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
+                            <StackPanel>
                                 <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                 <TextBox MinWidth="140"
                                          materialDesign:HintAssist.Hint="Filter"
@@ -180,7 +180,7 @@
                 <DataGridTextColumn Binding="{Binding LastUsedIMEI}" Header="LastUsedIMEI">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
-                            <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
+                            <StackPanel>
                                 <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                 <TextBox MinWidth="120"
                                          materialDesign:HintAssist.Hint="Filter"
@@ -194,7 +194,7 @@
                 <DataGridTextColumn Binding="{Binding UserName}" Header="User Name">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
-                            <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
+                            <StackPanel>
                                 <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                 <TextBox MinWidth="130"
                                          materialDesign:HintAssist.Hint="Filter"
@@ -208,7 +208,7 @@
                 <DataGridTextColumn Binding="{Binding ContractEndDate}" Header="Contract End Date">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
-                            <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
+                            <StackPanel>
                                 <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                 <TextBox MinWidth="120"
                                          materialDesign:HintAssist.Hint="Filter"
@@ -222,7 +222,7 @@
                 <DataGridTextColumn Binding="{Binding Handset}" Header="Handset">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
-                            <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
+                            <StackPanel>
                                 <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                 <TextBox MinWidth="120"
                                          materialDesign:HintAssist.Hint="Filter"
@@ -236,7 +236,7 @@
                 <DataGridTextColumn Binding="{Binding TalkPlan}" Header="Talk Plan">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
-                            <StackPanel Keyboard.GotKeyboardFocus="StackPanel_GotKeyboardFocus">
+                            <StackPanel>
                                 <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                 <TextBox MinWidth="120"
                                          materialDesign:HintAssist.Hint="Filter"

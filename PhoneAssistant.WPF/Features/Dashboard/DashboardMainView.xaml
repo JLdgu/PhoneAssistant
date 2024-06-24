@@ -29,12 +29,19 @@
             <StackPanel Orientation="Vertical">
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="vNext" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Transfer user settings between versions" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Application no longer needs a restart when database selected (starts minimized in Task Bar)" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
                         <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.406.17" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #53 Add Phone also incorrectly adding SIM details" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Fix clearing filter bug on all grid style views" />
                     </StackPanel>
                 </materialDesign:Card>
-
 
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">

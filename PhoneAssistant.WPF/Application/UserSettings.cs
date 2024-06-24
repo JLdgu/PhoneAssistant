@@ -1,4 +1,7 @@
 using System.Configuration;
+using System.Windows;
+
+using Microsoft.Win32;
 
 using PhoneAssistant.WPF.Features.MainWindow;
 
@@ -99,5 +102,34 @@ public sealed class UserSettings : ApplicationSettingsBase, IUserSettings
         }
     }
 
+    public static bool DatabaseFullPathRetrieved()
+    {
+
+        UserSettings userSettings = new();
+        if (userSettings.UpdateUserSettingsRequired)
+        {
+            userSettings.Upgrade();
+            userSettings.UpdateUserSettingsRequired = false;
+            userSettings.Save();
+        }
+
+        if (userSettings.Database is not null)
+            return true;
+
+        MessageBox.Show($"Select the Phone Assistant database to use.", "Phone Assistant", MessageBoxButton.OK, MessageBoxImage.Question);
+
+        OpenFileDialog openFileDialog = new()
+        {
+            Filter = "SQLite Database (*.db)|*.db",
+            Multiselect = false
+        };
+
+        if (openFileDialog.ShowDialog() == false)
+            return false;
+
+        userSettings.Database = openFileDialog.FileName;
+        userSettings.Save();
+        return true;
+    }
 }
 

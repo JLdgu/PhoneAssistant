@@ -19,7 +19,7 @@ public partial class App : System.Windows.Application
     [STAThread]
     private static void Main(string[] args)
     {
-        if (!ApplicationUpdate.DatabaseFullPathRetrieved())
+        if (!UserSettings.DatabaseFullPathRetrieved())
         {
             Trace.Close();
             return;
@@ -36,7 +36,7 @@ public partial class App : System.Windows.Application
         await host.StartAsync().ConfigureAwait(true);
 
         ConfigureDatabase(host);
-        
+
         App app = new();
         app.InitializeComponent();
         app.MainWindow = host.Services.GetRequiredService<MainWindow>();
@@ -107,5 +107,5 @@ public partial class App : System.Windows.Application
             "Phone Assistant", MessageBoxButton.OK, MessageBoxImage.Stop);
 
         App.Current.Shutdown();
-    }    
+    }
 }

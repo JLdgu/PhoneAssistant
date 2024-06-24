@@ -16,28 +16,38 @@ namespace PhoneAssistant.WPF;
 /// </summary>
 public partial class App : System.Windows.Application
 {
-    private readonly IHost _host;
-
-    public App()
+    [STAThread]
+    private static void Main(string[] args)
     {
-        _host = Host.CreateDefaultBuilder()
+        if (!ApplicationUpdate.DatabaseFullPathRetrieved())
+        {
+            Trace.Close();
+            return;
+        }
+
+        MainAsync(args).GetAwaiter().GetResult();
+    }
+
+    private static async Task MainAsync(string[] args)
+    {
+        using IHost host = Host.CreateDefaultBuilder()
             .ConfigureApplicationServices()
             .Build();
+        await host.StartAsync().ConfigureAwait(true);
+
+        ConfigureDatabase(host);
+        
+        App app = new();
+        app.InitializeComponent();
+        app.MainWindow = host.Services.GetRequiredService<MainWindow>();
+        app.MainWindow.Visibility = Visibility.Visible;
+        app.Run();
+
+        await host.StopAsync().ConfigureAwait(true);
     }
 
     protected override void OnStartup(StartupEventArgs e)
     {
-        _host.Start();
-
-        if (ApplicationUpdate.FirstRun())
-        {
-            Trace.Close();
-            Current.Shutdown();
-            return;
-        }
-
-        ConfigureDatabase();
-
 #if DEBUG
         var helper = new PaletteHelper();
         var theme = helper.GetTheme();
@@ -45,10 +55,7 @@ public partial class App : System.Windows.Application
         theme.SetPrimaryColor(Colors.Orange);
         theme.SetSecondaryColor(Colors.Yellow);
         helper.SetTheme(theme);
-#endif
-
-        MainWindow = _host.Services.GetRequiredService<MainWindow>();
-        MainWindow.Show();
+#endif        
 
         base.OnStartup(e);
     }
@@ -57,17 +64,15 @@ public partial class App : System.Windows.Application
         Trace.Close();
     }
 
-    private void ConfigureDatabase()
+    private static void ConfigureDatabase(IHost host)
     {
-        PhoneAssistantDbContext dbContext = _host.Services.GetRequiredService<PhoneAssistantDbContext>();
+        PhoneAssistantDbContext dbContext = host.Services.GetRequiredService<PhoneAssistantDbContext>();
 
         dbContext.Database.EnsureCreated();
     }
 
     protected override void OnExit(ExitEventArgs e)
     {
-        _host.Dispose();
-
         base.OnExit(e);
     }
 

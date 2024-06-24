@@ -69,8 +69,8 @@ public static class ApplicationServicesExtensions
             services.AddTransient<ISimsItemViewModelFactory, SimsItemViewModelFactory>();
             services.AddTransient<SimsItemViewModel>();
             
-            services.AddTransient<MainWindowViewModel>();
-            services.AddSingleton(s => new MainWindow(s.GetRequiredService<MainWindowViewModel>()));
+            services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<MainWindow>();
         });
         return host;
     }

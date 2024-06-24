@@ -18,20 +18,13 @@ public static class ApplicationUpdate
         }
     }
 
-    public static bool FirstRun()
+    public static bool DatabaseFullPathRetrieved()
     {
         UserSettings userSettings = new();
         if (userSettings.Database is not null)
-        {
-            for (int retry = 0; retry < 3; retry++) 
-            {
-                if (File.Exists(userSettings.Database))
-                    return false;
-                Thread.Sleep(100);
-            }
+            return true;
 
-        }
-        MessageBox.Show($"Select the Phone Assistant database to use.{Environment.NewLine}Application will need to restart.", "Phone Assistant", MessageBoxButton.OK, MessageBoxImage.Question);
+        MessageBox.Show($"Select the Phone Assistant database to use.", "Phone Assistant", MessageBoxButton.OK, MessageBoxImage.Question);
 
         OpenFileDialog openFileDialog = new()
         {
@@ -39,11 +32,11 @@ public static class ApplicationUpdate
             Multiselect = false
         };
 
-        if (openFileDialog.ShowDialog() == true)
-        {
-            userSettings.Database = openFileDialog.FileName;
-            userSettings.Save();
-        }        
+        if (openFileDialog.ShowDialog() == false)
+            return false;
+
+        userSettings.Database = openFileDialog.FileName;
+        userSettings.Save();
         return true;
     }
 }

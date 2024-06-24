@@ -4,6 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <StartupObject>PhoneAssistant.WPF.App</StartupObject>
     <ApplicationIcon>Resources\Phone.ico</ApplicationIcon>
     <AssemblyName>PhoneAssistant</AssemblyName>
     <AssemblyVersion>1.406.17</AssemblyVersion>
@@ -19,10 +20,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ApplicationDefinition Remove="App.xaml" />
     <Content Include="Resources\Phone.ico" />
+    <Page Include="App.xaml" />
   </ItemGroup>
 
-  <ItemGroup>
+    <ItemGroup>
     <EmbeddedResource Include="Resources\EUC.png" />
     <EmbeddedResource Include="Resources\Keyboard.jpg" />
     <EmbeddedResource Include="Resources\MobilePhone.jpg" />

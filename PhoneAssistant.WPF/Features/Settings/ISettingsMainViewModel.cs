@@ -8,5 +8,5 @@ public interface ISettingsMainViewModel : IViewModel
 
     public string Printer { get; set; }
     
-    public string VersionDescription { get; set; }
+    public string CurrentVersion { get; set; }
 }

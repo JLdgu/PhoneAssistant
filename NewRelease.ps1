@@ -1,6 +1,13 @@
 #Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
 
-$newRelease = "K:\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application\v1.406.17"
+
+vpk pack -u PhoneAssistant -v 0.406.23 -p .\publish -e PhoneAssistant.exe
+
+Copy-Item -Path "c:\dev\PhoneAssistant\Releases\*" -Destination "K:\FITProject\ICTS\Mobile Phones\PhoneAssistant\Velopack" -Recurse -Force
+
+Return
+
+$newRelease = "K:\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application\v1.406.22"
 
 If (!(Test-Path -Path $newRelease))
 {   
@@ -12,3 +19,5 @@ If (!(Test-Path -Path $newRelease))
 $newRelease = $newRelease + "\*"
 New-Item -Path "$ENV:UserProfile\AppData\Local" -Name PhoneAssistant.New -ItemType Directory -ErrorAction SilentlyContinue
 Copy-Item -Path $newRelease -Destination "$ENV:UserProfile\AppData\Local\PhoneAssistant.New" -Recurse
+
+Return

@@ -9,7 +9,6 @@ using CommunityToolkit.Mvvm.Messaging;
 
 using Microsoft.Win32;
 
-using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.Disposals;

@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace PhoneAssistant.WPF.Features.Users;
 /// <summary>
@@ -22,5 +10,16 @@ public partial class UsersMainView : UserControl
     public UsersMainView()
     {
         InitializeComponent();
+        DataObject.AddPastingHandler(Search, OnPaste);
+    }
+
+    private void OnPaste(object sender, DataObjectPastingEventArgs e)
+    {
+        UsersMainViewModel vm = (UsersMainViewModel)DataContext;
+        bool isText = e.SourceDataObject.GetDataPresent(DataFormats.UnicodeText, true);
+        if (!isText) return;
+        Search.Text = e.SourceDataObject.GetData(DataFormats.UnicodeText) as string;
+        vm.EnterKeyCommand.Execute(null);
+        e.CancelCommand();
     }
 }

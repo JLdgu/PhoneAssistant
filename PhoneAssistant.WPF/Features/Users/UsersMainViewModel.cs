@@ -1,5 +1,6 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.DirectoryServices;
+using System.Windows;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -7,54 +8,64 @@ using CommunityToolkit.Mvvm.Input;
 namespace PhoneAssistant.WPF.Features.Users;
 public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainViewModel
 {
-    private IUsersItemViewModelFactory _usersItemViewModelFactory { get; }
+    private readonly IUsersItemViewModelFactory _usersItemViewModelFactory;
     public ObservableCollection<UsersItemViewModel> UserItems { get; } = new();
 
     public UsersMainViewModel(IUsersItemViewModelFactory usersItemViewModelFactory)
     {
-        _usersItemViewModelFactory = usersItemViewModelFactory;
+        _usersItemViewModelFactory = usersItemViewModelFactory ?? throw new ArgumentNullException(nameof(usersItemViewModelFactory));
     }
 
     [ObservableProperty]
     private string? _searchUser;
 
     [RelayCommand]
-    private void EnterKey()
+    private async Task EnterKey()
     {
-        if (string.IsNullOrEmpty(SearchUser)) return;        
+        if (string.IsNullOrEmpty(SearchUser)) return;
 
         UserItems.Clear();
 
         string person = SearchUser.Trim().Replace(" ", "*");
+        
+        ProgressVisibility = Visibility.Visible;
 
-        using SearchResultCollection results = PersonSearch(person);
-
-        if (results.Count == 0) 
+        await Task.Run(() =>
         {
-            NoResultsFound = true;
-            return;
-        }
-        NoResultsFound = false;
+            using SearchResultCollection results = PersonSearch(person);
 
-        foreach (SearchResult sr in results)
-        {
-            var srp = sr.Properties["mail"];
-
-            User user = new User()
+            if (results.Count == 0)
             {
-                Name = ParsePropertyString(sr.Properties["displayName"]),
-                Description = ParsePropertyString(sr.Properties["description"])
-            };
-            user.Email = ParsePropertyString(sr.Properties["mail"]);
-            user.LastLogonDate = ParsePropertyDateTime(sr.Properties["lastLogon"]);
-            user.WhenCreated = ParsePropertyString(sr.Properties["whenCreated"]);
-            user.PasswordLastSet = ParsePropertyDateTime(sr.Properties["pwdLastSet"]);
-            int flags = (int)sr.Properties["userAccountControl"][0];
-            UserAccountControl userAccountControl = (UserAccountControl)flags;
-            user.Enabled = (userAccountControl & UserAccountControl.ACCOUNTDISABLE) != UserAccountControl.ACCOUNTDISABLE;            
+                NoResultsFound = true;
+                return;
+            }
+            NoResultsFound = false;
 
-            UserItems.Add(_usersItemViewModelFactory.Create(user));
-        }
+            foreach (SearchResult sr in results)
+            {
+                var srp = sr.Properties["mail"];
+
+                User user = new User()
+                {
+                    Name = ParsePropertyString(sr.Properties["displayName"]),
+                    Description = ParsePropertyString(sr.Properties["description"])
+                };
+                user.Email = ParsePropertyString(sr.Properties["mail"]);
+                user.LastLogonDate = ParsePropertyDateTime(sr.Properties["lastLogon"]);
+                user.WhenCreated = ParsePropertyString(sr.Properties["whenCreated"]);
+                user.PasswordLastSet = ParsePropertyDateTime(sr.Properties["pwdLastSet"]);
+                int flags = (int)sr.Properties["userAccountControl"][0];
+                UserAccountControl userAccountControl = (UserAccountControl)flags;
+                user.Enabled = (userAccountControl & UserAccountControl.ACCOUNTDISABLE) != UserAccountControl.ACCOUNTDISABLE;
+
+                App.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    UserItems.Add(_usersItemViewModelFactory.Create(user));
+                });
+            }
+        });
+
+        ProgressVisibility = Visibility.Collapsed;
     }
     private SearchResultCollection PersonSearch(string name)
     {
@@ -73,6 +84,8 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
         return searcher.FindAll();
     }
 
+    [ObservableProperty]
+    private Visibility _progressVisibility = Visibility.Collapsed;
 
     [ObservableProperty]
     private bool _noResultsFound;
@@ -90,7 +103,7 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
         if (resultPropertyValueCollection.Count == 0) return string.Empty;
         long l = (long)resultPropertyValueCollection[0];
         //if (l ==0) return string.Empty;
-        DateTime dt = DateTime.FromFileTime(l);            
+        DateTime dt = DateTime.FromFileTime(l);
         if (dt.Date.Equals(MinFileTime)) return string.Empty;
         return dt.ToString();
     }

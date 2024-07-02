@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Data;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -10,6 +11,8 @@ using Microsoft.Extensions.Hosting;
 
 using PhoneAssistant.WPF.Application;
 
+using Velopack;
+
 namespace PhoneAssistant.WPF;
 /// <summary>
 /// Interaction logic for App.xaml
@@ -19,12 +22,17 @@ public partial class App : System.Windows.Application
     [STAThread]
     private static void Main(string[] args)
     {
+        Trace.Listeners.Add(new TextWriterTraceListener("PhoneAssistant.log", "logListener"));
+        Trace.AutoFlush = true;
+
         if (!UserSettings.DatabaseFullPathRetrieved())
         {
             Trace.Close();
             return;
         }
-
+        
+        VelopackApp.Build().Run();
+        
         MainAsync(args).GetAwaiter().GetResult();
     }
 
@@ -33,6 +41,7 @@ public partial class App : System.Windows.Application
         using IHost host = Host.CreateDefaultBuilder()
             .ConfigureApplicationServices()
             .Build();
+        
         await host.StartAsync().ConfigureAwait(true);
 
         ConfigureDatabase(host);
@@ -78,9 +87,6 @@ public partial class App : System.Windows.Application
 
     private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
-        Trace.Listeners.Add(new TextWriterTraceListener("PhoneAssistant.log", "logListener"));//
-        Trace.AutoFlush = true;
-
         Trace.TraceError(DateTime.Now.ToString());
 
         Exception? ex = e.Exception;

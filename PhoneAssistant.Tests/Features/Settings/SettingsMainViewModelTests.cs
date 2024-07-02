@@ -42,7 +42,7 @@ public sealed class SettingsMainViewModelTests
         Assert.Equal(darkMode,vm.ColourThemeDark);
         Assert.Equal(!darkMode,vm.ColourThemeLight);
 
-        Assert.Equal(VERSION, vm.VersionDescription);
+        Assert.Equal(VERSION, vm.CurrentVersion);
         userSettings.VerifyGet(s => s.AssemblyVersion);
     }
 

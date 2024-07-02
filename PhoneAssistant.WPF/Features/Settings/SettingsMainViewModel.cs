@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -7,12 +8,17 @@ using Microsoft.Win32;
 
 using PhoneAssistant.WPF.Application;
 
+using Velopack;
+
 namespace PhoneAssistant.WPF.Features.Settings;
 
 public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsMainViewModel
 {
     private readonly IUserSettings _userSettings;
     private readonly IThemeWrapper _themeWrapper;
+    const string _releaseUrl = @"K:\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application";
+    private readonly UpdateManager _updateManager;
+    private UpdateInfo? _updateInfo;        
 
 #pragma warning disable CS8618
     public SettingsMainViewModel(IUserSettings userSettings, IThemeWrapper themeWrapper)
@@ -31,11 +37,11 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
         DymoPrinter = _userSettings.DymoPrinter;
         DymoPrintFile = _userSettings.DymoPrintFile;
 
-
         ColourThemeDark = _userSettings.DarkMode;
         ColourThemeLight = !_userSettings.DarkMode;
 
-        VersionDescription = _userSettings.AssemblyVersion?.ToString();
+        CurrentVersion = _userSettings.AssemblyVersion?.ToString();
+        _updateManager = new(_releaseUrl);
     }
 #pragma warning restore CS8618
 
@@ -53,7 +59,7 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
     }
 
     [RelayCommand]
-    private void ChangeDatabase() 
+    private void ChangeDatabase()
     {
         MessageBox.Show($"Select the Phone Assistant database to use.{Environment.NewLine}Application will need to restart.", "Phone Assistant", MessageBoxButton.OK, MessageBoxImage.Question);
 
@@ -80,7 +86,7 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
     private bool _printToFile;
 
     partial void OnPrintToFileChanged(bool value)
-    { 
+    {
         _userSettings.PrintToFile = value;
         _userSettings.Save();
     }
@@ -158,11 +164,73 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
     private bool colourThemeLight;
     #endregion
 
-    [ObservableProperty]
-    private string? _versionDescription;
+    #region Update Application
 
-    public Task LoadAsync()
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(UpdateAndRestartCommand))]
+    private ApplicationUpdateState _updateState = ApplicationUpdateState.Default;
+
+    [ObservableProperty]
+    private string? _currentVersion;
+
+    private async Task CheckForUpdate()
     {
-        return Task.CompletedTask;
+        Trace.TraceInformation("CheckForUpdate Started");
+
+        if (_updateManager is null)
+            return;
+
+        if (!_updateManager.IsInstalled)
+        {
+            UpdateState = ApplicationUpdateState.NoUpdateAvailable;
+            return;
+        }
+
+        _updateInfo = await _updateManager.CheckForUpdatesAsync().ConfigureAwait(true);
+        Trace.TraceInformation("UpdateCommand CheckForUpdatesAsync() called");
+
+        if (_updateInfo is null)
+        {
+            UpdateState = ApplicationUpdateState.NoUpdateAvailable;
+            return;
+        }
+
+        NewVersion = $" Version {_updateInfo.TargetFullRelease.Version} available" ?? "No updates outstanding";
+        UpdateState = ApplicationUpdateState.UpdateAvailable;
     }
+
+    [ObservableProperty]
+    private string? _newVersion = "No updates outstanding";
+
+    private bool CanUpdate() => UpdateState == ApplicationUpdateState.UpdateAvailable;
+
+    [RelayCommand(CanExecute = nameof(CanUpdate))]
+    private async Task UpdateAndRestart()
+    {
+        if (_updateManager is null || _updateInfo is null)
+            return;
+
+        Trace.TraceInformation("UpdateAndRestart Started");
+        
+        await _updateManager.DownloadUpdatesAsync(_updateInfo).ConfigureAwait(true);
+        Trace.TraceInformation("DownloadUpdate DownloadUpdatesAsync() called");
+        UpdateState = ApplicationUpdateState.UpdateDownloaded;
+
+        _updateManager.ApplyUpdatesAndRestart(_updateInfo);
+        Trace.TraceInformation("UpdateAndRestart Completed");
+    }
+    #endregion
+
+    public async Task LoadAsync()
+    {
+        if (UpdateState == ApplicationUpdateState.Default)
+            await CheckForUpdate();
+    }
+}
+public enum ApplicationUpdateState
+{
+    Default,
+    NoUpdateAvailable,
+    UpdateAvailable,
+    UpdateDownloaded
 }

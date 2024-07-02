@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Windows;
+
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using PhoneAssistant.WPF.Application;
@@ -38,7 +40,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private readonly ISettingsMainViewModel _settingsMainViewModel;
     private readonly IUsersMainViewModel _usersMainViewModel;
     private readonly IUserSettings _userSettings;
-    
+
     public MainWindowViewModel(AddItemViewModel addItemViewModel,
                                IBaseReportMainViewModel baseReportMainViewModel,
                                IDashboardMainViewModel dashboardMainViewModel,
@@ -64,7 +66,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 #endif
 
         ViewModelType currentView = _userSettings.CurrentView;
-        _ = UpdateViewAsync(currentView);        
+        _ = UpdateViewAsync(currentView);
     }
 
     [ObservableProperty]
@@ -73,12 +75,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private IViewModel? _selectedViewModel;
 
-
     [RelayCommand]
     private async Task UpdateViewAsync(object selectedViewModelType)
     {
-        if (selectedViewModelType is null)
-            throw new ArgumentNullException(nameof(selectedViewModelType));
+        ArgumentNullException.ThrowIfNull(selectedViewModelType);
 
         if (selectedViewModelType.GetType() != typeof(ViewModelType))
             throw new ArgumentException("Type " + selectedViewModelType.GetType() + " is not handled.");
@@ -100,7 +100,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
         _userSettings.CurrentView = viewType;
         _userSettings.Save();
 
-        
-            await SelectedViewModel.LoadAsync();
+        await SelectedViewModel.LoadAsync();
+
+        if (viewType == ViewModelType.Settings && _settingsMainViewModel.UpdateState == ApplicationUpdateState.UpdateAvailable)
+            ShowUpdateBadge = Visibility.Visible;
     }
+
+    [ObservableProperty]
+    private Visibility _showUpdateBadge = Visibility.Collapsed;
 }

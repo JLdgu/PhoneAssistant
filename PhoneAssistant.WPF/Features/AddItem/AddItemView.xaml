@@ -30,6 +30,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <shared:HeaderMainView HeaderIcon="Plus" HeaderText="Add Phones and SIMs" />
@@ -209,6 +210,24 @@
                     Style="{StaticResource MaterialDesignRaisedLightButton}" />
 
         </StackPanel>
+
+        <GroupBox Grid.Row="4"
+                  Margin="5"
+                  materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                  Header="Log"
+                  Style="{StaticResource MaterialDesignGroupBox}">
+
+            <ListView MaxHeight="450" ItemsSource="{Binding LogItems, Mode=OneWay}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="Padding" Value="0" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+
+        </GroupBox>
+
 
     </Grid>
 

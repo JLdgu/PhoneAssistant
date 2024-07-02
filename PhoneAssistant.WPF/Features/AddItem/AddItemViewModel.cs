@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -15,6 +16,8 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     private readonly IPhonesRepository _phonesRepository;
     private readonly ISimsRepository _simsRepository;
     private readonly IMessenger _messenger;
+
+    public ObservableCollection<string> LogItems { get; } = [];
 
     public AddItemViewModel(IPhonesRepository phonesRepository,
                             ISimsRepository simsRepository,
@@ -96,10 +99,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     [ObservableProperty]
     private string? _phoneNotes;
 
-    public IEnumerable<OEMs> OEMs
-    {
-        get { return Enum.GetValues(typeof(OEMs)).Cast<OEMs>(); }
-    }
+    public static IEnumerable<OEMs> OEMs => Enum.GetValues(typeof(OEMs)).Cast<OEMs>();
 
     [ObservableProperty]
     private OEMs _oEM;
@@ -177,15 +177,17 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         if (Ticket is not null)
             sr = int.Parse(Ticket);
         Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, Notes = PhoneNotes, OEM = OEM, PhoneNumber = PhoneNumber, SimNumber = SimNumber, SR = sr, Status = Status };
+        string simDetails = $" {PhoneNumber} {SimNumber}";
         if (phoneOnly is null)
         {
             phone.PhoneNumber = null;
             phone.SimNumber = null;
+            simDetails = string.Empty;
         }
         await _phonesRepository.CreateAsync(phone);
 
+        LogItems.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} Phone added - IMEI: {Imei} {OEM} {Model} {simDetails}");
         _messenger.Send(phone);
-
         PhoneClear();
     }
     #endregion
@@ -269,7 +271,8 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     private async Task SIMDeleteAsync()
     {
         _ = await _simsRepository.DeleteSIMAsync(PhoneNumber!);
-
+        
+        LogItems.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} SIM deleted - {PhoneNumber} {SimNumber}");
         SIMClear();
     }
 
@@ -287,6 +290,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         Sim sim = new() { PhoneNumber = PhoneNumber!, SimNumber = SimNumber!, Notes = PhoneNotes };
         await _simsRepository.CreateAsync(sim);
 
+        LogItems.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} SIM added - {PhoneNumber} {SimNumber}");
         _messenger.Send(sim);
         SIMClear();
     }

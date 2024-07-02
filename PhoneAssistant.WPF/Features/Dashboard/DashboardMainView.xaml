@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="PhoneAssistant.WPF.Features.Dashboard.DashboardMainView"
+<UserControl x:Class="PhoneAssistant.WPF.Features.Dashboard.DashboardMainView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -29,7 +29,9 @@
             <StackPanel Orientation="Vertical">
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.406.27" />
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="vNext" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #2 Update application automatically" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #54 Auto search aftr paste on user view" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Transfer user settings between versions" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Application no longer needs a restart when database selected (starts minimized in Task Bar)" />
                     </StackPanel>

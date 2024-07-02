@@ -16,7 +16,7 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
 {
     private readonly IUserSettings _userSettings;
     private readonly IThemeWrapper _themeWrapper;
-    const string _releaseUrl = @"K:\FITProject\ICTS\Mobile Phones\PhoneAssistant\Velopack";
+    const string _releaseUrl = @"K:\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application";
     private readonly UpdateManager _updateManager;
     private UpdateInfo? _updateInfo;        
 
@@ -167,17 +167,12 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
     #region Update Application
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(CheckForUpdateCommand))]
-    [NotifyCanExecuteChangedFor(nameof(DownloadUpdateCommand))]
     [NotifyCanExecuteChangedFor(nameof(UpdateAndRestartCommand))]
     private ApplicationUpdateState _updateState = ApplicationUpdateState.Default;
 
     [ObservableProperty]
     private string? _currentVersion;
 
-    private bool CanCheckForUpdate() => UpdateState == ApplicationUpdateState.Default;    
-
-    [RelayCommand(CanExecute = nameof(CanCheckForUpdate))]    
     private async Task CheckForUpdate()
     {
         Trace.TraceInformation("CheckForUpdate Started");
@@ -185,55 +180,57 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
         if (_updateManager is null)
             return;
 
+        if (!_updateManager.IsInstalled)
+        {
+            UpdateState = ApplicationUpdateState.NoUpdateAvailable;
+            return;
+        }
+
         _updateInfo = await _updateManager.CheckForUpdatesAsync().ConfigureAwait(true);
         Trace.TraceInformation("UpdateCommand CheckForUpdatesAsync() called");
-        
-        if (_updateInfo is null) return;
 
-        NewVersion = _updateInfo.TargetFullRelease.Version.ToString() ?? "None";
+        if (_updateInfo is null)
+        {
+            UpdateState = ApplicationUpdateState.NoUpdateAvailable;
+            return;
+        }
+
+        NewVersion = $" Version {_updateInfo.TargetFullRelease.Version} available" ?? "No updates outstanding";
         UpdateState = ApplicationUpdateState.UpdateAvailable;
     }
 
     [ObservableProperty]
-    private string? _newVersion = "None";
+    private string? _newVersion = "No updates outstanding";
 
-    private bool CanDownload() => UpdateState == ApplicationUpdateState.UpdateAvailable;
-
-    [RelayCommand(CanExecute = nameof(CanDownload))]    
-    private async Task DownloadUpdate()
-    {
-        if (_updateManager is null || _updateInfo is null)
-            return;
-
-        await _updateManager.DownloadUpdatesAsync(_updateInfo).ConfigureAwait(true);
-        Trace.TraceInformation("DownloadUpdate DownloadUpdatesAsync() called");
-        UpdateState = ApplicationUpdateState.UpdateDownloaded;
-    }
-
-    private bool CanUpdate() => UpdateState == ApplicationUpdateState.UpdateDownloaded;
+    private bool CanUpdate() => UpdateState == ApplicationUpdateState.UpdateAvailable;
 
     [RelayCommand(CanExecute = nameof(CanUpdate))]
-    private void UpdateAndRestart()
+    private async Task UpdateAndRestart()
     {
         if (_updateManager is null || _updateInfo is null)
             return;
 
         Trace.TraceInformation("UpdateAndRestart Started");
+        
+        await _updateManager.DownloadUpdatesAsync(_updateInfo).ConfigureAwait(true);
+        Trace.TraceInformation("DownloadUpdate DownloadUpdatesAsync() called");
+        UpdateState = ApplicationUpdateState.UpdateDownloaded;
 
         _updateManager.ApplyUpdatesAndRestart(_updateInfo);
-
         Trace.TraceInformation("UpdateAndRestart Completed");
     }
     #endregion
 
-    public Task LoadAsync()
+    public async Task LoadAsync()
     {
-        return Task.CompletedTask;
+        if (UpdateState == ApplicationUpdateState.Default)
+            await CheckForUpdate();
     }
 }
 public enum ApplicationUpdateState
 {
     Default,
+    NoUpdateAvailable,
     UpdateAvailable,
     UpdateDownloaded
 }

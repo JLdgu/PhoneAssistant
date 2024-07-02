@@ -29,7 +29,7 @@
             <StackPanel Orientation="Vertical">
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.406.23" />
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.406.27" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Transfer user settings between versions" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Application no longer needs a restart when database selected (starts minimized in Task Bar)" />
                     </StackPanel>

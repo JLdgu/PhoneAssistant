@@ -250,18 +250,14 @@ public sealed partial class PhonesMainViewModel :
     {
         await EmailViewModel.LoadAsync();
 
-        if (CanRefeshPhones) return;
-
-        PhoneItems.Clear();
-        IEnumerable<Phone> phones;
-        if (IncludeDisposals)
-            phones = await _phonesRepository.GetAllPhonesAsync();
-        else
-            phones = await _phonesRepository.GetActivePhonesAsync();
-
-        foreach (Phone phone in phones)
+        if (!CanRefeshPhones)
         {
-            PhoneItems.Add(_phonesItemViewModelFactory.Create(phone));
+            PhoneItems.Clear();
+            IEnumerable<Phone> phones = IncludeDisposals ? await _phonesRepository.GetAllPhonesAsync() : await _phonesRepository.GetActivePhonesAsync();
+            foreach (Phone phone in phones)
+            {
+                PhoneItems.Add(_phonesItemViewModelFactory.Create(phone));
+            }
         }
 
         _filterView.SortDescriptions.Clear();

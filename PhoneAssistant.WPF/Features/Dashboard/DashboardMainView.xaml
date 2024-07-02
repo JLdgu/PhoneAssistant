@@ -29,7 +29,7 @@
             <StackPanel Orientation="Vertical">
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="vNext" />
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.407.2" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #2 Update application automatically" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #54 Auto search aftr paste on user view" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Transfer user settings between versions" />

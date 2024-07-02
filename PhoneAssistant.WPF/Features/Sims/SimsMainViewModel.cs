@@ -139,19 +139,24 @@ public sealed partial class SimsMainViewModel : ObservableObject, IRecipient<Sim
 
     public async Task LoadAsync()
     {
-        if (CanRefeshSims) return;
-
-        SimItems.Clear();
-        IEnumerable<Sim> simCards = await _simRepository.GetSimsAsync();
-        if (simCards == null)
+        if (!CanRefeshSims)
         {
-            throw new ArgumentNullException(nameof(simCards));
+            SimItems.Clear();
+            IEnumerable<Sim> simCards = await _simRepository.GetSimsAsync();
+            if (simCards == null)
+            {
+                throw new ArgumentNullException(nameof(simCards));
+            }
+
+            foreach (Sim simcard in simCards)
+            {
+                SimItems.Add(_simsItemViewModelFactory.Create(simcard));
+            }
         }
 
-        foreach (Sim simcard in simCards)
-        {            
-            SimItems.Add(_simsItemViewModelFactory.Create(simcard));
-        }
+        _filterView.SortDescriptions.Clear();
+        _filterView.SortDescriptions.Add(new SortDescription("LastUpdate", ListSortDirection.Descending));
+        RefreshFilterView();
 
         CanRefeshSims = true;
     }

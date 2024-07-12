@@ -65,26 +65,25 @@ public sealed partial class MainWindowViewModel : ObservableObject
         Development = true;
 #endif
 
-        ViewModelType currentView = _userSettings.CurrentView;
-        _ = UpdateViewAsync(currentView);
+        SelectedView = _userSettings.CurrentView;
+        _ = UpdateViewAsync(SelectedView);
     }
 
     [ObservableProperty]
     private bool _development = false;
 
     [ObservableProperty]
+    private ViewModelType _selectedView;
+
+    [ObservableProperty]
     private IViewModel? _selectedViewModel;
 
     [RelayCommand]
-    private async Task UpdateViewAsync(object selectedViewModelType)
+    private async Task UpdateViewAsync(ViewModelType selectedViewModelType)
     {
         ArgumentNullException.ThrowIfNull(selectedViewModelType);
 
-        if (selectedViewModelType.GetType() != typeof(ViewModelType))
-            throw new ArgumentException("Type " + selectedViewModelType.GetType() + " is not handled.");
-
-        ViewModelType viewType = (ViewModelType)selectedViewModelType;
-        SelectedViewModel = viewType switch
+        SelectedViewModel = selectedViewModelType switch
         {
             ViewModelType.None => _dashboardMainViewModel,
             ViewModelType.AddItem => _addItemViewModel,
@@ -97,12 +96,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
             ViewModelType.Users => _usersMainViewModel,
             _ => throw new NotImplementedException()
         };
-        _userSettings.CurrentView = viewType;
+        _userSettings.CurrentView = selectedViewModelType;
         _userSettings.Save();
 
         await SelectedViewModel.LoadAsync();
 
-        if (viewType == ViewModelType.Settings && _settingsMainViewModel.UpdateState == ApplicationUpdateState.UpdateAvailable)
+        if (selectedViewModelType == ViewModelType.Settings && _settingsMainViewModel.UpdateState == ApplicationUpdateState.UpdateAvailable)
             ShowUpdateBadge = Visibility.Visible;
     }
 

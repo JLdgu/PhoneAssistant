@@ -10,6 +10,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:phones="clr-namespace:PhoneAssistant.WPF.Features.Phones"
         xmlns:settings="clr-namespace:PhoneAssistant.WPF.Features.Settings"
+        xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
         xmlns:sims="clr-namespace:PhoneAssistant.WPF.Features.Sims"
         xmlns:users="clr-namespace:PhoneAssistant.WPF.Features.Users"
         xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.MainWindow"
@@ -29,6 +30,7 @@
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d">
     <Window.Resources>
+        <shared:EnumBooleanConverter x:Key="EnumBooleanConverter" />
         <DataTemplate DataType="{x:Type addItem:AddItemViewModel}">
             <addItem:AddItemView />
         </DataTemplate>
@@ -65,6 +67,7 @@
                          Command="{Binding UpdateViewCommand}"
                          CommandParameter="{x:Static viewmodel:ViewModelType.Dashboard}"
                          DockPanel.Dock="Top"
+                         IsChecked="{Binding SelectedView, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static viewmodel:ViewModelType.Dashboard}}"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon Width="24"
@@ -79,6 +82,7 @@
                          Command="{Binding UpdateViewCommand}"
                          CommandParameter="{x:Static viewmodel:ViewModelType.Phones}"
                          DockPanel.Dock="Top"
+                         IsChecked="{Binding SelectedView, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static viewmodel:ViewModelType.Phones}}"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon Width="24"
@@ -92,6 +96,7 @@
             <RadioButton Command="{Binding UpdateViewCommand}"
                          CommandParameter="{x:Static viewmodel:ViewModelType.Sims}"
                          DockPanel.Dock="Top"
+                         IsChecked="{Binding SelectedView, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static viewmodel:ViewModelType.Sims}}"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon Width="24"
@@ -105,6 +110,7 @@
             <RadioButton Command="{Binding UpdateViewCommand}"
                          CommandParameter="{x:Static viewmodel:ViewModelType.BaseReport}"
                          DockPanel.Dock="Top"
+                         IsChecked="{Binding SelectedView, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static viewmodel:ViewModelType.BaseReport}}"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel HorizontalAlignment="Center">
                     <materialDesign:PackIcon Width="12"
@@ -122,6 +128,7 @@
             <RadioButton Command="{Binding UpdateViewCommand}"
                          CommandParameter="{x:Static viewmodel:ViewModelType.Users}"
                          DockPanel.Dock="Top"
+                         IsChecked="{Binding SelectedView, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static viewmodel:ViewModelType.Users}}"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel HorizontalAlignment="Center">
                     <materialDesign:PackIcon Width="24"
@@ -136,6 +143,7 @@
                          Command="{Binding UpdateViewCommand}"
                          CommandParameter="{x:Static viewmodel:ViewModelType.Disposals}"
                          DockPanel.Dock="Top"
+                         IsChecked="{Binding SelectedView, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static viewmodel:ViewModelType.Disposals}}"
                          IsEnabled="{Binding Development}"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
@@ -150,6 +158,7 @@
             <RadioButton Command="{Binding UpdateViewCommand}"
                          CommandParameter="{x:Static viewmodel:ViewModelType.AddItem}"
                          DockPanel.Dock="Top"
+                         IsChecked="{Binding SelectedView, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static viewmodel:ViewModelType.AddItem}}"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel HorizontalAlignment="Center">
                     <materialDesign:PackIcon Width="24"
@@ -165,6 +174,7 @@
                          Command="{Binding UpdateViewCommand}"
                          CommandParameter="{x:Static viewmodel:ViewModelType.Settings}"
                          DockPanel.Dock="Bottom"
+                         IsChecked="{Binding SelectedView, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static viewmodel:ViewModelType.Settings}}"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:Badged Margin="-15,5,0,-15"

@@ -15,12 +15,10 @@ public sealed class MainWindowViewModelTests
     [Fact]
     public async Task UpdateViewAsync_NullViewModelType_ThrowsArgumentNullException()
     {
-        AutoMocker mocker = new AutoMocker();
+        AutoMocker mocker = new();
         MainWindowViewModel vm = mocker.CreateInstance<MainWindowViewModel>();
 
-        var actual = await Assert.ThrowsAsync<ArgumentNullException>(() => vm.UpdateViewCommand.ExecuteAsync(null));        
-
-        Assert.Equal("selectedViewModelType", actual.ParamName);
+        await Assert.ThrowsAsync<ArgumentException>(() => vm.UpdateViewCommand.ExecuteAsync(null));               
     }
 
     [Fact]
@@ -29,9 +27,7 @@ public sealed class MainWindowViewModelTests
         AutoMocker mocker = new AutoMocker();
         MainWindowViewModel vm = mocker.CreateInstance<MainWindowViewModel>();
 
-        var actual = await Assert.ThrowsAsync<ArgumentException>(() => vm.UpdateViewCommand.ExecuteAsync("Wrong Type"));
-
-        Assert.Equal("Type System.String is not handled.", actual.Message);
+        await Assert.ThrowsAsync<ArgumentException>(() => vm.UpdateViewCommand.ExecuteAsync("Wrong Type"));
     }
 
     [Theory]

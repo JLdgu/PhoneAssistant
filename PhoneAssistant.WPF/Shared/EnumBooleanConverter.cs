@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
 
-namespace PhoneAssistant.WPF.Features.Phones;
+namespace PhoneAssistant.WPF.Shared;
 public class EnumBooleanConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

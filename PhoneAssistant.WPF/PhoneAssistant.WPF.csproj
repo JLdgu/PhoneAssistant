@@ -7,7 +7,7 @@
     <StartupObject>PhoneAssistant.WPF.App</StartupObject>
     <ApplicationIcon>Resources\Phone.ico</ApplicationIcon>
     <AssemblyName>PhoneAssistant</AssemblyName>
-    <AssemblyVersion>1.407.2</AssemblyVersion>
+    <AssemblyVersion>1.407.20</AssemblyVersion>
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
   </PropertyGroup>
 

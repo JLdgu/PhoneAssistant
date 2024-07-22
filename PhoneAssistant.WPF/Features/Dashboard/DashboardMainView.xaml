@@ -29,6 +29,15 @@
             <StackPanel Orientation="Vertical">
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.407.20" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #57 Highlight selected view on startup" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #55 Add session log to add item view" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Refresh sort order on view change" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
                         <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.407.2" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #2 Update application automatically" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #54 Auto search aftr paste on user view" />

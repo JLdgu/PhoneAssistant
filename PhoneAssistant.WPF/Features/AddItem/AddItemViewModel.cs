@@ -177,6 +177,10 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         if (Ticket is not null)
             sr = int.Parse(Ticket);
         Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, Notes = PhoneNotes, OEM = OEM, PhoneNumber = PhoneNumber, SimNumber = SimNumber, SR = sr, Status = Status };
+        string conditionDesc = ApplicationSettings.ConditionRepurposed;
+        if (Condition == ApplicationSettings.ConditionNew.Substring(1))
+            conditionDesc = ApplicationSettings.ConditionNew;
+        
         string simDetails = $" {PhoneNumber} {SimNumber}";
         if (phoneOnly is null)
         {
@@ -184,9 +188,9 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
             phone.SimNumber = null;
             simDetails = string.Empty;
         }
-        await _phonesRepository.CreateAsync(phone);
 
-        LogItems.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} Phone added - IMEI: {Imei} {OEM} {Model} {simDetails}");
+        await _phonesRepository.CreateAsync(phone);
+        LogItems.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} Phone added - {AssetTag} IMEI: {Imei} Status: {Status} Condition: {conditionDesc} {OEM} {Model} {FormerUser} {simDetails}");
         _messenger.Send(phone);
         PhoneClear();
     }

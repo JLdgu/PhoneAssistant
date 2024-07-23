@@ -9,6 +9,7 @@ using PhoneAssistant.WPF.Features.AddItem;
 using PhoneAssistant.WPF.Features.BaseReport;
 using PhoneAssistant.WPF.Features.Dashboard;
 using PhoneAssistant.WPF.Features.Disposals;
+using PhoneAssistant.WPF.Features.Dymo;
 using PhoneAssistant.WPF.Features.MainWindow;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.Settings;
@@ -51,6 +52,8 @@ public static class ApplicationServicesExtensions
             services.AddSingleton<IDashboardMainViewModel, DashboardMainViewModel>();
 
             services.AddSingleton<IDisposalsMainViewModel, DisposalsMainViewModel>();
+
+            services.AddSingleton<DymoViewModel>();
 
             services.AddTransient<IPhonesItemViewModelFactory, PhonesItemViewModelFactory>();
             services.AddSingleton<EmailViewModel>();

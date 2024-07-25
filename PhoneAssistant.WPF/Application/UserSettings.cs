@@ -72,6 +72,14 @@ public sealed class UserSettings : ApplicationSettingsBase, IUserSettings
     }
 
     [UserScopedSetting()]
+    [DefaultSettingValue("225316")]
+    public int DefaultDecommissionedTicket
+    {
+        get => (int)this[nameof(DefaultDecommissionedTicket)];
+        set => this[nameof(DefaultDecommissionedTicket)] = value;
+    }
+
+    [UserScopedSetting()]
     [DefaultSettingValue("0")]
     public ViewModelType CurrentView
     {

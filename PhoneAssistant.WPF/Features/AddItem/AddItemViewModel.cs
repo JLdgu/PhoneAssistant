@@ -15,16 +15,19 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
 {
     private readonly IPhonesRepository _phonesRepository;
     private readonly ISimsRepository _simsRepository;
+    private readonly IUserSettings _userSettings;
     private readonly IMessenger _messenger;
 
     public ObservableCollection<string> LogItems { get; } = [];
 
     public AddItemViewModel(IPhonesRepository phonesRepository,
                             ISimsRepository simsRepository,
+                            IUserSettings userSettings,
                             IMessenger messenger)
     {
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
         _simsRepository = simsRepository ?? throw new ArgumentNullException(nameof(simsRepository));
+        _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         OEM = Application.Entities.OEMs.Samsung;
         ValidateAllProperties();
@@ -112,7 +115,10 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
 
     partial void OnStatusChanged(string value)
     {
-        ValidateProperty(Ticket, "Ticket");
+        if (value == "Decommissioned" && string.IsNullOrEmpty(Ticket))
+            Ticket = _userSettings.DefaultDecommissionedTicket.ToString();
+        else
+            ValidateProperty(Ticket, "Ticket");
     }
 
     [ObservableProperty]

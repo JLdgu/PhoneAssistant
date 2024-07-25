@@ -10,6 +10,8 @@ public interface IUserSettings
 
     string Database { get; set; }
 
+    int DefaultDecommissionedTicket {  get; set; }
+
     bool PrintToFile { get; set; }
 
     string Printer { get; set; }

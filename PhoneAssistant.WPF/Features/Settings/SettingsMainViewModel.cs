@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Windows;
 
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -12,7 +13,7 @@ using Velopack;
 
 namespace PhoneAssistant.WPF.Features.Settings;
 
-public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsMainViewModel
+public sealed partial class SettingsMainViewModel : ObservableValidator, ISettingsMainViewModel
 {
     private readonly IUserSettings _userSettings;
     private readonly IThemeWrapper _themeWrapper;
@@ -36,6 +37,8 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
         DymoPrintToPrinter = !DymoPrintToFile;
         DymoPrinter = _userSettings.DymoPrinter;
         DymoPrintFile = _userSettings.DymoPrintFile;
+
+        DefaultDecommissionedTicket = _userSettings.DefaultDecommissionedTicket.ToString();
 
         ColourThemeDark = _userSettings.DarkMode;
         ColourThemeLight = !_userSettings.DarkMode;
@@ -147,6 +150,20 @@ public sealed partial class SettingsMainViewModel : ObservableObject, ISettingsM
         _userSettings.Save();
     }
     #endregion
+
+    [ObservableProperty]
+    [NotifyDataErrorInfo]
+    [Range(100000,999999, ErrorMessage = "Ticket must be 6 digits")]
+    private string _defaultDecommissionedTicket;
+
+    partial void OnDefaultDecommissionedTicketChanged(string value)
+    {
+        if (_userSettings.DefaultDecommissionedTicket.ToString() == value) return;
+
+        int ticket = int.Parse(value);
+        _userSettings.DefaultDecommissionedTicket = ticket;
+        _userSettings.Save();
+    }
 
     #region Mode Setting
     [ObservableProperty]

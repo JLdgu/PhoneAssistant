@@ -18,9 +18,35 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <shared:HeaderMainView HeaderIcon="CogOutline" HeaderText="Settings" />
+
         <materialDesign:Card Grid.Row="1"
+                             Margin="10,10"
+                             Padding="5,5">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center"
+                           Style="{StaticResource MaterialDesignBody2TextBlock}"
+                           Text="Current Version" />
+                <TextBox Margin="10,0"
+                         Padding="10,5"
+                         IsReadOnly="True"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding CurrentVersion, Mode=OneWay, FallbackValue=Current Version}" />
+                <TextBox Margin="10,0"
+                         Padding="10,5"
+                         IsReadOnly="True"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding NewVersion, Mode=OneWay, FallbackValue=New Version}" />
+                <Button Margin="10,0"
+                        Command="{Binding UpdateAndRestartCommand}"
+                        Content="Update and Restart"
+                        Style="{StaticResource MaterialDesignOutlinedButton}" />
+            </StackPanel>
+        </materialDesign:Card>
+
+        <materialDesign:Card Grid.Row="2"
                              Margin="10,10"
                              Padding="5,5">
             <Grid>
@@ -46,7 +72,7 @@
             </Grid>
         </materialDesign:Card>
 
-        <materialDesign:Card Grid.Row="2"
+        <materialDesign:Card Grid.Row="3"
                              Margin="10,10"
                              Padding="5,5">
             <Grid>
@@ -91,7 +117,7 @@
 
         </materialDesign:Card>
 
-        <materialDesign:Card Grid.Row="3"
+        <materialDesign:Card Grid.Row="4"
                              Margin="10,10"
                              Padding="5,5">
             <Grid>
@@ -136,7 +162,22 @@
 
         </materialDesign:Card>
 
-        <materialDesign:Card Grid.Row="4"
+        <materialDesign:Card Grid.Row="5"
+                             Margin="10,10"
+                             Padding="5,5">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center"
+                           Style="{StaticResource MaterialDesignBody2TextBlock}"
+                           Text="Default Decommissioned Phone Ticket #" />
+                <TextBox Grid.Column="1"
+                         Margin="10,0"
+                         Padding="10,5"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding DefaultDecommissionedTicket}" />
+            </StackPanel>
+        </materialDesign:Card>
+
+        <materialDesign:Card Grid.Row="6"
                              Margin="10,10"
                              Padding="5,5">
             <StackPanel Orientation="Horizontal">
@@ -154,26 +195,5 @@
             </StackPanel>
         </materialDesign:Card>
 
-        <materialDesign:Card Grid.Row="5"
-                             Margin="10,10"
-                             Padding="5,5">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock VerticalAlignment="Center"
-                           Style="{StaticResource MaterialDesignBody2TextBlock}"
-                           Text="Current Version" />
-                <TextBox Margin="10,0"
-                         IsReadOnly="True"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding CurrentVersion, Mode=OneWay, FallbackValue=Current Version}" />
-                <TextBox Margin="10,0"
-                         IsReadOnly="True"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding NewVersion, Mode=OneWay, FallbackValue=New Version}" />
-                <Button Margin="10,0"
-                        Command="{Binding UpdateAndRestartCommand}"
-                        Content="Update and Restart"
-                        Style="{StaticResource MaterialDesignOutlinedButton}" />
-            </StackPanel>
-        </materialDesign:Card>
     </Grid>
 </UserControl>

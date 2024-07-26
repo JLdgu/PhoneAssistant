@@ -44,13 +44,17 @@ public partial class App : System.Windows.Application
         
         await host.StartAsync().ConfigureAwait(true);
 
-        ConfigureDatabase(host);
+        DatabaseServices.ConfigureDatabase(host);
 
         App app = new();
         app.InitializeComponent();
         app.MainWindow = host.Services.GetRequiredService<MainWindow>();
         app.MainWindow.Visibility = Visibility.Visible;
         app.Run();
+
+#if DEBUG
+        DatabaseServices.BackupDatabase(host);
+#endif
 
         await host.StopAsync().ConfigureAwait(true);
     }
@@ -73,12 +77,12 @@ public partial class App : System.Windows.Application
         Trace.Close();
     }
 
-    private static void ConfigureDatabase(IHost host)
-    {
-        PhoneAssistantDbContext dbContext = host.Services.GetRequiredService<PhoneAssistantDbContext>();
+    //private static void ConfigureDatabase(IHost host)
+    //{
+    //    PhoneAssistantDbContext dbContext = host.Services.GetRequiredService<PhoneAssistantDbContext>();
 
-        dbContext.Database.EnsureCreated();
-    }
+    //    dbContext.Database.EnsureCreated();
+    //}
 
     protected override void OnExit(ExitEventArgs e)
     {

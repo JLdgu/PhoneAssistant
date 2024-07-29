@@ -1,5 +1,6 @@
 ﻿using System.IO;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -11,7 +12,7 @@ internal static class DatabaseServices
     {
         PhoneAssistantDbContext dbContext = host.Services.GetRequiredService<PhoneAssistantDbContext>();
 
-        dbContext.Database.EnsureCreated();
+        dbContext.Database.Migrate();
     }
 
     internal static void BackupDatabase(IHost host)

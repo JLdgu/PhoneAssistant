@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -43,18 +42,16 @@ public partial class App : System.Windows.Application
             .Build();
         
         await host.StartAsync().ConfigureAwait(true);
-
+#if debug
         DatabaseServices.ConfigureDatabase(host);
-
+#endif
         App app = new();
         app.InitializeComponent();
         app.MainWindow = host.Services.GetRequiredService<MainWindow>();
         app.MainWindow.Visibility = Visibility.Visible;
         app.Run();
 
-#if DEBUG
         DatabaseServices.BackupDatabase(host);
-#endif
 
         await host.StopAsync().ConfigureAwait(true);
     }
@@ -68,7 +65,7 @@ public partial class App : System.Windows.Application
         theme.SetPrimaryColor(Colors.Orange);
         theme.SetSecondaryColor(Colors.Yellow);
         helper.SetTheme(theme);
-#endif        
+#endif
 
         base.OnStartup(e);
     }
@@ -76,13 +73,6 @@ public partial class App : System.Windows.Application
     {
         Trace.Close();
     }
-
-    //private static void ConfigureDatabase(IHost host)
-    //{
-    //    PhoneAssistantDbContext dbContext = host.Services.GetRequiredService<PhoneAssistantDbContext>();
-
-    //    dbContext.Database.EnsureCreated();
-    //}
 
     protected override void OnExit(ExitEventArgs e)
     {

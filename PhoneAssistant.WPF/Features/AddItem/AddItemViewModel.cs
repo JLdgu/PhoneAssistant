@@ -115,7 +115,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
 
     partial void OnStatusChanged(string value)
     {
-        if (value == "Decommissioned" && string.IsNullOrEmpty(Ticket))
+        if ((value == "Decommissioned" || value == "Disposed") && string.IsNullOrEmpty(Ticket))
             Ticket = _userSettings.DefaultDecommissionedTicket.ToString();
         else
             ValidateProperty(Ticket, "Ticket");

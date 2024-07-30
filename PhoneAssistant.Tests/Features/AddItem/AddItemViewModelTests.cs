@@ -55,14 +55,26 @@ public class AddItemViewModelTests
     [Theory]
     [InlineData("Decommissioned")]
     [InlineData("Disposed")]
-    void GetErrors_ShouldContainTicketError_WhenDisposal(string status)
+    public void GetErrors_ShouldContainError_WhenDisposalWithDefaultTicket(string status)
     {
-        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
+        Mock<IUserSettings> setings = _mocker.GetMock<IUserSettings>();
+        setings.Setup(s => s.DefaultDecommissionedTicket).Returns(123456);
 
         _sut.Status = status;
 
         IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Ticket));
-        Assert.Equal("Ticket required when disposal", errors.First().ToString());
+        Assert.Empty(errors);
+    }
+
+    [Theory]
+    [InlineData("Decommissioned")]
+    [InlineData("Disposed")]
+    public void GetErrors_ShouldContainError_WhenDisposalWithNoDefaultTicket(string status)
+    {
+        _sut.Status = status;
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Ticket));
+        Assert.Equal("Ticket must 6 or 7 digits", errors.First().ToString());
     }
 
     [Theory]

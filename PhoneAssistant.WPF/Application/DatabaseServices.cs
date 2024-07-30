@@ -8,13 +8,6 @@ namespace PhoneAssistant.WPF.Application;
 
 internal static class DatabaseServices
 {
-    internal static void ConfigureDatabase(IHost host)
-    {
-        PhoneAssistantDbContext dbContext = host.Services.GetRequiredService<PhoneAssistantDbContext>();
-
-        dbContext.Database.Migrate();
-    }
-
     internal static void BackupDatabase(IHost host)
     {
         IUserSettings settings = host.Services.GetRequiredService<IUserSettings>();

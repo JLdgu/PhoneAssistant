@@ -8,3 +8,5 @@ If (Test-Path -Path $test) {
 }
 
 Copy-Item $live $test
+
+dotnet run --project DbUtil

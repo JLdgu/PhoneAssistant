@@ -1,4 +1,4 @@
-﻿BEGIN TRANSACTION;
+﻿DROP TABLE IF EXISTS __EFMigrationsHistory;
 
 CREATE TABLE "ReconcileDisposals" (
     "Imei" TEXT NOT NULL CONSTRAINT "PK_ReconcileDisposals" PRIMARY KEY,
@@ -9,9 +9,3 @@ CREATE TABLE "ReconcileDisposals" (
     "Certificate" INTEGER NULL,
     "Action" TEXT NULL
 );
-
-INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20240513121222_Disposal', '8.0.4');
-
-COMMIT;
-.exit 1

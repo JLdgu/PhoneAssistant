@@ -36,10 +36,6 @@
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="EntityFrameworkCore.Triggered" />
     <PackageReference Include="MaterialDesignThemes" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" />

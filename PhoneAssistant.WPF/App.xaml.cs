@@ -39,12 +39,9 @@ public partial class App : System.Windows.Application
     {
         using IHost host = Host.CreateDefaultBuilder()
             .ConfigureApplicationServices()
-            .Build();
-        
+            .Build();        
         await host.StartAsync().ConfigureAwait(true);
-#if debug
-        DatabaseServices.ConfigureDatabase(host);
-#endif
+
         App app = new();
         app.InitializeComponent();
         app.MainWindow = host.Services.GetRequiredService<MainWindow>();

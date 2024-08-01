@@ -44,7 +44,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         SimNumber = SIM_NUMBER,
         SR = SR,
         Status = STATUS
-};
+    };
 
     public PhonesRepositoryTests()
     {
@@ -82,7 +82,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     async Task Exists_ShouldReturnFalse_WhenPhoneDoesNotExist()
     {
         bool actual = await _repository.ExistsAsync("DoesNotExist");
-        
+
         Assert.False(actual);
     }
 
@@ -149,7 +149,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
 
         Assert.Null(_phone.PhoneNumber);
         Assert.Null(_phone.SimNumber);
-        
+
         Sim? dbSim = await _helper.DbContext.Sims.FindAsync(PHONE_NUMBER);
         Assert.NotNull(dbSim);
         Assert.Equal(PHONE_NUMBER, dbSim.PhoneNumber);
@@ -237,6 +237,45 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     }
 
     [Fact]
+    public async Task UpdateStatusAsync_WithNullImei_ThrowsException()
+    {
+#pragma warning disable CS8604 // Converting null literal or possible null value to non-nullable type.
+        string? imei = null;
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.UpdateStatusAsync(imei, "ApplicationSettings.StatusDisposed"));
+#pragma warning restore CS8604 // Possible null reference argument.
+    }
+
+    [Fact]
+    public async Task UpdateStatusAsync_WithNullStatus_ThrowsException()
+    {
+#pragma warning disable CS8604 // Converting null literal or possible null value to non-nullable type.
+        string? status = null;
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.UpdateStatusAsync("imei", status));
+#pragma warning restore CS8604 // Possible null reference argument.
+    }
+
+    [Fact]
+    public async Task UpdateStatusAsync_WithPhoneNotFound_ThrowsException()
+    {
+        await Assert.ThrowsAsync<ArgumentException>(() => _repository.UpdateStatusAsync("not found", ApplicationSettings.StatusDisposed));
+    }
+
+    [Fact]
+    public async Task UpdateStatusAsync_WithStatusChange_Succeeds()
+    {
+        _phone.Status = ApplicationSettings.StatusDecommissioned;
+        await _helper.DbContext.Phones.AddAsync(_phone);
+        await _helper.DbContext.SaveChangesAsync();
+
+        await _repository.UpdateStatusAsync(_phone.Imei, ApplicationSettings.StatusDisposed);
+
+        Phone? actual = await _helper.DbContext.Phones.FindAsync(_phone.Imei);
+        Assert.NotNull(actual);
+        Assert.Equal(ApplicationSettings.StatusDisposed,actual.Status);
+    }
+
+
+    [Fact]
     public async Task UpdateAsync_WithNullPhone_ThrowsException()
     {
 #pragma warning disable CS8600, CS8604 // Converting null literal or possible null value to non-nullable type.
@@ -254,16 +293,17 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     [Fact]
     public async Task UpdateAsync_WithPhoneFound_Succeeds()
     {
-        await _helper.DbContext.Phones.AddAsync(
-            new Phone() 
-            { 
-                Imei = _phone.Imei,
-                Condition = CONDITION_N,
-                Model = "old model",
-                OEM = OEMs.Apple,
-                Status = ApplicationSettings.Statuses[1]
-            });
+        Phone original = new()
+        {
+            Imei = _phone.Imei,
+            Condition = CONDITION_N,
+            Model = "old model",
+            OEM = OEMs.Apple,
+            Status = ApplicationSettings.Statuses[1]
+        };
+        await _helper.DbContext.Phones.AddAsync(original);
         await _helper.DbContext.SaveChangesAsync();
+        string lastUpdate = original.LastUpdate;
 
         await _repository.UpdateAsync(_phone);
 

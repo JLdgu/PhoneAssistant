@@ -103,18 +103,17 @@ public sealed class PhonesRepository : IPhonesRepository
         phone.LastUpdate = dbPhone.LastUpdate;
     }
 
+    public async Task UpdateStatusAsync(string imei, string status)
+    {
+        ArgumentNullException.ThrowIfNull(imei);
+        ArgumentNullException.ThrowIfNull(status);
+        Phone? dbPhone = await _dbContext.Phones.FindAsync(imei) ?? throw new ArgumentException($"IMEI {imei} not found.");
+    }
+
     public async Task UpdateAsync(Phone phone)
     {
-        if (phone is null)
-        {
-            throw new ArgumentNullException(nameof(phone));
-        }
-        Phone? dbPhone = await _dbContext.Phones.FindAsync(phone.Imei);
-        if (dbPhone is null)
-        {
-            throw new ArgumentException($"IMEI {phone.Imei} not found.");
-        }
-
+        ArgumentNullException.ThrowIfNull(phone);
+        Phone? dbPhone = await _dbContext.Phones.FindAsync(phone.Imei) ?? throw new ArgumentException($"IMEI {phone.Imei} not found.");
         await UpdateHistoryAsync(phone, UpdateTypes.UPDATE);        
 
         dbPhone.AssetTag = phone.AssetTag;

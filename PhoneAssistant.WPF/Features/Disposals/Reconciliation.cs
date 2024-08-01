@@ -8,6 +8,7 @@ using PhoneAssistant.WPF.Shared;
 namespace PhoneAssistant.WPF.Features.Disposals;
 
 public sealed class Reconciliation(IDisposalsRepository disposalsRepository,
+                                   IPhonesRepository phonesRepository,
                                    IMessenger messenger)
 {
     public async Task Execute()
@@ -40,7 +41,7 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository,
         messenger.Send(new LogMessage(MessageType.Default, "Reconciliation complete"));
     }
 
-    public static void CheckStatus(Disposal disposal)
+    public void CheckStatus(Disposal disposal)
     {
         ArgumentNullException.ThrowIfNull(disposal);
 
@@ -106,9 +107,15 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository,
                 disposal.Action = "Add phone to PhoneAssistant";
                 return;
             }
+            if (disposal.StatusPA == ApplicationSettings.StatusDecommissioned && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
+            { 
+                disposal.StatusPA = ApplicationSettings.StatusDisposed;
+                disposal.Action = "Complete";
+                return;
+            }
             if (disposal.StatusPA == ApplicationSettings.StatusDisposed && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
             {
-                disposal.Action = null;
+                disposal.Action = "Complete";
                 return;
             }
         }

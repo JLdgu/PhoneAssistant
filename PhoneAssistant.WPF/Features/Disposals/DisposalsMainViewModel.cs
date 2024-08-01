@@ -122,14 +122,11 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
         if (validSCC)
         {
             LatestReconiliation = "Importing from Phones";
-            ImportPhoneAssistant import = new(_disposalsRepository,
-                _phonesRepository,
-                _messenger);
+            ImportPhoneAssistant import = new(_disposalsRepository, _phonesRepository, _messenger);
             await import.Execute();
 
             LatestReconiliation = "Reconciling imports";
-            Reconciliation reconcile = new(_disposalsRepository,
-                _messenger);
+            Reconciliation reconcile = new(_disposalsRepository, _phonesRepository, _messenger);                
             await reconcile.Execute();
 
             LatestReconiliation = "Reconciliation complete";

@@ -1,5 +1,6 @@
 ﻿using System.CommandLine;
 using System.Reflection;
+using System.Xml.Linq;
 
 using DbUp;
 using DbUp.Engine;
@@ -10,8 +11,8 @@ public sealed class Program
 {
     private static Task<int> Main(string[] args)
     {
-        
-        CliConfiguration configuration = GetConfiguration();        
+
+        CliConfiguration configuration = GetConfiguration();
         return configuration.InvokeAsync(args);
     }
 
@@ -27,36 +28,51 @@ public sealed class Program
             Description = "The path to the live PhoneAssistant database",
             DefaultValueFactory = _ => @"K:\FITProject\ICTS\Mobile Phones\PhoneAssistant\phoneassistant.db"
         };
-        CliCommand liveUpdateCommand = new("live", "Apply updates to live database")
-            {
-                liveDb
-            };
+        CliOption<bool> dryRun = new("--dryRun", "-d");
+
+        CliCommand liveUpdateCommand = new("live", "Apply updates to LIVE database")
+        {
+            liveDb,
+            dryRun
+        };
         liveUpdateCommand.SetAction((ParseResult parseResult) =>
         {
             string? db = parseResult.CommandResult.GetValue(testDb);
-            ApplyUpdates(db, parseResult);
+            bool upgrade = !parseResult.CommandResult.GetValue(dryRun);
+            ApplyUpdates(db, parseResult, upgrade);
+        });
+
+        CliCommand testUpdateCommand = new("test", "Apply updates to TEST database")
+        {
+            testDb,
+            dryRun
+        };
+        testUpdateCommand.SetAction((ParseResult parseResult) =>
+        {
+            string? db = parseResult.CommandResult.GetValue(testDb);
+            bool upgrade = !parseResult.CommandResult.GetValue(dryRun);
+            ApplyUpdates(db, parseResult, upgrade);
         });
 
         CliRootCommand rootCommand = new("Utility application to update PhoneAssistant database")
             {
-                testDb,            
                 liveUpdateCommand,
+                testUpdateCommand
+
             };
-        rootCommand.SetAction((ParseResult parseResult) =>
-        {
-            string? db = parseResult.CommandResult.GetValue(testDb);
-            ApplyUpdates(db, parseResult);
-        });
         return new CliConfiguration(rootCommand);
     }
 
-    private static void ApplyUpdates(string? db, ParseResult parseResult)
+    private static void ApplyUpdates(string? db, ParseResult parseResult, bool upgrade)
     {
-        parseResult.Configuration.Output.WriteLine($"Applying updates to {db}");
+        string dryRun = "DRY RUN: ";
+        if (upgrade) dryRun = string.Empty;
+
+        parseResult.Configuration.Output.WriteLine("{0}Applying updates to {1}", dryRun, db);
         if (db is null)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Database path not supplied");
+            Console.WriteLine("{0}Database path not supplied", dryRun);
             Console.ResetColor();
             return;
         }
@@ -64,9 +80,16 @@ public sealed class Program
         if (!File.Exists(db))
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Database not found");
+            Console.WriteLine("{0}Database not found", dryRun);
             Console.ResetColor();
             return;
+        }
+        if (upgrade)
+        {
+            DirectoryInfo dbPath = new(Path.Combine(Path.GetDirectoryName(db)!, "Backup"));
+            string dbName = new FileInfo(db).Name;
+            string backup = Path.Combine(dbPath.FullName, dbName.Replace(".", $"{DateTime.Now:yyy-MM-dd}_PreMigration."));
+            File.Copy(db, backup);
         }
 
         string connectionString = $@"DataSource={db};";
@@ -79,21 +102,29 @@ public sealed class Program
         List<SqlScript> scripts = updater.GetDiscoveredScripts();
         foreach (SqlScript script in scripts)
         {
-            Console.WriteLine(script.Name);
+            Console.WriteLine("{0}{1}", dryRun, script.Name);
         }
 
-        DatabaseUpgradeResult result = updater.PerformUpgrade();
-
-        if (!result.Successful)
+        if (upgrade)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(result.Error);
-            Console.ResetColor();
-            return;
-        }
+            DatabaseUpgradeResult result = updater.PerformUpgrade();
 
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("Update scripts applied successfully.");
-        Console.ResetColor();
+            if (!result.Successful)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(result.Error);
+                Console.ResetColor();
+                return;
+            }
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("{0}Update scripts applied successfully.", dryRun);
+            Console.ResetColor();
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("{0}No update scripts were applied", dryRun);
+            Console.ResetColor();
+        }
     }
 }

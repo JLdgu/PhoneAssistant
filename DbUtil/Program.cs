@@ -37,7 +37,7 @@ public sealed class Program
         };
         liveUpdateCommand.SetAction((ParseResult parseResult) =>
         {
-            string? db = parseResult.CommandResult.GetValue(testDb);
+            string? db = parseResult.CommandResult.GetValue(liveDb);
             bool upgrade = !parseResult.CommandResult.GetValue(dryRun);
             ApplyUpdates(db, parseResult, upgrade);
         });

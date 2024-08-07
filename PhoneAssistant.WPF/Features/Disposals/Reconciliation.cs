@@ -7,16 +7,27 @@ using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.Disposals;
 
-public sealed class Reconciliation(IDisposalsRepository disposalsRepository,
-                                   IPhonesRepository phonesRepository,
-                                   IMessenger messenger)
+public sealed class Reconciliation
 {
+    private readonly IDisposalsRepository _disposalsRepository;
+    private readonly IPhonesRepository _phonesRepository;
+    private readonly IMessenger _messenger;
+
+    public Reconciliation(IDisposalsRepository disposalsRepository,
+                          IPhonesRepository phonesRepository,
+                          IMessenger messenger)
+    {
+        _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
+        _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
+        _disposalsRepository = disposalsRepository ?? throw new ArgumentNullException(nameof(disposalsRepository));
+    }
+
     public async Task Execute()
     {
-        messenger.Send(new LogMessage(MessageType.Default, $"Reconciling imports"));
+        _messenger.Send(new LogMessage(MessageType.Default, $"Reconciling imports"));
 
-        IEnumerable<Disposal> disposals = await disposalsRepository.GetAllDisposalsAsync();
-        messenger.Send(new LogMessage(MessageType.MaxProgress, "", disposals.Count()));
+        IEnumerable<Disposal> disposals = await _disposalsRepository.GetAllDisposalsAsync();
+        _messenger.Send(new LogMessage(MessageType.MaxProgress, "", disposals.Count()));
 
         int row = 1;
         TrackProgress progress = new(disposals.Count());
@@ -27,118 +38,123 @@ public sealed class Reconciliation(IDisposalsRepository disposalsRepository,
             foreach (Disposal disposal in disposals)
             {
                 lastAction = disposal.Action;
-                CheckStatus(disposal);
+                await CheckStatusAsync(disposal);
                 if (disposal.Action != lastAction)
-                    await disposalsRepository.UpdateAsync(disposal);
+                    await _disposalsRepository.UpdateAsync(disposal);
 
                 if (progress.Milestone(row))
-                    messenger.Send(new LogMessage(MessageType.Progress, "", row));
+                    _messenger.Send(new LogMessage(MessageType.Progress, "", row));
 
                 row++;
             }
         });
 
-        messenger.Send(new LogMessage(MessageType.Default, "Reconciliation complete"));
+        _messenger.Send(new LogMessage(MessageType.Default, "Reconciliation complete"));
     }
 
-    public void CheckStatus(Disposal disposal)
+    public async Task CheckStatusAsync(Disposal disposal)
     {
         ArgumentNullException.ThrowIfNull(disposal);
 
-        if (!LuhnValidator.IsValid(disposal.Imei,15)) 
+        if (disposal.Action is not null) return;
+
+        if (!LuhnValidator.IsValid(disposal.Imei, 15))
         {
-            disposal.Action = "Imei invalid";
-            return;
-        }
-        
-        if (disposal.StatusMS is null && disposal.StatusPA == ApplicationSettings.StatusDisposed && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
-        {
-            disposal.Action = null;
+            disposal.Action = ReconciliationConstants.ImeiInvalid;
             return;
         }
 
-        if (disposal.StatusMS is null && disposal.StatusPA is null && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
+        if (disposal.StatusMS == ApplicationSettings.StatusDisposed && disposal.StatusPA == ApplicationSettings.StatusDisposed)
         {
-            disposal.Action = "Check CI linked to Disposal SR or add IMEI to Phones";
+            disposal.Action = ReconciliationConstants.Complete;
             return;
         }
 
-        if (disposal.StatusMS == ApplicationSettings.StatusAwaitingReturn ||
-            disposal.StatusMS == ApplicationSettings.StatusLost ||
-            disposal.StatusMS == ApplicationSettings.StatusProduction ||
-            disposal.StatusMS == ApplicationSettings.StatusUnlocated)
+        if (disposal.StatusMS == ApplicationSettings.StatusAwaitingReturn)
         {
-            if (disposal.StatusPA is null && disposal.StatusSCC is null)
-            {
-                disposal.Action = null;
-                return;
-            }
-        }
-
-        if (disposal.StatusMS == ApplicationSettings.StatusDecommissioned && disposal.StatusPA == ApplicationSettings.StatusDecommissioned)
-        {
-            if (disposal.StatusSCC == null)
-            {
-                disposal.Action = null;
-                return;
-            }
-            if (disposal.StatusSCC == ApplicationSettings.StatusDisposed)
-            {
-                disposal.Action = "Update phone status in myScomis and PhoneAssistant";
-                return;
-            }
-        }
-
-        if (disposal.StatusMS == ApplicationSettings.StatusDecommissioned && disposal.StatusPA == ApplicationSettings.StatusDisposed && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
-        {
-            disposal.Action = "Update myScomis status to Disposed";
+            disposal.Action = ReconciliationConstants.MyScomisExport;
             return;
         }
-        
-        if (disposal.StatusMS == ApplicationSettings.StatusDisposed)
-        {
-            if (disposal.StatusPA is null && disposal.StatusSCC is null)
-            {
-                disposal.Action = "Check if phone is an SCC disposal";
-                return;
-            }
-            if (disposal.StatusPA is null && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
-            {
-                disposal.Action = "Add phone to PhoneAssistant";
-                return;
-            }
-            if (disposal.StatusPA == ApplicationSettings.StatusDecommissioned && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
-            { 
-                disposal.StatusPA = ApplicationSettings.StatusDisposed;
-                disposal.Action = "Complete";
-                return;
-            }
-            if (disposal.StatusPA == ApplicationSettings.StatusDisposed && disposal.StatusSCC == ApplicationSettings.StatusDisposed)
-            {
-                disposal.Action = "Complete";
-                return;
-            }
-        }
 
-        if (disposal.StatusMS == ApplicationSettings.StatusInStock)
+        if (disposal.StatusMS is null && disposal.StatusPA == ApplicationSettings.StatusDisposed && disposal.TrackedSKU == false)
         {
-            if (disposal.StatusPA is null && disposal.StatusSCC is null)
-            {
-                disposal.Action = "Phone needs to be logged in PhoneAssistant";
-                return;
-            }
-            if (disposal.StatusPA == ApplicationSettings.StatusInStock && disposal.StatusSCC is null)
-            {
-                disposal.Action = null;
-                return;
-            }
-        }
-
-        if (disposal.StatusMS == ApplicationSettings.StatusProduction && disposal.StatusPA == ApplicationSettings.StatusProduction && disposal.StatusSCC is null)
-        {
-            disposal.Action = null;
+            disposal.Action = ReconciliationConstants.Complete;
             return;
         }
+
+        //if (disposal.StatusMS == ApplicationSettings.StatusDisposed)
+        //{
+        //    if (disposal.StatusPA is null)
+        //    {
+        //        disposal.Action = "Add phone to PhoneAssistant";
+        //        return;
+        //    }
+        //    if (disposal.StatusPA == ApplicationSettings.StatusDecommissioned)
+        //    {
+        //        disposal.StatusPA = ApplicationSettings.StatusDisposed;
+        //        phonesRepository.UpdateStatusAsync(disposal.Imei, ApplicationSettings.StatusDisposed);
+        //        disposal.Action = "Complete";
+        //        return;
+        //    }
+        //    if (disposal.StatusPA == ApplicationSettings.StatusDisposed)
+        //    {
+        //        disposal.Action = ReconciliationConstants.Complete;
+        //        return;
+        //    }
+        //}
+
+        //if (disposal.StatusMS is null && disposal.StatusPA is null)
+        //{
+        //    disposal.Action = "Check CI linked to Disposal SR or add IMEI to Phones";
+        //    return;
+        //}
+
+        //if (disposal.StatusMS == ApplicationSettings.StatusAwaitingReturn ||
+        //    disposal.StatusMS == ApplicationSettings.StatusLost ||
+        //    disposal.StatusMS == ApplicationSettings.StatusProduction ||
+        //    disposal.StatusMS == ApplicationSettings.StatusUnlocated)
+        //{
+        //    disposal.Action = "Update phone status in myScomis";
+        //}
+
+        //if (disposal.StatusMS == ApplicationSettings.StatusDecommissioned && disposal.StatusPA == ApplicationSettings.StatusDecommissioned)
+        //{
+        //if (disposal.StatusSCC == null)
+        //{
+        //    disposal.Action = null;
+        //    return;
+        //}
+        //    disposal.StatusPA = ApplicationSettings.StatusDisposed;
+        //    phonesRepository.UpdateStatusAsync(disposal.Imei, ApplicationSettings.StatusDisposed);
+        //    disposal.Action = "Update phone status in myScomis";
+        //    return;
+        //}
+
+        //if (disposal.StatusMS == ApplicationSettings.StatusDecommissioned && disposal.StatusPA == ApplicationSettings.StatusDisposed)
+        //{
+        //    disposal.Action = "Update myScomis status to Disposed";
+        //    return;
+        //}
+
+        //if (disposal.StatusMS == ApplicationSettings.StatusInStock)
+        //{
+        //    if (disposal.StatusPA is null)
+        //    {
+        //        disposal.Action = "Phone needs to be logged in PhoneAssistant";
+        //        return;
+        //    }
+        //    if (disposal.StatusPA == ApplicationSettings.StatusInStock)
+        //    {
+        //        disposal.Action = null;
+        //        return;
+        //    }
+        //}
+
+        //if (disposal.StatusMS == ApplicationSettings.StatusProduction && disposal.StatusPA == ApplicationSettings.StatusProduction)
+        //{
+        //    disposal.Action = null;
+        //    return;
+        //}
 
         disposal.Action = "No matching reconcilation rule";
     }

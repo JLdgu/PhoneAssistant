@@ -45,7 +45,7 @@ public sealed class ImportMyScomis(string importFile,
                 string imei = row.GetCell(3).StringCellValue;
                 string status = row.GetCell(7).StringCellValue;
 
-                Result result = await disposalsRepository.AddOrUpdateMSAsync(imei, status);
+                Result result = await disposalsRepository.UpdateMSAsync(imei, status);
                 switch (result)
                 {
                     case Result.Added:

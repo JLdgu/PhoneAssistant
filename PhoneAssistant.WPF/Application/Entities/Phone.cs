@@ -15,7 +15,7 @@ public class Phone
     public string? NewUser { get; set; }
     public string? Notes { get; set; }
     public string? DespatchDetails { get; set; }
-    public string LastUpdate { get; set; }
+    public string LastUpdate { get; set; } = string.Empty;
 }
 
 public enum OEMs

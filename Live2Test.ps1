@@ -9,4 +9,4 @@ If (Test-Path -Path $test) {
 
 Copy-Item $live $test
 
-dotnet run --project DbUtil
+dotnet run --project DbUtil test

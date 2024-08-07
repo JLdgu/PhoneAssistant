@@ -13,5 +13,7 @@ public interface IPhonesRepository
     Task<bool> PhoneNumberExistsAsync(string phoneNumber);
     Task RemoveSimFromPhoneAsync(Phone phone);
     Task UpdateAsync(Phone phone);
+    Task UpdateStatusAsync(string imei, string status);
+
     //Task UpdateKeyAsync(string oldImei, string newImei);
 }

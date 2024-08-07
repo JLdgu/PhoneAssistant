@@ -19,63 +19,6 @@ public sealed class DisposalsRepository : IDisposalsRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<Result> AddOrUpdateMSAsync(string imei, string status)
-    {
-        Disposal? disposal = await _dbContext.Disposals.FindAsync(imei);
-        if (disposal is null)
-        {
-            disposal = new() { Imei = imei, StatusMS = status };
-            await AddAsync(disposal);
-            return Result.Added;
-        }
-
-        if (disposal.StatusMS == status)
-            return Result.Unchanged;
-
-        disposal.StatusMS = status;
-        await UpdateAsync(disposal);
-        return Result.Updated;
-    }
-
-    public async Task<Result> AddOrUpdatePAAsync(string imei, string status, int? sr)
-    {
-        Disposal? disposal = await _dbContext.Disposals.FindAsync(imei);
-        if (disposal is null)
-        {
-            disposal = new() { Imei = imei, StatusPA = status, SR = sr };
-            await AddAsync(disposal);
-            return Result.Added;
-        }
-
-        if (disposal.StatusPA == status && disposal.SR == sr)
-            return Result.Unchanged;
-
-        disposal.StatusPA = status;
-        disposal.SR = sr;
-
-        await UpdateAsync(disposal);
-        return Result.Updated;
-    }
-
-    public async Task<Result> AddOrUpdateSCCAsync(string imei, string status, int? certificate)
-    {
-        Disposal? disposal = await _dbContext.Disposals.FindAsync(imei);
-        if (disposal is null)
-        {
-            disposal = new() { Imei = imei, StatusSCC = status, Certificate = certificate };
-            await AddAsync(disposal);
-            return Result.Added;
-        }
-
-        if (disposal.StatusSCC == status && disposal.Certificate == certificate)
-            return Result.Unchanged;
-
-        disposal.StatusSCC = status;
-        disposal.Certificate = certificate;
-        await UpdateAsync(disposal);
-        return Result.Updated;
-    }
-
     public async Task<IEnumerable<Disposal>> GetAllDisposalsAsync()
     {
         IEnumerable<Disposal> disposals = await _dbContext.Disposals.ToListAsync();
@@ -86,6 +29,11 @@ public sealed class DisposalsRepository : IDisposalsRepository
     {
         Disposal? disposal = await _dbContext.Disposals.FindAsync(imei);
         return disposal;
+    }
+
+    public async Task<StockKeepingUnit?> GetSKUAsync(string manufacturer, string model)
+    {
+        return await _dbContext.SKUs.FirstOrDefaultAsync(s => s.Manufacturer == manufacturer && s.Model == model);
     }
 
     public async Task TruncateAsync()
@@ -99,4 +47,43 @@ public sealed class DisposalsRepository : IDisposalsRepository
         _dbContext.Disposals.Update(disposal);
         await _dbContext.SaveChangesAsync();
     }
+
+    public async Task<Result> UpdateMSAsync(string imei, string status)
+    {
+        Disposal? disposal = await _dbContext.Disposals.FindAsync(imei);
+        if (disposal is null) throw new KeyNotFoundException(nameof(disposal));
+        //{
+        //    disposal = new() { Imei = imei, StatusMS = status };
+        //    await AddAsync(disposal);
+        //    return Result.Added;
+        //}
+
+        if (disposal.StatusMS == status)
+            return Result.Unchanged;
+
+        disposal.StatusMS = status;
+        await UpdateAsync(disposal);
+        return Result.Updated;
+    }
+
+    public async Task<Result> UpdatePAAsync(string imei, string status, int sr)
+    {
+        Disposal? disposal = await _dbContext.Disposals.FindAsync(imei);
+        if (disposal is null) throw new KeyNotFoundException(nameof(disposal));
+        //{
+        //    disposal = new() { Imei = imei, StatusPA = status, SR = sr };
+        //    await AddAsync(disposal);
+        //    return Result.Added;
+        //}
+
+        if (disposal.StatusPA == status && disposal.SR == sr)
+            return Result.Unchanged;
+
+        disposal.StatusPA = status;
+        disposal.SR = sr;
+
+        await UpdateAsync(disposal);
+        return Result.Updated;
+    }
+
 }

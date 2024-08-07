@@ -103,13 +103,6 @@ public sealed class PhonesRepository : IPhonesRepository
         phone.LastUpdate = dbPhone.LastUpdate;
     }
 
-    public async Task UpdateStatusAsync(string imei, string status)
-    {
-        ArgumentNullException.ThrowIfNull(imei);
-        ArgumentNullException.ThrowIfNull(status);
-        Phone? dbPhone = await _dbContext.Phones.FindAsync(imei) ?? throw new ArgumentException($"IMEI {imei} not found.");
-    }
-
     public async Task UpdateAsync(Phone phone)
     {
         ArgumentNullException.ThrowIfNull(phone);
@@ -133,6 +126,16 @@ public sealed class PhonesRepository : IPhonesRepository
 
         await _dbContext.SaveChangesAsync();
         phone.LastUpdate = dbPhone.LastUpdate;
+    }
+
+    public async Task UpdateStatusAsync(string imei, string status)
+    {
+        ArgumentNullException.ThrowIfNull(imei);
+        ArgumentNullException.ThrowIfNull(status);
+        Phone? dbPhone = await _dbContext.Phones.FindAsync(imei) ?? throw new ArgumentException($"IMEI {imei} not found.");
+
+        dbPhone.Status = status;
+        await UpdateAsync(dbPhone);
     }
 
     private async Task UpdateHistoryAsync(Phone phone, UpdateTypes updateType)
@@ -161,6 +164,7 @@ public sealed class PhonesRepository : IPhonesRepository
         history = new(phone, updateType);
         _dbContext.UpdateHistoryPhones.Add(history);
     }
+
     //public async Task<string> UpdateKeyAsync(string oldImei, string newImei)
     //{
     //    if (oldImei is null)

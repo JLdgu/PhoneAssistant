@@ -7,11 +7,13 @@ using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace PhoneAssistant.Tests.Application.Repositories;
 
 public sealed class PhonesRepositoryTests : DbTestHelper
 {
+    private readonly ITestOutputHelper _output;
     readonly DbTestHelper _helper = new();
     readonly PhonesRepository _repository;
 
@@ -46,8 +48,9 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Status = STATUS
     };
 
-    public PhonesRepositoryTests()
+    public PhonesRepositoryTests(ITestOutputHelper output)
     {
+        _output = output;
         _repository = new(_helper.DbContext);
     }
 
@@ -273,7 +276,6 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Assert.NotNull(actual);
         Assert.Equal(ApplicationSettings.StatusDisposed,actual.Status);
     }
-
 
     [Fact]
     public async Task UpdateAsync_WithNullPhone_ThrowsException()

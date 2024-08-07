@@ -29,7 +29,7 @@ public sealed class ImportPhoneAssistant(IDisposalsRepository disposalsRepositor
                 Phone? phone = await phonesRepository.GetPhoneAsync(disposal.Imei);
                 if (phone is not null)
                 {
-                    Result result = await disposalsRepository.AddOrUpdatePAAsync(disposal.Imei, phone.Status, phone.SR);
+                    Result result = await disposalsRepository.UpdatePAAsync(disposal.Imei, phone.Status, (int)phone.SR);
                     switch (result)
                     {
                         case Result.Added:

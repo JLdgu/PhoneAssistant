@@ -31,6 +31,10 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
         messenger.RegisterAll(this);
 
         BindingOperations.EnableCollectionSynchronization(LogItems, new object());
+#if DEBUG
+        SCCFile = @"C:\Users\Jonathan.Linstead\OneDrive - Devon County Council\EUC Sharepoint\Mobile Phones\Disposals\SR 199260 CR 145382 Units.xls";
+        ScomisFile = @"C:\Users\Jonathan.Linstead\OneDrive - Devon County Council\EUC Sharepoint\Mobile Phones\Disposals\SR 199260 linked CIs.xlsx";
+#endif
     }
 
     [ObservableProperty]
@@ -86,16 +90,10 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     private async Task Reconcile()
     {
         Importing(true);
+        LogItems.Clear();
         ShowProgress = Visibility.Visible;
 
         await _disposalsRepository.TruncateAsync();
-
-        LatestReconiliation = "Importing from myScomis spreadsheet";
-        ImportMyScomis ms = new(ScomisFile!,
-            _disposalsRepository,
-            _messenger);
-        await ms.Execute();
-        ScomisFile = null;
 
         LatestReconiliation = "Importing from SCC spreadsheet";
         bool validSCC = true;
@@ -119,6 +117,14 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
                 throw;
         }
         SCCFile = null;
+
+        LatestReconiliation = "Importing from myScomis spreadsheet";
+        ImportMyScomis ms = new(ScomisFile!,
+            _disposalsRepository,
+            _messenger);
+        await ms.Execute();
+        ScomisFile = null;
+
         if (validSCC)
         {
             LatestReconiliation = "Importing from Phones";

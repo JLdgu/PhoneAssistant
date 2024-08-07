@@ -89,6 +89,12 @@ public sealed class Program
             DirectoryInfo dbPath = new(Path.Combine(Path.GetDirectoryName(db)!, "Backup"));
             string dbName = new FileInfo(db).Name;
             string backup = Path.Combine(dbPath.FullName, dbName.Replace(".", $"{DateTime.Now:yyy-MM-dd}_PreMigration."));
+            int x = 0;
+            while (File.Exists(backup))
+            {
+                backup = Path.Combine(dbPath.FullName, dbName.Replace(".", $"{DateTime.Now:yyy-MM-dd}_PreMigration{x}."));
+                x++;
+            }
             File.Copy(db, backup);
         }
 

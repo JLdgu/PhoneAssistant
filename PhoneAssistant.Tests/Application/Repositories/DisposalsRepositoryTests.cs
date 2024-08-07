@@ -15,26 +15,43 @@ public class DisposalsRepositoryTests
         _repository = new(_helper.DbContext);
     }
 
+
+    [Fact]
+    public async Task GetSKU_ShouldBeCaseInsensitive()
+    {
+        List<StockKeepingUnit> mixedcase = [
+            new StockKeepingUnit() { Manufacturer = "DeddeeE", Model = "BbCc", TrackedSKU = true },
+            new StockKeepingUnit() { Manufacturer = "apple", Model = "iPhone se", TrackedSKU = true },
+            new StockKeepingUnit() { Manufacturer = "APple", Model = "iphone 6s", TrackedSKU = true },
+            new StockKeepingUnit() { Manufacturer = "Apple", Model = "Iphone 8S", TrackedSKU = true }
+            ];
+        _helper.DbContext.SKUs.AddRange(mixedcase);
+        await _helper.DbContext.SaveChangesAsync();
+
+        foreach (StockKeepingUnit sku in _helper.DbContext.SKUs.ToList())
+        {
+            StockKeepingUnit? upper = await _repository.GetSKUAsync(sku.Manufacturer.ToUpper(), sku.Model.ToUpper());
+            StockKeepingUnit? lower = await _repository.GetSKUAsync(sku.Manufacturer.ToLower(), sku.Model.ToLower());
+
+            Assert.Equal(sku, upper);
+            Assert.Equal(sku, lower);
+        }
+    }
+
     #region MS Import
     [Fact]
-    public async Task AddOrUpdateMSAsync_WithNew_AddsDisposal()
+    public async Task UpdateMSAsync_WithMissing_ThrowsException()
     {
-        Result result = await _repository.AddOrUpdateMSAsync("imei", "status");
-
-        Assert.Equal(Result.Added, result);
-        Disposal? disposal = await _helper.DbContext.Disposals.FindAsync("imei");
-        Assert.NotNull(disposal);
-        Assert.Equal("imei", disposal.Imei);
-        Assert.Equal("status", disposal.StatusMS);
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _repository.UpdateMSAsync("imei", "status"));
     }
 
     [Fact]
-    public async Task AddOrUpdateMSAsync_WithModifiedExisting_UpdatesDisposal()
+    public async Task UpdateMSAsync_WithModifiedExisting_UpdatesDisposal()
     {        
-        await _helper.DbContext.Disposals.AddAsync(new Disposal() { Imei = "imei", StatusMS = "old status" });
+        await _helper.DbContext.Disposals.AddAsync(new Disposal() { Imei = "imei", StatusMS = "old status", Manufacturer = "OEM", Model = "model", TrackedSKU = true });
         await _helper.DbContext.SaveChangesAsync();
 
-        Result result = await _repository.AddOrUpdateMSAsync("imei", "new status");
+        Result result = await _repository.UpdateMSAsync("imei", "new status");
 
         Assert.Equal(Result.Updated, result);
         Disposal? disposal = await _helper.DbContext.Disposals.FindAsync("imei");
@@ -44,12 +61,12 @@ public class DisposalsRepositoryTests
     }
 
     [Fact]
-    public async Task AddOrUpdateMSAsync_WithUnmodifiedExisting_ReturnsUnchanged()
+    public async Task UpdateMSAsync_WithUnmodifiedExisting_ReturnsUnchanged()
     {
-        await _helper.DbContext.Disposals.AddAsync(new Disposal() { Imei = "imei", StatusMS = "status" });
+        await _helper.DbContext.Disposals.AddAsync(new Disposal() { Imei = "imei", StatusMS = "status", Manufacturer = "OEM", Model = "model", TrackedSKU = true });
         await _helper.DbContext.SaveChangesAsync();
 
-        Result result = await _repository.AddOrUpdateMSAsync("imei", "status");
+        Result result = await _repository.UpdateMSAsync("imei", "status");
 
         Assert.Equal(Result.Unchanged, result);
         Disposal? disposal = await _helper.DbContext.Disposals.FindAsync("imei");
@@ -61,29 +78,22 @@ public class DisposalsRepositoryTests
 
     #region PA Import
     [Fact]
-    public async Task AddOrUpdatePAAsync_WithNew_AddsDisposal()
+    public async Task UpdatePAAsync_WithMissing_ThrowsException()
     {
-        Result result = await _repository.AddOrUpdatePAAsync("imei", "status",15);
-
-        Assert.Equal(Result.Added, result);
-        Disposal? disposal = await _helper.DbContext.Disposals.FindAsync("imei");
-        Assert.NotNull(disposal);
-        Assert.Equal("imei", disposal.Imei);
-        Assert.Equal("status", disposal.StatusPA);
-        Assert.Equal(15, disposal.SR);
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _repository.UpdatePAAsync("imei", "status",15));
     }
 
     [Theory]
-    [InlineData("old", "new", null,15)]
-    [InlineData("same", "same", null, 15)]
-    [InlineData("old", "new", 10, 20)]
+    [InlineData("old", "new", 15, 15)]
+    [InlineData("same", "same", 15, 20)]
+    [InlineData("old", "new", 10, 10)]
     [InlineData("same", "same", 10, 20)]
-    public async Task AddOrUpdatePAAsync_WithModifiedExisting_UpdatesDisposal(string oldStatus, string newStatus, int? oldSR, int newSR)
+    public async Task UpdatePAAsync_WithModified_UpdatesDisposal(string oldStatus, string newStatus, int oldSR, int newSR)
     {
-        await _helper.DbContext.Disposals.AddAsync(new Disposal() { Imei = "imei", StatusPA = oldStatus, SR = oldSR });
+        await _helper.DbContext.Disposals.AddAsync(new Disposal() { Imei = "imei", StatusPA = oldStatus, SR = oldSR, Manufacturer = "OEM", Model = "model", TrackedSKU = true });
         await _helper.DbContext.SaveChangesAsync();
 
-        Result result = await _repository.AddOrUpdatePAAsync("imei", newStatus, newSR);
+        Result result = await _repository.UpdatePAAsync("imei", newStatus, newSR);
 
         Assert.Equal(Result.Updated, result);
         Disposal? disposal = await _helper.DbContext.Disposals.FindAsync("imei");
@@ -94,12 +104,12 @@ public class DisposalsRepositoryTests
     }
 
     [Fact]
-    public async Task AddOrUpdatePAAsync_WithUnmodifiedExisting_ReturnsUnchanged()
+    public async Task UpdatePAAsync_WithUnmodified_ReturnsUnchanged()
     {
-        await _helper.DbContext.Disposals.AddAsync(new Disposal() { Imei = "imei", StatusPA = "status" , SR = 25});
+        await _helper.DbContext.Disposals.AddAsync(new Disposal() { Imei = "imei", StatusPA = "status", SR = 25, Manufacturer = "OEM", Model = "model", TrackedSKU = true });
         await _helper.DbContext.SaveChangesAsync();
 
-        Result result = await _repository.AddOrUpdatePAAsync("imei", "status", 25);
+        Result result = await _repository.UpdatePAAsync("imei", "status", 25);
 
         Assert.Equal(Result.Unchanged, result);
         Disposal? disposal = await _helper.DbContext.Disposals.FindAsync("imei");
@@ -107,61 +117,6 @@ public class DisposalsRepositoryTests
         Assert.Equal("imei", disposal.Imei);
         Assert.Equal("status", disposal.StatusPA);
         Assert.Equal(25, disposal.SR);
-    }
-    #endregion
-
-    #region SCC Import
-    [Theory]
-    [InlineData(null)]
-    [InlineData(100)]
-    public async Task AddOrUpdateSCCAsync_WithNew_AddsDisposal(int? certificate)
-    {
-        Result result = await _repository.AddOrUpdateSCCAsync("imei", "status", certificate);
-
-        Assert.Equal(Result.Added, result);
-        Disposal? disposal = await _helper.DbContext.Disposals.FindAsync("imei");
-        Assert.NotNull(disposal);
-        Assert.Equal("imei", disposal.Imei);
-        Assert.Equal("status", disposal.StatusSCC);
-        Assert.Equal(certificate, disposal.Certificate);
-    }
-
-    [Theory]
-    [InlineData("old", "new", null, 115)]
-    [InlineData("same", "same", null, 115)]
-    [InlineData("old", "new", 110, 120)]
-    [InlineData("same", "same", 110, 120)]
-    public async Task AddOrUpdateSCCAsync_WithModifiedExisting_UpdatesDisposal(string oldStatus, string newStatus, int? oldCertificate, int newCertificate)
-    {
-        await _helper.DbContext.Disposals.AddAsync(new Disposal() { Imei = "imei", StatusSCC = oldStatus, Certificate = oldCertificate });
-        await _helper.DbContext.SaveChangesAsync();
-
-        Result result = await _repository.AddOrUpdateSCCAsync("imei", newStatus, newCertificate);
-
-        Assert.Equal(Result.Updated, result);
-        Disposal? disposal = await _helper.DbContext.Disposals.FindAsync("imei");
-        Assert.NotNull(disposal);
-        Assert.Equal("imei", disposal.Imei);
-        Assert.Equal(newStatus, disposal.StatusSCC);
-        Assert.Equal(newCertificate, disposal.Certificate);
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData(125)]
-    public async Task AddOrUpdateSCCAsync_WithUnmodifiedExisting_ReturnsUnchanged(int? certificate)
-    {
-        await _helper.DbContext.Disposals.AddAsync(new Disposal() { Imei = "imei", StatusSCC = "status", Certificate = certificate });
-        await _helper.DbContext.SaveChangesAsync();
-
-        Result result = await _repository.AddOrUpdateSCCAsync("imei", "status", certificate);
-
-        Assert.Equal(Result.Unchanged, result);
-        Disposal? disposal = await _helper.DbContext.Disposals.FindAsync("imei");
-        Assert.NotNull(disposal);
-        Assert.Equal("imei", disposal.Imei);
-        Assert.Equal("status", disposal.StatusSCC);
-        Assert.Equal(certificate, disposal.Certificate);
     }
     #endregion
 }

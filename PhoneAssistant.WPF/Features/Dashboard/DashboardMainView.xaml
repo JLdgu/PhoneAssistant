@@ -29,6 +29,14 @@
             <StackPanel Orientation="Vertical">
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.408.7" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #59 Backup database weekly" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #58 Create setting for default decommissioned phones ticket" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
                         <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.407.20" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #57 Highlight selected view on startup" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #55 Add session log to add item view" />

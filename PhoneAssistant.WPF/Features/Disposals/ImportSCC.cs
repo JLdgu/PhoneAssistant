@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Eventing.Reader;
-using System.IO;
+﻿using System.IO;
 
 using CommunityToolkit.Mvvm.Messaging;
 
@@ -15,6 +14,13 @@ public sealed class ImportSCC(string importFile,
                               IDisposalsRepository disposalsRepository,
                               IMessenger messenger)
 {
+    public const int TrackerId = 2; 
+    public const int SerialNumber = 3;
+    public const int Status = 8;
+    public const int Manufacturer = 12;
+    public const int Model = 13;
+
+
     public async Task Execute()
     {
         using FileStream? stream = new(importFile, FileMode.Open, FileAccess.Read);
@@ -39,58 +45,13 @@ public sealed class ImportSCC(string importFile,
             for (int i = (sheet.FirstRowNum + 4); i <= sheet.LastRowNum; i++)
             {
                 IRow row = sheet.GetRow(i);
-                if (row == null) continue;
-
-                string imei;
-                if (row.GetCell(3).CellType == CellType.Numeric)
+                Disposal disposal = await ParseRowAsync(row);
+                if (disposal.Action == ReconciliationConstants.ImeiInvalid)
                 {
-                    imei = row.GetCell(3).NumericCellValue.ToString("000000000000000");
-                }
-                else
-                {
-                    if (row.GetCell(3).CellType == CellType.String)
-                    {
-                        imei = row.GetCell(3).StringCellValue.PadLeft(15, '0');
-
-                        bool isNumeric = long.TryParse(imei, out _);
-                        if (!isNumeric)
-                        {
-                            messenger.Send(new LogMessage(MessageType.Default, $"Ignored row {i} Serial Number is not numeric."));
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        messenger.Send(new LogMessage(MessageType.Default, $"Ignored row {i} Serial Number is not numeric."));
-                        continue;
-                    }
+                    messenger.Send(new LogMessage(MessageType.Default, $"Ignored row {row.RowNum} Serial Number is invalid"));
+                    continue;
                 }
 
-                string status = row.GetCell(8).StringCellValue;
-                if (status.Contains("despatched", StringComparison.InvariantCultureIgnoreCase))
-                    status = "Disposed";
-
-                string manufacturer = row.GetCell(12).StringCellValue;
-                string model = row.GetCell(13).CellType == CellType.Numeric ? row.GetCell(2).NumericCellValue.ToString() : row.GetCell(13).StringCellValue;
-                bool tracked = false;
-                string? action = ReconciliationConstants.UnknownSKU;
-
-                StockKeepingUnit? sku = await disposalsRepository.GetSKUAsync(manufacturer, model);
-                if (sku is not null)
-                { 
-                    manufacturer = sku.Manufacturer;
-                    model = sku.Model;
-                    tracked = true;
-                    action = null;
-                }
-
-                int certificate = 0;
-                if (row.GetCell(2).CellType == CellType.Numeric)
-                {
-                    certificate = (int)row.GetCell(2).NumericCellValue;
-                }
-
-                Disposal disposal = new() { Imei = imei, Manufacturer = manufacturer, Model = model, TrackedSKU = tracked, Certificate = certificate, Action = action};
                 await disposalsRepository.AddAsync(disposal);
                 added++;
 
@@ -103,16 +64,74 @@ public sealed class ImportSCC(string importFile,
 
         messenger.Send(new LogMessage(MessageType.Default, $"Added {added} disposals"));
         messenger.Send(new LogMessage(MessageType.Default, "Import complete"));
-        //}
-        //catch (IOException ex)
-        //{
-        //    if (ex.Message.StartsWith("Duplicate"))
-        //    {
-        //        messenger.Send(new LogMessage(MessageType.Default, $"Cannot read SCC spreadsheet"));
-        //        messenger.Send(new LogMessage(MessageType.Default, $"Try opening and saving a copy"));
-        //    }
-        //    else
-        //        throw;
-        //}
+    }
+
+    public async Task<Disposal> ParseRowAsync(IRow row)
+    {
+        Disposal disposal = new() { Imei = string.Empty, Manufacturer = string.Empty, Model = string.Empty, TrackedSKU = false, Action = ReconciliationConstants.ImeiInvalid };
+
+        if (row == null) return disposal;
+
+        if (row.GetCell(2).CellType == CellType.Numeric)
+        {
+            disposal.Certificate = (int)row.GetCell(2).NumericCellValue;
+        }
+
+        switch (row.GetCell(SerialNumber).CellType)
+        {
+            case CellType.Numeric:
+                {
+                    disposal.Imei = row.GetCell(SerialNumber).NumericCellValue.ToString("000000000000000");
+                    break;
+                }
+            case CellType.String:
+                {
+                    disposal.Imei = row.GetCell(SerialNumber).StringCellValue;
+                    bool isNumeric = long.TryParse(disposal.Imei, out _);
+                    if (isNumeric)
+                        disposal.Imei = disposal.Imei.PadLeft(15, '0');
+                    else
+                    {
+                        disposal.Action = ReconciliationConstants.ImeiInvalid;
+                        return disposal;
+                    }
+                    break;
+                }
+            default:
+                {
+                    disposal.Imei = row.GetCell(SerialNumber).CellFormula;
+                    disposal.Action = ReconciliationConstants.ImeiInvalid; 
+                    return disposal;                    
+                }
+        }
+
+        if (!row.GetCell(Status).StringCellValue.Contains("despatched", StringComparison.InvariantCultureIgnoreCase))
+        {
+            disposal.Action = ReconciliationConstants.CheckSCCStatus;
+            return disposal;
+        }
+
+        disposal.Manufacturer = row.GetCell(Manufacturer).StringCellValue;
+        if (row.GetCell(Model).CellType == CellType.Numeric)
+        {
+            disposal.Model = row.GetCell(Model).NumericCellValue == disposal.Certificate ? "Unknown" : row.GetCell(Model).NumericCellValue.ToString();
+        }
+        else
+        {
+            disposal.Model = row.GetCell(Model).StringCellValue;
+        }
+
+        disposal.Action = ReconciliationConstants.UnknownSKU;
+        StockKeepingUnit? sku = await disposalsRepository.GetSKUAsync(disposal.Manufacturer, disposal.Model);
+        if (sku is not null)
+        {
+            disposal.Manufacturer = sku.Manufacturer;
+            disposal.Model = sku.Model;
+            disposal.TrackedSKU = true;
+            disposal.Action = null;
+        }
+
+        return disposal;
+
     }
 }

@@ -2,6 +2,7 @@
 
 public static class ReconciliationConstants
 {
+    public const string CheckSCCStatus = "Check SCC Status";
     public const string Complete = "Complete";
     public const string ImeiInvalid = "Imei Invalid";
     public const string UnknownSKU = "Unknown SKU";

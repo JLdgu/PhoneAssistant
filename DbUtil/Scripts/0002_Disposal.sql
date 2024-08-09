@@ -22,8 +22,15 @@ CREATE TABLE SKUs (
 CREATE UNIQUE INDEX IX_SKU
 ON SKUs (Manufacturer, Model);
 
+INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone 4s', 0);
+INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone 5', 1);
+INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone 5s', 1);
+INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone 6', 1);
+INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone 6s', 1);
+INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone 8', 1);
+INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone SE', 1);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone SE 2020', 1);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone SE 2022', 1);
+INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Nokia','3109C', 1);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Samsung','A32', 1);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Samsung','A34', 1);
-

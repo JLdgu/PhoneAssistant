@@ -85,7 +85,7 @@ public partial class DisposalsMainViewModel : ObservableObject, IRecipient<LogMe
     #endregion
 
     #region PhoneAssistant import and reconiliation
-    private bool CanReconcile() => !ImportingFiles;
+    private bool CanReconcile() => !ImportingFiles && !string.IsNullOrEmpty(ScomisFile) && !string.IsNullOrEmpty(SCCFile);
     [RelayCommand(CanExecute = nameof(CanReconcile))]
     private async Task Reconcile()
     {

@@ -14,7 +14,7 @@ public sealed class ImportSCC(string importFile,
                               IDisposalsRepository disposalsRepository,
                               IMessenger messenger)
 {
-    public const int TrackerId = 2; 
+    public const int TrackerId = 2;
     public const int SerialNumber = 3;
     public const int Status = 8;
     public const int Manufacturer = 12;
@@ -68,7 +68,15 @@ public sealed class ImportSCC(string importFile,
 
     public async Task<Disposal> ParseRowAsync(IRow row)
     {
-        Disposal disposal = new() { Imei = string.Empty, Manufacturer = string.Empty, Model = string.Empty, TrackedSKU = false, Action = ReconciliationConstants.ImeiInvalid };
+        Disposal disposal = new()
+        {
+            Action = ReconciliationConstants.ImeiInvalid,
+            Imei = string.Empty,
+            Manufacturer = string.Empty,
+            Model = string.Empty,
+            StatusMS = "Missing",
+            TrackedSKU = false
+        };
 
         if (row == null) return disposal;
 
@@ -100,8 +108,8 @@ public sealed class ImportSCC(string importFile,
             default:
                 {
                     disposal.Imei = row.GetCell(SerialNumber).CellFormula;
-                    disposal.Action = ReconciliationConstants.ImeiInvalid; 
-                    return disposal;                    
+                    disposal.Action = ReconciliationConstants.ImeiInvalid;
+                    return disposal;
                 }
         }
 

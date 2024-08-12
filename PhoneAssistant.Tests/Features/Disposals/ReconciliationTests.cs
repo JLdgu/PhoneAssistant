@@ -24,13 +24,12 @@ public sealed class ReconciliationTests
     }
 
     [Fact]
-    public async Task CheckStatus_ShouldReturn_WhenActionNotNull()
+    public void CheckStatus_ShouldReturn_WhenActionNotNull()
     {
-        Mock<IDisposalsRepository> repository = _mocker.GetMock<IDisposalsRepository>();
+        //Mock<IDisposalsRepository> repository = _mocker.GetMock<IDisposalsRepository>();
         Disposal actual = new()
         {
             Imei = "355758060678186",
-            StatusMS = null,
             StatusPA = ApplicationSettings.StatusDisposed,
             Manufacturer = "OEM",
             Model = "model",
@@ -38,60 +37,60 @@ public sealed class ReconciliationTests
             Action = "action"
         };
 
-        await _sut.CheckStatusAsync(actual);
+        _sut.CheckStatus(actual);
 
         Assert.Equal("action", actual.Action);
     }
 
     [Fact]
-    public async Task CheckStatus_ShouldSetActionComplete_WhenMSandPADisposedAsync()
+    public void CheckStatus_ShouldSetActionComplete_WhenMSandPADisposed()
     {
         Disposal actual = new() { Imei = "355758060678186", StatusMS = ApplicationSettings.StatusDisposed, StatusPA = ApplicationSettings.StatusDisposed,
             Manufacturer = "OEMs", Model = "model", TrackedSKU = true};
 
-        await _sut.CheckStatusAsync(actual);
+        _sut.CheckStatus(actual);
 
         Assert.Equal(ReconciliationConstants.Complete, actual.Action);
     }
 
     [Fact]
-    public async Task CheckStatus_ShouldSetComplete_WhenMSNullPADisposedandSKUNotTracked()
+    public void CheckStatus_ShouldSetActionComplete_WhenMSMissingPADisposedandSKUNotTracked()
     {
-        Disposal actual = new() { Imei = "355758060678186", StatusMS = null, StatusPA = ApplicationSettings.StatusDisposed, 
+        Disposal actual = new() { Imei = "355758060678186", StatusPA = ApplicationSettings.StatusDisposed, 
             Manufacturer = "OEM", Model = "model", TrackedSKU = false};
 
-        await _sut.CheckStatusAsync(actual);
+        _sut.CheckStatus(actual);
 
         Assert.Equal(ReconciliationConstants.Complete, actual.Action);
         _mocker.VerifyAll();
     }
 
     [Fact]
-    public async Task CheckStatus_ShouldSetActionInvalid_WhenImeiInvalidAsync()
+    public void CheckStatus_ShouldSetActionInvalid_WhenImeiInvalid()
     {
-        Disposal actual = new() { Imei = "355758060678286", StatusMS = null, StatusPA = null, Manufacturer = "OEM", Model = "model", TrackedSKU = true};
+        Disposal actual = new() { Imei = "355758060678286", StatusPA = null, Manufacturer = "OEM", Model = "model", TrackedSKU = true};
 
-        await _sut.CheckStatusAsync(actual);
+        _sut.CheckStatus(actual);
 
         Assert.Equal(ReconciliationConstants.ImeiInvalid, actual.Action);
     }
 
     [Theory]
     [InlineData(ApplicationSettings.StatusAwaitingReturn, ReconciliationConstants.MyScomisExport)]
-    public async Task CheckStatus_ShouldSetActionMSDisposedAsync(string statusMS, string expectedAction)
+    public void CheckStatus_ShouldSetActionMSDisposedAsync(string statusMS, string expectedAction)
     {
         Disposal actual = new() { Imei = "355758060678186", StatusMS = statusMS, StatusPA = null, Manufacturer = "OEM", Model = "model", TrackedSKU = true };
 
-        await _sut.CheckStatusAsync(actual);
+        _sut.CheckStatus(actual);
 
         Assert.Equal(expectedAction, actual.Action);
     }
 
     [Fact]
-    public async Task CheckStatus_ShouldThrowException_WhenDisposalNullAsync()
+    public void CheckStatus_ShouldThrowException_WhenDisposalNullAsync()
     {
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _sut.CheckStatusAsync(null));        
+        Assert.Throws<ArgumentNullException>(() => _sut.CheckStatus(null));        
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
     }
 

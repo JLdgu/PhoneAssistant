@@ -40,9 +40,10 @@ public class DisposalsRepositoryTests
 
     #region MS Import
     [Fact]
-    public async Task UpdateMSAsync_WithMissing_ThrowsException()
+    public async Task UpdateMSAsync_ShouldReturnIgnored_WhenIMEINotFound()
     {
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => _repository.UpdateMSAsync("imei", "status"));
+        Result result = await  _repository.UpdateMSAsync("imei", "status");
+        Assert.Equal(Result.Ignored, result);
     }
 
     [Fact]

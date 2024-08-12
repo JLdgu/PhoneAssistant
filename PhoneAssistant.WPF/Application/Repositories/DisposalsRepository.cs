@@ -51,12 +51,7 @@ public sealed class DisposalsRepository : IDisposalsRepository
     public async Task<Result> UpdateMSAsync(string imei, string status)
     {
         Disposal? disposal = await _dbContext.Disposals.FindAsync(imei);
-        if (disposal is null) throw new KeyNotFoundException(nameof(disposal));
-        //{
-        //    disposal = new() { Imei = imei, StatusMS = status };
-        //    await AddAsync(disposal);
-        //    return Result.Added;
-        //}
+        if (disposal is null) return Result.Ignored;
 
         if (disposal.StatusMS == status)
             return Result.Unchanged;

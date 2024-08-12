@@ -2,8 +2,9 @@
 
 public enum Result
 {
-    Unchanged = 0,
     Added,
+    Deleted,
+    Ignored,
+    Unchanged,
     Updated,
-    Deleted
 }

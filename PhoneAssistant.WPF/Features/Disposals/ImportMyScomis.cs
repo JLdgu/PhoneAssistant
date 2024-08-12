@@ -34,7 +34,7 @@ public sealed class ImportMyScomis(string importFile,
         int unchanged = 0;
         int updated = 0;
         TrackProgress progress = new(sheet.LastRowNum);
-        
+
         await Task.Run(async delegate
         {
             for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++)
@@ -50,6 +50,9 @@ public sealed class ImportMyScomis(string importFile,
                 {
                     case Result.Added:
                         added++;
+                        break;
+                    case Result.Ignored:
+                        messenger.Send(new LogMessage(MessageType.Default, $"Ignored row {row.RowNum + 1} IMEI ({imei}) not found"));
                         break;
                     case Result.Unchanged:
                         unchanged++;

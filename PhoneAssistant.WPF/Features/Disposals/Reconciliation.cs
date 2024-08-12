@@ -38,7 +38,7 @@ public sealed class Reconciliation
             foreach (Disposal disposal in disposals)
             {
                 lastAction = disposal.Action;
-                await CheckStatusAsync(disposal);
+                CheckStatus(disposal);
                 if (disposal.Action != lastAction)
                     await _disposalsRepository.UpdateAsync(disposal);
 
@@ -52,7 +52,7 @@ public sealed class Reconciliation
         _messenger.Send(new LogMessage(MessageType.Default, "Reconciliation complete"));
     }
 
-    public async Task CheckStatusAsync(Disposal disposal)
+    public void CheckStatus(Disposal disposal)
     {
         ArgumentNullException.ThrowIfNull(disposal);
 
@@ -76,7 +76,7 @@ public sealed class Reconciliation
             return;
         }
 
-        if (disposal.StatusMS is null && disposal.StatusPA == ApplicationSettings.StatusDisposed && disposal.TrackedSKU == false)
+        if (disposal.StatusMS == ReconciliationConstants.StatusMissing && disposal.StatusPA == ApplicationSettings.StatusDisposed && disposal.TrackedSKU == false)
         {
             disposal.Action = ReconciliationConstants.Complete;
             return;

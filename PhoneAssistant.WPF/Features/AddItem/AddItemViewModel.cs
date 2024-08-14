@@ -37,7 +37,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand), nameof(PhoneWithSIMSaveCommand))]
     [NotifyDataErrorInfo]    
-    [RegularExpression(@"MP\d{5}",ErrorMessage = "Asset Tag format MPnnnnn")]
+    [RegularExpression(@"(MP|PC)\d{5}",ErrorMessage = "Invalid format")]
     [CustomValidation(typeof(AddItemViewModel), nameof(ValidateAssetTag))]
     private string? _assetTag;
 

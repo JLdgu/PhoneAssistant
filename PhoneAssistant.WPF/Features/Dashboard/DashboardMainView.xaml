@@ -29,6 +29,13 @@
             <StackPanel Orientation="Vertical">
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="vNext" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #60 Allow PCnnnnn asset tag format" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
                         <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.408.7" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #59 Backup database weekly" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #58 Create setting for default decommissioned phones ticket" />

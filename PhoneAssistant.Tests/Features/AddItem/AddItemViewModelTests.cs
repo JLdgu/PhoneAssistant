@@ -92,6 +92,21 @@ public class AddItemViewModelTests
         Assert.Equal("Ticket must 6 or 7 digits", errors.First().ToString());
     }
 
+    [Theory]
+    [InlineData("PC00001")]
+    [InlineData("MP00002")]
+    void GetErrors_ShouldBeEmpty_WhenAssetTagFormatValid(string assetTag)
+    {
+        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
+        _repository.Setup(r => r.AssetTagUniqueAsync(assetTag)).ReturnsAsync(true);
+
+        _sut.AssetTag = assetTag;
+
+        _mocker.VerifyAll();
+        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.AssetTag));
+        Assert.Empty(errors);
+    }
+
     [Fact]
     void GetErrors_ShouldBeEmpty_WhenAssetTagUnique()
     {

@@ -36,10 +36,16 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     #region NewPhone
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand), nameof(PhoneWithSIMSaveCommand))]
+    [NotifyPropertyChangedFor(nameof(Status))]
     [NotifyDataErrorInfo]    
     [RegularExpression(@"(MP|PC)\d{5}",ErrorMessage = "Invalid format")]
     [CustomValidation(typeof(AddItemViewModel), nameof(ValidateAssetTag))]
     private string? _assetTag;
+
+    partial void OnAssetTagChanged(string? value)
+    {
+        ValidateProperty(Status, "Status");
+    }
 
     public static ValidationResult ValidateAssetTag(string assetTag, ValidationContext context)
     {
@@ -110,8 +116,27 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     public List<string> Statuses { get; } = ApplicationSettings.Statuses;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(AssetTag))]
     [NotifyPropertyChangedFor(nameof(Ticket))]
-    private string _status = ApplicationSettings.Statuses[1];
+    [NotifyDataErrorInfo]
+    [CustomValidation(typeof(AddItemViewModel), nameof(ValidateStatus))]
+    private string _status = ApplicationSettings.StatusInStock;
+
+    public static ValidationResult ValidateStatus(string status, ValidationContext context)
+    {
+#pragma warning disable CS8603 // Possible null reference return.
+        if (status != ApplicationSettings.StatusInStock)
+            return ValidationResult.Success;
+#pragma warning restore CS8603 // Possible null reference return.
+    
+        AddItemViewModel vm = (AddItemViewModel)context.ObjectInstance;
+        if (string.IsNullOrEmpty(vm.AssetTag))
+            return new ValidationResult("Asset Tag required");
+
+#pragma warning disable CS8603 // Possible null reference return.
+        return ValidationResult.Success;
+#pragma warning restore CS8603 // Possible null reference return.
+    }
 
     partial void OnStatusChanged(string value)
     {

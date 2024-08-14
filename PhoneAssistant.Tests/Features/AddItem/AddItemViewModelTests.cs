@@ -24,7 +24,7 @@ public class AddItemViewModelTests
 
     #region Phone
     [Fact]
-    void CanSavePhone_ShouldBeEnabled_WhenAllRequiredPropertiesSupplied()
+    public void CanSavePhone_ShouldBeEnabled_WhenAllRequiredPropertiesSupplied()
     {
         Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
         _repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
@@ -40,7 +40,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void GetErrors_ShouldContainAssetTagError_WhenAssetTagNotUnique()
+    public void GetErrors_ShouldContainAssetTagError_WhenAssetTagNotUnique()
     {
         Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
         _repository.Setup(r => r.AssetTagUniqueAsync("MP99999")).ReturnsAsync(false);
@@ -53,8 +53,8 @@ public class AddItemViewModelTests
     }
 
     [Theory]
-    [InlineData("Decommissioned")]
-    [InlineData("Disposed")]
+    [InlineData(ApplicationSettings.StatusDecommissioned)]
+    [InlineData(ApplicationSettings.StatusDisposed)]
     public void GetErrors_ShouldContainError_WhenDisposalWithDefaultTicket(string status)
     {
         Mock<IUserSettings> setings = _mocker.GetMock<IUserSettings>();
@@ -67,8 +67,8 @@ public class AddItemViewModelTests
     }
 
     [Theory]
-    [InlineData("Decommissioned")]
-    [InlineData("Disposed")]
+    [InlineData(ApplicationSettings.StatusDecommissioned)]
+    [InlineData(ApplicationSettings.StatusDisposed)]
     public void GetErrors_ShouldContainError_WhenDisposalWithNoDefaultTicket(string status)
     {
         _sut.Status = status;
@@ -82,7 +82,7 @@ public class AddItemViewModelTests
     [InlineData("12345")]
     [InlineData("12345678")]
     [InlineData("1A345")]
-    void GetErrors_ShouldContainTicketError_WhenTicketInvalid(string ticket)
+    public void GetErrors_ShouldContainTicketError_WhenTicketInvalid(string ticket)
     {
         Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
 
@@ -92,10 +92,20 @@ public class AddItemViewModelTests
         Assert.Equal("Ticket must 6 or 7 digits", errors.First().ToString());
     }
 
+    [Fact]
+    public void GetErrors_ShouldContainStatueError_WhenInvalidStatusAssetTagCombination()
+    {
+        _sut.AssetTag = null;
+        _sut.Status = ApplicationSettings.StatusInStock;
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Status));
+        Assert.Equal("Asset Tag required", errors.First().ToString());
+    }
+
     [Theory]
     [InlineData("PC00001")]
     [InlineData("MP00002")]
-    void GetErrors_ShouldBeEmpty_WhenAssetTagFormatValid(string assetTag)
+    public void GetErrors_ShouldBeEmpty_WhenAssetTagFormatValid(string assetTag)
     {
         Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
         _repository.Setup(r => r.AssetTagUniqueAsync(assetTag)).ReturnsAsync(true);
@@ -108,7 +118,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void GetErrors_ShouldBeEmpty_WhenAssetTagUnique()
+    public void GetErrors_ShouldBeEmpty_WhenAssetTagUnique()
     {
         Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
         _repository.Setup(r => r.AssetTagUniqueAsync("MP99999")).ReturnsAsync(true);
@@ -121,7 +131,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void GetErrors_ShouldBeEmpty_WhenIMEISet()
+    public void GetErrors_ShouldBeEmpty_WhenIMEISet()
     {
         _sut.Imei = "355808981147090";
 
@@ -130,7 +140,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void GetErrors_ShouldBeEmpty_WhenModelSet()
+    public void GetErrors_ShouldBeEmpty_WhenModelSet()
     {
         _sut.Model = "model";
 
@@ -138,8 +148,28 @@ public class AddItemViewModelTests
         Assert.Empty(errors);
     }
 
+
+    [Theory]
+    [InlineData(ApplicationSettings.StatusInStock, "MP00001")]
+    [InlineData(ApplicationSettings.StatusProduction, null)]
+    [InlineData(ApplicationSettings.StatusProduction, "PC00001")]
+    [InlineData(ApplicationSettings.StatusInRepair, null)]
+    [InlineData(ApplicationSettings.StatusInRepair, "PC00002")]
+    public void GetErrors_ShouldBeEmpty_WhenValidStatusAssetTagCombination(string status, string? assetTag)
+    {
+        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
+        _repository.Setup(r => r.AssetTagUniqueAsync(assetTag)).ReturnsAsync(true);
+
+        _sut.AssetTag = assetTag;
+        _sut.Status = status;
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Status));
+        Assert.Empty(errors);
+
+    }
+
     [Fact]
-    void PhoneClearCommand_ShouldDisablePhoneSave()
+    public void PhoneClearCommand_ShouldDisablePhoneSave()
     {
         _sut.PhoneClearCommand.Execute(null);
 
@@ -147,7 +177,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void PhoneClearCommand_ShouldResetAllProperties()
+    public void PhoneClearCommand_ShouldResetAllProperties()
     {
         ArrangeSetAllPhoneProperties();
 
@@ -184,7 +214,7 @@ public class AddItemViewModelTests
 
     [Fact]
     [Description("Issue 53")]
-    void PhoneSaveCommand_ShouldNotSaveSimDetails()
+    public void PhoneSaveCommand_ShouldNotSaveSimDetails()
     {
         Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
         repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);        
@@ -204,9 +234,8 @@ public class AddItemViewModelTests
         Assert.Null(actual.SimNumber);
     }
 
-
     [Fact]
-    void PhoneSaveCommand_ShouldCallRepository()
+    public void PhoneSaveCommand_ShouldCallRepository()
     {
         Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
         _repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
@@ -222,7 +251,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void PhoneSaveCommand_ShouldDisablePhoneSave()
+    public void PhoneSaveCommand_ShouldDisablePhoneSave()
     {
         _sut.PhoneSaveCommand.Execute(null);
 
@@ -230,7 +259,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void PhoneSaveCommand_ShouldResetAllPhoneProperties()
+    public void PhoneSaveCommand_ShouldResetAllPhoneProperties()
     {
         ArrangeSetAllPhoneProperties();
 
@@ -240,7 +269,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void PhoneSaveCommand_ShouldSendPhoneMessage()
+    public void PhoneSaveCommand_ShouldSendPhoneMessage()
     {
         Mock<IMessenger> message = _mocker.GetMock<IMessenger>();
         message.Setup(m => m.Send(It.IsAny<Phone>(), It.IsAny<IsAnyToken>()));
@@ -255,7 +284,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void ValidateImei_ShouldReturnError_WhenIMEIEmptyOrWhiteSpace()
+    public void ValidateImei_ShouldReturnError_WhenIMEIEmptyOrWhiteSpace()
     {
         ValidationContext ctx = new(_sut, null, null);
 
@@ -269,7 +298,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void ValidateImei_ShouldReturnError_WhenIMEINotNumeric()
+    public void ValidateImei_ShouldReturnError_WhenIMEINotNumeric()
     {
         ValidationContext ctx = new(_sut, null, null);
 
@@ -280,7 +309,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void ValidateImei_ShouldReturnError_WhenIMEINotUnique()
+    public void ValidateImei_ShouldReturnError_WhenIMEINotUnique()
     {
         ValidationContext ctx = new(_sut, null, null);
         Mock<IPhonesRepository> _repository = new Mock<IPhonesRepository>();
@@ -294,7 +323,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void ValidateIMEI_ShouldReturnError_WhenIMEIInvalid()
+    public void ValidateIMEI_ShouldReturnError_WhenIMEIInvalid()
     {
         ValidationContext ctx = new(_sut, null, null);
 
@@ -305,7 +334,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void ValidateIMEI_ShouldReturnValidResult_WhenIMEIValid()
+    public void ValidateIMEI_ShouldReturnValidResult_WhenIMEIValid()
     {
         ValidationContext ctx = new(_sut, null, null);
 
@@ -317,7 +346,7 @@ public class AddItemViewModelTests
 
     #region SIM
     [Fact]
-    void CanDeleteSIM_ShouldBeEnabled_WhenAllRequiredPropertiesSuppliedAndSIMExists()
+    public void CanDeleteSIM_ShouldBeEnabled_WhenAllRequiredPropertiesSuppliedAndSIMExists()
     {
         Mock<IPhonesRepository> phones = new Mock<IPhonesRepository>();
         phones = _mocker.GetMock<IPhonesRepository>();
@@ -334,7 +363,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void CanDeleteSIM_ShouldBeDisabled_WhenSIMDoesNotExist()
+    public void CanDeleteSIM_ShouldBeDisabled_WhenSIMDoesNotExist()
     {
         Mock<ISimsRepository> _repository = _mocker.GetMock<ISimsRepository>();
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
@@ -349,7 +378,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void CanSaveSIM_ShouldBeEnabled_WhenAllRequiredPropertiesSupplied()
+    public void CanSaveSIM_ShouldBeEnabled_WhenAllRequiredPropertiesSupplied()
     {
         Mock<ISimsRepository> _repository = _mocker.GetMock<ISimsRepository>();
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
@@ -364,7 +393,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void GetErrors_ShouldBeEmpty_WhenPhoneNumberSet()
+    public void GetErrors_ShouldBeEmpty_WhenPhoneNumberSet()
     {
         _sut.PhoneNumber = "07123456789";
 
@@ -373,7 +402,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void GetErrors_ShouldBeEmpty_WhenSimNumberSet()
+    public void GetErrors_ShouldBeEmpty_WhenSimNumberSet()
     {
         _sut.SimNumber = "8944122605566849402";
 
@@ -382,7 +411,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void OnPhoneNumberChanged_ShouldSetSimNumber_WhenSimExists()
+    public void OnPhoneNumberChanged_ShouldSetSimNumber_WhenSimExists()
     {
         Mock<ISimsRepository> _repository = _mocker.GetMock<ISimsRepository>();
         _repository.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync("sim number");
@@ -395,7 +424,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void SIMClearCommand_ShouldDisableSIMSave()
+    public void SIMClearCommand_ShouldDisableSIMSave()
     {
         _sut.SIMClearCommand.Execute(null);
 
@@ -403,7 +432,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void SIMClearCommand_ShouldResetAllSIMProperties()
+    public void SIMClearCommand_ShouldResetAllSIMProperties()
     {
         _sut.PhoneNumber = "1234567890";
         _sut.SimNumber = "1234567890123456789";
@@ -417,7 +446,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void SimDeleteCommand_ShouldCallRepository()
+    public void SimDeleteCommand_ShouldCallRepository()
     {
         Mock<ISimsRepository> _repository = _mocker.GetMock<ISimsRepository>();
         _repository.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync("8944122605566849402");
@@ -430,7 +459,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void SimSaveCommand_ShouldCallRepository()
+    public void SimSaveCommand_ShouldCallRepository()
     {
         Sim newSIM = new() { PhoneNumber = "", SimNumber = "" };
         Mock<ISimsRepository> _repository = _mocker.GetMock<ISimsRepository>();
@@ -450,7 +479,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void SimSaveCommand_ShouldDisablePhoneSave()
+    public void SimSaveCommand_ShouldDisablePhoneSave()
     {
         _sut.SIMSaveCommand.Execute(null);
 
@@ -458,7 +487,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void SimSaveCommand_ShouldResetAllPhoneProperties()
+    public void SimSaveCommand_ShouldResetAllPhoneProperties()
     {
         _sut.PhoneNumber = "1234567890";
         _sut.SimNumber = "1234567890123456789";
@@ -472,7 +501,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void SimSaveCommand_ShouldSendSimMessage()
+    public void SimSaveCommand_ShouldSendSimMessage()
     {
         Mock<IMessenger> message = _mocker.GetMock<IMessenger>();
         message.Setup(m => m.Send(It.IsAny<Sim>(), It.IsAny<IsAnyToken>()));
@@ -486,7 +515,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void ValidateSimNumber_ShouldReturnError_WhenSimNumberEmptyOrWhiteSpace()
+    public void ValidateSimNumber_ShouldReturnError_WhenSimNumberEmptyOrWhiteSpace()
     {
         ValidationContext ctx = new(_sut, null, null);
 
@@ -500,7 +529,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void ValidateSimNumber_ShouldReturnError_WhenSimNumberNotNumeric()
+    public void ValidateSimNumber_ShouldReturnError_WhenSimNumberNotNumeric()
     {
         ValidationContext ctx = new(_sut, null, null);
 
@@ -511,7 +540,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void ValidateSimNumber_ShouldReturnError_WhenSimNumberInvalid()
+    public void ValidateSimNumber_ShouldReturnError_WhenSimNumberInvalid()
     {
         ValidationContext ctx = new(_sut, null, null);
 
@@ -522,7 +551,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void ValidateSimNumber_ShouldReturnValidResult_WhenSimNumberValid()
+    public void ValidateSimNumber_ShouldReturnValidResult_WhenSimNumberValid()
     {
         ValidationContext ctx = new(_sut, null, null);
 
@@ -534,7 +563,7 @@ public class AddItemViewModelTests
 
     #region PhoneWithSim
     [Fact]
-    void CanSavePhoneWithSIM_ShouldBeEnabled_WhenAllRequiredPropertiesSupplied()
+    public void CanSavePhoneWithSIM_ShouldBeEnabled_WhenAllRequiredPropertiesSupplied()
     {
         Mock<IPhonesRepository> _phones = _mocker.GetMock<IPhonesRepository>();
         _phones.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
@@ -556,7 +585,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void PhoneWithSIMCommand_ShouldCallRepository()
+    public void PhoneWithSIMCommand_ShouldCallRepository()
     {
         Phone actual = new() { Condition = "", Imei = "", Model = "", OEM = OEMs.Apple, Status = "" };
         Mock<IPhonesRepository> _phones = _mocker.GetMock<IPhonesRepository>();
@@ -584,7 +613,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void PhoneWithSIMCommand_ShouldDeleteSIM_WhenSimExists()
+    public void PhoneWithSIMCommand_ShouldDeleteSIM_WhenSimExists()
     {
         Mock<IPhonesRepository> _phones = _mocker.GetMock<IPhonesRepository>();
         _phones.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
@@ -605,7 +634,7 @@ public class AddItemViewModelTests
         _mocker.VerifyAll();
     }
     [Fact]
-    void ValidatePhoneNumber_ShouldReturnError_WhenPhoneNumberNotUnique()
+    public void ValidatePhoneNumber_ShouldReturnError_WhenPhoneNumberNotUnique()
     {
         ValidationContext ctx = new(_sut, null, null);
         Mock<IPhonesRepository> _repository = new Mock<IPhonesRepository>();
@@ -620,7 +649,7 @@ public class AddItemViewModelTests
     }
 
     [Fact]
-    void ValidatePhoneNumber_ShouldReturnValidResult_WhenPhoneNumberUnique()
+    public void ValidatePhoneNumber_ShouldReturnValidResult_WhenPhoneNumberUnique()
     {
         ValidationContext ctx = new(_sut, null, null);
         Mock<IPhonesRepository> _repository = new Mock<IPhonesRepository>();

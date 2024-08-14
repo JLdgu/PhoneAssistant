@@ -24,6 +24,7 @@ ON SKUs (Manufacturer, Model);
 
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone 4s', 0);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone 5', 1);
+INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone 5c', 1);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone 5s', 1);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone 6', 1);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone 6s', 1);
@@ -31,6 +32,10 @@ INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone 8', 1
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone SE', 1);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone SE 2020', 1);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Apple','iPhone SE 2022', 1);
+INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Blackberry','All', 0);
+INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Dakota','All', 0);
+INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('HTC','All', 0);
+INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('LG Electronics','All', 0);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Microsoft','435', 1);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Microsoft','640', 0);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Microsoft','640 XL', 0);
@@ -47,6 +52,7 @@ INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Nokia','3120', 1);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Nokia','6021', 0);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Nokia','C1-02', 0);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Samsung','A32', 1);
+INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Samsung','A32 5G', 1);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Samsung','A34', 1);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Samsung','A40', 1);
 INSERT INTO SKUs (Manufacturer, Model, TrackedSKU) Values ('Samsung','J5', 1);

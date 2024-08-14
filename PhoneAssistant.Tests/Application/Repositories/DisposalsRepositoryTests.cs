@@ -47,6 +47,20 @@ public class DisposalsRepositoryTests
     }
 
     [Fact]
+    public async Task GetSKU_ShouldReturnAll_WhenAllModelExists()
+    {
+        StockKeepingUnit mixedcase = new() { Manufacturer = "Blackberry", Model = "All", TrackedSKU = true };
+
+        _helper.DbContext.SKUs.Add(mixedcase);
+        await _helper.DbContext.SaveChangesAsync();
+
+        StockKeepingUnit? all = await _repository.GetSKUAsync("Blackberry", "Any");
+
+        Assert.NotNull(all);
+        Assert.Equal("All", all.Model);
+    }
+
+    [Fact]
     public async Task UpdateMSAsync_WithModifiedExisting_UpdatesDisposal()
     {        
         await _helper.DbContext.Disposals.AddAsync(new Disposal() { Imei = "imei", StatusMS = "old status", Manufacturer = "OEM", Model = "model", TrackedSKU = true });

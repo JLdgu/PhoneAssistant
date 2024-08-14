@@ -33,7 +33,8 @@ public sealed class DisposalsRepository : IDisposalsRepository
 
     public async Task<StockKeepingUnit?> GetSKUAsync(string manufacturer, string model)
     {
-        return await _dbContext.SKUs.FirstOrDefaultAsync(s => s.Manufacturer == manufacturer && s.Model == model);
+
+        return await _dbContext.SKUs.FirstOrDefaultAsync(s => s.Manufacturer == manufacturer && (s.Model == model || s.Model == "All"));
     }
 
     public async Task TruncateAsync()

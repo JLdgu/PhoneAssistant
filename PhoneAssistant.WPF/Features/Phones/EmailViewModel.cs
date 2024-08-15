@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -76,7 +77,6 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         await _phonesRepository.UpdateAsync(_orderDetails!.Phone);
         GeneratingEmail = false;
     }
-
     private bool CanPrintEnvelope() => OrderType != OrderType.None;
     [RelayCommand(CanExecute = nameof(CanPrintEnvelope))]
     private async Task PrintEnvelope()
@@ -134,6 +134,15 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         GenerateEmailHtml();
     }
     private string _formattedAddress = string.Empty;
+
+    public static string ReformatDeliveryAddress(string address)
+    {
+        Regex regex = AddressReformat();
+
+        string reformatted = regex.Replace(address,string.Empty);
+
+        return reformatted;
+    }
 
     [ObservableProperty]
     private bool _generatingEmail;
@@ -303,4 +312,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
         loaded = true;
     }
+
+    [GeneratedRegex(@"First line of address\r\n|Second line of address\r\n|Town/City\r\n|County\r\n|Postcode\r\n", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-GB")]
+    private static partial Regex AddressReformat();
 }

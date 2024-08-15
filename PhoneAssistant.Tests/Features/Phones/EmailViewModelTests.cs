@@ -16,12 +16,12 @@ public sealed class EmailViewModelTests
         PhoneNumber = "phoneNumber",
         SimNumber = "simNumber",
         Status = "status",
-        AssetTag = "at",       
+        AssetTag = "at",
         DespatchDetails = "dd",
         FormerUser = "fu",
         Imei = "imei",
         Model = "model",
-        NewUser = "nu", 
+        NewUser = "nu",
         Condition = "norr",
         Notes = "note",
         OEM = OEMs.Apple,
@@ -60,8 +60,9 @@ public sealed class EmailViewModelTests
 
         Assert.False(_vm.GeneratingEmail);
     }
+
     [Fact]
-    private void CloseCommand_UpdatesDb()
+    public void CloseCommand_UpdatesDb()
     {
         TestSetup(_phone);
 
@@ -71,7 +72,7 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    private void Constructor_SetsGeneratingEmail_True()
+    public void Constructor_SetsGeneratingEmail_True()
     {
         TestSetup(_phone);
 
@@ -79,7 +80,7 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    private void DefaultPhone_Contains_BoilerPlate()
+    public void DefaultPhone_Contains_BoilerPlate()
     {
         TestSetup(_phone);
 
@@ -95,7 +96,7 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    private void DespatchDetails_Null_SetsDeliveryAddress()
+    public void DespatchDetails_Null_SetsDeliveryAddress()
     {
         _phone.DespatchDetails = null;
         TestSetup(_phone);
@@ -108,7 +109,7 @@ public sealed class EmailViewModelTests
     [Theory]
     [InlineData("N", "New")]
     [InlineData("R", "Repurposed")]
-    private void NorR_Includes_DeviceSupplied(string norr, string norrDescription)
+    public void NorR_Includes_DeviceSupplied(string norr, string norrDescription)
     {
         _phone.Condition = norr;
         OrderDetails orderDetails = new(_phone);
@@ -118,7 +119,7 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    void OrderDetails_ShouldSetDeviceTypePhone_WhenModelDoesNotContanIPad()
+    public void OrderDetails_ShouldSetDeviceTypePhone_WhenModelDoesNotContanIPad()
     {
         TestSetup(_phone);
 
@@ -126,7 +127,7 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    void OrderDetails_ShouldSetDeviceTypeTable_WhenModelContainsIPad()
+    public void OrderDetails_ShouldSetDeviceTypeTable_WhenModelContainsIPad()
     {
         _phone.Model = "iPad";
         TestSetup(_phone);
@@ -135,7 +136,7 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    void OrderDetails_ShouldSetOrderTypeNew_WhenPhoneDetailsSupplied()
+    public void OrderDetails_ShouldSetOrderTypeNew_WhenPhoneDetailsSupplied()
     {
         TestSetup(_phone);
 
@@ -143,7 +144,7 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    void OrderDetails_ShouldSetOrderTypeReplacement_WhenPhoneDetailsNotSupplied()
+    public void OrderDetails_ShouldSetOrderTypeReplacement_WhenPhoneDetailsNotSupplied()
     {
         _phone.PhoneNumber = null;
         _phone.SimNumber = null;
@@ -153,7 +154,7 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    private void OrderType_New_GeneratesHtml()
+    public void OrderType_New_GeneratesHtml()
     {
         TestSetup(_phone);
 
@@ -162,9 +163,9 @@ public sealed class EmailViewModelTests
         Assert.DoesNotContain("Don't forget to transfer your old sim", _vm.EmailHtml);
         Assert.Contains("<td>Order type:</td><td>New ", _vm.EmailHtml);
     }
-    
+
     [Fact]
-    private void OrderType_Replacement_GeneratesHtml()
+    public void OrderType_Replacement_GeneratesHtml()
     {
         TestSetup(_phone);
 
@@ -175,7 +176,7 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    private void OEM_Apple_Includes_AppleDetails()
+    public void OEM_Apple_Includes_AppleDetails()
     {
         _phone.OEM = OEMs.Apple;
         TestSetup(_phone);
@@ -186,7 +187,7 @@ public sealed class EmailViewModelTests
 
     [Fact]
     [Description("Issue 43")]
-    private void OEM_Nokia_Includes_NokiaDetails()
+    public void OEM_Nokia_Includes_NokiaDetails()
     {
         _phone.OEM = OEMs.Nokia;
         TestSetup(_phone);
@@ -196,7 +197,7 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    private void OEM_Samsung_Includes_SamsungDetails()
+    public void OEM_Samsung_Includes_SamsungDetails()
     {
         _phone.OEM = OEMs.Samsung;
         TestSetup(_phone);
@@ -206,7 +207,7 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    private void PhoneNumber_Null_ExcludesPhoneNumber()
+    public void PhoneNumber_Null_ExcludesPhoneNumber()
     {
         _phone.PhoneNumber = null;
         TestSetup(_phone);
@@ -215,7 +216,34 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    private void PhoneNumber_NotNull_IncludesPhoneNumber()
+    public void ReformatDeliveryAddress_ShouldStripHeadings()
+    {
+        string actual = EmailViewModel.ReformatDeliveryAddress("""
+            User Name
+            First line of address
+            DCS, Springfield Court
+            Second line of address
+            Fishleigh Road
+            Town/city
+            Barnstaple
+            County
+            Devon
+            Postcode
+            EX31 3UD
+            """);
+
+        Assert.Equal("""
+            User Name
+            DCS, Springfield Court
+            Fishleigh Road
+            Barnstaple
+            Devon
+            EX31 3UD
+            """, actual);
+    }
+
+    [Fact]
+    public void PhoneNumber_NotNull_IncludesPhoneNumber()
     {
         TestSetup(_phone);
 
@@ -223,7 +251,7 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    private void SelectedLocation_InterpolatesValuesFor_DeliveryAddress()
+    public void SelectedLocation_InterpolatesValuesFor_DeliveryAddress()
     {
         _phone.NewUser = "New User";
         _phone.SR = 42;
@@ -238,7 +266,7 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    private void SelectedLocation_WithPrintDateTrue_SetsCollectionDetails()
+    public void SelectedLocation_WithPrintDateTrue_SetsCollectionDetails()
     {
         TestSetup(_phone);
 
@@ -249,7 +277,7 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
-    private void SelectedLocation_WithPrintDateFalse_SetsDeliveryDetails()
+    public void SelectedLocation_WithPrintDateFalse_SetsDeliveryDetails()
     {
         TestSetup(_phone);
 
@@ -270,11 +298,11 @@ public sealed class EmailViewModelTests
     [InlineData("23/1/2024", "Tuesday 23<sup>rd</sup> January 2024")]
     [InlineData("31/1/2024", "Wednesday 31<sup>st</sup> January 2024")]
     [InlineData("12/02/2024", "Monday 12<sup>th</sup> February 2024")] // Issue #40
-    private void ToOrdinalWorkingDate_IgnoresWeekends(string date,string expected)
+    private void ToOrdinalWorkingDate_IgnoresWeekends(string date, string expected)
     {
         string actual = EmailViewModel.ToOrdinalWorkingDate(DateTime.Parse(date));
 
-        Assert.Equal(expected,actual);
+        Assert.Equal(expected, actual);
     }
 
     [Theory]

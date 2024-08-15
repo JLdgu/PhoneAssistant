@@ -11,4 +11,11 @@ public partial class EmailView : UserControl
     {
         InitializeComponent();
     }
+
+    private void DeliveryAddress_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        string newValue = EmailViewModel.ReformatDeliveryAddress(DeliveryAddress.Text);
+        if (newValue != DeliveryAddress.Text)
+            DeliveryAddress.Text = newValue;
+    }
 }

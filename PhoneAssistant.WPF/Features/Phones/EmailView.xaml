@@ -125,7 +125,8 @@
                               ItemsSource="{Binding Locations}"
                               SelectedItem="{Binding SelectedLocation}" />
 
-                    <TextBox Width="300"
+                    <TextBox x:Name="DeliveryAddress"
+                             Width="300"
                              Height="160"
                              Margin="10,0,0,10"
                              HorizontalAlignment="Left"
@@ -135,6 +136,7 @@
                              BorderThickness="1"
                              FontSize="16"
                              Text="{Binding DeliveryAddress}"
+                             TextChanged="DeliveryAddress_TextChanged"
                              TextWrapping="Wrap"
                              VerticalScrollBarVisibility="Auto" />
                 </StackPanel>

@@ -8,7 +8,7 @@
     <ApplicationIcon Condition="'$(Configuration)'=='Debug'">Resources\DebugPhone.ico</ApplicationIcon>
     <ApplicationIcon Condition="'$(Configuration)'=='Release'">Resources\Phone.ico</ApplicationIcon>
     <AssemblyName>PhoneAssistant</AssemblyName>
-    <AssemblyVersion>1.408.7</AssemblyVersion>
+    <AssemblyVersion>1.408.16</AssemblyVersion>
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
   </PropertyGroup>
 

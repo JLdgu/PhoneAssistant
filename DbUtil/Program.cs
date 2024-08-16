@@ -26,7 +26,7 @@ public sealed class Program
         CliArgument<string> liveDb = new("liveDB")
         {
             Description = "The path to the live PhoneAssistant database",
-            DefaultValueFactory = _ => @"K:\FITProject\ICTS\Mobile Phones\PhoneAssistant\phoneassistant.db"
+            DefaultValueFactory = _ => @"\\countyhall.ds2.devon.gov.uk\docs\exeter, county hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\PhoneAssistant.db"
         };
         CliOption<bool> dryRun = new("--dryRun", "-d");
 

@@ -17,7 +17,7 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
 {
     private readonly IUserSettings _userSettings;
     private readonly IThemeWrapper _themeWrapper;
-    const string _releaseUrl = @"K:\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application";
+    const string ReleaseUrl = @"\\countyhall.ds2.devon.gov.uk\docs\exeter, county hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\PhoneAssistant.db";
     private readonly UpdateManager _updateManager;
     private UpdateInfo? _updateInfo;        
 
@@ -44,7 +44,7 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
         ColourThemeLight = !_userSettings.DarkMode;
 
         CurrentVersion = _userSettings.AssemblyVersion?.ToString();
-        _updateManager = new(_releaseUrl);
+        _updateManager = new(ReleaseUrl);
     }
 #pragma warning restore CS8618
 

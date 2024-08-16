@@ -1,8 +1,8 @@
 #Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
 
-vpk pack -u PhoneAssistant -v 0.408.7 -p .\publish -e PhoneAssistant.exe
+vpk pack -u PhoneAssistant -v 0.408.16 -p .\publish -e PhoneAssistant.exe
 
-Copy-Item -Path "c:\dev\PhoneAssistant\Releases\*" -Destination "K:\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application" -Recurse -Force
+Copy-Item -Path "c:\dev\PhoneAssistant\Releases\*" -Destination "\\countyhall.ds2.devon.gov.uk\docs\exeter, county hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application" -Recurse -Force
 
 Return
 

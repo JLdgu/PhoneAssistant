@@ -1,5 +1,5 @@
 # Copy Live PhoneAssistant db to c:/temp
-$live = "K:/FITProject/ICTS/Mobile Phones/PhoneAssistant/PhoneAssistant.db"
+$live = "\\countyhall.ds2.devon.gov.uk\docs\exeter, county hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\PhoneAssistant.db"
 $test =  "c:/dev/paTest.db" 
 
 If (Test-Path -Path $test) {

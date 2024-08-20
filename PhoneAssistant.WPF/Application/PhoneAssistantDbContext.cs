@@ -13,7 +13,7 @@ public partial class PhoneAssistantDbContext : DbContext
 
     public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
 
-    public DbSet<EEBaseReport> BaseReport => Set<EEBaseReport>();
+    public DbSet<BaseReport> BaseReport => Set<BaseReport>();
 
     public DbSet<Disposal> Disposals => Set<Disposal>();
 
@@ -56,10 +56,8 @@ public partial class PhoneAssistantDbContext : DbContext
             entity.HasKey(d => d.Imei);
         });
 
-        modelBuilder.Entity<EEBaseReport>(entity =>
+        modelBuilder.Entity<BaseReport>(entity =>
         {
-            entity.ToTable("BaseReport");
-
             entity.HasKey(e => e.PhoneNumber);
         });
 

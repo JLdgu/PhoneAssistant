@@ -37,7 +37,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
 
     public ObservableCollection<string> LogItems { get; } = new();
 
-    public ObservableCollection<EEBaseReport> BaseReport { get; } = new();
+    public ObservableCollection<Application.Entities.BaseReport> BaseReport { get; } = new();
 
     [RelayCommand]
     private async Task Refresh()
@@ -65,7 +65,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     #region Filter
     public bool FilterView(object item)
     {
-        if (item is not EEBaseReport vm) return false;
+        if (item is not Application.Entities.BaseReport vm) return false;
 
         if (FilterOutItem(FilterConnectedIMEI, vm.ConnectedIMEI)) return false;
 
@@ -217,7 +217,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
             if (row == null) continue;
             if (row.Cells.Count == 4) break;
 
-            EEBaseReport item = new()
+            Application.Entities.BaseReport item = new()
             {
                 PhoneNumber = row.GetCell(3).StringCellValue,
                 UserName = row.GetCell(4).StringCellValue,
@@ -263,11 +263,11 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         if (importHistory is null)
             LatestImport = $"Latest Import: None";
         else
-            LatestImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})"; 
+            LatestImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
 
-        IEnumerable<EEBaseReport> report = await _repository.GetBaseReportAsync();
+        IEnumerable<Application.Entities.BaseReport> report = await _repository.GetBaseReportAsync();
 
-        foreach (EEBaseReport phone in report)
+        foreach (Application.Entities.BaseReport phone in report)
         {
             BaseReport.Add(phone);
         };

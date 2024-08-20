@@ -7,13 +7,13 @@ public sealed class BaseReportRepository(PhoneAssistantDbContext dbContext)
 {
     private readonly PhoneAssistantDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
-    public async Task<IEnumerable<EEBaseReport>> GetBaseReportAsync()
+    public async Task<IEnumerable<BaseReport>> GetBaseReportAsync()
     {
-        List<EEBaseReport> report = await _dbContext.BaseReport.AsNoTracking().ToListAsync();
+        List<BaseReport> report = await _dbContext.BaseReport.AsNoTracking().ToListAsync();
         return report;
     }
 
-    public async Task CreateAsync(EEBaseReport report)
+    public async Task CreateAsync(BaseReport report)
     {
         _dbContext.BaseReport.Add(report);
         await _dbContext.SaveChangesAsync();

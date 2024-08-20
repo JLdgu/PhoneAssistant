@@ -93,7 +93,7 @@
                 </StackPanel>
             </RadioButton>
 
-            <RadioButton Command="{Binding UpdateViewCommand}"
+            <RadioButton Command="{Binding UpdateViewCommand}" IsEnabled="{Binding Development}"
                          CommandParameter="{x:Static viewmodel:ViewModelType.Sims}"
                          DockPanel.Dock="Top"
                          IsChecked="{Binding SelectedView, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static viewmodel:ViewModelType.Sims}}"

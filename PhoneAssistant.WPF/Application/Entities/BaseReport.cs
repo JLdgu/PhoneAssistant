@@ -1,6 +1,6 @@
 ﻿namespace PhoneAssistant.WPF.Application.Entities;
 
-public class EEBaseReport
+public class BaseReport
 {
     public required string PhoneNumber { get; set; }
     public required string UserName { get; set; }

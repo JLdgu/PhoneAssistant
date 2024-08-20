@@ -8,6 +8,7 @@ using PhoneAssistant.WPF.Features.AddItem;
 using PhoneAssistant.WPF.Features.BaseReport;
 using PhoneAssistant.WPF.Features.Dashboard;
 using PhoneAssistant.WPF.Features.Disposals;
+using PhoneAssistant.WPF.Features.Dymo;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Features.Sims;
@@ -23,6 +24,7 @@ public enum ViewModelType
     BaseReport,
     Dashboard,
     Disposals,
+    Dymo,
     Phones,
     Sims,
     Settings,
@@ -35,6 +37,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private readonly IBaseReportMainViewModel _baseReportMainViewModel;
     private readonly IDashboardMainViewModel _dashboardMainViewModel;
     private readonly IDisposalsMainViewModel _disposalsMainViewModel;
+    private readonly DymoViewModel _dymoViewModel;
     private readonly IPhonesMainViewModel _phonesMainViewModel;
     private readonly ISimsMainViewModel _simsMainViewModel;
     private readonly ISettingsMainViewModel _settingsMainViewModel;
@@ -45,6 +48,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
                                IBaseReportMainViewModel baseReportMainViewModel,
                                IDashboardMainViewModel dashboardMainViewModel,
                                IDisposalsMainViewModel disposalsMainViewModel,
+                               DymoViewModel dymoViewModel,
                                IPhonesMainViewModel phonesMainViewModel,
                                ISimsMainViewModel simsMainViewModel,
                                ISettingsMainViewModel settingsMainViewModel,
@@ -55,6 +59,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         _baseReportMainViewModel = baseReportMainViewModel ?? throw new ArgumentNullException(nameof(baseReportMainViewModel));
         _dashboardMainViewModel = dashboardMainViewModel ?? throw new ArgumentNullException(nameof(dashboardMainViewModel));
         _disposalsMainViewModel = disposalsMainViewModel ?? throw new ArgumentNullException(nameof(disposalsMainViewModel));
+        _dymoViewModel = dymoViewModel ?? throw new ArgumentNullException(nameof(dymoViewModel));
         _phonesMainViewModel = phonesMainViewModel ?? throw new ArgumentNullException(nameof(phonesMainViewModel));
         _simsMainViewModel = simsMainViewModel ?? throw new ArgumentNullException(nameof(simsMainViewModel));
         _settingsMainViewModel = settingsMainViewModel ?? throw new ArgumentNullException(nameof(settingsMainViewModel));
@@ -90,6 +95,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
             ViewModelType.BaseReport => _baseReportMainViewModel,
             ViewModelType.Dashboard => _dashboardMainViewModel,
             ViewModelType.Disposals => _disposalsMainViewModel,
+            ViewModelType.Dymo => _dymoViewModel,
             ViewModelType.Phones => _phonesMainViewModel,
             ViewModelType.Sims => _simsMainViewModel,
             ViewModelType.Settings => _settingsMainViewModel,

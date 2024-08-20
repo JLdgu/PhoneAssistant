@@ -1,12 +1,9 @@
 ﻿using System.Drawing;
 using System.Drawing.Printing;
-using System.Text;
-
-using NPOI.SS.Formula.Functions;
 
 using PhoneAssistant.WPF.Application;
 
-namespace PhoneAssistant.WPF.Features.Phones
+namespace PhoneAssistant.WPF.Shared
 {
     public sealed class PrintDymoLabel : IPrintDymoLabel
     {
@@ -20,7 +17,7 @@ namespace PhoneAssistant.WPF.Features.Phones
 
         private readonly IUserSettings _userSettings;
         private string? _address;
-        private string?  _includeDate; 
+        private string? _includeDate;
 
         public PrintDymoLabel(IUserSettings userSettings)
         {
@@ -80,7 +77,7 @@ namespace PhoneAssistant.WPF.Features.Phones
 
                 fontSize = (float)(fontSize - 0.5);
                 font = new("Segoe UI", fontSize);
-            }            
+            }
 
             Brush brush = new SolidBrush(Color.Black);
             Rectangle rectangle = new(MarginLeft, MarginTop, BodyWidth, maxHeight);
@@ -92,7 +89,7 @@ namespace PhoneAssistant.WPF.Features.Phones
                 sf.LineAlignment = StringAlignment.Far;
                 sf.Alignment = StringAlignment.Far;
 
-                rectangle = new(MarginLeft, (MarginTop + BodyHeight - dateFontHeight), BodyWidth, dateFontHeight);
+                rectangle = new(MarginLeft, MarginTop + BodyHeight - dateFontHeight, BodyWidth, dateFontHeight);
                 graphics.DrawString(_includeDate, dateFont, brush, rectangle, sf);
             }
 

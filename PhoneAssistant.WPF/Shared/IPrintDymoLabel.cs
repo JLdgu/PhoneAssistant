@@ -1,4 +1,4 @@
-﻿namespace PhoneAssistant.WPF.Features.Phones;
+﻿namespace PhoneAssistant.WPF.Shared;
 
 public interface IPrintDymoLabel
 {

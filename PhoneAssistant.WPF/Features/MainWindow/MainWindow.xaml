@@ -6,6 +6,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:dashboard="clr-namespace:PhoneAssistant.WPF.Features.Dashboard"
         xmlns:disposals="clr-namespace:PhoneAssistant.WPF.Features.Disposals"
+        xmlns:dymo="clr-namespace:PhoneAssistant.WPF.Features.Dymo"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:phones="clr-namespace:PhoneAssistant.WPF.Features.Phones"
@@ -42,6 +43,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type disposals:DisposalsMainViewModel}">
             <disposals:DisposalsMainView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type dymo:DymoViewModel}">
+            <dymo:DymoView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type phones:PhonesMainViewModel}">
             <phones:PhonesMainView />
@@ -169,6 +173,23 @@
                     <TextBlock HorizontalAlignment="Center" Text="or SIM" />
                 </StackPanel>
             </RadioButton>
+
+            <RadioButton Margin="0,10,0,0"
+                         Command="{Binding UpdateViewCommand}"
+                         CommandParameter="{x:Static viewmodel:ViewModelType.Dymo}"
+                         DockPanel.Dock="Top"
+                         IsChecked="{Binding SelectedView, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static viewmodel:ViewModelType.Dymo}}"
+                         IsEnabled="{Binding Development}"
+                         Style="{StaticResource MaterialDesignTabRadioButton}">
+                <StackPanel>
+                    <materialDesign:PackIcon Width="24"
+                                             Height="24"
+                                             HorizontalAlignment="Center"
+                                             Kind="LabelOutline" />
+                    <TextBlock Text="Dymo Label" />
+                </StackPanel>
+            </RadioButton>
+
 
             <RadioButton Margin="0,0,0,5"
                          Command="{Binding UpdateViewCommand}"

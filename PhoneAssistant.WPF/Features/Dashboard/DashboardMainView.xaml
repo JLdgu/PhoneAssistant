@@ -29,6 +29,13 @@
             <StackPanel Orientation="Vertical">
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="vNext" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add separate Dymo label print view" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
                         <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.408.16" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #60 Allow PCnnnnn asset tag format" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #52 Asset Tag mandatory when phone In Stock" />

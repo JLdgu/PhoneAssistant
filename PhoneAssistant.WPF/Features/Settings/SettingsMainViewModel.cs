@@ -17,7 +17,7 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
 {
     private readonly IUserSettings _userSettings;
     private readonly IThemeWrapper _themeWrapper;
-    const string ReleaseUrl = @"\\countyhall.ds2.devon.gov.uk\docs\exeter, county hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\PhoneAssistant.db";
+    const string ReleaseUrl = @"\\countyhall.ds2.devon.gov.uk\docs\exeter, county hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application";
     private readonly UpdateManager _updateManager;
     private UpdateInfo? _updateInfo;        
 

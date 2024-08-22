@@ -124,8 +124,8 @@
                   Grid.Row="3"
                   MaxHeight="930"
                   Margin="10,5,0,0"
-                  materialDesign:DataGridAssist.CellPadding="0 5 0 3"
-                  materialDesign:DataGridAssist.ColumnHeaderPadding="14 5 0 7"
+                  materialDesign:DataGridAssist.CellPadding="4 5 2 3"
+                  materialDesign:DataGridAssist.ColumnHeaderPadding="4 5 2 7"
                   AlternatingRowBackground="{DynamicResource MaterialDesignChipBackground}"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
@@ -149,7 +149,7 @@
                     </DataGridTextColumn.HeaderTemplate>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Binding="{Binding SIMNumber}" Header="SIM Number">
+                <DataGridTextColumn Binding="{Binding SimNumber}" Header="SIM Number">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
                             <StackPanel>
@@ -157,7 +157,7 @@
                                 <TextBox MinWidth="140"
                                          materialDesign:HintAssist.Hint="Filter"
                                          materialDesign:TextFieldAssist.HasClearButton="True"
-                                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterSIMNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterSimNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTextColumn.HeaderTemplate>

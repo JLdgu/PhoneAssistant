@@ -77,7 +77,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         
         if (FilterOutItem(FilterPhoneNumber, vm.PhoneNumber)) return false; 
         
-        if (FilterOutItem(FilterSIMNumber, vm.SimNumber)) return false;
+        if (FilterOutItem(FilterSimNumber, vm.SimNumber)) return false;
         
         if (FilterOutItem(FilterTalkPlan, vm.TalkPlan)) return false;
 
@@ -133,8 +133,8 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     }
 
     [ObservableProperty]
-    private string? _filterSIMNumber;
-    partial void OnFilterSIMNumberChanged(string? value)
+    private string? _filterSimNumber;
+    partial void OnFilterSimNumberChanged(string? value)
     {
         RefreshFilterView();
     }

@@ -29,11 +29,9 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <shared:HeaderMainView HeaderIcon="Plus" HeaderText="Add Phones and SIMs" />
+        <shared:HeaderMainView HeaderIcon="Plus" HeaderText="Add Phone" />
 
         <GroupBox Grid.Row="1"
                   Margin="5"
@@ -53,165 +51,112 @@
                     </StackPanel>
                 </DataTemplate>
             </GroupBox.HeaderTemplate>
-            <StackPanel Margin="0,0,0,25" Orientation="Horizontal">
-                <ComboBox MinWidth="120"
-                          materialDesign:HintAssist.Hint="Condition"
-                          ItemsSource="{Binding Conditions}"
-                          SelectedItem="{Binding Condition, Converter={StaticResource ConditionConverter}, UpdateSourceTrigger=LostFocus}"
-                          Style="{StaticResource MaterialDesignOutlinedComboBox}" />
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <StackPanel Margin="0,0,0,25" Orientation="Horizontal">
+                    <ComboBox MinWidth="120"
+                              materialDesign:HintAssist.Hint="Condition"
+                              ItemsSource="{Binding Conditions}"
+                              SelectedItem="{Binding Condition, Converter={StaticResource ConditionConverter}, UpdateSourceTrigger=LostFocus}"
+                              Style="{StaticResource MaterialDesignOutlinedComboBox}" />
 
-                <ComboBox MinWidth="150"
-                          Margin="10,0,0,0"
-                          materialDesign:HintAssist.Hint="Status"
-                          ItemsSource="{Binding Statuses}"
-                          SelectedItem="{Binding Status, UpdateSourceTrigger=LostFocus}"
-                          Style="{StaticResource MaterialDesignOutlinedComboBox}" />
+                    <ComboBox MinWidth="150"
+                              Margin="10,0,0,0"
+                              materialDesign:HintAssist.Hint="Status"
+                              ItemsSource="{Binding Statuses}"
+                              SelectedItem="{Binding Status, UpdateSourceTrigger=LostFocus}"
+                              Style="{StaticResource MaterialDesignOutlinedComboBox}" />
 
-                <TextBox MinWidth="55"
-                         Margin="10,0,0,0"
-                         materialDesign:HintAssist.Hint="Ticket #"
-                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                         MaxLength="7"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding Ticket}" />
+                    <TextBox MinWidth="85"
+                             Margin="10,0,0,0"
+                             materialDesign:HintAssist.Hint="Ticket #"
+                             materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                             MaxLength="7"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Text="{Binding Ticket}" />
 
-                <TextBox MinWidth="150"
-                         Margin="10,0,0,0"
-                         materialDesign:HintAssist.Hint="IMEI"
-                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                         MaxLength="15"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding Imei}" />
+                    <TextBox MinWidth="150"
+                             Margin="10,0,0,0"
+                             materialDesign:HintAssist.Hint="IMEI"
+                             materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                             MaxLength="15"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Text="{Binding Imei}" />
 
-                <TextBox MinWidth="95"
-                         Margin="10,0,0,0"
-                         materialDesign:HintAssist.Hint="Asset Tag"
-                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding AssetTag}" />
+                    <TextBox MinWidth="125  "
+                             Margin="10,0,0,0"
+                             materialDesign:HintAssist.Hint="Phone Number"
+                             materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                             MaxLength="11"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Text="{Binding PhoneNumber}" />
 
-                <ComboBox MinWidth="110"
-                          Margin="10,0,0,0"
-                          ItemsSource="{Binding OEMs}"
-                          SelectedValue="{Binding OEM}"
-                          Style="{StaticResource MaterialDesignOutlinedComboBox}" />
+                    <TextBox MinWidth="160"
+                             Margin="10,0,0,0"
+                             materialDesign:HintAssist.Hint="SIM Number"
+                             materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                             MaxLength="19"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Text="{Binding SimNumber}" />
 
-                <TextBox MinWidth="75"
-                         Margin="10,0,0,0"
-                         materialDesign:HintAssist.Hint="Model"
-                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding Model}" />
+                    <TextBox MinWidth="95"
+                             Margin="10,0,0,0"
+                             materialDesign:HintAssist.Hint="Asset Tag"
+                             materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Text="{Binding AssetTag}" />
 
-                <TextBox MinWidth="150"
-                         Margin="10,0,0,0"
-                         materialDesign:HintAssist.Hint="Former User"
-                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding FormerUser}" />
+                    <ComboBox MinWidth="110"
+                              Margin="10,0,0,0"
+                              ItemsSource="{Binding OEMs}"
+                              SelectedValue="{Binding OEM}"
+                              Style="{StaticResource MaterialDesignOutlinedComboBox}" />
 
-                <TextBox MinWidth="200"
-                         Margin="10,0,0,0"
-                         materialDesign:HintAssist.Hint="Notes"
-                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding PhoneNotes}" />
-                <Button Margin="10,0,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Command="{Binding PhoneSaveCommand}"
-                        Content="Add Phone"
-                        Style="{StaticResource MaterialDesignRaisedButton}" />
+                    <TextBox MinWidth="75"
+                             Margin="10,0,0,0"
+                             materialDesign:HintAssist.Hint="Model"
+                             materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Text="{Binding Model}" />
 
-                <Button Margin="10,0,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Command="{Binding PhoneClearCommand}"
-                        Content="Clear Phone Changes"
-                        Style="{StaticResource MaterialDesignRaisedButton}" />
+                    <TextBox MinWidth="150"
+                             Margin="10,0,0,0"
+                             materialDesign:HintAssist.Hint="Former User"
+                             materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Text="{Binding FormerUser}" />
 
-            </StackPanel>
+                    <TextBox MinWidth="200"
+                             Margin="10,0,0,0"
+                             materialDesign:HintAssist.Hint="Notes"
+                             materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Text="{Binding PhoneNotes}" />
+                </StackPanel>
 
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Button Margin="10,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Command="{Binding PhoneSaveCommand}"
+                            Content="Add"
+                            Style="{StaticResource MaterialDesignRaisedButton}" />
+
+                    <Button Margin="10,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Command="{Binding PhoneClearCommand}"
+                            Content="Clear Changes"
+                            Style="{StaticResource MaterialDesignRaisedButton}" />
+
+                </StackPanel>
+            </Grid>
         </GroupBox>
 
         <GroupBox Grid.Row="2"
-                  Margin="5"
-                  materialDesign:ColorZoneAssist.Mode="SecondaryLight"
-                  Style="{StaticResource MaterialDesignGroupBox}">
-            <GroupBox.HeaderTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon Width="32"
-                                                 Height="32"
-                                                 VerticalAlignment="Center"
-                                                 Kind="SimOutline" />
-                        <TextBlock Margin="8,0,0,0"
-                                   VerticalAlignment="Center"
-                                   Style="{StaticResource CardHeader}"
-                                   Text="SIM Details" />
-                    </StackPanel>
-                </DataTemplate>
-            </GroupBox.HeaderTemplate>
-            <StackPanel Margin="0,0,0,25" Orientation="Horizontal">
-                <TextBox MinWidth="150"
-                         Margin="10,0,0,0"
-                         materialDesign:HintAssist.Hint="Phone Number"
-                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                         MaxLength="11"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding PhoneNumber}" />
-
-                <TextBox MinWidth="150"
-                         Margin="10,0,0,0"
-                         materialDesign:HintAssist.Hint="SIM Number"
-                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                         MaxLength="19"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding SimNumber}" />
-
-                <TextBox MinWidth="200"
-                         Margin="10,0,0,0"
-                         materialDesign:HintAssist.Hint="Notes"
-                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding SimNotes}" />
-
-                <Button Margin="10,0,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Command="{Binding SIMSaveCommand}"
-                        Content="Add SIM"
-                        Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}" />
-
-                <Button Margin="10,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Command="{Binding SIMDeleteCommand}"
-                        Content="Delete SIM"
-                        Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}" />
-
-                <Button Margin="10,0,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Command="{Binding SIMClearCommand}"
-                        Content="Clear SIM Changes"
-                        Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}" />
-            </StackPanel>
-        </GroupBox>
-
-        <StackPanel Grid.Row="3"
-                    Margin="0,10,0,10"
-                    Orientation="Horizontal">
-            <Button Margin="10,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Command="{Binding PhoneWithSIMSaveCommand}"
-                    Content="Add Phone with SIM"
-                    Style="{StaticResource MaterialDesignRaisedLightButton}" />
-
-        </StackPanel>
-
-        <GroupBox Grid.Row="4"
                   Margin="5"
                   materialDesign:ColorZoneAssist.Mode="PrimaryMid"
                   Header="Log"
@@ -227,8 +172,5 @@
             </ListView>
 
         </GroupBox>
-
-
     </Grid>
-
 </UserControl>

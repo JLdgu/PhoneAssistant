@@ -166,19 +166,6 @@ public sealed class PhonesItemViewModelTests
         Assert.Equal(expected, _phone.PhoneNumber);
     }
 
-    [Fact]
-    private void OnPhoneNumberChanged_ShouldDeleteSim_WhenSimExists()
-    {
-        Mock<ISimsRepository> sims = _mocker.GetMock<ISimsRepository>();
-        sims.Setup(r => r.DeleteSIMAsync("0123456789")).ReturnsAsync("sim number");
-
-        _vm.PhoneNumber = "0123456789";
-
-        sims.Verify(r => r.DeleteSIMAsync("0123456789"), Times.Once);
-
-        Assert.Equal("sim number", _phone.SimNumber);
-    }
-
     [Theory]
     [InlineData("sim number", "sim number")]
     [InlineData("", null)]

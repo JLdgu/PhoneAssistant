@@ -29,8 +29,10 @@
             <StackPanel Orientation="Vertical">
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="vNext" />
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.408.22" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add separate Dymo label print view" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Use BaseReport for SIM card lookup" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Disable SIM functionality" />
                     </StackPanel>
                 </materialDesign:Card>
 

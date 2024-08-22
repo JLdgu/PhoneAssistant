@@ -9,10 +9,10 @@ using System.ComponentModel.DataAnnotations;
 using PhoneAssistant.WPF.Application;
 using CommunityToolkit.Mvvm.Messaging;
 using PhoneAssistant.Tests.Shared;
-using System.ComponentModel;
+using NPOI.SS.Formula.Functions;
 
 namespace PhoneAssistant.Tests.Features.AddItem;
-public class AddItemViewModelTests
+public partial class AddItemViewModelTests
 {
     private readonly AutoMocker _mocker = new AutoMocker();
     private readonly AddItemViewModel _sut;
@@ -22,20 +22,54 @@ public class AddItemViewModelTests
         _sut = _mocker.CreateInstance<AddItemViewModel>();
     }
 
-    #region Phone
     [Fact]
-    public void CanSavePhone_ShouldBeEnabled_WhenAllRequiredPropertiesSupplied()
+    public void CanSavePhone_ShouldBeEnabled_WhenNoErrors_WithPhoneHasSim()
     {
-        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
-        _repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
+        Mock<IBaseReportRepository> sims = _mocker.GetMock<IBaseReportRepository>();
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+        sims.Setup(r => r.GetSimNumberAsync("07123456789")).ReturnsAsync((string)null);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
+        _sut.Condition = "condition";
+        _sut.Imei = "355808981147090";
+        _sut.Model = "model";
+        _sut.PhoneNumber = "07123456789";
+        _sut.Status = "status";
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors();
+        Assert.Empty(errors);
+        Assert.True(_sut.CanSavePhone());
+        _mocker.VerifyAll();
+    }
+
+    [Fact]
+    public void CanSavePhone_ShouldBeEnabled_WhenNoErrors_WithPhoneInStock()
+    {
+        Mock<IPhonesRepository> _phones = _mocker.GetMock<IPhonesRepository>();
+        _phones.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
+        Mock<IBaseReportRepository> sims = _mocker.GetMock<IBaseReportRepository>();
         _sut.AssetTag = "MP00001";
         _sut.Condition = "condition";
         _sut.Imei = "355808981147090";
         _sut.Model = "model";
-        _sut.Status = "status";
-        
+        _sut.Status = ApplicationSettings.StatusInStock;
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors();
+        Assert.Empty(errors);
+        Assert.True(_sut.CanSavePhone());
         _mocker.VerifyAll();
+    }
+
+    [Fact]
+    public void CanSavePhone_ShouldBeEnabled_WhenNoErrors_WithPhoneOnly()
+    {
+        _sut.Condition = "condition";
+        _sut.Imei = "355808981147090";
+        _sut.Model = "model";
+        _sut.Status = "status";
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors();
+        Assert.Empty(errors);
         Assert.True(_sut.CanSavePhone());
     }
 
@@ -169,6 +203,54 @@ public class AddItemViewModelTests
     }
 
     [Fact]
+    public void GetErrors_ShouldBeEmpty_WhenPhoneNumberNull()
+    {
+        _sut.PhoneNumber = "07123456789";
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.PhoneNumber));
+        Assert.Empty(errors);
+    }
+
+    [Fact]
+    public void GetErrors_ShouldBeEmpty_WhenPhoneNumberSet()
+    {
+        _sut.PhoneNumber = "07123456789";
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.PhoneNumber));
+        Assert.Empty(errors);
+    }
+
+    [Fact]
+    public void GetErrors_ShouldBeEmpty_WhenSimNumberNull()
+    {
+        _sut.SimNumber = null;
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.SimNumber));
+        Assert.Empty(errors);
+    }
+
+    [Fact]
+    public void GetErrors_ShouldBeEmpty_WhenSimNumberSet()
+    {
+        _sut.SimNumber = "8944122605566849402";
+
+        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.SimNumber));
+        Assert.Empty(errors);
+    }
+
+    [Fact]
+    public void OnPhoneNumberChanged_ShouldSetSimNumber_WhenSimExists()
+    {
+        Mock<IBaseReportRepository> _repository = _mocker.GetMock<IBaseReportRepository>();
+        _repository.Setup(r => r.GetSimNumberAsync("07123456789")).ReturnsAsync("sim number");
+
+        _sut.PhoneNumber = "07123456789";
+
+        _mocker.VerifyAll();
+        Assert.Equal("sim number", _sut.SimNumber);
+    }
+
+    [Fact]
     public void PhoneClearCommand_ShouldDisablePhoneSave()
     {
         _sut.PhoneClearCommand.Execute(null);
@@ -184,54 +266,6 @@ public class AddItemViewModelTests
         _sut.PhoneClearCommand.Execute(null);
 
         AssertResetAllPhoneProperties();
-    }
-
-    private void ArrangeSetAllPhoneProperties()
-    {
-        _sut.AssetTag = "MP00000";
-        _sut.Condition = "condition";
-        _sut.FormerUser = "former user";
-        _sut.Imei = "imei";
-        _sut.Model = "model";
-        _sut.PhoneNotes = "notes";
-        _sut.OEM = OEMs.Samsung;
-        _sut.Status = "status";
-        _sut.Ticket = 7654321.ToString();
-    }
-
-    private void AssertResetAllPhoneProperties()
-    {
-        Assert.Null(_sut.AssetTag);
-        Assert.Equal(ApplicationSettings.Conditions[1].Substring(0, 1), _sut.Condition);
-        Assert.Null( _sut.FormerUser);
-        Assert.Equal(string.Empty, _sut.Imei);
-        Assert.Equal(string.Empty, _sut.Model);
-        Assert.Null(_sut.PhoneNotes);
-        Assert.Equal(OEMs.Samsung,_sut.OEM);
-        Assert.Equal(ApplicationSettings.Statuses[1], _sut.Status);
-        Assert.Null(_sut.Ticket);
-    }
-
-    [Fact]
-    [Description("Issue 53")]
-    public void PhoneSaveCommand_ShouldNotSaveSimDetails()
-    {
-        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);        
-        Phone actual = new() { Condition = "", Imei = "", Model = "", OEM = OEMs.Apple, Status = "" };
-        repository.Setup(r => r.CreateAsync(It.IsAny<Phone>())).Callback<Phone>(p => actual = p);
-
-        _sut.AssetTag = "MP00001";
-        _sut.Imei = "355808981147090";
-        _sut.Model = "model";
-        _sut.PhoneNumber = "07123456789";
-        _sut.SimNumber = "8944122605566849402";
-
-        _sut.PhoneSaveCommand.Execute(null);
-
-        _mocker.VerifyAll();
-        Assert.Null(actual.PhoneNumber);
-        Assert.Null(actual.SimNumber);
     }
 
     [Fact]
@@ -342,190 +376,46 @@ public class AddItemViewModelTests
 
         Assert.Equal(ValidationResult.Success, actual);
     }
-    #endregion
 
-    #region SIM
     [Fact]
-    public void CanDeleteSIM_ShouldBeEnabled_WhenAllRequiredPropertiesSuppliedAndSIMExists()
+    public void ValidatePhoneNumber_ShouldReturnError_WhenPhoneNumberNotUnique()
     {
-        Mock<IPhonesRepository> phones = new Mock<IPhonesRepository>();
-        phones = _mocker.GetMock<IPhonesRepository>();
-        phones.Setup(p => p.PhoneNumberExistsAsync("07123456789")).ReturnsAsync(false);
+        ValidationContext ctx = new(_sut, null, null);
+        Mock<IPhonesRepository> _repository = new Mock<IPhonesRepository>();
+        _repository = _mocker.GetMock<IPhonesRepository>();
+        _repository.Setup(p => p.PhoneNumberExistsAsync("07123456789")).ReturnsAsync(true);
 
-        Mock<ISimsRepository> sims = _mocker.GetMock<ISimsRepository>();
-        sims.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync("8944122605566849402");
+        ValidationResult? actual = AddItemViewModel.ValidatePhoneNumber("07123456789", ctx);
 
-        _sut.PhoneNumber = "07123456789";
-
-        _mocker.VerifyAll();
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.PhoneNumber));
-        Assert.True(_sut.CanDeleteSIM());
+        _repository.VerifyAll();
+        Assert.NotNull(actual);
+        Assert.Equal("Phone Number already linked to phone", actual.ErrorMessage);
     }
 
     [Fact]
-    public void CanDeleteSIM_ShouldBeDisabled_WhenSIMDoesNotExist()
+    public void ValidatePhoneNumber_ShouldReturnValidResult_WhenPhoneNumberUnique()
     {
-        Mock<ISimsRepository> _repository = _mocker.GetMock<ISimsRepository>();
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-        _repository.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync((string)null);
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+        ValidationContext ctx = new(_sut, null, null);
+        Mock<IPhonesRepository> _repository = new Mock<IPhonesRepository>();
+        _repository = _mocker.GetMock<IPhonesRepository>();
+        _repository.Setup(p => p.PhoneNumberExistsAsync("07123456789")).ReturnsAsync(false);
 
-        _sut.PhoneNumber = "07123456789";
-        _sut.SimNumber = "8944122605566849402";
+        ValidationResult actual = AddItemViewModel.ValidatePhoneNumber("07123456789", ctx);
 
-        _mocker.VerifyAll();
-        Assert.False(_sut.CanDeleteSIM());
+        _repository.VerifyAll();
+        Assert.Equal(ValidationResult.Success, actual);
     }
 
     [Fact]
-    public void CanSaveSIM_ShouldBeEnabled_WhenAllRequiredPropertiesSupplied()
-    {
-        Mock<ISimsRepository> _repository = _mocker.GetMock<ISimsRepository>();
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-        _repository.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync((string)null);
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-
-        _sut.PhoneNumber = "07123456789";
-        _sut.SimNumber = "8944122605566849402";
-
-        _mocker.VerifyAll();
-        Assert.True(_sut.CanSaveSIM());
-    }
-
-    [Fact]
-    public void GetErrors_ShouldBeEmpty_WhenPhoneNumberSet()
-    {
-        _sut.PhoneNumber = "07123456789";
-
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.PhoneNumber));
-        Assert.Empty(errors);
-    }
-
-    [Fact]
-    public void GetErrors_ShouldBeEmpty_WhenSimNumberSet()
-    {
-        _sut.SimNumber = "8944122605566849402";
-
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.SimNumber));
-        Assert.Empty(errors);
-    }
-
-    [Fact]
-    public void OnPhoneNumberChanged_ShouldSetSimNumber_WhenSimExists()
-    {
-        Mock<ISimsRepository> _repository = _mocker.GetMock<ISimsRepository>();
-        _repository.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync("sim number");
-
-        _sut.PhoneNumber = "07123456789";
-
-        _mocker.VerifyAll();
-        Assert.Equal("sim number", _sut.SimNumber);
-        Assert.False(_sut.CanSaveSIM());
-    }
-
-    [Fact]
-    public void SIMClearCommand_ShouldDisableSIMSave()
-    {
-        _sut.SIMClearCommand.Execute(null);
-
-        Assert.False(_sut.CanSaveSIM());
-    }
-
-    [Fact]
-    public void SIMClearCommand_ShouldResetAllSIMProperties()
-    {
-        _sut.PhoneNumber = "1234567890";
-        _sut.SimNumber = "1234567890123456789";
-        _sut.SimNotes = "Notes";
-
-        _sut.SIMClearCommand.Execute(null);
-
-        Assert.Null(_sut.PhoneNumber);
-        Assert.Null(_sut.SimNumber);
-        Assert.Null(_sut.SimNotes);
-    }
-
-    [Fact]
-    public void SimDeleteCommand_ShouldCallRepository()
-    {
-        Mock<ISimsRepository> _repository = _mocker.GetMock<ISimsRepository>();
-        _repository.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync("8944122605566849402");
-        _repository.Setup(r => r.DeleteSIMAsync("07123456789")).ReturnsAsync("8944122605566849402");
-        _sut.PhoneNumber = "07123456789";
-
-        _sut.SIMDeleteCommand.Execute(null);
-
-        _mocker.VerifyAll();
-    }
-
-    [Fact]
-    public void SimSaveCommand_ShouldCallRepository()
-    {
-        Sim newSIM = new() { PhoneNumber = "", SimNumber = "" };
-        Mock<ISimsRepository> _repository = _mocker.GetMock<ISimsRepository>();
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-        _repository.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync((string)null);
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-        _repository.Setup(r => r.CreateAsync(It.IsAny<Sim>())).Callback<Sim>(s => newSIM = s);
-        _sut.PhoneNumber = "07123456789";
-        _sut.SimNumber = "8944122605566849402";
-
-        _sut.SIMSaveCommand.Execute(null);
-
-        Assert.Equal("07123456789", newSIM.PhoneNumber);
-        Assert.Equal("8944122605566849402", newSIM.SimNumber);
-
-        _mocker.VerifyAll();
-    }
-
-    [Fact]
-    public void SimSaveCommand_ShouldDisablePhoneSave()
-    {
-        _sut.SIMSaveCommand.Execute(null);
-
-        Assert.False(_sut.CanSaveSIM());
-    }
-
-    [Fact]
-    public void SimSaveCommand_ShouldResetAllPhoneProperties()
-    {
-        _sut.PhoneNumber = "1234567890";
-        _sut.SimNumber = "1234567890123456789";
-        _sut.SimNotes = "Notes";
-
-        _sut.SIMSaveCommand.Execute(null);
-
-        Assert.Null(_sut.PhoneNumber);
-        Assert.Null(_sut.SimNumber);
-        Assert.Null(_sut.SimNotes);
-    }
-
-    [Fact]
-    public void SimSaveCommand_ShouldSendSimMessage()
-    {
-        Mock<IMessenger> message = _mocker.GetMock<IMessenger>();
-        message.Setup(m => m.Send(It.IsAny<Sim>(), It.IsAny<IsAnyToken>()));
-        
-        _sut.PhoneNumber = "1234567890";
-        _sut.SimNumber = "1234567890123456789";
-
-        _sut.SIMSaveCommand.Execute(null);
-
-        message.Verify(x => x.Send(It.IsAny<Sim>(), It.IsAny<IsAnyToken>()), Times.Once);
-    }
-
-    [Fact]
-    public void ValidateSimNumber_ShouldReturnError_WhenSimNumberEmptyOrWhiteSpace()
+    public void ValidateSimNumber_ShouldReturnValidResult_WhenSimNumberEmptyOrWhiteSpace()
     {
         ValidationContext ctx = new(_sut, null, null);
 
         ValidationResult actual1 = AddItemViewModel.ValidateSimNumber("", ctx);
         ValidationResult actual2 = AddItemViewModel.ValidateSimNumber("  ", ctx);
 
-        Assert.NotNull(actual1);
-        Assert.Equal("SIM Number is required", actual1.ErrorMessage);
-        Assert.NotNull(actual2);
-        Assert.Equal("SIM Number is required", actual2.ErrorMessage);
+        Assert.Null(actual1);
+        Assert.Null(actual2);
     }
 
     [Fact]
@@ -536,7 +426,7 @@ public class AddItemViewModelTests
         ValidationResult actual = AddItemViewModel.ValidateSimNumber("abc", ctx);
 
         Assert.NotNull(actual);
-        Assert.Equal("SIM Number check digit incorrect", actual.ErrorMessage);
+        Assert.Equal("SIM Number must be 19 digits", actual.ErrorMessage);
     }
 
     [Fact]
@@ -559,108 +449,31 @@ public class AddItemViewModelTests
 
         Assert.Equal(ValidationResult.Success, actual);
     }
-    #endregion
 
-    #region PhoneWithSim
-    [Fact]
-    public void CanSavePhoneWithSIM_ShouldBeEnabled_WhenAllRequiredPropertiesSupplied()
+    private void ArrangeSetAllPhoneProperties()
     {
-        Mock<IPhonesRepository> _phones = _mocker.GetMock<IPhonesRepository>();
-        _phones.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
-        Mock<ISimsRepository> sims = _mocker.GetMock<ISimsRepository>();
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-        sims.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync((string)null);
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-
-        _sut.AssetTag = "MP00001";
+        _sut.AssetTag = "MP00000";
         _sut.Condition = "condition";
-        _sut.Imei = "355808981147090";
+        _sut.FormerUser = "former user";
+        _sut.Imei = "imei";
         _sut.Model = "model";
+        _sut.PhoneNotes = "notes";
+        _sut.OEM = OEMs.Samsung;
         _sut.Status = "status";
-        _sut.PhoneNumber = "07123456789";
-        _sut.SimNumber = "8944122605566849402";
-
-        _mocker.VerifyAll();
-        Assert.True(_sut.CanSavePhoneWithSIM());
+        _sut.Ticket = 7654321.ToString();
     }
 
-    [Fact]
-    public void PhoneWithSIMCommand_ShouldCallRepository()
+    private void AssertResetAllPhoneProperties()
     {
-        Phone actual = new() { Condition = "", Imei = "", Model = "", OEM = OEMs.Apple, Status = "" };
-        Mock<IPhonesRepository> _phones = _mocker.GetMock<IPhonesRepository>();
-        _phones.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
-        _phones.Setup(r => r.CreateAsync(It.IsAny<Phone>())).Callback<Phone>(p => actual = p); 
-        Mock<ISimsRepository> sims = _mocker.GetMock<ISimsRepository>();
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-        sims.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync((string)null);
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-
-        _sut.AssetTag = "MP00001";
-        _sut.Condition = "condition";
-        _sut.Imei = "355808981147090";
-        _sut.Model = "model";
-        _sut.Status = "status";
-        _sut.PhoneNumber = "07123456789";
-        _sut.SimNumber = "8944122605566849402";
-
-        _sut.PhoneWithSIMSaveCommand.Execute(null);
-
-        _mocker.VerifyAll();
-        Assert.Equal("07123456789", actual.PhoneNumber);
-        Assert.Equal("8944122605566849402", actual.SimNumber);
-
+        Assert.Null(_sut.AssetTag);
+        Assert.Equal(ApplicationSettings.Conditions[1].Substring(0, 1), _sut.Condition);
+        Assert.Null(_sut.FormerUser);
+        Assert.Equal(string.Empty, _sut.Imei);
+        Assert.Equal(string.Empty, _sut.Model);
+        Assert.Null(_sut.PhoneNotes);
+        Assert.Equal(OEMs.Samsung, _sut.OEM);
+        Assert.Equal(ApplicationSettings.Statuses[1], _sut.Status);
+        Assert.Null(_sut.Ticket);
     }
-
-    [Fact]
-    public void PhoneWithSIMCommand_ShouldDeleteSIM_WhenSimExists()
-    {
-        Mock<IPhonesRepository> _phones = _mocker.GetMock<IPhonesRepository>();
-        _phones.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
-        _phones.Setup(r => r.CreateAsync(It.IsAny<Phone>()));
-        Mock<ISimsRepository> sims = _mocker.GetMock<ISimsRepository>();
-        sims.Setup(r => r.GetSIMNumberAsync("07123456789")).ReturnsAsync("8944122605566849402");
-        sims.Setup(s => s.DeleteSIMAsync("07123456789")).ReturnsAsync("8944122605566849402");
-
-        _sut.AssetTag = "MP00001";
-        _sut.Condition = "condition";
-        _sut.Imei = "355808981147090";
-        _sut.Model = "model";
-        _sut.Status = "status";
-        _sut.PhoneNumber = "07123456789";
-
-        _sut.PhoneWithSIMSaveCommand.Execute(null);
-
-        _mocker.VerifyAll();
-    }
-    [Fact]
-    public void ValidatePhoneNumber_ShouldReturnError_WhenPhoneNumberNotUnique()
-    {
-        ValidationContext ctx = new(_sut, null, null);
-        Mock<IPhonesRepository> _repository = new Mock<IPhonesRepository>();
-        _repository = _mocker.GetMock<IPhonesRepository>();
-        _repository.Setup(p => p.PhoneNumberExistsAsync("07123456789")).ReturnsAsync(true);
-        
-        ValidationResult actual = AddItemViewModel.ValidatePhoneNumber("07123456789", ctx);
-
-        _repository.VerifyAll();
-        Assert.NotNull(actual);
-        Assert.Equal("Phone Number already linked to phone", actual.ErrorMessage);
-    }
-
-    [Fact]
-    public void ValidatePhoneNumber_ShouldReturnValidResult_WhenPhoneNumberUnique()
-    {
-        ValidationContext ctx = new(_sut, null, null);
-        Mock<IPhonesRepository> _repository = new Mock<IPhonesRepository>();
-        _repository = _mocker.GetMock<IPhonesRepository>();
-        _repository.Setup(p => p.PhoneNumberExistsAsync("07123456789")).ReturnsAsync(false);
-        
-        ValidationResult actual = AddItemViewModel.ValidatePhoneNumber("07123456789", ctx);
-
-        _repository.VerifyAll();
-        Assert.Equal(ValidationResult.Success, actual);
-    }
-    #endregion
 }
 

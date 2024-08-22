@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -14,28 +15,27 @@ namespace PhoneAssistant.WPF.Features.AddItem;
 public partial class AddItemViewModel : ObservableValidator, IViewModel
 {
     private readonly IPhonesRepository _phonesRepository;
-    private readonly ISimsRepository _simsRepository;
+    private readonly IBaseReportRepository _baseReportRepository;
     private readonly IUserSettings _userSettings;
     private readonly IMessenger _messenger;
 
     public ObservableCollection<string> LogItems { get; } = [];
 
     public AddItemViewModel(IPhonesRepository phonesRepository,
-                            ISimsRepository simsRepository,
+                            IBaseReportRepository baseReportRepository,
                             IUserSettings userSettings,
                             IMessenger messenger)
     {
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
-        _simsRepository = simsRepository ?? throw new ArgumentNullException(nameof(simsRepository));
+        _baseReportRepository = baseReportRepository ?? throw new ArgumentNullException(nameof(baseReportRepository));
         _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         OEM = Application.Entities.OEMs.Samsung;
         ValidateAllProperties();
     }
 
-    #region NewPhone
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand), nameof(PhoneWithSIMSaveCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
     [NotifyPropertyChangedFor(nameof(Status))]
     [NotifyDataErrorInfo]    
     [RegularExpression(@"(MP|PC)\d{5}",ErrorMessage = "Invalid format")]
@@ -74,7 +74,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     private string? _formerUser;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand), nameof(PhoneWithSIMSaveCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
     [NotifyDataErrorInfo]
     [Required(ErrorMessage = "IMEI is required")]
     [CustomValidation(typeof(AddItemViewModel), nameof(ValidateImeiAsync))]
@@ -100,7 +100,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     private async Task<bool> IsIMEIUniqueAsync(string imei) => !await _phonesRepository.ExistsAsync(imei);
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand), nameof(PhoneWithSIMSaveCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
     [NotifyDataErrorInfo]
     [Required(ErrorMessage = "Model is required")]
     private string _model = string.Empty;
@@ -225,127 +225,63 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         _messenger.Send(phone);
         PhoneClear();
     }
-    #endregion
 
-    #region NewSIM
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(SIMSaveCommand), nameof(SIMDeleteCommand), nameof(PhoneWithSIMSaveCommand))]
-    [NotifyDataErrorInfo]
-    [Required(ErrorMessage = "Phone Number is required")]
+    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
+    [NotifyDataErrorInfo]    
     [RegularExpression(@"0\d{9,10}", ErrorMessage = "Phone Number must be 10 or 11 digits")]
     [CustomValidation(typeof(AddItemViewModel), nameof(ValidatePhoneNumber))]
     private string? _phoneNumber;
 
-    public static ValidationResult ValidatePhoneNumber(string phoneNumber, ValidationContext context)
+    public static ValidationResult? ValidatePhoneNumber(string phoneNumber, ValidationContext context)
     {
+        if (string.IsNullOrWhiteSpace(phoneNumber)) return ValidationResult.Success;
+
         AddItemViewModel vm = (AddItemViewModel)context.ObjectInstance;
 
         bool unique  = Task.Run(() => vm.IsPhoneNumberUniqueAsync(phoneNumber)).GetAwaiter().GetResult();
 
-#pragma warning disable CS8603 // Possible null reference return.
-        if (unique) return ValidationResult.Success;
-#pragma warning restore CS8603 // Possible null reference return.
+        if (unique) return ValidationResult.Success!;
 
         return new ValidationResult("Phone Number already linked to phone");
     }
+
     private async Task<bool> IsPhoneNumberUniqueAsync(string phoneNumber) => !await _phonesRepository.PhoneNumberExistsAsync(phoneNumber);
     
     async partial void OnPhoneNumberChanged(string? value)
     {
-        _newSIM = true;
         if (string.IsNullOrWhiteSpace(value)) return;
 
-        string? simNumber = await _simsRepository.GetSIMNumberAsync(value);
+        string? simNumber = await _baseReportRepository.GetSimNumberAsync(value);
 
         if (simNumber is null) return;
 
         SimNumber = simNumber;
-        _newSIM = false;
     }
-    private bool _newSIM = true;
 
     [ObservableProperty]
-    private string? _simNotes;
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(SIMSaveCommand), nameof(SIMDeleteCommand), nameof(PhoneWithSIMSaveCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
     [NotifyDataErrorInfo]
-    [Required(ErrorMessage = "SIM Number is required")]
     [RegularExpression(@"8944\d{15}", ErrorMessage = "SIM Number must be 19 digits")]
     [CustomValidation(typeof(AddItemViewModel), nameof(ValidateSimNumber))]
     private string? _simNumber;
 
     public static ValidationResult ValidateSimNumber(string? simNumber, ValidationContext context)
     {
-        if (string.IsNullOrWhiteSpace(simNumber)) return new ValidationResult("SIM Number is required");
+        Regex regex = ImeiFormat();
+
+        if (string.IsNullOrWhiteSpace(simNumber)) return ValidationResult.Success!;
+
+        if (!regex.IsMatch(simNumber))
+            return new ValidationResult("SIM Number must be 19 digits");
 
         if (!LuhnValidator.IsValid(simNumber, 19)) return new ValidationResult("SIM Number check digit incorrect");
 
-#pragma warning disable CS8603 // Possible null reference return.
-        return ValidationResult.Success;
-#pragma warning restore CS8603 // Possible null reference return.
+        return ValidationResult.Success!;
     }
 
-    [RelayCommand]
-    private void SIMClear()
-    {
-        PhoneNumber = null;
-        SimNotes = null;
-        SimNumber = null;
-    }
-
-    public bool CanDeleteSIM()
-    {
-        if (_newSIM) return false;
-        if (GetErrors(nameof(PhoneNumber)).Any()) return false;
-        if (GetErrors(nameof(SimNumber)).Any()) return false;
-        return true;
-    }
-
-    [RelayCommand(CanExecute = nameof(CanDeleteSIM))]
-    private async Task SIMDeleteAsync()
-    {
-        _ = await _simsRepository.DeleteSIMAsync(PhoneNumber!);
-        
-        LogItems.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} SIM deleted - {PhoneNumber} {SimNumber}");
-        SIMClear();
-    }
-
-    public bool CanSaveSIM()
-    {
-        if (!_newSIM) return false;
-        if (GetErrors(nameof(PhoneNumber)).Any()) return false;
-        if (GetErrors(nameof(SimNumber)).Any()) return false;
-        return true;
-    }
-
-    [RelayCommand(CanExecute = nameof(CanSaveSIM))]
-    private async Task SIMSaveAsync()
-    {
-        Sim sim = new() { PhoneNumber = PhoneNumber!, SimNumber = SimNumber!, Notes = PhoneNotes };
-        await _simsRepository.CreateAsync(sim);
-
-        LogItems.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} SIM added - {PhoneNumber} {SimNumber}");
-        _messenger.Send(sim);
-        SIMClear();
-    }
-    #endregion
-
-    public bool CanSavePhoneWithSIM()
-    {
-        if (CanSavePhone() && CanSaveSIM()) return true;
-        return false; 
-    }
-
-    [RelayCommand(CanExecute =nameof(CanSavePhoneWithSIM))]
-    private async Task PhoneWithSIMSaveAsync()
-    {
-        if (!_newSIM)
-            await _simsRepository.DeleteSIMAsync(PhoneNumber!);
-
-        await PhoneSaveAsync(false);
-        SIMClear();
-    }
+    [GeneratedRegex(@"8944\d{15}", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-GB")]
+    private static partial Regex ImeiFormat();
 
     public Task LoadAsync()
     {

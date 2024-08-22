@@ -20,48 +20,9 @@ public sealed class SimsRepository : ISimsRepository
 
     }
 
-    public async Task<string?> DeleteSIMAsync(string phoneNumber)
-    {
-        Sim? sim = await _dbContext.Sims.FindAsync(phoneNumber);
-        
-        if (sim is null) return null;
-
-        _dbContext.Sims.Remove(sim);
-        await _dbContext.SaveChangesAsync();
-        return sim.SimNumber;
-    }
-
-    public async Task<string?> GetSIMNumberAsync(string phoneNumber)
-    {
-        Sim? sim = await _dbContext.Sims.FindAsync(phoneNumber);
-
-        if (sim is null) return null;
-
-        return sim.SimNumber;
-    }
-
     public async Task<IEnumerable<Sim>> GetSimsAsync()
     {
         List<Sim> sims = await _dbContext.Sims.ToListAsync();
         return sims;
     }
-
-    //public async Task MoveSimToPhone(string phoneNumber, string imei)
-    //{
-    //    if (phoneNumber is null)
-    //    {
-    //        throw new ArgumentNullException(nameof(phoneNumber));
-    //    }
-
-    //    Sim sim = await _dbContext.Sims.SingleAsync(x => x.PhoneNumber == phoneNumber);
-    //    Phone phone = await _dbContext.Phones.SingleAsync(x => x.Imei == imei);
-
-    //    phone.PhoneNumber = phoneNumber;
-    //    phone.SimNumber = sim.SimNumber;
-    //    _dbContext.Phones.Update(phone);
-
-    //    _dbContext.Sims.Remove(sim);
-
-    //    await _dbContext.SaveChangesAsync();
-    //}
 }

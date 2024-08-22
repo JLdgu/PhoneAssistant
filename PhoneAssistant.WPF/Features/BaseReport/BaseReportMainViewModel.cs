@@ -19,13 +19,13 @@ namespace PhoneAssistant.WPF.Features.BaseReport;
 
 public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMainViewModel
 {
-    private readonly BaseReportRepository _repository;
+    private readonly IBaseReportRepository _repository;
     private readonly IImportHistoryRepository _import;
     private bool _loaded;
     
     private readonly ListCollectionView _filterView;
 
-    public BaseReportMainViewModel(BaseReportRepository repository, IImportHistoryRepository importHistory)
+    public BaseReportMainViewModel(IBaseReportRepository repository, IImportHistoryRepository importHistory)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _import = importHistory ?? throw new ArgumentNullException(nameof(importHistory));
@@ -77,7 +77,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         
         if (FilterOutItem(FilterPhoneNumber, vm.PhoneNumber)) return false; 
         
-        if (FilterOutItem(FilterSIMNumber, vm.SIMNumber)) return false;
+        if (FilterOutItem(FilterSIMNumber, vm.SimNumber)) return false;
         
         if (FilterOutItem(FilterTalkPlan, vm.TalkPlan)) return false;
 
@@ -224,7 +224,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
                 ContractEndDate = row.GetCell(7).DateCellValue.ToString() ?? string.Empty,
                 TalkPlan = row.GetCell(8).StringCellValue,
                 Handset = row.GetCell(9).StringCellValue,
-                SIMNumber = row.GetCell(10).StringCellValue,
+                SimNumber = row.GetCell(10).StringCellValue,
                 ConnectedIMEI = row.GetCell(11).StringCellValue,
                 LastUsedIMEI = row.GetCell(12).StringCellValue
             };

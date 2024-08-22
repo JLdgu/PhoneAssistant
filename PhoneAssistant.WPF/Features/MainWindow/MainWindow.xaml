@@ -97,10 +97,11 @@
                 </StackPanel>
             </RadioButton>
 
-            <RadioButton Command="{Binding UpdateViewCommand}" IsEnabled="{Binding Development}"
+            <RadioButton Command="{Binding UpdateViewCommand}"
                          CommandParameter="{x:Static viewmodel:ViewModelType.Sims}"
                          DockPanel.Dock="Top"
                          IsChecked="{Binding SelectedView, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static viewmodel:ViewModelType.Sims}}"
+                         IsEnabled="{Binding Development}"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon Width="24"
@@ -169,8 +170,7 @@
                                              Height="24"
                                              HorizontalAlignment="Center"
                                              Kind="Plus" />
-                    <TextBlock HorizontalAlignment="Center" Text="New Phone" />
-                    <TextBlock HorizontalAlignment="Center" Text="or SIM" />
+                    <TextBlock HorizontalAlignment="Center" Text="Add Phone" />
                 </StackPanel>
             </RadioButton>
 

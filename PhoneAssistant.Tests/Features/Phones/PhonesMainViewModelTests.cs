@@ -307,7 +307,7 @@ public sealed class PhonesMainViewModelTests
             repository.Setup(r => r.GetActivePhonesAsync()).ReturnsAsync(phones);
         else
             repository.Setup(r => r.GetAllPhonesAsync()).ReturnsAsync(phones);
-        Mock<ISimsRepository> sims = mocker.GetMock<ISimsRepository>();
+        Mock<IBaseReportRepository> sims = mocker.GetMock<IBaseReportRepository>();
         Mock<IPrintEnvelope> print = mocker.GetMock<IPrintEnvelope>();
         Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
         Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();

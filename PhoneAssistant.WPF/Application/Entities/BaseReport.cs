@@ -7,7 +7,7 @@ public class BaseReport
     public required string ContractEndDate { get; set; }
     public required string TalkPlan { get; set; }
     public required string Handset { get; set; }
-    public required string SIMNumber { get; set; }
+    public required string SimNumber { get; set; }
     public required string ConnectedIMEI{ get; set; }
     public required string LastUsedIMEI{ get; set; }
 }

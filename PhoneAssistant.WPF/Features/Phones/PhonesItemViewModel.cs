@@ -11,19 +11,19 @@ namespace PhoneAssistant.WPF.Features.Phones;
 public sealed partial class PhonesItemViewModel : ObservableObject
 {
     private readonly IPhonesRepository _repository;
-    private readonly ISimsRepository _simsRepository;
+    private readonly IBaseReportRepository _baseReportRepository;
     private readonly IPrintEnvelope _printEnvelope;
     private readonly IMessenger _messenger;
     private readonly Phone _phone;
 
     public PhonesItemViewModel(IPhonesRepository repository,
-                               ISimsRepository simsRepository,
+                               IBaseReportRepository baseReportRepository,
                                IPrintEnvelope printEnvelope,
                                IMessenger messenger,
                                Phone phone)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _simsRepository = simsRepository ?? throw new ArgumentNullException(nameof(simsRepository));
+        _baseReportRepository = baseReportRepository ?? throw new ArgumentNullException(nameof(baseReportRepository));
         _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         _phone = phone ?? throw new ArgumentNullException(nameof(phone));
@@ -194,13 +194,12 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         else
         {
             _phone.PhoneNumber = value;
-            string? simNumber = await _simsRepository.DeleteSIMAsync(value);
+            string? simNumber = await _baseReportRepository.GetSimNumberAsync(value);
             if (simNumber is not null)
             {
                 _phone.SimNumber = simNumber;
                 SimNumber = simNumber;
             }
-
         }
 
         await _repository.UpdateAsync(_phone);

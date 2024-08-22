@@ -3,7 +3,7 @@ using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Application.Repositories;
 
-public sealed class BaseReportRepository(PhoneAssistantDbContext dbContext)
+public sealed class BaseReportRepository(PhoneAssistantDbContext dbContext) : IBaseReportRepository
 {
     private readonly PhoneAssistantDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
@@ -17,6 +17,13 @@ public sealed class BaseReportRepository(PhoneAssistantDbContext dbContext)
     {
         _dbContext.BaseReport.Add(report);
         await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<string?> GetSimNumberAsync(string phoneNumber)
+    {
+        BaseReport? report = await _dbContext.BaseReport.FindAsync(phoneNumber);
+
+        return report?.SimNumber;
     }
 
     public async Task TruncateAsync()

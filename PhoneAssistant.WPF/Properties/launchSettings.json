@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PhoneAssistant": {
+      "commandName": "Project",
+      "commandLineArgs": ""
+    }
+  }
+}

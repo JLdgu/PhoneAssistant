@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
-using PhoneAssistant.WPF.Application;
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
@@ -291,7 +291,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 
     private bool CanCreateEmail()
     {
-        if (!_phone.Status.Equals(ApplicationSettings.StatusProduction, StringComparison.InvariantCultureIgnoreCase))
+        if (!_phone.Status.Equals(ApplicationConstants.StatusProduction, StringComparison.InvariantCultureIgnoreCase))
             return false;
         if (string.IsNullOrEmpty(SR))
             return false;

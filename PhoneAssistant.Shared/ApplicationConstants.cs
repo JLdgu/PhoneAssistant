@@ -1,6 +1,6 @@
-﻿namespace PhoneAssistant.WPF.Application;
+﻿namespace PhoneAssistant.Model;
 
-public static class ApplicationSettings
+public static class ApplicationConstants
 {
     public const string ConditionNew = "New";
     public const string ConditionRepurposed = "Repurposed";

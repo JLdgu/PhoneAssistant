@@ -1,6 +1,7 @@
 ﻿using Moq;
 using Moq.AutoMock;
 
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
@@ -30,7 +31,7 @@ public sealed class ReconciliationTests
         Disposal actual = new()
         {
             Imei = "355758060678186",
-            StatusPA = ApplicationSettings.StatusDisposed,
+            StatusPA = ApplicationConstants.StatusDisposed,
             Manufacturer = "OEM",
             Model = "model",
             TrackedSKU = false,
@@ -45,7 +46,7 @@ public sealed class ReconciliationTests
     [Fact]
     public void CheckStatus_ShouldSetActionComplete_WhenMSandPADisposed()
     {
-        Disposal actual = new() { Imei = "355758060678186", StatusMS = ApplicationSettings.StatusDisposed, StatusPA = ApplicationSettings.StatusDisposed,
+        Disposal actual = new() { Imei = "355758060678186", StatusMS = ApplicationConstants.StatusDisposed, StatusPA = ApplicationConstants.StatusDisposed,
             Manufacturer = "OEMs", Model = "model", TrackedSKU = true};
 
         _sut.CheckStatus(actual);
@@ -56,7 +57,7 @@ public sealed class ReconciliationTests
     [Fact]
     public void CheckStatus_ShouldSetActionComplete_WhenMSMissingPADisposedandSKUNotTracked()
     {
-        Disposal actual = new() { Imei = "355758060678186", StatusPA = ApplicationSettings.StatusDisposed, 
+        Disposal actual = new() { Imei = "355758060678186", StatusPA = ApplicationConstants.StatusDisposed, 
             Manufacturer = "OEM", Model = "model", TrackedSKU = false};
 
         _sut.CheckStatus(actual);
@@ -76,7 +77,7 @@ public sealed class ReconciliationTests
     }
 
     [Theory]
-    [InlineData(ApplicationSettings.StatusAwaitingReturn, ReconciliationConstants.MyScomisExport)]
+    [InlineData(ApplicationConstants.StatusAwaitingReturn, ReconciliationConstants.MyScomisExport)]
     public void CheckStatus_ShouldSetActionMSDisposedAsync(string statusMS, string expectedAction)
     {
         Disposal actual = new() { Imei = "355758060678186", StatusMS = statusMS, StatusPA = null, Manufacturer = "OEM", Model = "model", TrackedSKU = true };

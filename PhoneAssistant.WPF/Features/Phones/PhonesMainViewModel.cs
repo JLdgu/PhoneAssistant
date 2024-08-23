@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
-using PhoneAssistant.WPF.Application;
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
@@ -27,14 +27,14 @@ public sealed partial class PhonesMainViewModel :
 
     private readonly ListCollectionView _filterView;
 
-    public List<string> Conditions { get; } = ApplicationSettings.Conditions;
+    public List<string> Conditions { get; } = ApplicationConstants.Conditions;
 
     public IEnumerable<OEMs> OEMs
     {
         get { return Enum.GetValues(typeof(OEMs)).Cast<OEMs>(); }
     }
     
-    public List<string> Statuses { get; } = ApplicationSettings.Statuses;
+    public List<string> Statuses { get; } = ApplicationConstants.Statuses;
 
     public PhonesMainViewModel(IPhonesItemViewModelFactory phonesItemViewModelFactory,
                                IPhonesRepository phonesRepository,

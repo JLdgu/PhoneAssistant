@@ -53,4 +53,6 @@
     <Resource Include="Features\Disposals\CISearch.png" />
   </ItemGroup>
 
+  <Import Project="..\PhoneAssistant.Shared\PhoneAssistant.Shared.projitems" Label="Shared" />
+
 </Project>

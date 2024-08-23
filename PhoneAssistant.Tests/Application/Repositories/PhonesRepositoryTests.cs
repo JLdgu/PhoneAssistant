@@ -2,6 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
@@ -260,21 +261,21 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     [Fact]
     public async Task UpdateStatusAsync_WithPhoneNotFound_ThrowsException()
     {
-        await Assert.ThrowsAsync<ArgumentException>(() => _repository.UpdateStatusAsync("not found", ApplicationSettings.StatusDisposed));
+        await Assert.ThrowsAsync<ArgumentException>(() => _repository.UpdateStatusAsync("not found", ApplicationConstants.StatusDisposed));
     }
 
     [Fact]
     public async Task UpdateStatusAsync_WithStatusChange_Succeeds()
     {
-        _phone.Status = ApplicationSettings.StatusDecommissioned;
+        _phone.Status = ApplicationConstants.StatusDecommissioned;
         await _helper.DbContext.Phones.AddAsync(_phone);
         await _helper.DbContext.SaveChangesAsync();
 
-        await _repository.UpdateStatusAsync(_phone.Imei, ApplicationSettings.StatusDisposed);
+        await _repository.UpdateStatusAsync(_phone.Imei, ApplicationConstants.StatusDisposed);
 
         Phone? actual = await _helper.DbContext.Phones.FindAsync(_phone.Imei);
         Assert.NotNull(actual);
-        Assert.Equal(ApplicationSettings.StatusDisposed,actual.Status);
+        Assert.Equal(ApplicationConstants.StatusDisposed,actual.Status);
     }
 
     [Fact]
@@ -301,7 +302,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
             Condition = CONDITION_N,
             Model = "old model",
             OEM = OEMs.Apple,
-            Status = ApplicationSettings.Statuses[1]
+            Status = ApplicationConstants.Statuses[1]
         };
         await _helper.DbContext.Phones.AddAsync(original);
         await _helper.DbContext.SaveChangesAsync();
@@ -352,7 +353,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
                 Condition = CONDITION_N,
                 Model = "old model",
                 OEM = OEMs.Apple,
-                Status = ApplicationSettings.Statuses[1]
+                Status = ApplicationConstants.Statuses[1]
             });
         await _helper.DbContext.SaveChangesAsync();
 

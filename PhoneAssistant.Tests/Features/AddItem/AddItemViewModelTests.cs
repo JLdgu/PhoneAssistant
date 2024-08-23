@@ -10,6 +10,7 @@ using PhoneAssistant.WPF.Application;
 using CommunityToolkit.Mvvm.Messaging;
 using PhoneAssistant.Tests.Shared;
 using NPOI.SS.Formula.Functions;
+using PhoneAssistant.Model;
 
 namespace PhoneAssistant.Tests.Features.AddItem;
 public partial class AddItemViewModelTests
@@ -52,7 +53,7 @@ public partial class AddItemViewModelTests
         _sut.Condition = "condition";
         _sut.Imei = "355808981147090";
         _sut.Model = "model";
-        _sut.Status = ApplicationSettings.StatusInStock;
+        _sut.Status = ApplicationConstants.StatusInStock;
 
         IEnumerable<ValidationResult> errors = _sut.GetErrors();
         Assert.Empty(errors);
@@ -87,8 +88,8 @@ public partial class AddItemViewModelTests
     }
 
     [Theory]
-    [InlineData(ApplicationSettings.StatusDecommissioned)]
-    [InlineData(ApplicationSettings.StatusDisposed)]
+    [InlineData(ApplicationConstants.StatusDecommissioned)]
+    [InlineData(ApplicationConstants.StatusDisposed)]
     public void GetErrors_ShouldContainError_WhenDisposalWithDefaultTicket(string status)
     {
         Mock<IUserSettings> setings = _mocker.GetMock<IUserSettings>();
@@ -101,8 +102,8 @@ public partial class AddItemViewModelTests
     }
 
     [Theory]
-    [InlineData(ApplicationSettings.StatusDecommissioned)]
-    [InlineData(ApplicationSettings.StatusDisposed)]
+    [InlineData(ApplicationConstants.StatusDecommissioned)]
+    [InlineData(ApplicationConstants.StatusDisposed)]
     public void GetErrors_ShouldContainError_WhenDisposalWithNoDefaultTicket(string status)
     {
         _sut.Status = status;
@@ -130,7 +131,7 @@ public partial class AddItemViewModelTests
     public void GetErrors_ShouldContainStatueError_WhenInvalidStatusAssetTagCombination()
     {
         _sut.AssetTag = null;
-        _sut.Status = ApplicationSettings.StatusInStock;
+        _sut.Status = ApplicationConstants.StatusInStock;
 
         IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Status));
         Assert.Equal("Asset Tag required", errors.First().ToString());
@@ -184,11 +185,11 @@ public partial class AddItemViewModelTests
 
 
     [Theory]
-    [InlineData(ApplicationSettings.StatusInStock, "MP00001")]
-    [InlineData(ApplicationSettings.StatusProduction, null)]
-    [InlineData(ApplicationSettings.StatusProduction, "PC00001")]
-    [InlineData(ApplicationSettings.StatusInRepair, null)]
-    [InlineData(ApplicationSettings.StatusInRepair, "PC00002")]
+    [InlineData(ApplicationConstants.StatusInStock, "MP00001")]
+    [InlineData(ApplicationConstants.StatusProduction, null)]
+    [InlineData(ApplicationConstants.StatusProduction, "PC00001")]
+    [InlineData(ApplicationConstants.StatusInRepair, null)]
+    [InlineData(ApplicationConstants.StatusInRepair, "PC00002")]
     public void GetErrors_ShouldBeEmpty_WhenValidStatusAssetTagCombination(string status, string? assetTag)
     {
         Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
@@ -400,7 +401,7 @@ public partial class AddItemViewModelTests
         _repository = _mocker.GetMock<IPhonesRepository>();
         _repository.Setup(p => p.PhoneNumberExistsAsync("07123456789")).ReturnsAsync(false);
 
-        ValidationResult actual = AddItemViewModel.ValidatePhoneNumber("07123456789", ctx);
+        ValidationResult? actual = AddItemViewModel.ValidatePhoneNumber("07123456789", ctx);
 
         _repository.VerifyAll();
         Assert.Equal(ValidationResult.Success, actual);
@@ -466,13 +467,13 @@ public partial class AddItemViewModelTests
     private void AssertResetAllPhoneProperties()
     {
         Assert.Null(_sut.AssetTag);
-        Assert.Equal(ApplicationSettings.Conditions[1].Substring(0, 1), _sut.Condition);
+        Assert.Equal(ApplicationConstants.Conditions[1].Substring(0, 1), _sut.Condition);
         Assert.Null(_sut.FormerUser);
         Assert.Equal(string.Empty, _sut.Imei);
         Assert.Equal(string.Empty, _sut.Model);
         Assert.Null(_sut.PhoneNotes);
         Assert.Equal(OEMs.Samsung, _sut.OEM);
-        Assert.Equal(ApplicationSettings.Statuses[1], _sut.Status);
+        Assert.Equal(ApplicationConstants.Statuses[1], _sut.Status);
         Assert.Null(_sut.Ticket);
     }
 }

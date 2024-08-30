@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PhoneAssistant": {
+      "commandName": "Project",
+      "commandLineArgs": "test -m \"C:\\dev\\PA Test Data\\CI List.xlsx\""
+    }
+  }
+}

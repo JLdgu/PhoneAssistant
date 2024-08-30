@@ -1,6 +1,5 @@
 ﻿using System.CommandLine;
 using System.Reflection;
-using System.Xml.Linq;
 
 using DbUp;
 using DbUp.Engine;

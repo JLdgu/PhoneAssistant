@@ -1,6 +1,9 @@
-﻿using System.CommandLine;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 using Serilog;
+
+using System.CommandLine;
 
 namespace Import;
 
@@ -13,24 +16,20 @@ public sealed class Program
     private const string MsOption = "--myScomis";
     private const string MsAlias = "-m";
 
-    static async Task Main(string[] args)
+    private static async Task Main(string[] args)
     {
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.Console()
-#if DEBUG
-            .WriteTo.File(@"c:\dev\import.txt")
-#else
-            .WriteTo.File("import.txt", rollingInterval: RollingInterval.Day)
-#endif
-            .CreateLogger();
-
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+        IHost host = ConfigureHost();
 
         try
         {
+            await host.StartAsync().ConfigureAwait(true);
+
             CliConfiguration configuration = GetConfiguration();
             await configuration.InvokeAsync(args);
+
+            await host.StopAsync().ConfigureAwait(true);
             return;
         }
         catch (Exception ex)
@@ -42,6 +41,30 @@ public sealed class Program
         {
             await Log.CloseAndFlushAsync();
         }
+    }
+
+    static IHost ConfigureHost()
+    {
+
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteTo.Console()
+#if DEBUG
+            .MinimumLevel.Information()
+            .WriteTo.File(@"c:\dev\import.txt")
+#else
+            .MinimumLevel.Warning()
+            .WriteTo.File("import.txt", rollingInterval: RollingInterval.Day)
+#endif
+            .CreateLogger();
+
+        Log.Logger.Information("Application Starting");
+
+        var host = Host.CreateDefaultBuilder()
+            .UseSerilog()
+            .Build();
+
+        return host;
     }
 
     private static CliConfiguration GetConfiguration()
@@ -62,7 +85,7 @@ public sealed class Program
         {
             testDb,
             myScomis
-        };
+        };        
         testUpdateCommand.SetAction((ParseResult parseResult) =>
         {
             string? db = parseResult.CommandResult.GetValue<string>(testDb);
@@ -92,6 +115,7 @@ public sealed class Program
                 liveUpdateCommand,
                 testUpdateCommand
             };
+        
         return new CliConfiguration(rootCommand);
     }
 
@@ -107,6 +131,22 @@ public sealed class Program
 
         Log.Information("Applying import to {0}", db);
         Log.Information("Importing {0}", ms);
+
+        string connectionString = $"DataSource={db};";
+        DbContextOptionsBuilder<ImportDbContext> optionsBuilder = new();
+        optionsBuilder.UseSqlite(connectionString);
+        //optionsBuilder.LogTo(Log.Logger.Warning, LogLevel.Warning, null);
+
+        ImportDbContext dbContext = new(optionsBuilder.Options);
+
+        List<BaseReport> report = [.. dbContext.BaseReport];
+
+        int ct = 0;
+        foreach (BaseReport reportItem in report)
+        {
+            ct++;
+        }
+        Log.Information("Record count = {0}", ct);
     }
 
     private static bool CheckFileExists(string? argument)

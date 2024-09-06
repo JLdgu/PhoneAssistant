@@ -29,6 +29,4 @@ public class ImportDbContext : DbContext
             entity.HasKey(e => e.PhoneNumber);
         });
     }
-
-
 }

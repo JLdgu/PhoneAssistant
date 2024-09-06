@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Hosting;
 
 using Serilog;
@@ -20,22 +21,29 @@ public sealed class Program
     {
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-        IHost host = ConfigureHost();
+        var database = new CliOption<FileInfo>("--database") { Description = "Path to the PhoneAssistant database", Required = true }.AcceptExistingOnly();
+        database.Aliases.Add("-db");
+        var myScomis = new CliOption<FileInfo>("--myScomis") { Description = "Path to the myScomis Excel spreadsheet", Required = true }.AcceptExistingOnly();
+        myScomis.Aliases.Add("-ms");
+        CliRootCommand rootCommand = new("Utility application to update PhoneAssistant database")
+        { 
+            database,
+            myScomis
+        };
+        rootCommand.SetAction((parseResult, cancellationToken) =>
+        {
+            return ExecuteAsync(
+                database: parseResult.CommandResult.GetValue<FileInfo>(database),
+                msExcel: parseResult.CommandResult.GetValue<FileInfo>(myScomis));
+        });
 
         try
         {
-            await host.StartAsync().ConfigureAwait(true);
-
-            CliConfiguration configuration = GetConfiguration();
-            await configuration.InvokeAsync(args);
-
-            await host.StopAsync().ConfigureAwait(true);
-            return;
+            await rootCommand.Parse(args).InvokeAsync(CancellationToken.None);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Something went wrong");
-            return;
         }
         finally
         {
@@ -43,9 +51,8 @@ public sealed class Program
         }
     }
 
-    static IHost ConfigureHost()
+    private static async Task ExecuteAsync(FileInfo? database, FileInfo? msExcel)
     {
-
         Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .WriteTo.Console()
@@ -58,105 +65,20 @@ public sealed class Program
 #endif
             .CreateLogger();
 
-        Log.Logger.Information("Application Starting");
+        Log.Logger.Information("Import Application Starting");
 
-        var host = Host.CreateDefaultBuilder()
-            .UseSerilog()
-            .Build();
+        Log.Information("Applying import to {0}", database);
+        Log.Information("Importing {0}", msExcel);
 
-        return host;
-    }
-
-    private static CliConfiguration GetConfiguration()
-    {
-        CliOption<string> myScomis = new(MsOption)
-        {
-            Description = "The path to the myScomis Excel spreadsheet",
-            Required = true,
-        };
-        myScomis.Aliases.Add(MsAlias);
-
-        CliArgument<string> testDb = new(TestArgument)
-        {
-            Description = "The path to the test PhoneAssistant database",
-            DefaultValueFactory = _ => @"c:\dev\paTest.db"
-        };
-        CliCommand testUpdateCommand = new(TestRun, "Apply import to TEST database")
-        {
-            testDb,
-            myScomis
-        };        
-        testUpdateCommand.SetAction((ParseResult parseResult) =>
-        {
-            string? db = parseResult.CommandResult.GetValue<string>(testDb);
-            string? ms = parseResult.CommandResult.GetValue<string>(myScomis);
-            Execute(parseResult, db, ms);
-        });
-
-        CliArgument<string> liveDb = new(LiveArgument)
-        {
-            Description = "The path to the live PhoneAssistant database",
-            DefaultValueFactory = _ => @"\\countyhall.ds2.devon.gov.uk\docs\exeter, county hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\PhoneAssistant.db"
-        };
-        CliCommand liveUpdateCommand = new(LiveRun, "Apply import to LIVE database")
-        {
-            liveDb,
-            myScomis
-        };
-        liveUpdateCommand.SetAction((ParseResult parseResult) =>
-        {
-            string? db = parseResult.CommandResult.GetValue(liveDb);
-            string? ms = parseResult.CommandResult.GetValue<string>(myScomis);
-            Execute(parseResult, db, ms);
-        });
-
-        CliRootCommand rootCommand = new("Utility application to update PhoneAssistant database")
-            {
-                liveUpdateCommand,
-                testUpdateCommand
-            };
-        
-        return new CliConfiguration(rootCommand);
-    }
-
-    private static void Execute(ParseResult parseResult, string? db, string? ms)
-    {
-        ArgumentNullException.ThrowIfNull(parseResult);
-
-        string runType = parseResult.CommandResult.Command.Name;
-        Log.Information("Starting Import - {0} run", runType);
-
-        if (!CheckFileExists(db)) return;
-        if (!CheckFileExists(ms)) return;
-
-        Log.Information("Applying import to {0}", db);
-        Log.Information("Importing {0}", ms);
-
-        string connectionString = $"DataSource={db};";
+        string connectionString = $"DataSource={database};";
         DbContextOptionsBuilder<ImportDbContext> optionsBuilder = new();
         optionsBuilder.UseSqlite(connectionString);
-        //optionsBuilder.LogTo(Log.Logger.Warning, LogLevel.Warning, null);
-
         ImportDbContext dbContext = new(optionsBuilder.Options);
 
-        List<BaseReport> report = [.. dbContext.BaseReport];
+        ImportMS? importMS = new(dbContext);
 
-        int ct = 0;
-        foreach (BaseReport reportItem in report)
-        {
-            ct++;
-        }
-        Log.Information("Record count = {0}", ct);
-    }
-
-    private static bool CheckFileExists(string? argument)
-    {
-        if (!File.Exists(argument))
-        {
-            Log.Error("{0} not found", argument);
-            return false;
-        }
-        return true;
+        Log.Information("Record count = {0}", importMS.Count());
+        await Task.CompletedTask;
     }
 
     private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

@@ -1,6 +1,20 @@
 ﻿namespace Import;
-internal class ImportMS
+
+internal sealed class ImportMS(ImportDbContext dbContext)
 {
+    private readonly ImportDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+
+    internal int Count()
+    {
+        List<BaseReport> report = [.. dbContext.BaseReport];
+
+        //int ct = 0;
+        //foreach (BaseReport reportItem in report)
+        //{
+        //    ct++;
+        //}
+        return dbContext.BaseReport.Count(); //report.Count;
+    }
 }
 
 

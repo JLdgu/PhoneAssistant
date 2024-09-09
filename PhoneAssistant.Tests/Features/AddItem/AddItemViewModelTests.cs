@@ -1,4 +1,4 @@
-﻿using Moq.AutoMock;
+using Moq.AutoMock;
 
 using Xunit;
 using PhoneAssistant.WPF.Application.Entities;
@@ -270,18 +270,70 @@ public partial class AddItemViewModelTests
     }
 
     [Fact]
-    public void PhoneSaveCommand_ShouldCallRepository()
+    public void PhoneSaveCommand_WithPhoneAndSim_ShouldCallRepository()
     {
+        const string expectedAssetTag = "MP00001";
+        const string expectedImei = "355808981147090";
+        const string expectedModel = "model";
+        const string expectedPhoneNumber = "07123456789";
+        const string expectedSimNumber = "355808981147090";
+        Phone actual = new()
+        {
+            Condition = "norr",
+            Imei = "imei",
+            Model = "model",
+            OEM = OEMs.Apple,
+            Status = "status"
+        };
         Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
         _repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
-        _repository.Setup(r => r.CreateAsync(It.IsAny<Phone>()));
+        _repository.Setup(r => r.CreateAsync(It.IsAny<Phone>())).Callback<Phone>((p) => actual = p);
 
-        _sut.AssetTag = "MP00001";
-        _sut.Imei = "355808981147090";
-        _sut.Model = "model";
+        _sut.AssetTag = expectedAssetTag;
+        _sut.Imei = expectedImei;
+        _sut.Model = expectedModel;
+        _sut.PhoneNumber = expectedPhoneNumber;
+        _sut.SimNumber = expectedSimNumber;
 
         _sut.PhoneSaveCommand.Execute(null);
 
+        Assert.Equal(expectedAssetTag, actual.AssetTag);
+        Assert.Equal(expectedImei, actual.Imei);
+        Assert.Equal(expectedModel, actual.Model);
+        Assert.Equal(expectedPhoneNumber, actual.PhoneNumber);
+        Assert.Equal(expectedSimNumber, actual.SimNumber);
+        _mocker.VerifyAll();
+    }
+
+    [Fact]
+    public void PhoneSaveCommand_WithPhoneOnly_ShouldCallRepository()
+    {
+        const string expectedAssetTag = "MP00001";
+        const string expectedImei = "355808981147090";
+        const string expectedModel = "model";        
+        Phone actual = new()
+        {
+            Condition = "norr",
+            Imei = "imei",
+            Model = "model",
+            OEM = OEMs.Apple,
+            Status = "status"
+        };
+        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
+        _repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
+        _repository.Setup(r => r.CreateAsync(It.IsAny<Phone>())).Callback<Phone>((p) => actual = p);
+
+        _sut.AssetTag = expectedAssetTag;
+        _sut.Imei = expectedImei;
+        _sut.Model = expectedModel;
+
+        _sut.PhoneSaveCommand.Execute(null);
+
+        Assert.Equal(expectedAssetTag, actual.AssetTag);
+        Assert.Equal(expectedImei, actual.Imei);
+        Assert.Equal(expectedModel, actual.Model);
+        Assert.Null(actual.PhoneNumber);
+        Assert.Null(actual.SimNumber);
         _mocker.VerifyAll();
     }
 
@@ -459,7 +511,9 @@ public partial class AddItemViewModelTests
         _sut.Imei = "imei";
         _sut.Model = "model";
         _sut.PhoneNotes = "notes";
+        _sut.PhoneNumber = "07123456789";
         _sut.OEM = OEMs.Samsung;
+        _sut.SimNumber = "8944125605540324743";
         _sut.Status = "status";
         _sut.Ticket = 7654321.ToString();
     }
@@ -472,8 +526,10 @@ public partial class AddItemViewModelTests
         Assert.Equal(string.Empty, _sut.Imei);
         Assert.Equal(string.Empty, _sut.Model);
         Assert.Null(_sut.PhoneNotes);
+        Assert.Null(_sut.PhoneNumber);
         Assert.Equal(OEMs.Samsung, _sut.OEM);
         Assert.Equal(ApplicationConstants.Statuses[1], _sut.Status);
+        Assert.Null(_sut.SimNumber);
         Assert.Null(_sut.Ticket);
     }
 }

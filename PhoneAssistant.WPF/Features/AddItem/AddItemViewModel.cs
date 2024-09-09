@@ -187,8 +187,10 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         Imei = string.Empty;
         Model = string.Empty;
         PhoneNotes = null;
+        PhoneNumber = null;
         OEM = Application.Entities.OEMs.Samsung;
         Status = ApplicationConstants.Statuses[1];
+        SimNumber = null;
         Ticket = null;
 
         ValidateAllProperties();
@@ -203,7 +205,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     }
 
     [RelayCommand(CanExecute = nameof(CanSavePhone))]
-    private async Task PhoneSaveAsync(bool? phoneOnly)
+    private async Task PhoneSaveAsync()
     {
         int? sr = null;
         if (Ticket is not null)
@@ -213,13 +215,9 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         if (Condition == ApplicationConstants.ConditionNew.Substring(1))
             conditionDesc = ApplicationConstants.ConditionNew;
         
-        string simDetails = $" {PhoneNumber} {SimNumber}";
-        if (phoneOnly is null)
-        {
-            phone.PhoneNumber = null;
-            phone.SimNumber = null;
-            simDetails = string.Empty;
-        }
+        string simDetails = string.Empty;
+        if (PhoneNumber is not null)
+            simDetails = $"SIM Card {PhoneNumber} {SimNumber}";
 
         await _phonesRepository.CreateAsync(phone);
         LogItems.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} Phone added - {AssetTag} IMEI: {Imei} Status: {Status} Condition: {conditionDesc} {OEM} {Model} {FormerUser} {simDetails}");

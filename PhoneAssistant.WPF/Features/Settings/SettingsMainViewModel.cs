@@ -1,14 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
+using PhoneAssistant.WPF.Application;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Windows;
-
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-
-using Microsoft.Win32;
-
-using PhoneAssistant.WPF.Application;
-
 using Velopack;
 
 namespace PhoneAssistant.WPF.Features.Settings;
@@ -18,7 +14,7 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
     private readonly IUserSettings _userSettings;
     private readonly IThemeWrapper _themeWrapper;
     const string ReleaseUrl = @"\\countyhall.ds2.devon.gov.uk\docs\exeter, county hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application";
-    private readonly UpdateManager _updateManager;
+    private UpdateManager _updateManager;
     private UpdateInfo? _updateInfo;        
 
 #pragma warning disable CS8618
@@ -44,7 +40,8 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
         ColourThemeLight = !_userSettings.DarkMode;
 
         CurrentVersion = _userSettings.AssemblyVersion?.ToString();
-        _updateManager = new(ReleaseUrl);
+        _updateManager = new(ReleaseUrl, 
+            new UpdateOptions() { AllowVersionDowngrade = true });
     }
 #pragma warning restore CS8618
 
@@ -188,14 +185,27 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
     private ApplicationUpdateState _updateState = ApplicationUpdateState.Default;
 
     [ObservableProperty]
+    private bool _betaChannel = false;
+
+    async partial void OnBetaChannelChanged(bool value)
+    {
+        if (value)
+            _updateManager = new(ReleaseUrl, new UpdateOptions() { AllowVersionDowngrade = true, ExplicitChannel = "beta" });
+        else
+            _updateManager = new(ReleaseUrl, new UpdateOptions() { AllowVersionDowngrade = true, ExplicitChannel = null });
+
+        if (UpdateState == ApplicationUpdateState.Default)
+            await CheckForUpdate();
+    }
+
+    [ObservableProperty]
     private string? _currentVersion;
 
     private async Task CheckForUpdate()
     {
         Trace.TraceInformation("CheckForUpdate Started");
 
-        if (_updateManager is null)
-            return;
+        if (_updateManager is null) return;
 
         if (!_updateManager.IsInstalled)
         {

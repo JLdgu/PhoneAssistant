@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 
-using PhoneAssistant.WPF.Application;
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Shared;
@@ -64,19 +64,19 @@ public sealed class Reconciliation
             return;
         }
 
-        if (disposal.StatusMS == ApplicationSettings.StatusDisposed && disposal.StatusPA == ApplicationSettings.StatusDisposed)
+        if (disposal.StatusMS == ApplicationConstants.StatusDisposed && disposal.StatusPA == ApplicationConstants.StatusDisposed)
         {
             disposal.Action = ReconciliationConstants.Complete;
             return;
         }
 
-        if (disposal.StatusMS == ApplicationSettings.StatusAwaitingReturn)
+        if (disposal.StatusMS == ApplicationConstants.StatusAwaitingReturn)
         {
             disposal.Action = ReconciliationConstants.MyScomisExport;
             return;
         }
 
-        if (disposal.StatusMS == ReconciliationConstants.StatusMissing && disposal.StatusPA == ApplicationSettings.StatusDisposed && disposal.TrackedSKU == false)
+        if (disposal.StatusMS == ReconciliationConstants.StatusMissing && disposal.StatusPA == ApplicationConstants.StatusDisposed && disposal.TrackedSKU == false)
         {
             disposal.Action = ReconciliationConstants.Complete;
             return;

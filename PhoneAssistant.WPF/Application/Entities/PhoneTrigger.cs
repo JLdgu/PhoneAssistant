@@ -1,7 +1,8 @@
 ﻿using EntityFrameworkCore.Triggered;
 
 namespace PhoneAssistant.WPF.Application.Entities;
-internal sealed class PhoneTrigger : IBeforeSaveTrigger<Phone>
+
+public sealed class PhoneTrigger : IBeforeSaveTrigger<Phone>
 {
     public Task BeforeSave(ITriggerContext<Phone> context, CancellationToken cancellationToken)
     {

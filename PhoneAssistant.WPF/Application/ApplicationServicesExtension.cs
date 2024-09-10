@@ -16,6 +16,7 @@ using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Features.Sims;
 using PhoneAssistant.WPF.Features.Users;
 using PhoneAssistant.WPF.Shared;
+using PhoneAssistant.Model;
 
 namespace PhoneAssistant.WPF.Application;
 

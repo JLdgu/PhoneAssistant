@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 using PhoneAssistant.WPF.Application.Entities;
 
-namespace PhoneAssistant.WPF.Application;
+namespace PhoneAssistant.Model;
 
 public partial class PhoneAssistantDbContext : DbContext
 {

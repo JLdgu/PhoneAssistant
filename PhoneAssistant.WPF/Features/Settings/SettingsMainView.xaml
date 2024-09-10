@@ -43,6 +43,9 @@
                         Command="{Binding UpdateAndRestartCommand}"
                         Content="Update and Restart"
                         Style="{StaticResource MaterialDesignOutlinedButton}" />
+                <CheckBox Content="Beta Channel"
+                          IsChecked="{Binding BetaChannel}"
+                          Style="{StaticResource MaterialDesignFilterChipPrimaryOutlineCheckBox}" />
             </StackPanel>
         </materialDesign:Card>
 

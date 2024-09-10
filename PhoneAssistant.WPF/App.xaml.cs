@@ -8,6 +8,7 @@ using MaterialDesignThemes.Wpf;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application;
 
 using Velopack;

@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
@@ -65,10 +66,10 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     }
     private async Task<bool> IsAssetTagUniqueAsync() => await _phonesRepository.AssetTagUniqueAsync(AssetTag);
 
-    public List<string> Conditions { get; } = ApplicationSettings.Conditions;
+    public List<string> Conditions { get; } = ApplicationConstants.Conditions;
 
     [ObservableProperty]
-    private string _condition = ApplicationSettings.Conditions[1].Substring(0,1);
+    private string _condition = ApplicationConstants.Conditions[1].Substring(0,1);
 
     [ObservableProperty]
     private string? _formerUser;
@@ -113,19 +114,19 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     [ObservableProperty]
     private OEMs _oEM;
 
-    public List<string> Statuses { get; } = ApplicationSettings.Statuses;
+    public List<string> Statuses { get; } = ApplicationConstants.Statuses;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(AssetTag))]
     [NotifyPropertyChangedFor(nameof(Ticket))]
     [NotifyDataErrorInfo]
     [CustomValidation(typeof(AddItemViewModel), nameof(ValidateStatus))]
-    private string _status = ApplicationSettings.StatusInStock;
+    private string _status = ApplicationConstants.StatusInStock;
 
     public static ValidationResult ValidateStatus(string status, ValidationContext context)
     {
 #pragma warning disable CS8603 // Possible null reference return.
-        if (status != ApplicationSettings.StatusInStock)
+        if (status != ApplicationConstants.StatusInStock)
             return ValidationResult.Success;
 #pragma warning restore CS8603 // Possible null reference return.
     
@@ -181,7 +182,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     private void PhoneClear()
     {
         AssetTag = null;
-        Condition = ApplicationSettings.Conditions[1].Substring(0, 1);
+        Condition = ApplicationConstants.Conditions[1].Substring(0, 1);
         FormerUser = null;
         Imei = string.Empty;
         Model = string.Empty;
@@ -189,7 +190,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         PhoneNumber = null;
         OEM = Application.Entities.OEMs.Samsung;
         SimNumber = null;
-        Status = ApplicationSettings.Statuses[1];
+        Status = ApplicationConstants.Statuses[1];
         Ticket = null;
 
         ValidateAllProperties();
@@ -210,9 +211,9 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         if (Ticket is not null)
             sr = int.Parse(Ticket);
         Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, Notes = PhoneNotes, OEM = OEM, PhoneNumber = PhoneNumber, SimNumber = SimNumber, SR = sr, Status = Status };
-        string conditionDesc = ApplicationSettings.ConditionRepurposed;
-        if (Condition == ApplicationSettings.ConditionNew.Substring(1))
-            conditionDesc = ApplicationSettings.ConditionNew;
+        string conditionDesc = ApplicationConstants.ConditionRepurposed;
+        if (Condition == ApplicationConstants.ConditionNew.Substring(1))
+            conditionDesc = ApplicationConstants.ConditionNew;
         
         string simDetails = string.Empty;
         if (PhoneNumber is not null)

@@ -106,8 +106,11 @@ internal sealed class PrintEnvelope : IPrintEnvelope
         float fontLineHeight = _bodyFont.GetHeight(graphics);
         RectangleF bodyRectangle = new(MARGIN_LEFT, _vertialPostion, A4_BODY_WIDTH, fontLineHeight * 15);
 
-        StringBuilder bodyText = new($"Service Request:\t#{_orderDetails.Phone.SR}");
-        bodyText.AppendLine("");
+        StringBuilder bodyText = new();
+        if (_orderDetails.Phone.SR > 999999)
+            bodyText.AppendLine($"Issue:\t#{_orderDetails.Phone.SR}");
+        else
+            bodyText.AppendLine($"Service Request:\t#{_orderDetails.Phone.SR}");
         bodyText.AppendLine("");
         bodyText.AppendLine($"Device User:\t{_orderDetails.Phone.NewUser}");
         bodyText.AppendLine("");

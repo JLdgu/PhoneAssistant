@@ -1,10 +1,11 @@
 ﻿using System.IO;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace PhoneAssistant.WPF.Application;
+using PhoneAssistant.WPF.Application;
+
+namespace PhoneAssistant.Model;
 
 internal static class DatabaseServices
 {

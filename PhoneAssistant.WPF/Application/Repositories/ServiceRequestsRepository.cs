@@ -2,6 +2,7 @@
 
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application;
+using PhoneAssistant.Model;
 
 namespace PhoneAssistant.WPF.Application.Repositories;
 

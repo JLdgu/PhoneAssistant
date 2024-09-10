@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbUtil", "DbUtil\DbUtil.csproj", "{CF10DA97-7A1D-49F8-9EE2-89C1953E1A8E}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "PhoneAssistant.Model", "PhoneAssistant.Shared\PhoneAssistant.Model.shproj", "{56B15FC4-F5F9-43E0-A835-CED61BB640D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +46,9 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {72A07A8D-4847-464D-A7B0-C1C3F61CF6F7}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		PhoneAssistant.Shared\PhoneAssistant.Shared.projitems*{077e9dcc-bd4a-4125-a19c-d95769b7ff89}*SharedItemsImports = 5
+		PhoneAssistant.Shared\PhoneAssistant.Shared.projitems*{56b15fc4-f5f9-43e0-a835-ced61bb640d4}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

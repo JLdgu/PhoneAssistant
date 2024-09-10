@@ -29,6 +29,16 @@
             <StackPanel Orientation="Vertical">
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.409.10" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #63 Phone cover sheet changed for Issue/SR" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #62 Adding phone does not add SIM " />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #61 Minor changes to installer" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Allow for beta channel" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
                         <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.408.23" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Fix Sim Number rename error" />
                     </StackPanel>

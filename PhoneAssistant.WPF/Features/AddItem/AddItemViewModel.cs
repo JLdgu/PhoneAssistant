@@ -189,6 +189,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         PhoneNotes = null;
         PhoneNumber = null;
         OEM = Application.Entities.OEMs.Samsung;
+        SimNumber = null;
         Status = ApplicationConstants.Statuses[1];
         SimNumber = null;
         Ticket = null;

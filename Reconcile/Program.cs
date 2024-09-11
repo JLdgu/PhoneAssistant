@@ -1,22 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Hosting;
-
 using Serilog;
-
 using System.CommandLine;
 
-namespace Import;
+namespace Reconcile;
 
 public sealed class Program
-{
-    private const string LiveRun = "live";
-    private const string LiveArgument = "liveDb";
-    private const string TestRun = "test";
-    private const string TestArgument = "testDb";
-    private const string MsOption = "--myScomis";
-    private const string MsAlias = "-m";
-
+{    
     private static async Task Main(string[] args)
     {
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -25,7 +14,7 @@ public sealed class Program
         database.Aliases.Add("-db");
         var myScomis = new CliOption<FileInfo>("--myScomis") { Description = "Path to the myScomis Excel spreadsheet", Required = true }.AcceptExistingOnly();
         myScomis.Aliases.Add("-ms");
-        CliRootCommand rootCommand = new("Utility application to update PhoneAssistant database")
+        CliRootCommand rootCommand = new("Utility application to reconcile phone disposals")
         { 
             database,
             myScomis
@@ -71,9 +60,9 @@ public sealed class Program
         Log.Information("Importing {0}", msExcel);
 
         string connectionString = $"DataSource={database};";
-        DbContextOptionsBuilder<ImportDbContext> optionsBuilder = new();
+        DbContextOptionsBuilder<ReconcileDbContext> optionsBuilder = new();
         optionsBuilder.UseSqlite(connectionString);
-        ImportDbContext dbContext = new(optionsBuilder.Options);
+        ReconcileDbContext dbContext = new(optionsBuilder.Options);
 
         ImportMS? importMS = new(dbContext);
 

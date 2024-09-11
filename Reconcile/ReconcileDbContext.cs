@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-
 using Serilog;
 
-namespace Import;
+namespace Reconcile;
 
-public class ImportDbContext : DbContext
+public class ReconcileDbContext : DbContext
 {
-    public ImportDbContext(DbContextOptions options)
+    public ReconcileDbContext(DbContextOptions options)
         : base(options) { }
 
     public DbSet<BaseReport> BaseReport => Set<BaseReport>();

@@ -22,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbUtil", "DbUtil\DbUtil.csp
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "PhoneAssistant.Model", "PhoneAssistant.Shared\PhoneAssistant.Model.shproj", "{56B15FC4-F5F9-43E0-A835-CED61BB640D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Import", "Import\Import.csproj", "{5DD84559-9531-4D0C-A7D3-B8943DE68639}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reconcile", "Reconcile\Reconcile.csproj", "{5DD84559-9531-4D0C-A7D3-B8943DE68639}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

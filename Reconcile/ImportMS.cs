@@ -1,12 +1,12 @@
-﻿namespace Import;
+﻿namespace Reconcile;
 
-internal sealed class ImportMS(ImportDbContext dbContext)
+internal sealed class ImportMS(ReconcileDbContext dbContext)
 {
-    private readonly ImportDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+    private readonly ReconcileDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
     internal int Count()
     {
-        List<BaseReport> report = [.. dbContext.BaseReport];
+        List<BaseReport> report = [.. _dbContext.BaseReport];
 
         //int ct = 0;
         //foreach (BaseReport reportItem in report)

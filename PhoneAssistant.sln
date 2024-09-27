@@ -24,6 +24,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "PhoneAssistant.Model", "Pho
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reconcile", "Reconcile\Reconcile.csproj", "{5DD84559-9531-4D0C-A7D3-B8943DE68639}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reconcile.Tests", "Reconcile.Tests\Reconcile.Tests.csproj", "{B786C823-DA8C-4AB4-8471-7E24438C0ABF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,10 @@ Global
 		{5DD84559-9531-4D0C-A7D3-B8943DE68639}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DD84559-9531-4D0C-A7D3-B8943DE68639}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DD84559-9531-4D0C-A7D3-B8943DE68639}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B786C823-DA8C-4AB4-8471-7E24438C0ABF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B786C823-DA8C-4AB4-8471-7E24438C0ABF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B786C823-DA8C-4AB4-8471-7E24438C0ABF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B786C823-DA8C-4AB4-8471-7E24438C0ABF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

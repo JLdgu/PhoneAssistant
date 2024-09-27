@@ -8,8 +8,10 @@
   </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="FluentResults" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
         <PackageReference Include="Microsoft.Extensions.Hosting" />
+        <PackageReference Include="NPOI" />
         <PackageReference Include="Serilog" />
         <PackageReference Include="Serilog.Extensions.Hosting" />
         <PackageReference Include="Serilog.Sinks.Console" />

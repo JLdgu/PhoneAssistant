@@ -9,7 +9,7 @@ public class ReconcileDbContext : DbContext
     public ReconcileDbContext(DbContextOptions options)
         : base(options) { }
 
-    public DbSet<BaseReport> BaseReport => Set<BaseReport>();
+    //public DbSet<BaseReport> BaseReport => Set<BaseReport>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -23,9 +23,9 @@ public class ReconcileDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<BaseReport>(entity =>
-        {
-            entity.HasKey(e => e.PhoneNumber);
-        });
+        //modelBuilder.Entity<BaseReport>(entity =>
+        //{
+        //    entity.HasKey(e => e.PhoneNumber);
+        //});
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Serilog;
+﻿using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
 using System.CommandLine;
@@ -24,19 +23,15 @@ public sealed class Program
 #endif
             .CreateLogger();
 
-        //var database = new CliOption<FileInfo>("--database") { Description = "Path to the PhoneAssistant database", Required = true }.AcceptExistingOnly();
-        //database.Aliases.Add("-db");
         var myScomis = new CliOption<FileInfo>("--myScomis") { Description = "Path to the myScomis Excel spreadsheet", Required = true }.AcceptExistingOnly();
         myScomis.Aliases.Add("-ms");
         CliRootCommand rootCommand = new("Utility application to reconcile phone disposals")
         {
-            //database,
             myScomis
         };
         rootCommand.SetAction((parseResult) =>
         {
             Execute(
-                //database: parseResult.CommandResult.GetValue<FileInfo>(database),
                 msExcel: parseResult.CommandResult.GetValue<FileInfo>(myScomis)
                 );
         });
@@ -55,17 +50,10 @@ public sealed class Program
         }
     }
 
-    private static void Execute(FileInfo? msExcel) //FileInfo? database, 
+    private static void Execute(FileInfo? msExcel) 
     {
-        Log.Logger.Information("Reconcile Starting");
-
-        //Log.Information("Applying import to {0}", database);
+        Log.Information("Reconcile Starting");
         Log.Information("Importing {0}", msExcel);
-
-        //string connectionString = $"DataSource={database};";
-        //DbContextOptionsBuilder<ReconcileDbContext> optionsBuilder = new();
-        //optionsBuilder.UseSqlite(connectionString);
-        //ReconcileDbContext dbContext = new(optionsBuilder.Options);
 
         ImportMS importMS = new( msExcel!.FullName); //dbContext,
         FluentResults.Result<List<Device>> result = importMS.Execute();
@@ -74,7 +62,6 @@ public sealed class Program
             Log.Error(result.Errors.First().Message);
             return; 
         }
-
     }
 
     private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

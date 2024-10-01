@@ -7,7 +7,7 @@ using Serilog;
 
 namespace Reconcile;
 
-public sealed class ImportMS(string importFile) //ReconcileDbContext dbContext,
+public sealed class ImportMS(string importFile) 
 {
     public const int Category = 0;
     public const int ItemType = 1;

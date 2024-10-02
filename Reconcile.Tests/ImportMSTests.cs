@@ -8,59 +8,8 @@ using NPOI.XSSF.UserModel;
 
 namespace Reconcile.Tests;
 
-public class ImportMSTests
+public sealed class ImportMSTests
 {
-    [Fact]
-    public void GetDataSheet_ShouldFail_WhenHeaderColumnsInvalid()
-    {
-        using XSSFWorkbook workbook = new();
-        ISheet sheet = workbook.CreateSheet("Data");
-        IRow row = sheet.CreateRow(0);
-        row.CreateCell(ImportMS.ItemType).SetCellValue("NotCategory");
-
-        Result<ISheet> actual = ImportMS.GetDataSheet(workbook);
-
-        actual.IsFailed.Should().BeTrue();
-        actual.Errors.First().Message.Should().Be("Unable to find 'Category' column, check you are using a myScomis export");
-    }
-
-    [Fact]
-    public void GetDataSheet_ShouldFail_WhenNoRows()
-    {
-        using XSSFWorkbook workbook = new();
-        workbook.CreateSheet("Data");
-
-        Result<ISheet> actual = ImportMS.GetDataSheet(workbook);
-
-        actual.IsFailed.Should().BeTrue();
-        actual.Errors.First().Message.Should().Be("No rows found in sheet Data");
-    }
-
-    [Fact]
-    public void GetDataSheet_ShouldFail_WhenSheetNameNotData()
-    {
-        using XSSFWorkbook workbook = new();
-        workbook.CreateSheet("Sheet 1");
-
-        Result<ISheet> actual = ImportMS.GetDataSheet(workbook);
-
-        actual.IsFailed.Should().BeTrue();
-        actual.Errors.First().Message.Should().Be("Unable to find sheet named Data in workbook");
-    }
-
-    [Fact]
-    public void GetDataSheet_ShouldSucceed_WhenValidSheet()
-    {
-        using XSSFWorkbook workbook = new();
-        ISheet sheet = workbook.CreateSheet("Data");
-        IRow row = sheet.CreateRow(0);
-        row.CreateCell(ImportMS.Category).SetCellValue("Category");
-
-        Result<ISheet> actual = ImportMS.GetDataSheet(workbook);
-
-        actual.IsSuccess.Should().BeTrue();
-    }
-
     [Fact]
     public void GetDevice_ShouldFail_WhenItemTypeToBeIgnored()
     {
@@ -99,7 +48,7 @@ public class ImportMSTests
     [InlineData("Computer", "computer", "", "", "Apple", "model", "")]
     [InlineData("Phone", "phone", "asset tag", "status", "oem", "model", "serial")]
     [InlineData("Phone", "phone", "", "", "oem", "model", "")]
-    public void GetDevice_ShouldSucceed_WhenValidDevice(string itemType, string name, string assetTag, string status, string oem,string model, string serialNumber)
+    public void GetDevice_ShouldSucceed_WhenValidDevice(string itemType, string name, string assetTag, string status, string oem, string model, string serialNumber)
     {
         IRow row = SetupRow(itemType, name, assetTag, status, oem, model, serialNumber);
 

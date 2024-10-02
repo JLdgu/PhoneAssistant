@@ -1,4 +1,6 @@
-﻿using Serilog;
+using FluentResults;
+
+using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
 using System.CommandLine;
@@ -9,8 +11,6 @@ public sealed class Program
 {
     private static void Main(string[] args)
     {
-        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
         Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen)
@@ -25,53 +25,57 @@ public sealed class Program
 
         var myScomis = new CliOption<FileInfo>("--myScomis") { Description = "Path to the myScomis Excel spreadsheet", Required = true }.AcceptExistingOnly();
         myScomis.Aliases.Add("-ms");
+        var scc = new CliOption<FileInfo>("--scc") { Description = "Path to the SCC Excel spreadsheet", Required = true }.AcceptExistingOnly();
+        scc.Aliases.Add("-s");
         CliRootCommand rootCommand = new("Utility application to reconcile phone disposals")
         {
-            myScomis
+            myScomis,
+            scc
         };
         rootCommand.SetAction((parseResult) =>
         {
-            Execute(
-                msExcel: parseResult.CommandResult.GetValue<FileInfo>(myScomis)
-                );
+            try
+            {
+                Execute(
+                    msExcel: parseResult.CommandResult.GetValue<FileInfo>(myScomis),
+                    scc: parseResult.CommandResult.GetValue<FileInfo>(scc)
+                    );
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(exception: ex, "Unhandled exception:");
+            }
         });
 
         try
         {
             rootCommand.Parse(args).Invoke();
         }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Something went wrong");
-        }
         finally
         {
+            Log.Debug("Closing log");
             Log.CloseAndFlush();
         }
     }
 
-    private static void Execute(FileInfo? msExcel) 
+    private static void Execute(FileInfo? msExcel, FileInfo? scc)
     {
         Log.Information("Reconcile Starting");
-        Log.Information("Importing {0}", msExcel);
 
-        ImportMS importMS = new( msExcel!.FullName); //dbContext,
-        FluentResults.Result<List<Device>> result = importMS.Execute();
-        if (result.IsFailed)
+        ImportMS importMS = new(msExcel!.FullName);
+        Result<List<Device>> msResult = importMS.Execute();
+        if (msResult.IsFailed)
         {
-            Log.Error(result.Errors.First().Message);
-            return; 
-        }
-    }
-
-    private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-    {
-        if (e.ExceptionObject is Exception ex)
-        {
-            Log.Fatal(exception: ex, "Unhandled exception:");
+            Log.Error(msResult.Errors.First().Message);
             return;
         }
 
-        Log.Fatal("Unhandled non-exception object:", e.ExceptionObject);
+        ImportSCC importSCC = new(scc!.FullName, msResult.Value);
+        Result sccResult = importSCC.Execute();
+        if (sccResult.IsFailed)
+        {
+            Log.Error(sccResult.Errors.First().Message);
+            return;
+        }
     }
 }

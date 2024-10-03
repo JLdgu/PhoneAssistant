@@ -70,8 +70,8 @@ public sealed class Program
             return;
         }
 
-        ImportSCC importSCC = new(scc!.FullName, msResult.Value);
-        Result sccResult = importSCC.Execute();
+        ImportSCC importSCC = new(scc!.FullName);
+        Result<List<Disposal>> sccResult = importSCC.Execute();
         if (sccResult.IsFailed)
         {
             Log.Error(sccResult.Errors.First().Message);

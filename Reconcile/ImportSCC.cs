@@ -6,20 +6,19 @@ using Serilog;
 
 namespace Reconcile;
 
-public record Disposal(string Name, int Certificate);
+public record Disposal(string PrimaryKey, string? SecondaryKey, int Certificate);
 
-public sealed class ImportSCC(string importFile, List<Device> devices)
+public sealed class ImportSCC(string importFile)
 {
     private const string SheetName = "Units";
     private const string A2 = "A2";
     private const string CheckValue = "Units";
-    const int TrackerId = 2;
-    const int SerialNumber = 3;
-    const int Status = 8;
-    const int Manufacturer = 12;
-    const int Model = 13;
+    public const int Account = 0;
+    public const int TrackerId = 2;
+    public const int SerialNumber = 3;
+    public const int AssetNumber = 4;
 
-    public Result Execute()
+    public Result<List<Disposal>> Execute()
     {
         Log.Information("Importing {0}", importFile);
 
@@ -31,20 +30,18 @@ public sealed class ImportSCC(string importFile, List<Device> devices)
 
             Result<ISheet> resultSheet = Import.IsValidSheet(workbook, SheetName, CheckValue, A2);
             if (resultSheet.IsFailed) return Result.Fail(resultSheet.Errors);
-
             ISheet sheet = resultSheet.Value;
-            Log.Information("Processing {0} rows", sheet.LastRowNum - 3);
 
-            for (int i = (sheet.FirstRowNum + 3); i <= sheet.LastRowNum; i++)
+            for (int i = sheet.FirstRowNum; i <= sheet.LastRowNum; i++)
             {
                 IRow row = sheet.GetRow(i);
-                if (row is null) continue;
-                //if (row.GetCell(0) is not null && row.GetCell(0).CellType == CellType.String && row.GetCell(0).StringCellValue == "D1024CT")
-                    //disposals.Add();
+                Result<Disposal> disposal = GetDisposal(row);
+                if (disposal.IsSuccess) 
+                    disposals.Add(disposal.Value);
             }
-            Log.Information("{0} devices found", devices.Count);
-            Log.Debug("First device {0}", devices.First());
-            Log.Debug("Last device {0}", devices.Last());
+            Log.Information("{0} devices found", disposals.Count);
+            Log.Debug("First device {0}", disposals.First());
+            Log.Debug("Last device {0}", disposals.Last());
         }
         catch (IOException)
         {
@@ -56,33 +53,32 @@ public sealed class ImportSCC(string importFile, List<Device> devices)
 
     public static Result<Disposal> GetDisposal(IRow row)
     {
-        int certificate = 0;
-        if (row.GetCell(TrackerId).CellType == CellType.Numeric)
-            certificate = (int)row.GetCell(TrackerId).NumericCellValue;
+        if (row is null) return Result.Fail("Ignore: Null row");
+        if (row.GetCell(Account) is null) return Result.Fail("Ignore: Account not D1024CT");
+        if (row.GetCell(Account).CellType is not CellType.String) return Result.Fail("Ignore: Account not D1024CT");
+        if (row.GetCell(Account).StringCellValue != "D1024CT") return Result.Fail("Ignore: Account not D1024CT");
 
-        string imei;
-        switch (row.GetCell(SerialNumber).CellType)
+        if (row.GetCell(SerialNumber).CellType is CellType.String
+            && (row.GetCell(SerialNumber).StringCellValue == "NONE" || row.GetCell(SerialNumber).StringCellValue == "UNREADABLE")) return Result.Fail("Ignore: Unidentifiable");
+
+        string primary;
+        if (row.GetCell(SerialNumber).CellType is CellType.Numeric)
         {
-            case CellType.Numeric:
-                {
-                    imei = row.GetCell(SerialNumber).NumericCellValue.ToString("000000000000000");
-                    break;
-                }
-            case CellType.String:
-                {
-                    imei = row.GetCell(SerialNumber).StringCellValue;
-                    bool isNumeric = long.TryParse(imei, out _);
-                    if (isNumeric)
-                        imei = imei.PadLeft(15, '0');
-                    break;
-                }
-            default:
-                {
-                    imei = row.GetCell(SerialNumber).CellFormula;
-                    break;
-                }
+            primary = row.GetCell(SerialNumber).NumericCellValue.ToString("000000000000000");
         }
+        else
+        {
+            primary = row.GetCell(SerialNumber).StringCellValue;
+            bool isNumeric = long.TryParse(primary, out _);
+            if (isNumeric)
+                primary = primary.PadLeft(15, '0');
+        }
+        string? secondary = null;
+        if (row.GetCell(AssetNumber).CellType is CellType.String && row.GetCell(AssetNumber).StringCellValue != "NONE")
+            secondary = row.GetCell(AssetNumber).StringCellValue;
 
-        return Result.Ok();
+        int certificate = (int)row.GetCell(TrackerId).NumericCellValue;
+
+        return Result.Ok(new Disposal(primary, secondary, certificate));
     }
 }

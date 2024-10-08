@@ -17,6 +17,7 @@ public sealed class ImportSCC(string importFile)
     public const int TrackerId = 2;
     public const int SerialNumber = 3;
     public const int AssetNumber = 4;
+    public const int ProductType = 5;
 
     public Result<List<Disposal>> Execute()
     {
@@ -48,7 +49,7 @@ public sealed class ImportSCC(string importFile)
             return Result.Fail("Cannot access file, ensure it is closed and retry.");
         }
 
-        return Result.Ok();
+        return Result.Ok(disposals);
     }
 
     public static Result<Disposal> GetDisposal(IRow row)
@@ -60,6 +61,8 @@ public sealed class ImportSCC(string importFile)
 
         if (row.GetCell(SerialNumber).CellType is CellType.String
             && (row.GetCell(SerialNumber).StringCellValue == "NONE" || row.GetCell(SerialNumber).StringCellValue == "UNREADABLE")) return Result.Fail("Ignore: Unidentifiable");
+
+        if (row.GetCell(ProductType).CellType is CellType.String && row.GetCell(ProductType).StringCellValue == "MONITORS") return Result.Fail("Ignore: Invalid product type");
 
         string primary;
         if (row.GetCell(SerialNumber).CellType is CellType.Numeric)

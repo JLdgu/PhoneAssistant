@@ -27,10 +27,13 @@ public sealed class Program
         myScomis.Aliases.Add("-ms");
         var scc = new CliOption<FileInfo>("--scc") { Description = "Path to the SCC Excel spreadsheet", Required = true }.AcceptExistingOnly();
         scc.Aliases.Add("-s");
+        var export = new CliOption<DirectoryInfo>("--export") { Description = "Path to the folder where output files will be created", Required = true }.AcceptExistingOnly();
+        export.Aliases.Add("-e");
         CliRootCommand rootCommand = new("Utility application to reconcile phone disposals")
         {
             myScomis,
-            scc
+            scc, 
+            export
         };
         rootCommand.SetAction((parseResult) =>
         {
@@ -38,7 +41,8 @@ public sealed class Program
             {
                 Execute(
                     msExcel: parseResult.CommandResult.GetValue<FileInfo>(myScomis),
-                    scc: parseResult.CommandResult.GetValue<FileInfo>(scc)
+                    scc: parseResult.CommandResult.GetValue<FileInfo>(scc),
+                    exportDirectory: parseResult.CommandResult.GetValue(export)
                     );
             }
             catch (Exception ex)
@@ -58,9 +62,9 @@ public sealed class Program
         }
     }
 
-    private static void Execute(FileInfo? msExcel, FileInfo? scc)
+    private static void Execute(FileInfo? msExcel, FileInfo? scc, DirectoryInfo? exportDirectory)
     {
-        Log.Information("Reconcile Starting");
+        Log.Information("Reconcile starting");
 
         ImportMS importMS = new(msExcel!.FullName);
         Result<List<Device>> msResult = importMS.Execute();
@@ -77,5 +81,15 @@ public sealed class Program
             Log.Error(sccResult.Errors.First().Message);
             return;
         }
+
+        Export export = new(disposals: sccResult.Value, devices: msResult.Value, exportDirectory: exportDirectory!);
+        Result exportResult = export.Execute();
+        if (exportResult.IsFailed)
+        {
+            Log.Error(sccResult.Errors.First().Message);
+            return;
+        }
+
+        Log.Information("Reconcile finished");
     }
 }

@@ -56,6 +56,24 @@ public sealed class ImportSCCTests()
     }
 
     [Fact]
+    public void GetDisposal_ShouldFail_WhenProductTypeToBeIgnored()
+    {
+        using XSSFWorkbook workbook = new();
+        ISheet sheet = workbook.CreateSheet("Data");
+        IRow row = sheet.CreateRow(0);
+        row.CreateCell(ImportSCC.Account).SetCellValue("D1024CT");
+        row.CreateCell(ImportSCC.ProductType).SetCellValue("MONITORS");
+        row.CreateCell(ImportSCC.SerialNumber).SetCellValue("serialNumber");
+
+        Result<Disposal> result = ImportSCC.GetDisposal(row);
+
+        result.IsFailed.Should().BeTrue();
+        result.Errors.First().Message.Should().Be("Ignore: Invalid product type");
+    }
+
+
+
+    [Fact]
     public void GetDisposal_ShouldFail_WhenRowNull()
     {
         using XSSFWorkbook workbook = new();
@@ -94,9 +112,10 @@ public sealed class ImportSCCTests()
         ISheet sheet = workbook.CreateSheet("Data");
         IRow row = sheet.CreateRow(0);
         row.CreateCell(ImportSCC.Account).SetCellValue("D1024CT");
-        row.CreateCell(ImportSCC.TrackerId).SetCellValue(certificate);
-        row.CreateCell(ImportSCC.SerialNumber).SetCellValue(serialNumber);
         row.CreateCell(ImportSCC.AssetNumber).SetCellValue(assetNumber);
+        row.CreateCell(ImportSCC.ProductType).SetCellValue("productType");
+        row.CreateCell(ImportSCC.SerialNumber).SetCellValue(serialNumber);
+        row.CreateCell(ImportSCC.TrackerId).SetCellValue(certificate);
 
         Result<Disposal> result = ImportSCC.GetDisposal(row);
 

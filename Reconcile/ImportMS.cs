@@ -1,12 +1,10 @@
 ﻿using FluentResults;
-
 using NPOI.SS.UserModel;
-
 using Serilog;
 
 namespace Reconcile;
 
-public record Device(string Name, string AssetTag, string SerialNumber, string Status);
+public record Device(string Name, string AssetTag, string SerialNumber, string Status, int Certificate = 0);
 
 public sealed class ImportMS(string importFile)
 {

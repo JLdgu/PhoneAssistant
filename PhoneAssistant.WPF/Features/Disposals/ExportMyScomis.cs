@@ -1,7 +1,6 @@
 ﻿using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
-using System.Data;
 using System.IO;
 
 namespace PhoneAssistant.WPF.Features.Disposals;

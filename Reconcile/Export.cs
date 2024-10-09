@@ -13,24 +13,31 @@ public sealed class Export
 {
     private readonly List<Disposal> _disposals;
     private readonly List<Device> _devices;
-    private readonly IWorkbook _workbook;
-    private readonly string _fileName;
+    private readonly IWorkbook _disposalsWorkbook;
+    private readonly IWorkbook _notesWorkbook;
+    private readonly string _disposalFile;
+    private readonly string _notesFile;
 
-    public ISheet Sheet { get; private set; }
+    public ISheet DisposalsSheet { get; private set; }
+    public ISheet NotesSheet { get; private set; }
+
     public static (int, string) Name { get => (0, "Name"); }
+    public static (int, string) Owner { get => (1, "Owner"); }
+    public static (int, string) Status { get => (2, "Status"); }
+    public static (int, string) SubLocation { get => (3, "Sub-Location"); }
     public static (int, string) Notes { get => (1, "CI Notes"); }
-    public static (int, string) Owner { get => (2, "Owner"); }
-    public static (int, string) Status { get => (3, "CI Status"); }
-    public static (int, string) SubLocation { get => (4, "Sub-Location"); }
     public int RowCount { get; private set; }
 
     public Export(int sr, List<Disposal> disposals, List<Device> devices, DirectoryInfo exportDirectory)
     {
         _disposals = disposals;
         _devices = devices;
-        _workbook = new XSSFWorkbook();
-        Sheet = _workbook.CreateSheet("Disposals");
-        _fileName = Path.Combine(exportDirectory.FullName, $"SR{sr}_Disposals_{DateTime.Now:yyMMdd_Hmmss}.xlsx");
+        _disposalsWorkbook = new XSSFWorkbook();
+        DisposalsSheet = _disposalsWorkbook.CreateSheet("Disposals");
+        _disposalFile = Path.Combine(exportDirectory.FullName, $"SR{sr}_Disposals_{DateTime.Now:yyMMdd_Hmmss}.xlsx");
+        _notesWorkbook = new XSSFWorkbook();
+        NotesSheet = _notesWorkbook.CreateSheet("Notes");
+        _notesFile = Path.Combine(exportDirectory.FullName, $"SR{sr}_DisposalNotes_{DateTime.Now:yyMMdd_Hmmss}.xlsx");
     }
 
     public Result Execute()
@@ -45,9 +52,12 @@ public sealed class Export
 
         if (RowCount > 0)
         {
-            Log.Information("{0} created", _fileName);
-            using var fs = new FileStream(_fileName, FileMode.Create, FileAccess.Write);
-            _workbook.Write(fs);
+            using var fs = new FileStream(_disposalFile, FileMode.Create, FileAccess.Write);
+            _disposalsWorkbook.Write(fs);
+            Log.Information("{0} created", _disposalFile);
+            using var fs2 = new FileStream(_notesFile, FileMode.Create, FileAccess.Write);
+            _notesWorkbook.Write(fs2);
+            Log.Information("{0} created", _notesFile);
         }
 
         return Result.Ok();
@@ -76,21 +86,26 @@ public sealed class Export
     {
         if (RowCount == 0)
         {
-            IRow header = Sheet.CreateRow(0);
+            IRow header = DisposalsSheet.CreateRow(0);
             header.CreateCell(Name.Item1).SetCellValue(Name.Item2);
-            header.CreateCell(Notes.Item1).SetCellValue(Notes.Item2);
             header.CreateCell(Owner.Item1).SetCellValue(Owner.Item2);
             header.CreateCell(Status.Item1).SetCellValue(Status.Item2);
             header.CreateCell(SubLocation.Item1).SetCellValue(SubLocation.Item2);
+
+            IRow notesHeader = NotesSheet.CreateRow(0);
+            notesHeader.CreateCell(Name.Item1).SetCellValue(Name.Item2);
+            notesHeader.CreateCell(Notes.Item1).SetCellValue(Notes.Item2);
         }
 
         RowCount++;
-        IRow row = Sheet.CreateRow(RowCount);
+        IRow row = DisposalsSheet.CreateRow(RowCount);
         row.CreateCell(Name.Item1).SetCellValue(disposal.Name);
-        row.CreateCell(Notes.Item1).SetCellValue($"SCC Certificate # {disposal.Certificate}");
         row.CreateCell(Owner.Item1).SetCellValue("");
         row.CreateCell(Status.Item1).SetCellValue("Disposed");
         row.CreateCell(SubLocation.Item1).SetCellValue("");
-    }
 
+        IRow notesRow = NotesSheet.CreateRow(RowCount);
+        notesRow.CreateCell(Name.Item1).SetCellValue(disposal.Name);
+        notesRow.CreateCell(Notes.Item1).SetCellValue($"SCC Certificate # {disposal.Certificate}");
+    }
 }

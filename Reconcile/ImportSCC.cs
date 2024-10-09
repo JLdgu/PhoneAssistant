@@ -41,8 +41,6 @@ public sealed class ImportSCC(string importFile)
                     disposals.Add(disposal.Value);
             }
             Log.Information("{0} devices found", disposals.Count);
-            Log.Debug("First device {0}", disposals.First());
-            Log.Debug("Last device {0}", disposals.Last());
         }
         catch (IOException)
         {

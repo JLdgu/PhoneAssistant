@@ -24,13 +24,13 @@ public sealed class Export
     public static (int, string) SubLocation { get => (4, "Sub-Location"); }
     public int RowCount { get; private set; }
 
-    public Export(List<Disposal> disposals, List<Device> devices, DirectoryInfo exportDirectory)
+    public Export(int sr, List<Disposal> disposals, List<Device> devices, DirectoryInfo exportDirectory)
     {
         _disposals = disposals;
         _devices = devices;
         _workbook = new XSSFWorkbook();
         Sheet = _workbook.CreateSheet("Disposals");
-        _fileName = Path.Combine(exportDirectory.FullName, $"Disposals{DateTime.Now:yyMMdd_Hmmss}.xlsx");
+        _fileName = Path.Combine(exportDirectory.FullName, $"SR{sr}_Disposals_{DateTime.Now:yyMMdd_Hmmss}.xlsx");
     }
 
     public Result Execute()
@@ -42,10 +42,10 @@ public sealed class Export
         }
 
         Log.Information("{0} CIs to be amended", RowCount);
-        Log.Information("{0} created",_fileName);
 
         if (RowCount > 0)
         {
+            Log.Information("{0} created", _fileName);
             using var fs = new FileStream(_fileName, FileMode.Create, FileAccess.Write);
             _workbook.Write(fs);
         }
@@ -57,10 +57,10 @@ public sealed class Export
     {
         if (_devices.Any(d => d.Name == disposal.PrimaryKey && d.Status != "Disposed"))
             return Result.Ok(new ExcelRow(disposal.PrimaryKey, disposal.Certificate));
-        if(_devices.Any(d => d.Name == disposal.SecondaryKey && d.Status != "Disposed"))
+        if (_devices.Any(d => d.Name == disposal.SecondaryKey && d.Status != "Disposed"))
             return Result.Ok(new ExcelRow(disposal.SecondaryKey!, disposal.Certificate));
 
-        if(_devices.Any(d => d.AssetTag == disposal.PrimaryKey && d.Status != "Disposed"))
+        if (_devices.Any(d => d.AssetTag == disposal.PrimaryKey && d.Status != "Disposed"))
             return Result.Ok(new ExcelRow(disposal.PrimaryKey!, disposal.Certificate));
         if (_devices.Any(d => d.AssetTag == disposal.SecondaryKey && d.Status != "Disposed"))
             return Result.Ok(new ExcelRow(disposal.SecondaryKey!, disposal.Certificate));

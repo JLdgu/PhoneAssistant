@@ -23,6 +23,7 @@ public sealed class Program
 #endif
             .CreateLogger();
 
+        var sr = new CliOption<int>("--sr") { Description = "Service Request of disposals", Required = true };
         var myScomis = new CliOption<FileInfo>("--myScomis") { Description = "Path to the myScomis Excel spreadsheet", Required = true }.AcceptExistingOnly();
         myScomis.Aliases.Add("-ms");
         var scc = new CliOption<FileInfo>("--scc") { Description = "Path to the SCC Excel spreadsheet", Required = true }.AcceptExistingOnly();
@@ -31,6 +32,7 @@ public sealed class Program
         export.Aliases.Add("-e");
         CliRootCommand rootCommand = new("Utility application to reconcile phone disposals")
         {
+            sr,
             myScomis,
             scc, 
             export
@@ -40,6 +42,7 @@ public sealed class Program
             try
             {
                 Execute(
+                    sr: parseResult.CommandResult.GetValue<int>(sr),
                     msExcel: parseResult.CommandResult.GetValue<FileInfo>(myScomis),
                     scc: parseResult.CommandResult.GetValue<FileInfo>(scc),
                     exportDirectory: parseResult.CommandResult.GetValue(export)
@@ -62,7 +65,7 @@ public sealed class Program
         }
     }
 
-    private static void Execute(FileInfo? msExcel, FileInfo? scc, DirectoryInfo? exportDirectory)
+    private static void Execute(int sr, FileInfo? msExcel, FileInfo? scc, DirectoryInfo? exportDirectory)
     {
         Log.Information("Reconcile starting");
 
@@ -82,7 +85,7 @@ public sealed class Program
             return;
         }
 
-        Export export = new(disposals: sccResult.Value, devices: msResult.Value, exportDirectory: exportDirectory!);
+        Export export = new(sr: sr, disposals: sccResult.Value, devices: msResult.Value, exportDirectory: exportDirectory!);
         Result exportResult = export.Execute();
         if (exportResult.IsFailed)
         {

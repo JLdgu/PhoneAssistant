@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Reconcile": {
+      "commandName": "Project",
+      "commandLineArgs": "test"
+    }
+  }
+}

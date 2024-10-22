@@ -38,9 +38,8 @@ public static class ApplicationServicesExtensions
             services.AddSingleton<WeakReferenceMessenger>();
             services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider => provider.GetRequiredService<WeakReferenceMessenger>());
 
-            // Reposotories
+            // Repositories
             services.AddSingleton<IBaseReportRepository, BaseReportRepository>();
-            services.AddSingleton<IDisposalsRepository, DisposalsRepository>();
             services.AddSingleton<IImportHistoryRepository, ImportHistoryRepository>();
             services.AddSingleton<ILocationsRepository, LocationsRepository>();
             services.AddSingleton<IPhonesRepository, PhonesRepository>();

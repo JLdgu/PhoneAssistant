@@ -156,6 +156,7 @@
                                              Height="24"
                                              HorizontalAlignment="Center"
                                              Kind="DeleteOutline" />
+                    <TextBlock Text="Reconcile" />
                     <TextBlock Text="Disposals" />
                 </StackPanel>
             </RadioButton>

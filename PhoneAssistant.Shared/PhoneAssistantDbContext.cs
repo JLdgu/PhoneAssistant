@@ -15,8 +15,6 @@ public partial class PhoneAssistantDbContext : DbContext
 
     public DbSet<BaseReport> BaseReport => Set<BaseReport>();
 
-    public DbSet<Disposal> Disposals => Set<Disposal>();
-
     public DbSet<ImportHistory> Imports => Set<ImportHistory>();
 
     public DbSet<Location> Locations => Set<Location>();
@@ -49,13 +47,6 @@ public partial class PhoneAssistantDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Disposal>(entity =>
-        {
-            entity.ToTable("ReconcileDisposals");
-
-            entity.HasKey(d => d.Imei);
-        });
-
         modelBuilder.Entity<BaseReport>(entity =>
         {
             entity.HasKey(e => e.PhoneNumber);

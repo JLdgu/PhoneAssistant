@@ -13,7 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Features\Disposals\CISearch.png" />
     <None Remove="Resources\DebugPhone.ico" />
     <None Remove="Resources\EUC.png" />
     <None Remove="Resources\Keyboard.jpg" />
@@ -47,10 +46,6 @@
     <PackageReference Include="NPOI" />
     <PackageReference Include="System.Drawing.Common" />
     <PackageReference Include="Velopack" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Features\Disposals\CISearch.png" />
   </ItemGroup>
 
   <Import Project="..\PhoneAssistant.Shared\PhoneAssistant.Shared.projitems" Label="Shared" />

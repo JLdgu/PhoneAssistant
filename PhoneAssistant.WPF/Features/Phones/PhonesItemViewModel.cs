@@ -56,8 +56,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         else
             _phone.AssetTag = value;
 
-        await _repository.UpdateAsync(_phone);
-        LastUpdate = _phone.LastUpdate;
+        await UpdatePhone();
     }
 
     [ObservableProperty]
@@ -83,7 +82,6 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         }
 
         await UpdatePhone();
-        LastUpdate = _phone.LastUpdate;
     }
 
     [ObservableProperty]
@@ -101,8 +99,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         if (string.IsNullOrEmpty(value) && _phone.AssetTag is null) return;
 
         _phone.Model = value;
-        await _repository.UpdateAsync(_phone);
-        LastUpdate = _phone.LastUpdate;
+        await UpdatePhone();
     }
 
     [ObservableProperty]
@@ -129,7 +126,6 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         }
 
         await UpdatePhone();
-        LastUpdate = _phone.LastUpdate;
     }
 
     [ObservableProperty]
@@ -139,8 +135,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         if (value == _phone.Condition) return;
 
         _phone.Condition = value;
-        await _repository.UpdateAsync(_phone);
-        LastUpdate = _phone.LastUpdate;
+
+        await UpdatePhone();
     }
 
     [ObservableProperty]
@@ -165,8 +161,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
             _phone.Notes = value;
         }
 
-        await _repository.UpdateAsync(_phone);
-        LastUpdate = _phone.LastUpdate;
+        await UpdatePhone();
     }
 
     [ObservableProperty]
@@ -176,8 +171,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         if (value == _phone.OEM) return;
 
         _phone.OEM = value;
-        await _repository.UpdateAsync(_phone);
-        LastUpdate = _phone.LastUpdate;
+        await UpdatePhone();        
     }
 
     [ObservableProperty]
@@ -190,7 +184,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 
         if (string.IsNullOrEmpty(value) && _phone.PhoneNumber is null) return;
         if (string.IsNullOrEmpty(value))
-             _phone.PhoneNumber = null;
+            _phone.PhoneNumber = null;
         else
         {
             _phone.PhoneNumber = value;
@@ -202,8 +196,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
             }
         }
 
-        await _repository.UpdateAsync(_phone);
-        LastUpdate = _phone.LastUpdate;
+        await UpdatePhone();
     }
 
     [ObservableProperty]
@@ -214,13 +207,12 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         if (value == _phone.SimNumber) return;
 
         if (string.IsNullOrEmpty(value) && _phone.SimNumber is null) return;
-        if (string.IsNullOrEmpty(value))           
+        if (string.IsNullOrEmpty(value))
             _phone.SimNumber = null;
         else
             _phone.SimNumber = value;
 
-        await _repository.UpdateAsync(_phone);
-        LastUpdate = _phone.LastUpdate;
+        await UpdatePhone();
     }
 
     [ObservableProperty]
@@ -247,7 +239,6 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         }
 
         await UpdatePhone();
-        LastUpdate = _phone.LastUpdate;
     }
 
     [ObservableProperty]
@@ -257,19 +248,23 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     {
         if (value == _phone.Status) return;
 
+        _multiUpdate = true;
         if (value == "In Stock" || value == "In Repair")
         {
-            _multiUpdate = true;
             _phone.DespatchDetails = null;
             FormerUser = NewUser;
             NewUser = string.Empty;
             SR = string.Empty;
-            _multiUpdate = false;
         }
+        if (value == "In Stock") 
+        {
+            Notes = string.Empty;
+        }
+        _multiUpdate = false;
 
         _phone.Status = value;
-        await _repository.UpdateAsync(_phone);
-        LastUpdate = _phone.LastUpdate;        
+
+        await UpdatePhone();
     }
 
     private bool _multiUpdate = false;
@@ -278,6 +273,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         if (_multiUpdate) return;
 
         await _repository.UpdateAsync(_phone);
+        LastUpdate = _phone.LastUpdate;
     }
     #endregion
 

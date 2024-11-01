@@ -29,6 +29,13 @@
             <StackPanel Orientation="Vertical">
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="vNext" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #66 Notes not being cleared when phone status changed to In Stock" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
                         <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.409.10" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #63 Phone cover sheet changed for Issue/SR" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #62 Adding phone does not add SIM " />

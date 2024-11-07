@@ -11,6 +11,8 @@ using CommunityToolkit.Mvvm.Messaging;
 using PhoneAssistant.Tests.Shared;
 using NPOI.SS.Formula.Functions;
 using PhoneAssistant.Model;
+using FluentAssertions;
+using System.ComponentModel;
 
 namespace PhoneAssistant.Tests.Features.AddItem;
 public partial class AddItemViewModelTests
@@ -267,6 +269,38 @@ public partial class AddItemViewModelTests
         _sut.PhoneClearCommand.Execute(null);
 
         AssertResetAllPhoneProperties();
+    }
+
+    [Fact]
+    [Description("Issue #65")]
+    public void PhoneSaveCommand_WithConditionN_ShouldLogNew()
+    {
+        _sut.Condition = ApplicationConstants.Conditions[0].Substring(0, 1);
+        _sut.Imei = "355808981147090";
+        _sut.Model = "model";
+        _sut.OEM = OEMs.Apple;
+        _sut.Status = "status";
+
+        _sut.PhoneSaveCommand.Execute(null);
+
+        var actual = _sut.LogItems.First();
+        actual.Should().Contain("New");
+    }
+
+    [Fact]
+    [Description("Issue #65")]
+    public void PhoneSaveCommand_WithConditionR_ShouldLogRepurposed()
+    {
+        _sut.Condition = ApplicationConstants.Conditions[1].Substring(0, 1);
+        _sut.Imei = "355808981147090";
+        _sut.Model = "model";
+        _sut.OEM = OEMs.Apple;
+        _sut.Status = "status";
+
+        _sut.PhoneSaveCommand.Execute(null);
+
+        var actual = _sut.LogItems.First();
+        actual.Should().Contain("Repurposed");
     }
 
     [Fact]

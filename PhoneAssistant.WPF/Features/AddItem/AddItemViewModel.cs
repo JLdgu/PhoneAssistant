@@ -213,7 +213,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
             sr = int.Parse(Ticket);
         Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, Notes = PhoneNotes, OEM = OEM, PhoneNumber = PhoneNumber, SimNumber = SimNumber, SR = sr, Status = Status };
         string conditionDesc = ApplicationConstants.ConditionRepurposed;
-        if (Condition == ApplicationConstants.ConditionNew.Substring(1))
+        if (Condition == ApplicationConstants.ConditionNew.Substring(0,1))
             conditionDesc = ApplicationConstants.ConditionNew;
         
         string simDetails = string.Empty;

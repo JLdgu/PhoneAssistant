@@ -16,5 +16,7 @@
         <EmbeddedResource Include="Scripts\0000*.sql" />
         <EmbeddedResource Include="Scripts\0001*.sql" />
         <EmbeddedResource Include="Scripts\0002*.sql" />
+        <EmbeddedResource Include="Scripts\0003*.sql" />
     </ItemGroup>
+
 </Project>

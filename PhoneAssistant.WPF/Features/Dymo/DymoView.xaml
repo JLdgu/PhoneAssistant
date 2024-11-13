@@ -21,8 +21,8 @@
                     Margin="20"
                     HorizontalAlignment="Center"
                     Orientation="Horizontal">
-            <TextBox Width="300"
-                     Height="160"
+            <TextBox Width="330"
+                     Height="165"
                      Margin="10,0,0,10"
                      materialDesign:HintAssist.Hint="Label Details"
                      AcceptsReturn="True"

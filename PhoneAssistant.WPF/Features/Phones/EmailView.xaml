@@ -126,8 +126,8 @@
                               SelectedItem="{Binding SelectedLocation}" />
 
                     <TextBox x:Name="DeliveryAddress"
-                             Width="300"
-                             Height="160"
+                             Width="330"
+                             Height="165"
                              Margin="10,0,0,10"
                              HorizontalAlignment="Left"
                              VerticalAlignment="Top"

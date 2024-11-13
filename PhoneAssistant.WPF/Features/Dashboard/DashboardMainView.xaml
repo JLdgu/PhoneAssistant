@@ -30,6 +30,7 @@
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
                         <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="vNext" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #67 Dymo label width increased to reflect actual label width" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #66 Notes not being cleared when phone status changed to In Stock" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #65 Incorrect condition logged when adding New phone" />
                     </StackPanel>

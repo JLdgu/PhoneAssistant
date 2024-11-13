@@ -19,8 +19,6 @@ public partial class PhoneAssistantDbContext : DbContext
 
     public DbSet<Location> Locations => Set<Location>();
 
-    public DbSet<StockKeepingUnit> SKUs => Set<StockKeepingUnit>();
-
     public DbSet<Phone> Phones => Set<Phone>();
 
     public DbSet<Sim> Sims => Set<Sim>();
@@ -95,14 +93,6 @@ public partial class PhoneAssistantDbContext : DbContext
             entity.Property(e => e.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.SR)
                 .HasColumnType("INTEGER");
-        });
-
-        modelBuilder.Entity<StockKeepingUnit>(entity =>
-        {
-            entity.ToTable("SKUs");
-
-            entity.Property(m => m.Manufacturer).UseCollation("NOCASE");
-            entity.Property(m => m.Model).UseCollation("NOCASE");
         });
 
         modelBuilder.Entity<UpdateHistoryPhone>(entity =>

@@ -1,13 +1,14 @@
-﻿using System.CommandLine;
-using System.Reflection;
+﻿using FluentResults;
 
-using DbUp;
-using DbUp.Engine;
+using Microsoft.Data.Sqlite;
+using System.CommandLine;
 
 namespace DbUtil;
 
 public sealed class Program
 {
+    private readonly SqlScripts _sqlScripts = new();
+
     private static Task<int> Main(string[] args)
     {
 
@@ -98,29 +99,29 @@ public sealed class Program
         }
 
         string connectionString = $@"DataSource={db};";
-        UpgradeEngine updater = DeployChanges.To
-            .SQLiteDatabase(connectionString)
-            .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
-            .LogToConsole()
-            .Build();
+        //UpgradeEngine updater = DeployChanges.To
+        //    .SQLiteDatabase(connectionString)
+        //    .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
+        //    .LogToConsole()
+        //    .Build();
 
-        List<SqlScript> scripts = updater.GetDiscoveredScripts();
-        foreach (SqlScript script in scripts)
-        {
-            Console.WriteLine("{0}{1}", dryRun, script.Name);
-        }
+        //List<SqlScript> scripts = updater.GetDiscoveredScripts();
+        //foreach (SqlScript script in scripts)
+        //{
+        //    Console.WriteLine("{0}{1}", dryRun, script.Name);
+        //}
 
         if (upgrade)
         {
-            DatabaseUpgradeResult result = updater.PerformUpgrade();
+            //DatabaseUpgradeResult result = updater.PerformUpgrade();
 
-            if (!result.Successful)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(result.Error);
-                Console.ResetColor();
-                return;
-            }
+            //if (!result.Successful)
+            //{
+            //    Console.ForegroundColor = ConsoleColor.Red;
+            //    Console.WriteLine(result.Error);
+            //    Console.ResetColor();
+            //    return;
+            //}
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("{0}Update scripts applied successfully.", dryRun);
             Console.ResetColor();
@@ -131,5 +132,63 @@ public sealed class Program
             Console.WriteLine("{0}No update scripts were applied", dryRun);
             Console.ResetColor();
         }
+    }
+
+    public void Execute(SqliteConnection connection)
+    {
+        
+        CheckSchemaVersionsExists(connection);
+
+        foreach (Script script in _sqlScripts.Scripts)
+        {
+            Result<bool> result = ApplyScript(connection, script);
+            if (result.IsSuccess)
+            {
+                
+            }
+
+        }
+    }
+    public static Result<bool> ApplyScript(SqliteConnection connection, Script script)
+    {
+        var command = connection.CreateCommand();
+        command.CommandText = $"SELECT count(*) FROM SchemaVersion WHERE ScriptName = '{script.Name}';";
+        SqliteDataReader reader = command.ExecuteReader();
+        reader.Read();
+        var count = reader.GetInt32(0);
+        reader.Close();
+        if (count > 0) return Result.Ok(false);
+
+        command.CommandText = $"INSERT INTO SchemaVersion (ScriptName) VALUES ('{script.Name}');";
+        _ = command.ExecuteNonQuery();
+
+        command.CommandText = script.Sql;
+        try
+        {
+            _ = command.ExecuteNonQuery();
+        }
+        catch (Exception ex)
+        {
+
+            return Result.Fail(ex.Message);
+        }
+
+        return Result.Ok(true);
+    }
+
+    public static bool CheckSchemaVersionsExists(SqliteConnection connection)
+    {        
+        var command = connection.CreateCommand();
+        command.CommandText = "SELECT count(*) FROM sqlite_master WHERE type = 'table' and name = 'SchemaVersion';";
+        SqliteDataReader reader = command.ExecuteReader();
+        reader.Read();
+        var count = reader.GetInt32(0);
+        reader.Close();
+
+        if (count > 0) return false;
+
+        command.CommandText = "CREATE TABLE SchemaVersion (ScriptName TEXT NOT NULL CONSTRAINT PK_SchemaVersion PRIMARY KEY, Applied TEXT NOT NULL DEFAULT CURRENT_DATETIME);";
+        _ = command.ExecuteNonQuery();
+        return true;
     }
 }

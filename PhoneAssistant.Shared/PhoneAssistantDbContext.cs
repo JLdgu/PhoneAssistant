@@ -21,7 +21,7 @@ public partial class PhoneAssistantDbContext : DbContext
 
     public DbSet<Phone> Phones => Set<Phone>();
 
-    public DbSet<Sim> Sims => Set<Sim>();
+    public DbSet<SchemaVersion> SchemaVersion => Set<SchemaVersion>();
 
     public DbSet<UpdateHistoryPhone> UpdateHistoryPhones => Set<UpdateHistoryPhone>();
 
@@ -30,8 +30,7 @@ public partial class PhoneAssistantDbContext : DbContext
         if (!optionsBuilder.IsConfigured)
             optionsBuilder.UseSqlite(@"DataSource=c:\dev\PhoneAssistant.db;");
 
-        optionsBuilder.UseTriggers(t => t.AddTrigger<PhoneTrigger>())
-                      .UseTriggers(t => t.AddTrigger<SimTrigger>());
+        optionsBuilder.UseTriggers(t => t.AddTrigger<PhoneTrigger>());
 
 #if DEBUG
         optionsBuilder.UseLoggerFactory(_loggerFactory);  // Comment out to log EF calls
@@ -82,20 +81,13 @@ public partial class PhoneAssistantDbContext : DbContext
             entity.ToTable(p => p.HasCheckConstraint("CK_OEM", "\"OEM\" = 'Apple' OR \"OEM\" = 'Nokia' OR \"OEM\" = 'Samsung' OR \"OEM\" = 'Other'"));
         });
 
-        modelBuilder.Entity<Sim>(entity =>
+        modelBuilder.Entity<SchemaVersion>(entity =>
         {
-            entity.HasKey(e => e.PhoneNumber);
-
-            entity.ToTable("SIMs");
-
-            entity.HasIndex(e => e.SimNumber, "IX_Sims_SimNumber").IsUnique();
-
-            entity.Property(e => e.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.SR)
-                .HasColumnType("INTEGER");
+            entity.ToTable("SchemaVersions");
+            entity.HasIndex(e => e.ScriptName, "IX_SchemaVersion_ScriptName").IsUnique();
         });
 
-        modelBuilder.Entity<UpdateHistoryPhone>(entity =>
+            modelBuilder.Entity<UpdateHistoryPhone>(entity =>
         {
             entity.Property(e => e.Condition).HasColumnName("NorR");
             entity.Property(e => e.Imei).HasColumnName("IMEI");

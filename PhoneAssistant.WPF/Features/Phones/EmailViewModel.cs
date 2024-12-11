@@ -35,7 +35,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             AssetTag = value.Phone.AssetTag ?? string.Empty;
             Ticket = value.Phone.SR.ToString();
             OrderType = value.OrderType;
-            SelectedLocation = null;
+            SelectedLocation = null;            
             if (value.Phone.DespatchDetails is null)
             {
                 StringBuilder user = new();
@@ -158,7 +158,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             """);
         if (SelectedLocation is not null && SelectedLocation.PrintDate)
         {
-            html.AppendLine($"<p>Your {_orderDetails!.DeviceType.ToString().ToLower()} can be collected from</br>");
+            html.AppendLine($"<p>Your {OrderDetails.Phone.OEM} {OrderDetails.Phone.Model} {OrderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
             if (SelectedLocation.Name.Contains("GMH"))
             {
                 html.AppendLine("DTS End User Compute Team, Hardware Room, Great Moor House, Bittern Road, Exeter, EX2 7FW</br>");
@@ -172,11 +172,11 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         }
         else
         {
-            html.AppendLine($"<p>Your {_orderDetails!.DeviceType.ToString().ToLower()} has been sent to<br />{_formattedAddress}</br>");
+            html.AppendLine($"<p>Your {OrderDetails.Phone.OEM} {OrderDetails.Phone.Model} {OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />{_formattedAddress}</br>");
             html.AppendLine($"It was sent on {ToOrdinalWorkingDate(DateTime.Now)}</p>");
         }
 
-        if (_orderDetails!.Phone.OEM != OEMs.Nokia)
+        if (OrderDetails.Phone.OEM != OEMs.Nokia)
         {
             html.AppendLine(
             """
@@ -189,8 +189,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
                 """);
             //html.AppendLine("<p><br />To setup the phone either use Gov Wi-Fi, tether the phone to another phone, setup at another site or setup at home.</p>");
             
-            html.AppendLine($"<p><br />Detailed setup instructions for your {_orderDetails!.DeviceType.ToString().ToLower()}, are available here:</br>");
-            if (_orderDetails.Phone.OEM == OEMs.Apple)
+            html.AppendLine($"<p><br />Detailed setup instructions for your {OrderDetails.DeviceType.ToString().ToLower()}, are available here:</br>");
+            if (OrderDetails.Phone.OEM == OEMs.Apple)
             {
                 html.Append(
                     """
@@ -208,7 +208,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             }
         }
 
-        if (OrderType == OrderType.Replacement && _orderDetails.DeviceType == DeviceType.Phone)
+        if (OrderType == OrderType.Replacement && OrderDetails.DeviceType == DeviceType.Phone)
         {
             html.AppendLine("<p>Don't forget to transfer your old sim to the replacement phone before returning the old phone to");
             html.AppendLine("DTS End User Compute, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
@@ -225,8 +225,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             <table style="font-size:12px;font-family: Verdana">
             """);
         html.AppendLine("<tr><th>Order Details</th><th></th></tr>");
-        html.AppendLine($"<tr><td>Order type:</td><td>{_orderDetails.OrderedItem}</td></tr>");
-        html.AppendLine($"<tr><td>Device supplied:</td><td>{_orderDetails.DeviceSupplied}</td></tr>");
+        html.AppendLine($"<tr><td>Order type:</td><td>{OrderDetails.OrderedItem}</td></tr>");
+        html.AppendLine($"<tr><td>Device supplied:</td><td>{OrderDetails.DeviceSupplied}</td></tr>");
 
         html.AppendLine($"<tr><td>Handset identifier:</td><td>{Imei}</td></tr>");
         html.AppendLine($"<tr><td>Asset tag:</td><td>{AssetTag}</td></tr>");

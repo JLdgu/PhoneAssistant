@@ -1,13 +1,10 @@
 ﻿using FluentAssertions;
-
 using FluentResults;
-
 using Microsoft.Data.Sqlite;
-using Xunit.Abstractions;
 
 namespace DbUtil.Tests;
 
-public class ProgramTests(ITestOutputHelper output)
+public class ProgramTests()
 {
     [Fact]
     public void ApplyScript_ShouldApplyScript_WhenScriptNotAlreadyApplied()
@@ -79,7 +76,7 @@ public class ProgramTests(ITestOutputHelper output)
     private static void CreateSchemaVersionsTable(SqliteConnection connection)
     {
         var command = connection.CreateCommand();
-        command.CommandText = "CREATE TABLE SchemaVersion (ScriptName TEXT NOT NULL CONSTRAINT PK_SchemaVersion PRIMARY KEY, Applied TEXT NOT NULL DEFAULT CURRENT_DATETIME);";
+        command.CommandText = "CREATE TABLE SchemaVersion (ScriptName TEXT NOT NULL CONSTRAINT PK_SchemaVersion PRIMARY KEY, Applied TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);";
         _ = command.ExecuteNonQuery();
         return;
     }

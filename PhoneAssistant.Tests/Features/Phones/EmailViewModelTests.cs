@@ -6,6 +6,7 @@ using Moq;
 using PhoneAssistant.WPF.Application.Repositories;
 using System.Text;
 using System.ComponentModel;
+using FluentAssertions;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -104,6 +105,39 @@ public sealed class EmailViewModelTests
         expected.AppendLine(_phone.NewUser);
 
         Assert.Equal(expected.ToString(), _vm.DeliveryAddress);
+    }
+
+    [Fact]
+    public void GenerateEmail_ShouldBeCollection_WhenPrintDateTrue()
+    {
+        TestSetup(_phone);
+        Location location = new() { Name = "name", Address = "address", PrintDate = true};
+        _vm.SelectedLocation = location;
+
+        _vm.GenerateEmailHtml();
+
+        _vm.EmailHtml.Should().Contain($"<p>Your {_vm.OrderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
+    }
+
+    [Fact]
+    public void GenerateEmail_ShouldDelivery_WhenPrintDateFalse()
+    {
+        TestSetup(_phone);
+        Location location = new() { Name = "name", Address = "address", PrintDate = false };
+
+        _vm.GenerateEmailHtml();
+
+        _vm.EmailHtml.Should().Contain($"<p>Your {_vm.OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />");
+    }
+
+    [Fact]
+    public void GenerateEmail_ShouldDelivery_WhenSelectedLocationNull()
+    {
+        TestSetup(_phone);
+
+        _vm.GenerateEmailHtml();
+
+        _vm.EmailHtml.Should().Contain($"<p>Your {_vm.OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />");
     }
 
     [Theory]

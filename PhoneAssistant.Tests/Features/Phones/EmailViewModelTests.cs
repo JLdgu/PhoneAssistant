@@ -116,7 +116,7 @@ public sealed class EmailViewModelTests
 
         _vm.GenerateEmailHtml();
 
-        _vm.EmailHtml.Should().Contain($"<p>Your {_vm.OrderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
+        _vm.EmailHtml.Should().Contain($"<p>Your {_vm.OrderDetails.Phone.OEM} {_vm.OrderDetails.Phone.Model} {_vm.OrderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
     }
 
     [Fact]
@@ -127,7 +127,7 @@ public sealed class EmailViewModelTests
 
         _vm.GenerateEmailHtml();
 
-        _vm.EmailHtml.Should().Contain($"<p>Your {_vm.OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />");
+        _vm.EmailHtml.Should().Contain($"<p>Your {_vm.OrderDetails.Phone.OEM} {_vm.OrderDetails.Phone.Model} {_vm.OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />");
     }
 
     [Fact]
@@ -137,7 +137,7 @@ public sealed class EmailViewModelTests
 
         _vm.GenerateEmailHtml();
 
-        _vm.EmailHtml.Should().Contain($"<p>Your {_vm.OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />");
+        _vm.EmailHtml.Should().Contain($"<p>Your {_vm.OrderDetails.Phone.OEM} {_vm.OrderDetails.Phone.Model} {_vm.OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />");
     }
 
     [Theory]
@@ -306,7 +306,7 @@ public sealed class EmailViewModelTests
 
         _vm.SelectedLocation = new Location { Name = "Collect", Address = "Collection Address", PrintDate = true };
 
-        Assert.Contains("<p>Your phone can be collected from</br>", _vm.EmailHtml);
+        Assert.Contains(" can be collected from</br>", _vm.EmailHtml);
         Assert.Contains("It will be available for collection from", _vm.EmailHtml);
     }
 
@@ -317,7 +317,7 @@ public sealed class EmailViewModelTests
 
         _vm.SelectedLocation = new Location { Name = "Deliver", Address = "Delivery Address", PrintDate = false };
 
-        Assert.Contains("Your phone has been sent to", _vm.EmailHtml);
+        Assert.Contains(" has been sent to", _vm.EmailHtml);
         Assert.Contains("It was sent on", _vm.EmailHtml);
     }
 

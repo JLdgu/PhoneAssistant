@@ -194,7 +194,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             {
                 html.Append(
                     """
-                <a href="https://devoncc.sharepoint.com/sites/ICTKB/Public/DCC%20Mobile%20Phone%20Service%20-%20Setting%20up%20Apple%20(iOS)%20Smartphone.docx?d=w5a23e7d6e2404401a5039a4936743875">
+                <a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/_layouts/15/Doc.aspx?sourcedoc=%7BABC3F4D7-1159-4F72-9C0B-7E155B970A28%7D&file=How%20to%20set%20up%20your%20new%20DCC%20iPhone.docx&action=default&mobileredirect=true">
                 Setting up your Apple (iOS) Smartphone.docx (devoncc.sharepoint.com)</a></p>
                 """);
             }

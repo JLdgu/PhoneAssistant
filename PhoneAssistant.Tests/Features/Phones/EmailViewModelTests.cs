@@ -92,8 +92,6 @@ public sealed class EmailViewModelTests
         Assert.Contains("</span>", _vm.EmailHtml);
 
         Assert.Contains(@"<p><br />Before setting up your phone please ensure you register with <a href=""https://www.wifi.service.gov.uk/connect-to-govwifi/"">GovWifi</a></p>", _vm.EmailHtml);
-
-        //Assert.Contains("<p>To setup the phone either use GovWiFi, tether the phone to another phone, setup at another site or setup at home.</p>",_vm.EmailHtml);
     }
 
     [Fact]
@@ -216,6 +214,7 @@ public sealed class EmailViewModelTests
         TestSetup(_phone);
 
         Assert.Contains(DataUsage, _vm.EmailHtml);
+        _vm.EmailHtml.Should().Contain(@"<a href=""https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/_layouts/15/Doc.aspx?sourcedoc=%7BABC3F4D7-1159-4F72-9C0B-7E155B970A28%7D&file=How%20to%20set%20up%20your%20new%20DCC%20iPhone.docx&action=default&mobileredirect=true"">");
         Assert.Contains("Apple (iOS) Smartphone", _vm.EmailHtml);
     }
 
@@ -237,6 +236,7 @@ public sealed class EmailViewModelTests
         TestSetup(_phone);
 
         Assert.Contains(DataUsage, _vm.EmailHtml);
+        _vm.EmailHtml.Should().Contain(@"<a href=""https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/Android%20Enterprise%20-%20Setting%20up%20your%20Android%20Phone.docx?d=w64bb3f0a09e44557a64bb78311ee513b&csf=1&web=1"">");
         Assert.Contains("Android Smartphone", _vm.EmailHtml);
     }
 

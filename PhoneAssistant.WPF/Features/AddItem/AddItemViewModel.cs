@@ -31,7 +31,8 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         _baseReportRepository = baseReportRepository ?? throw new ArgumentNullException(nameof(baseReportRepository));
         _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
-        OEM = Application.Entities.OEMs.Samsung;
+        OEM = Application.Entities.OEMs.Apple;
+        Model = "iPhone SE 2022";
         ValidateAllProperties();
     }
 
@@ -114,6 +115,27 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     [ObservableProperty]
     private OEMs _oEM;
 
+    partial void OnOEMChanged(OEMs value)
+    {
+        switch (value)
+        {
+            case Application.Entities.OEMs.Apple:
+                Model = "iPhone SE 2022";
+                break;
+            case Application.Entities.OEMs.Nokia:
+                Model = "110 4G";
+                break;
+            case Application.Entities.OEMs.Samsung:
+               Model = "A32";
+                break;
+            case Application.Entities.OEMs.Other:
+                Model = "";
+                break;
+            default:
+                break;
+        }
+    }
+
     public List<string> Statuses { get; } = ApplicationConstants.Statuses;
 
     [ObservableProperty]
@@ -185,10 +207,9 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         Condition = ApplicationConstants.Conditions[1].Substring(0, 1);
         FormerUser = null;
         Imei = string.Empty;
-        Model = string.Empty;
         PhoneNotes = null;
         PhoneNumber = null;
-        OEM = Application.Entities.OEMs.Samsung;
+        OEM = Application.Entities.OEMs.Apple;
         SimNumber = null;
         Status = ApplicationConstants.Statuses[1];
         SimNumber = null;

@@ -26,6 +26,25 @@ public partial class AddItemViewModelTests
     }
 
     [Fact]
+    public void AddItemViewModel_DefaultOEMAndModel()
+    {
+        _sut.OEM.Should().Be(OEMs.Apple);
+        _sut.Model.Should().Be("iPhone SE 2022");
+    }
+
+    [Theory]
+    [InlineData(OEMs.Apple,"iPhone SE 2022")]
+    [InlineData(OEMs.Nokia, "110 4G")]
+    [InlineData(OEMs.Other, "")]
+    [InlineData(OEMs.Samsung, "A32")]
+    public void OnOEMChanged_ShouldChangeModel(OEMs oem, string model)
+    {
+        _sut.OEM = oem;
+
+        _sut.Model.Should().Be(model);
+    }
+
+    [Fact]
     public void CanSavePhone_ShouldBeEnabled_WhenNoErrors_WithPhoneHasSim()
     {
         Mock<IBaseReportRepository> sims = _mocker.GetMock<IBaseReportRepository>();
@@ -543,10 +562,9 @@ public partial class AddItemViewModelTests
         _sut.Condition = "condition";
         _sut.FormerUser = "former user";
         _sut.Imei = "imei";
-        _sut.Model = "model";
+        //_sut.Model = "model";
         _sut.PhoneNotes = "notes";
-        _sut.PhoneNumber = "07123456789";
-        _sut.OEM = OEMs.Samsung;
+        _sut.PhoneNumber = "07123456789";        
         _sut.SimNumber = "8944125605540324743";
         _sut.Status = "status";
         _sut.Ticket = 7654321.ToString();
@@ -558,10 +576,10 @@ public partial class AddItemViewModelTests
         Assert.Equal(ApplicationConstants.Conditions[1].Substring(0, 1), _sut.Condition);
         Assert.Null(_sut.FormerUser);
         Assert.Equal(string.Empty, _sut.Imei);
-        Assert.Equal(string.Empty, _sut.Model);
+        _sut.Model.Should().Be("iPhone SE 2022");
         Assert.Null(_sut.PhoneNotes);
         Assert.Null(_sut.PhoneNumber);
-        Assert.Equal(OEMs.Samsung, _sut.OEM);
+        _sut.OEM.Should().Be(OEMs.Apple);
         Assert.Equal(ApplicationConstants.Statuses[1], _sut.Status);
         Assert.Null(_sut.SimNumber);
         Assert.Null(_sut.Ticket);

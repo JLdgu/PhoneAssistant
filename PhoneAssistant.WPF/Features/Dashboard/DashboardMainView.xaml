@@ -29,6 +29,15 @@
             <StackPanel Orientation="Vertical">
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.412.16" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #72 Include OEM and Model as start of email" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #71 Change iOS setup url" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #67 Increased size of Dymo label textbox" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
                         <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.411.28" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #66 Notes not being cleared when phone status changed to In Stock" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #65 Incorrect condition logged when adding New phone" />

@@ -12,5 +12,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ApplicationConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DatabaseServices.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PhoneAssistantDbContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SchemaVersions.cs" />
   </ItemGroup>
 </Project>

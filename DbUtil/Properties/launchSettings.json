@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Reconcile": {
+    "DbUtil": {
       "commandName": "Project",
       "commandLineArgs": "test"
     }

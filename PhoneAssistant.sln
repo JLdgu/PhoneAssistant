@@ -26,6 +26,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reconcile", "Reconcile\Reco
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reconcile.Tests", "Reconcile.Tests\Reconcile.Tests.csproj", "{B786C823-DA8C-4AB4-8471-7E24438C0ABF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbUtil.Tests", "DbUtil.Tests\DbUtil.Tests.csproj", "{8A8BF375-9DE5-46EF-8ACE-B9D94B9252A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{B786C823-DA8C-4AB4-8471-7E24438C0ABF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B786C823-DA8C-4AB4-8471-7E24438C0ABF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B786C823-DA8C-4AB4-8471-7E24438C0ABF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A8BF375-9DE5-46EF-8ACE-B9D94B9252A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A8BF375-9DE5-46EF-8ACE-B9D94B9252A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A8BF375-9DE5-46EF-8ACE-B9D94B9252A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A8BF375-9DE5-46EF-8ACE-B9D94B9252A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

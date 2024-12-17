@@ -6,7 +6,8 @@ namespace PhoneAssistant.Tests.Application;
 
 public class ScriptDBContext
 {
-    [Fact(Skip ="Manual run only")]    
+    [Fact(Skip ="Manual run only")]
+    //[Fact]
     public void GenerateSQLScript()
     {
         

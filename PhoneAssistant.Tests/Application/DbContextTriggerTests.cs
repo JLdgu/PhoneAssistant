@@ -35,34 +35,4 @@ public class DbContextTriggerTests(ITestOutputHelper output) : DbTestHelper
 
         Assert.NotEqual(addDateTime, phone.LastUpdate);
     }
-
-    [Fact]
-    public async Task AddSim_ShouldSetLastUpdate()
-    {
-
-        Sim sim = new() { PhoneNumber = "123456789", SimNumber = "1123456789" };
-        Assert.Empty(sim.LastUpdate);
-
-        await _helper.DbContext.Sims.AddAsync(sim);
-        await _helper.DbContext.SaveChangesAsync();
-
-        Assert.NotEmpty(sim.LastUpdate);
-    }
-
-    [Fact]
-    public async Task UpdateSim_ShouldChangeLastUpdate()
-    {
-
-        Sim sim = new() { PhoneNumber = "123456789", SimNumber = "1123456789" };
-        await _helper.DbContext.Sims.AddAsync(sim);
-        await _helper.DbContext.SaveChangesAsync();
-        string addDateTime = sim.LastUpdate;
-        sim.AssetTag = "AssetTag";
-
-        await Task.Delay(1000); // make sure timestamps differ
-        _helper.DbContext.Sims.Update(sim);
-        await _helper.DbContext.SaveChangesAsync();
-
-        Assert.NotEqual(addDateTime, sim.LastUpdate);
-    }
 }

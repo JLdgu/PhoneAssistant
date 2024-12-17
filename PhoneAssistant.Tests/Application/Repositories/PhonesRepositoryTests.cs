@@ -144,9 +144,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         const string SIM_NUMBER = "sim number";
         _phone.PhoneNumber = PHONE_NUMBER;
         _phone.SimNumber = SIM_NUMBER;
-        _helper.DbContext.Phones.Add(_phone);
-        Sim? sim = new Sim() { PhoneNumber = PHONE_NUMBER, SimNumber = SIM_NUMBER };
-        _helper.DbContext.Sims.Add(sim);
+        await _helper.DbContext.Phones.AddAsync(_phone);
         await _helper.DbContext.SaveChangesAsync();
 
         await _repository.RemoveSimFromPhoneAsync(_phone);
@@ -154,40 +152,10 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Assert.Null(_phone.PhoneNumber);
         Assert.Null(_phone.SimNumber);
 
-        Sim? dbSim = await _helper.DbContext.Sims.FindAsync(PHONE_NUMBER);
-        Assert.NotNull(dbSim);
-        Assert.Equal(PHONE_NUMBER, dbSim.PhoneNumber);
-        Assert.Equal(SIM_NUMBER, dbSim.SimNumber);
-        Assert.Equal("In Stock", dbSim.Status);
-
         Phone? dbPhone = await _helper.DbContext.Phones.FindAsync("imei");
         Assert.NotNull(dbPhone);
         Assert.Null(dbPhone.PhoneNumber);
         Assert.Null(dbPhone.SimNumber);
-    }
-
-    [Fact]
-    public async Task RemoveSimFromPhone_WithNewSim_Succeeds()
-    {
-        const string PHONE_NUMBER = "phone number";
-        const string SIM_NUMBER = "sim number";
-        _phone.PhoneNumber = PHONE_NUMBER;
-        _phone.SimNumber = SIM_NUMBER;
-        await _helper.DbContext.Phones.AddAsync(_phone);
-        await _helper.DbContext.SaveChangesAsync();
-
-        await _repository.RemoveSimFromPhoneAsync(_phone);
-
-        Sim? sim = await _helper.DbContext.Sims.FindAsync(PHONE_NUMBER);
-        Assert.NotNull(sim);
-        Assert.Equal(PHONE_NUMBER, sim.PhoneNumber);
-        Assert.Equal(SIM_NUMBER, sim.SimNumber);
-        Assert.Equal("In Stock", sim.Status);
-
-        var phone = await _helper.DbContext.Phones.FindAsync("imei");
-        Assert.NotNull(phone);
-        Assert.Null(phone.PhoneNumber);
-        Assert.Null(phone.SimNumber);
     }
 
     [Fact]
@@ -201,12 +169,6 @@ public sealed class PhonesRepositoryTests : DbTestHelper
 
         Assert.Null(_phone.PhoneNumber);
         Assert.Null(_phone.SimNumber);
-
-        Sim? sim = await _helper.DbContext.Sims.FindAsync(PHONE_NUMBER);
-        Assert.NotNull(sim);
-        Assert.Equal(PHONE_NUMBER, sim.PhoneNumber);
-        Assert.Equal(SIM_NUMBER, sim.SimNumber);
-        Assert.Equal("In Stock", sim.Status);
 
         Phone? actual = await _helper.DbContext.Phones.FindAsync(IMEI);
         Assert.NotNull(actual);

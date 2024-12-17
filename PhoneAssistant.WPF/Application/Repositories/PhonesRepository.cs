@@ -78,23 +78,6 @@ public sealed class PhonesRepository : IPhonesRepository
         await UpdateHistoryAsync(phone, UpdateTypes.UPDATE);        
 
         Phone dbPhone = await _dbContext.Phones.SingleAsync(x => x.Imei == phone.Imei);
-        Sim? sim = await _dbContext.Sims.FindAsync(phone.PhoneNumber);
-        if (sim is not null)
-        {
-            sim.SimNumber = phone.SimNumber;
-            sim.Status = "In Stock";
-            _dbContext.Sims.Update(sim);
-        }
-        else
-        {
-            sim = new()
-            {
-                PhoneNumber = phone.PhoneNumber,
-                SimNumber = phone.SimNumber,
-                Status = "In Stock"
-            };
-            _dbContext.Sims.Add(sim);
-        }
         dbPhone.PhoneNumber = null;
         phone.PhoneNumber = null;
         dbPhone.SimNumber = null;

@@ -43,7 +43,6 @@ public static class ApplicationServicesExtensions
             services.AddSingleton<IImportHistoryRepository, ImportHistoryRepository>();
             services.AddSingleton<ILocationsRepository, LocationsRepository>();
             services.AddSingleton<IPhonesRepository, PhonesRepository>();
-            services.AddSingleton<ISimsRepository, SimsRepository>();
 
             // Features
             services.AddSingleton<AddItemViewModel>();
@@ -70,8 +69,6 @@ public static class ApplicationServicesExtensions
             services.AddTransient<IUsersItemViewModelFactory, UsersItemViewModelFactory>();
             
             services.AddSingleton<ISimsMainViewModel, SimsMainViewModel>();
-            services.AddTransient<ISimsItemViewModelFactory, SimsItemViewModelFactory>();
-            services.AddTransient<SimsItemViewModel>();
             
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<MainWindow>();

@@ -54,7 +54,6 @@ public sealed class PhonesItemViewModelTests
         _repository = _mocker.GetMock<IPhonesRepository>();
         _repository.Setup(r => r.UpdateAsync(It.IsAny<Phone>()))
             .Callback<Phone>((p) => _phone = p);
-        _repository.Setup(r => r.RemoveSimFromPhoneAsync(It.IsAny<Phone>()));
     }
 
     [Theory]
@@ -66,7 +65,7 @@ public sealed class PhonesItemViewModelTests
     [InlineData(null, "sim number", "Production")]
     [InlineData("phone number", null, "Production")]
     [InlineData(null, null, "Production")]
-    private void PhonePropertySet_SetsBoundProperties(string? phoneNumber, string? simNumber, string status)
+    public void PhonePropertySet_SetsBoundProperties(string? phoneNumber, string? simNumber, string status)
     {
         _phone.PhoneNumber = phoneNumber;
         _phone.SimNumber = simNumber;
@@ -291,7 +290,7 @@ public sealed class PhonesItemViewModelTests
 
     #region RemoveSim
     [Fact]
-    private void RemoveSim_SetsBoundProperties()
+    public void RemoveSim_SetsBoundProperties()
     {
         _vm.RemoveSimCommand.Execute(null);
 
@@ -301,9 +300,8 @@ public sealed class PhonesItemViewModelTests
     }
 
     [Fact]
-    private void RemoveSimCommand_SetsCanExecute_False()
+    public void RemoveSimCommand_SetsCanExecute_False()
     {
-
         _vm.RemoveSimCommand.Execute(null);
 
         Assert.False(_vm.RemoveSimCommand.CanExecute(null));

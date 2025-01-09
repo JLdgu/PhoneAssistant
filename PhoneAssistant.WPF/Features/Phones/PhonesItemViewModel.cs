@@ -307,9 +307,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CanRemoveSim))]
-    private async Task RemoveSimAsync()
+    private void RemoveSim()
     {
-        await _repository.RemoveSimFromPhoneAsync(_phone);
         PhoneNumber = string.Empty;
         SimNumber = string.Empty;
         LastUpdate = _phone.LastUpdate;

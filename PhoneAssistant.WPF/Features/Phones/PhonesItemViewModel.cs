@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using PhoneAssistant.Model;
+using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
@@ -12,18 +13,21 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 {
     private readonly IPhonesRepository _repository;
     private readonly IBaseReportRepository _baseReportRepository;
+    private readonly IUserSettings _userSettings;
     private readonly IPrintEnvelope _printEnvelope;
     private readonly IMessenger _messenger;
     private readonly Phone _phone;
 
     public PhonesItemViewModel(IPhonesRepository repository,
                                IBaseReportRepository baseReportRepository,
+                               IUserSettings userSettings,
                                IPrintEnvelope printEnvelope,
                                IMessenger messenger,
                                Phone phone)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _baseReportRepository = baseReportRepository ?? throw new ArgumentNullException(nameof(baseReportRepository));
+        _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
         _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         _phone = phone ?? throw new ArgumentNullException(nameof(phone));
@@ -256,9 +260,10 @@ public sealed partial class PhonesItemViewModel : ObservableObject
             NewUser = string.Empty;
             SR = string.Empty;
         }
-
-        //        if ((value == "Decommissioned" || value == "Disposed") && string.IsNullOrEmpty(Ticket))
-            //SR = _userSettings.DefaultDecommissionedTicket.ToString();
+        if (value == "Decommissioned")
+        {
+            SR = _userSettings.DefaultDecommissionedTicket.ToString();             
+        }
 
         if (value == "In Stock" || value == "Decommissioned") 
         {

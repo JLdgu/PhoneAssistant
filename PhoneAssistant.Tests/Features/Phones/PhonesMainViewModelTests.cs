@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Moq;
 using Moq.AutoMock;
 
+using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Features.Phones;
@@ -308,12 +309,13 @@ public sealed class PhonesMainViewModelTests
         else
             repository.Setup(r => r.GetAllPhonesAsync()).ReturnsAsync(phones);
         Mock<IBaseReportRepository> sims = mocker.GetMock<IBaseReportRepository>();
+        Mock<IUserSettings> settings = mocker.GetMock<IUserSettings>();
         Mock<IPrintEnvelope> print = mocker.GetMock<IPrintEnvelope>();
         Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
         Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
         factory.Setup(r => r.Create(It.IsAny<Phone>()))
                             .Returns(() => {
-                                return new PhonesItemViewModel(repository.Object, sims.Object, print.Object,messenger.Object, phones[index]);
+                                return new PhonesItemViewModel(repository.Object, sims.Object, settings.Object, print.Object,messenger.Object, phones[index]);
                                 }
                             )
                             .Callback(() => index++);

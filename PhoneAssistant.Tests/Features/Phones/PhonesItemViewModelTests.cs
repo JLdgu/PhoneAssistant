@@ -5,6 +5,7 @@ using PhoneAssistant.WPF.Application.Entities;
 using Xunit;
 using PhoneAssistant.WPF.Application.Repositories;
 using FluentAssertions;
+using PhoneAssistant.WPF.Application;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -222,9 +223,9 @@ public sealed class PhonesItemViewModelTests
     }
 
     [Theory]
+    [InlineData("Decommissioned")]
     [InlineData("In Stock")]
     [InlineData("In Repair")]
-    [InlineData("Decommissioned")]
     public void OnStatusChanged_ShouldClearProductionFields_WhenNewStatusInStockOrInRepairOrDecommissioned(string status)
     {
         string? expectedFormerUser = _phone.NewUser;
@@ -234,7 +235,6 @@ public sealed class PhonesItemViewModelTests
         Assert.Null(_phone.DespatchDetails);
         Assert.Equal(expectedFormerUser, _vm.FormerUser);
         Assert.Null(_phone.NewUser);
-        Assert.Equal(string.Empty, _vm.SR);
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
 
@@ -243,7 +243,7 @@ public sealed class PhonesItemViewModelTests
     [InlineData("Disposed")]
     [InlineData("Misplaced")]
     [InlineData("Production")]
-    public void OnStatusChanged_ShouldKeepProductionFields_WhenNewStatusNotInStockOrInRepair(string status)
+    public void OnStatusChanged_ShouldKeepProductionFields_WhenNewStatusNotInStockOrInRepairOrDecommissioned(string status)
     {
         _vm.Status = status;
 
@@ -251,27 +251,42 @@ public sealed class PhonesItemViewModelTests
         Assert.Equal("despatch", _phone.DespatchDetails);
         Assert.Equal(_phone.FormerUser, _vm.FormerUser);
         Assert.Equal(_phone.NewUser, _vm.NewUser);
-        //Assert.Equal(_phone.SR.ToString(), _vm.SR);
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
 
     [Theory]
-    [InlineData("Awaiting Return", "123454", "123454")]
-    [InlineData("Decommissioned","123455", "")]
-    [InlineData("Disposed","123456", "123456")]
-    [InlineData("In Stock","123457", "")]
-    [InlineData("In Repair","123458", "")]
-    [InlineData("Misplaced","123459", "123459")]
-    [InlineData("Production","123450", "123450")]
-    public void OnStatusChanged_ShouldSetTicket(string status, string ticket, string expectedTicket)
-    {        
-        _vm.SR = ticket;
-
+    [InlineData("In Stock")]
+    [InlineData("In Repair")]
+    public void OnStatusChanged_ShouldClearTicket(string status)
+    {
         _vm.Status = status;
 
-        _vm.SR.Should().Be(expectedTicket);
+        _vm.SR.Should().BeNullOrEmpty();
     }
 
+    [Theory]
+    [InlineData("Awaiting Return")]
+    [InlineData("Disposed")]
+    [InlineData("Misplaced")]
+    [InlineData("Production")]
+    public void OnStatusChanged_ShouldKeepTicket(string status)
+    {
+        _vm.Status = status;
+
+        _vm.SR.Should().Be(_phone.SR.ToString());
+    }
+
+    [Fact]
+    public void OnStatusChanged_ShouldSetTicketToDefault_WhenDecommissioned()
+    {
+        Mock<IUserSettings> settings;
+        settings = _mocker.GetMock<IUserSettings>();
+        settings.Setup(r => r.DefaultDecommissionedTicket).Returns(987654);
+
+        _vm.Status = "Decommissioned";
+
+        _vm.SR.Should().Be("987654");
+    }
     #endregion
 
     #region RemoveSim

@@ -14,33 +14,20 @@ public sealed class Program
         Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen)
-#if DEBUG
             .MinimumLevel.Debug()
-            .WriteTo.File(@"c:\dev\dbup.log")
-#else
-            .MinimumLevel.Warning()
-            .WriteTo.File("reconcile.log", rollingInterval: RollingInterval.Day)
-#endif
+            .WriteTo.File("reconcile.log")
             .CreateLogger();
 
         CliRootCommand rootCommand = new("Utility application to apply schema update scripts to a database");
-
-
-        CliArgument<string> testArg = new("testDb")
-        {
-            Description = "The path to the test PhoneAssistant database",
-            DefaultValueFactory = _ => @"c:\dev\paTest.db"
-        };
-
-        CliCommand testCommand = new("test", "Apply updates to TEST database")
-        {
-            testArg
-        };
-        testCommand.SetAction((ParseResult parseResult) =>
+        
+        var liveArg = new CliArgument<string>("liveDb") { Description = "The path to the test PhoneAssistant database", DefaultValueFactory = _ => @"\\countyhall.ds2.devon.gov.uk\docs\Exeter, County Hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\phoneassistant.db" };
+        CliCommand liveCommand = new ("live", "Apply updates to LIVE database") { liveArg };
+        liveCommand.SetAction((ParseResult parseResult) =>
         {
             try
             {
-                string? db = parseResult.CommandResult.GetValue(testArg);
+                string? db = parseResult.CommandResult.GetValue(liveArg);
+                Log.Information("Applying update to LIVE database {0}", db);
                 if (string.IsNullOrEmpty(db))
                 {
                     Log.Fatal("Database path is null when parsing parameter");
@@ -55,6 +42,29 @@ public sealed class Program
             }
         });
 
+        var testArg = new CliArgument<string>("testDb") { Description = "The path to the test PhoneAssistant database", DefaultValueFactory = _ => @"c:\dev\paTest.db" };
+        CliCommand testCommand = new("test", "Apply updates to TEST database") { testArg };
+        testCommand.SetAction((ParseResult parseResult) =>
+        {
+            try
+            {
+                string? db = parseResult.CommandResult.GetValue(testArg);
+                Log.Information("Applying update to TEST database {0}", db);
+                if (string.IsNullOrEmpty(db))
+                {
+                    Log.Fatal("Database path is null when parsing parameter");
+                    return;
+                }
+                Execute(db);
+            }
+            catch (Exception ex)
+            {
+
+                Log.Fatal(exception: ex, "Unhandled exception:");
+            }
+        });
+
+        rootCommand.Add(liveCommand);
         rootCommand.Add(testCommand);
 
         try

@@ -8,15 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="dbup-sqlite" />
+        <PackageReference Include="FluentResults" />
+        <PackageReference Include="Microsoft.Data.Sqlite" />
+        <PackageReference Include="Serilog.Sinks.Console" />
+        <PackageReference Include="Serilog.Sinks.File" />
         <PackageReference Include="System.CommandLine" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <EmbeddedResource Include="Scripts\0000*.sql" />
-        <EmbeddedResource Include="Scripts\0001*.sql" />
-        <EmbeddedResource Include="Scripts\0002*.sql" />
-        <EmbeddedResource Include="Scripts\0003*.sql" />
     </ItemGroup>
 
 </Project>

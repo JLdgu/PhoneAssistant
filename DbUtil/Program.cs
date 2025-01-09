@@ -1,135 +1,151 @@
-﻿using System.CommandLine;
-using System.Reflection;
-
-using DbUp;
-using DbUp.Engine;
+﻿using FluentResults;
+using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
+using Microsoft.Data.Sqlite;
+using System.CommandLine;
+using System.Text;
 
 namespace DbUtil;
 
 public sealed class Program
-{
-    private static Task<int> Main(string[] args)
+{  
+    private static void Main(string[] args)
     {
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen)
+            .MinimumLevel.Debug()
+            .WriteTo.File("reconcile.log")
+            .CreateLogger();
 
-        CliConfiguration configuration = GetConfiguration();
-        return configuration.InvokeAsync(args);
-    }
-
-    private static CliConfiguration GetConfiguration()
-    {
-        CliArgument<string> testDb = new("testDB")
+        CliRootCommand rootCommand = new("Utility application to apply schema update scripts to a database");
+        
+        var liveArg = new CliArgument<string>("liveDb") { Description = "The path to the test PhoneAssistant database", DefaultValueFactory = _ => @"\\countyhall.ds2.devon.gov.uk\docs\Exeter, County Hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\phoneassistant.db" };
+        CliCommand liveCommand = new ("live", "Apply updates to LIVE database") { liveArg };
+        liveCommand.SetAction((ParseResult parseResult) =>
         {
-            Description = "The path to the test PhoneAssistant database",
-            DefaultValueFactory = _ => @"c:\dev\paTest.db"
-        };
-        CliArgument<string> liveDb = new("liveDB")
-        {
-            Description = "The path to the live PhoneAssistant database",
-            DefaultValueFactory = _ => @"\\countyhall.ds2.devon.gov.uk\docs\exeter, county hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\PhoneAssistant.db"
-        };
-        CliOption<bool> dryRun = new("--dryRun", "-d");
-
-        CliCommand liveUpdateCommand = new("live", "Apply updates to LIVE database")
-        {
-            liveDb,
-            dryRun
-        };
-        liveUpdateCommand.SetAction((ParseResult parseResult) =>
-        {
-            string? db = parseResult.CommandResult.GetValue(liveDb);
-            bool upgrade = !parseResult.CommandResult.GetValue(dryRun);
-            ApplyUpdates(db, parseResult, upgrade);
-        });
-
-        CliCommand testUpdateCommand = new("test", "Apply updates to TEST database")
-        {
-            testDb,
-            dryRun
-        };
-        testUpdateCommand.SetAction((ParseResult parseResult) =>
-        {
-            string? db = parseResult.CommandResult.GetValue(testDb);
-            bool upgrade = !parseResult.CommandResult.GetValue(dryRun);
-            ApplyUpdates(db, parseResult, upgrade);
-        });
-
-        CliRootCommand rootCommand = new("Utility application to update PhoneAssistant database")
+            try
             {
-                liveUpdateCommand,
-                testUpdateCommand
-
-            };
-        return new CliConfiguration(rootCommand);
-    }
-
-    private static void ApplyUpdates(string? db, ParseResult parseResult, bool upgrade)
-    {
-        string dryRun = "DRY RUN: ";
-        if (upgrade) dryRun = string.Empty;
-
-        parseResult.Configuration.Output.WriteLine("{0}Applying updates to {1}", dryRun, db);
-        if (db is null)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("{0}Database path not supplied", dryRun);
-            Console.ResetColor();
-            return;
-        }
-
-        if (!File.Exists(db))
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("{0}Database not found", dryRun);
-            Console.ResetColor();
-            return;
-        }
-        if (upgrade)
-        {
-            DirectoryInfo dbPath = new(Path.Combine(Path.GetDirectoryName(db)!, "Backup"));
-            string dbName = new FileInfo(db).Name;
-            string backup = Path.Combine(dbPath.FullName, dbName.Replace(".", $"{DateTime.Now:yyy-MM-dd}_PreMigration."));
-            int x = 0;
-            while (File.Exists(backup))
-            {
-                backup = Path.Combine(dbPath.FullName, dbName.Replace(".", $"{DateTime.Now:yyy-MM-dd}_PreMigration{x}."));
-                x++;
+                string? db = parseResult.CommandResult.GetValue(liveArg);
+                Log.Information("Applying update to LIVE database {0}", db);
+                if (string.IsNullOrEmpty(db))
+                {
+                    Log.Fatal("Database path is null when parsing parameter");
+                    return;
+                }
+                Execute(db);
             }
-            File.Copy(db, backup);
-        }
-
-        string connectionString = $@"DataSource={db};";
-        UpgradeEngine updater = DeployChanges.To
-            .SQLiteDatabase(connectionString)
-            .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
-            .LogToConsole()
-            .Build();
-
-        List<SqlScript> scripts = updater.GetDiscoveredScripts();
-        foreach (SqlScript script in scripts)
-        {
-            Console.WriteLine("{0}{1}", dryRun, script.Name);
-        }
-
-        if (upgrade)
-        {
-            DatabaseUpgradeResult result = updater.PerformUpgrade();
-
-            if (!result.Successful)
+            catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(result.Error);
-                Console.ResetColor();
+
+                Log.Fatal(exception: ex, "Unhandled exception:");
+            }
+        });
+
+        var testArg = new CliArgument<string>("testDb") { Description = "The path to the test PhoneAssistant database", DefaultValueFactory = _ => @"c:\dev\paTest.db" };
+        CliCommand testCommand = new("test", "Apply updates to TEST database") { testArg };
+        testCommand.SetAction((ParseResult parseResult) =>
+        {
+            try
+            {
+                string? db = parseResult.CommandResult.GetValue(testArg);
+                Log.Information("Applying update to TEST database {0}", db);
+                if (string.IsNullOrEmpty(db))
+                {
+                    Log.Fatal("Database path is null when parsing parameter");
+                    return;
+                }
+                Execute(db);
+            }
+            catch (Exception ex)
+            {
+
+                Log.Fatal(exception: ex, "Unhandled exception:");
+            }
+        });
+
+        rootCommand.Add(liveCommand);
+        rootCommand.Add(testCommand);
+
+        try
+        {
+            rootCommand.Parse(args).Invoke();
+        }
+        finally
+        {
+            Log.CloseAndFlush();
+        }
+    }
+    
+    public static void Execute(string db)
+    {
+        SqlScripts sqlScripts = new();
+        using var connection = new SqliteConnection($"Data Source={db}");
+        connection.Open();
+
+        CheckSchemaVersionsExists(connection);
+
+        foreach (Script script in sqlScripts.Scripts)
+        {
+            Result<bool> result = ApplyScript(connection, script);
+            if (result.IsSuccess)
+            {
+                if (result.Value == true)
+                    Log.Information("{0} applied successfully",script.Name);
+                else
+                    Log.Information("{0} already applied to database", script.Name);
+            }
+            else
+            {
+                Log.Fatal("Error applying {0}", script.Name);
+                Log.Fatal(result.Reasons.Select(reason => reason.Message).First());
                 return;
             }
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("{0}Update scripts applied successfully.", dryRun);
-            Console.ResetColor();
         }
-        else
+        
+        Log.Information("Update scripts applied successfully.");
+    }
+
+    public static Result<bool> ApplyScript(SqliteConnection connection, Script script)
+    {
+        var command = connection.CreateCommand();
+        command.CommandText = $"SELECT count(*) FROM SchemaVersion WHERE ScriptName = '{script.Name}';";
+        SqliteDataReader reader = command.ExecuteReader();
+        reader.Read();
+        var count = reader.GetInt32(0);
+        reader.Close();
+        if (count > 0) return Result.Ok(false);
+
+        command.CommandText = $"INSERT INTO SchemaVersion (ScriptName) VALUES ('{script.Name}');";
+        _ = command.ExecuteNonQuery();
+
+        command.CommandText = script.Sql;
+        try
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("{0}No update scripts were applied", dryRun);
-            Console.ResetColor();
+            _ = command.ExecuteNonQuery();
         }
+        catch (Exception ex)
+        {
+
+            return Result.Fail(ex.Message);
+        }
+
+        return Result.Ok(true);
+    }
+
+    public static bool CheckSchemaVersionsExists(SqliteConnection connection)
+    {        
+        var command = connection.CreateCommand();
+        command.CommandText = "SELECT count(*) FROM sqlite_master WHERE type = 'table' and name = 'SchemaVersion';";
+        SqliteDataReader reader = command.ExecuteReader();
+        reader.Read();
+        var count = reader.GetInt32(0);
+        reader.Close();
+
+        if (count > 0) return false;
+
+        command.CommandText = "CREATE TABLE SchemaVersion (ScriptName TEXT NOT NULL CONSTRAINT PK_SchemaVersion PRIMARY KEY, Applied TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+        _ = command.ExecuteNonQuery();
+        return true;
     }
 }

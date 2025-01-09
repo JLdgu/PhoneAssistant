@@ -9,5 +9,4 @@ If (Test-Path -Path $test) {
 
 Copy-Item $live $test
 
-$env:path += ';c:\dev\Sqlite'
 dotnet run --project DbUtil test

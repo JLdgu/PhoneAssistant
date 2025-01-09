@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application.Entities;

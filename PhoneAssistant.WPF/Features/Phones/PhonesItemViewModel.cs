@@ -249,14 +249,18 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         if (value == _phone.Status) return;
 
         _multiUpdate = true;
-        if (value == "In Stock" || value == "In Repair")
+        if (value == "In Stock" || value == "In Repair" || value == "Decommissioned")
         {
             _phone.DespatchDetails = null;
             FormerUser = NewUser;
             NewUser = string.Empty;
             SR = string.Empty;
         }
-        if (value == "In Stock") 
+
+        //        if ((value == "Decommissioned" || value == "Disposed") && string.IsNullOrEmpty(Ticket))
+            //SR = _userSettings.DefaultDecommissionedTicket.ToString();
+
+        if (value == "In Stock" || value == "Decommissioned") 
         {
             Notes = string.Empty;
         }

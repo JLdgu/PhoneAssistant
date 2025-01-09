@@ -210,11 +210,13 @@ public sealed class PhonesItemViewModelTests
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
 
-    [Fact]
-    public void OnStatusChanged_ShouldClearNotes_WhenNewStatusInStock()
+    [Theory]
+    [InlineData("In Stock")]
+    [InlineData("Decommissioned")]
+    public void OnStatusChanged_ShouldClearNotes_WhenNewStatusInStockOrDecomissioned(string status)
     {
         string? expectedFormerUser = _phone.NewUser;
-        _vm.Status = "In Stock";
+        _vm.Status = status;
 
         _vm.Notes.Should().BeEmpty();
     }
@@ -222,7 +224,8 @@ public sealed class PhonesItemViewModelTests
     [Theory]
     [InlineData("In Stock")]
     [InlineData("In Repair")]
-    public void OnStatusChanged_ShouldClearProductionFields_WhenNewStatusInStockOrInRepair(string status)
+    [InlineData("Decommissioned")]
+    public void OnStatusChanged_ShouldClearProductionFields_WhenNewStatusInStockOrInRepairOrDecommissioned(string status)
     {
         string? expectedFormerUser = _phone.NewUser;
         _vm.Status = status;
@@ -236,7 +239,7 @@ public sealed class PhonesItemViewModelTests
     }
 
     [Theory]
-    [InlineData("Decommissioned")]
+    [InlineData("Awaiting Return")]
     [InlineData("Disposed")]
     [InlineData("Misplaced")]
     [InlineData("Production")]
@@ -248,9 +251,27 @@ public sealed class PhonesItemViewModelTests
         Assert.Equal("despatch", _phone.DespatchDetails);
         Assert.Equal(_phone.FormerUser, _vm.FormerUser);
         Assert.Equal(_phone.NewUser, _vm.NewUser);
-        Assert.Equal(_phone.SR.ToString(), _vm.SR);
+        //Assert.Equal(_phone.SR.ToString(), _vm.SR);
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
+
+    [Theory]
+    [InlineData("Awaiting Return", "123454", "123454")]
+    [InlineData("Decommissioned","123455", "")]
+    [InlineData("Disposed","123456", "123456")]
+    [InlineData("In Stock","123457", "")]
+    [InlineData("In Repair","123458", "")]
+    [InlineData("Misplaced","123459", "123459")]
+    [InlineData("Production","123450", "123450")]
+    public void OnStatusChanged_ShouldSetTicket(string status, string ticket, string expectedTicket)
+    {        
+        _vm.SR = ticket;
+
+        _vm.Status = status;
+
+        _vm.SR.Should().Be(expectedTicket);
+    }
+
     #endregion
 
     #region RemoveSim

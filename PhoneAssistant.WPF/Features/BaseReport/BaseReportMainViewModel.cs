@@ -22,7 +22,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     private readonly IBaseReportRepository _repository;
     private readonly IImportHistoryRepository _import;
     private bool _loaded;
-    
+
     private readonly ListCollectionView _filterView;
 
     public BaseReportMainViewModel(IBaseReportRepository repository, IImportHistoryRepository importHistory)
@@ -55,7 +55,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
 
     [ObservableProperty]
     private Visibility _importViewVisibility;
-    
+
     [ObservableProperty]
     private Visibility _reportViewVisibility;
 
@@ -70,15 +70,15 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         if (FilterOutItem(FilterConnectedIMEI, vm.ConnectedIMEI)) return false;
 
         if (FilterOutItem(FilterContractEndDate, vm.ContractEndDate)) return false;
-        
+
         if (FilterOutItem(FilterHandset, vm.Handset)) return false;
-        
+
         if (FilterOutItem(FilterLastUsedIMEI, vm.LastUsedIMEI)) return false;
-        
-        if (FilterOutItem(FilterPhoneNumber, vm.PhoneNumber)) return false; 
-        
+
+        if (FilterOutItem(FilterPhoneNumber, vm.PhoneNumber)) return false;
+
         if (FilterOutItem(FilterSimNumber, vm.SimNumber)) return false;
-        
+
         if (FilterOutItem(FilterTalkPlan, vm.TalkPlan)) return false;
 
         if (FilterOutItem(FilterUserName, vm.UserName)) return false;
@@ -186,23 +186,23 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
             return false;
 
         return true;
-    } 
+    }
 
     [RelayCommand(CanExecute = nameof(CanImport))]
     private async Task Import()
     {
         _loaded = false;
-        
+
         await Task.Delay(100);
 
         using FileStream? stream = new FileStream(DevonBaseReport!, FileMode.Open, FileAccess.Read);
         using HSSFWorkbook workbook = new HSSFWorkbook(stream);
 
-        ISheet sheet = workbook.GetSheetAt(1);
+        ISheet sheet = workbook.GetSheetAt(0);
 
         IRow header = sheet.GetRow(0);
         ICell cell = header.GetCell(0);
-        if (cell is null || cell.StringCellValue != "Group Id")
+        if (cell is null || cell.StringCellValue != "Group")
         {
             LogItems.Add($"Unable to find Group Id in cell A1, check you are importing the correct file.");
             return;
@@ -217,16 +217,18 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
             if (row == null) continue;
             if (row.Cells.Count == 4) break;
 
+            _ = row.GetCell(11).DateCellValue.ToString() ?? string.Empty;
+
             Application.Entities.BaseReport item = new()
             {
-                PhoneNumber = row.GetCell(3).StringCellValue,
-                UserName = row.GetCell(4).StringCellValue,
-                ContractEndDate = row.GetCell(7).DateCellValue.ToString() ?? string.Empty,
-                TalkPlan = row.GetCell(8).StringCellValue,
-                Handset = row.GetCell(9).StringCellValue,
-                SimNumber = row.GetCell(10).StringCellValue,
-                ConnectedIMEI = row.GetCell(11).StringCellValue,
-                LastUsedIMEI = row.GetCell(12).StringCellValue
+                PhoneNumber = row.GetCell(6).StringCellValue,
+                UserName = row.GetCell(5).StringCellValue,
+                ContractEndDate = row.GetCell(11).DateCellValue.ToString() ?? string.Empty,
+                TalkPlan = row.GetCell(9).NumericCellValue.ToString(),
+                Handset = string.Empty,
+                SimNumber = row.GetCell(14).StringCellValue,
+                ConnectedIMEI = string.Empty,
+                LastUsedIMEI = string.Empty
             };
 
             await _repository.CreateAsync(item);
@@ -237,7 +239,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         LogItems.Add("Import complete");
 
         ImportHistory importHistory = await _import.CreateAsync(ImportType.BaseReport, Path.GetFileName(DevonBaseReport!));
-        
+
         LatestImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
 
         DevonBaseReport = string.Empty;
@@ -248,10 +250,10 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
 
     [RelayCommand]
     private void CloseImport()
-    { 
+    {
         ImportViewVisibility = Visibility.Collapsed;
         ReportViewVisibility = Visibility.Visible;
-    }    
+    }
 
     public async Task LoadAsync()
     {

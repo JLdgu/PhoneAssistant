@@ -311,6 +311,16 @@ public sealed class EmailViewModelTests
     }
 
     [Fact]
+    public void SelectedLocation_WithPrintDateTrueAndNameIncludesL87_AddTeamChatDetails()
+    {
+        TestSetup(_phone);
+
+        _vm.SelectedLocation = new Location { Name = "Collect L87", Address = "Collection Address", PrintDate = true };
+
+        Assert.Contains("County Hall EUC Appointments &amp; Collections", _vm.EmailHtml);        
+    }
+
+    [Fact]
     public void SelectedLocation_WithPrintDateFalse_SetsDeliveryDetails()
     {
         TestSetup(_phone);

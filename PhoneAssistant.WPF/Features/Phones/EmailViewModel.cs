@@ -152,8 +152,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
     public void GenerateEmailHtml()
     {
-        StringBuilder html = new StringBuilder(
-            """
+        StringBuilder html = new("""
             <span style="font-size:14px; font-family:Verdana;">
             """);
         if (SelectedLocation is not null && SelectedLocation.PrintDate)
@@ -168,6 +167,10 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             {
                 html.AppendLine("DTS End User Compute Team, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
                 html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now)}</p>");
+                html.AppendLine("""
+                    <p><br /><span style="color: red;"><b>Important Note</b></span><br>You have been added to the Teams Chat 'County Hall EUC Appointments &amp; Collections'<br>
+                    Please notify this chat on your arrival at County Hall and your device will be brought to Reception.</p>
+                    """);
             }
         }
         else
@@ -178,8 +181,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
         if (OrderDetails.Phone.OEM != OEMs.Nokia)
         {
-            html.AppendLine(
-            """
+            html.AppendLine("""
             <p><br /><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1">
             DCC mobile phone data usage guidance and policies</a></p>
             """);

@@ -72,7 +72,7 @@ public sealed class UserSettings : ApplicationSettingsBase, IUserSettings
     }
 
     [UserScopedSetting()]
-    [DefaultSettingValue("225316")]
+    [DefaultSettingValue("263323")]
     public int DefaultDecommissionedTicket
     {
         get => (int)this[nameof(DefaultDecommissionedTicket)];

@@ -69,6 +69,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
 #if DEBUG
         Development = true;
 #endif
+        if (_settingsMainViewModel.UpdateState == ApplicationUpdateState.UpdateAvailable)
+            ShowUpdateBadge = Visibility.Visible;
 
         SelectedView = _userSettings.CurrentView;
         _ = UpdateViewAsync(SelectedView);
@@ -106,9 +108,6 @@ public sealed partial class MainWindowViewModel : ObservableObject
         _userSettings.Save();
 
         await SelectedViewModel.LoadAsync();
-
-        if (selectedViewModelType == ViewModelType.Settings && _settingsMainViewModel.UpdateState == ApplicationUpdateState.UpdateAvailable)
-            ShowUpdateBadge = Visibility.Visible;
     }
 
     [ObservableProperty]

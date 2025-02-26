@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application;
+using PhoneAssistant.WPF.Features.Settings;
 
 using Velopack;
 
@@ -42,6 +43,9 @@ public partial class App : System.Windows.Application
             .ConfigureApplicationServices()
             .Build();        
         await host.StartAsync().ConfigureAwait(true);
+
+        var settings = host.Services.GetRequiredService<ISettingsMainViewModel>();
+        await settings.LoadAsync();
 
         App app = new();
         app.InitializeComponent();

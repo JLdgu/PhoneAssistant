@@ -185,20 +185,6 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
     private ApplicationUpdateState _updateState = ApplicationUpdateState.Default;
 
     [ObservableProperty]
-    private bool _betaChannel = false;
-
-    async partial void OnBetaChannelChanged(bool value)
-    {
-        if (value)
-            _updateManager = new(ReleaseUrl, new UpdateOptions() { AllowVersionDowngrade = true, ExplicitChannel = "beta" });
-        else
-            _updateManager = new(ReleaseUrl, new UpdateOptions() { AllowVersionDowngrade = true, ExplicitChannel = null });
-
-        if (UpdateState == ApplicationUpdateState.Default)
-            await CheckForUpdate();
-    }
-
-    [ObservableProperty]
     private string? _currentVersion;
 
     private async Task CheckForUpdate()
@@ -209,7 +195,8 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
 
         if (!_updateManager.IsInstalled)
         {
-            UpdateState = ApplicationUpdateState.NoUpdateAvailable;
+            NewVersion = $" Version 9.9.999 available";
+            UpdateState = ApplicationUpdateState.UpdateAvailable;
             return;
         }
 

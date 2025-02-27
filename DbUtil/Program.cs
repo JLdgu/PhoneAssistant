@@ -18,58 +18,64 @@ public sealed class Program
             .WriteTo.File("reconcile.log")
             .CreateLogger();
 
-        CliRootCommand rootCommand = new("Utility application to apply schema update scripts to a database");
+        RootCommand rootCommand = new("Utility application to apply schema update scripts to a database");
         
-        var liveArg = new CliArgument<string>("liveDb") { Description = "The path to the test PhoneAssistant database", DefaultValueFactory = _ => @"\\countyhall.ds2.devon.gov.uk\docs\Exeter, County Hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\phoneassistant.db" };
-        CliCommand liveCommand = new ("live", "Apply updates to LIVE database") { liveArg };
-        liveCommand.SetAction((ParseResult parseResult) =>
+        var liveArg = new Argument<string>(
+            name: "liveDb",
+            description: "The path to the test PhoneAssistant database",
+            getDefaultValue: ()  => @"\\countyhall.ds2.devon.gov.uk\docs\Exeter, County Hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\phoneassistant.db");
+
+        Command liveCommand = new ("live", "Apply updates to LIVE database") { liveArg };
+        liveCommand.SetHandler(( live ) =>
         {
             try
             {
-                string? db = parseResult.CommandResult.GetValue(liveArg);
-                Log.Information("Applying update to LIVE database {0}", db);
-                if (string.IsNullOrEmpty(db))
+                Log.Information("Applying update to LIVE database {0}", live);
+                if (string.IsNullOrEmpty(live))
                 {
                     Log.Fatal("Database path is null when parsing parameter");
                     return;
                 }
-                Execute(db);
+                Execute(live);
             }
             catch (Exception ex)
             {
 
                 Log.Fatal(exception: ex, "Unhandled exception:");
             }
-        });
+        },liveArg);
 
-        var testArg = new CliArgument<string>("testDb") { Description = "The path to the test PhoneAssistant database", DefaultValueFactory = _ => @"c:\dev\paTest.db" };
-        CliCommand testCommand = new("test", "Apply updates to TEST database") { testArg };
-        testCommand.SetAction((ParseResult parseResult) =>
+        var testArg = new Argument<string>(
+            name: "testDb",
+            description: "The path to the test PhoneAssistant database",
+            getDefaultValue: () => @"c:\dev\paTest.db" );
+
+        Command testCommand = new("test", "Apply updates to TEST database") { testArg };
+        testCommand.SetHandler((test) =>
         {
             try
             {
-                string? db = parseResult.CommandResult.GetValue(testArg);
-                Log.Information("Applying update to TEST database {0}", db);
-                if (string.IsNullOrEmpty(db))
+                Log.Information("Applying update to TEST database {0}", test);
+                if (string.IsNullOrEmpty(test))
                 {
                     Log.Fatal("Database path is null when parsing parameter");
                     return;
                 }
-                Execute(db);
+                Execute(test);
             }
             catch (Exception ex)
             {
 
                 Log.Fatal(exception: ex, "Unhandled exception:");
             }
-        });
+        },testArg);
 
         rootCommand.Add(liveCommand);
         rootCommand.Add(testCommand);
 
         try
         {
-            rootCommand.Parse(args).Invoke();
+            rootCommand.Invoke(args);
         }
         finally
         {

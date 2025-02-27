@@ -24,43 +24,44 @@ public sealed class Program
 #endif
             .CreateLogger();
 
-        var sr = new CliOption<int>("--serviceRequest") { Description = "Service Request of disposals", Required = true };
-        sr.Aliases.Add("-s");
-        var cr = new CliOption<int>("--cr") { Description = "Service Request of disposals", Required = true };
-        cr.Aliases.Add("-c");
-        var folder = new CliOption<DirectoryInfo>("--folder") { Description = "Path to the folder where import files exist", Required = true }.AcceptExistingOnly();
-        folder.Aliases.Add("-f");
-
         StringBuilder sb = new();
         sb.AppendLine("Utility application to reconcile phone disposals");
         sb.AppendLine("File name expected formats are:");
         sb.AppendLine("CI List.xlsx for myScomis import");
         sb.AppendLine("SR[sr] CR[cr] Units.xlsx for SCC import");
-        CliRootCommand rootCommand = new(sb.ToString())
-        {
-            sr,
-            cr,
-            folder
-        };
-        rootCommand.SetAction((parseResult) =>
+        RootCommand rootCommand = new(sb.ToString());
+
+        var srOption = new Option<int>("--serviceRequest") { Description = "Service Request of disposals" };
+        srOption.AddAlias("-sr");
+        srOption.IsRequired = true;
+        rootCommand.AddOption(srOption);
+
+        var crOption = new Option<int>("--collectionRequest") { Description = "Service Request of disposals" };
+        crOption.AddAlias("-cr");
+        crOption.IsRequired = true;
+        rootCommand.AddOption(crOption);
+
+        var folderOption = new Option<DirectoryInfo>("--folder") { Description = "Path to the folder where import files exist" };
+        folderOption.AddAlias("-f");
+        folderOption.ExistingOnly();
+        folderOption.IsRequired = true;
+        rootCommand.AddOption(folderOption);
+
+        rootCommand.SetHandler((sr, cr, folder) =>
         {
             try
             {
-                Execute(
-                    sr: parseResult.CommandResult.GetValue<int>(sr),
-                    scc: parseResult.CommandResult.GetValue<int>(cr),
-                    directory: parseResult.CommandResult.GetValue(folder)
-                    );
+                Execute(sr: sr, scc: cr, directory: folder);
             }
             catch (Exception ex)
             {
                 Log.Fatal(exception: ex, "Unhandled exception:");
             }
-        });
+        },srOption, crOption, folderOption);
 
         try
         {
-            rootCommand.Parse(args).Invoke();
+            rootCommand.Invoke(args);
         }
         finally
         {

@@ -2,7 +2,7 @@
   "profiles": {
     "PhoneAssistant": {
       "commandName": "Project",
-      "commandLineArgs": "-s 197395 -c 142329 -f \"C:\\dev\\PA Test Data\" "
+      "commandLineArgs": "-sr 201899 -cr 146967 -f \"C:\\temp\" "
     }
   }
 }

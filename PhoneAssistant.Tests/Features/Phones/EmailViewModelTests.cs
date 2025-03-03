@@ -7,6 +7,7 @@ using PhoneAssistant.WPF.Application.Repositories;
 using System.Text;
 using System.ComponentModel;
 using FluentAssertions;
+using System.Globalization;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -342,9 +343,10 @@ public sealed class EmailViewModelTests
     [InlineData("23/1/2024", "Tuesday 23<sup>rd</sup> January 2024")]
     [InlineData("31/1/2024", "Wednesday 31<sup>st</sup> January 2024")]
     [InlineData("12/02/2024", "Monday 12<sup>th</sup> February 2024")] // Issue #40
-    private void ToOrdinalWorkingDate_IgnoresWeekends(string date, string expected)
+    public void ToOrdinalWorkingDate_IgnoresWeekends(string date, string expected)
     {
-        string actual = EmailViewModel.ToOrdinalWorkingDate(DateTime.Parse(date));
+        CultureInfo culture = new("en-GB");
+        string actual = EmailViewModel.ToOrdinalWorkingDate(DateTime.Parse(date,culture));
 
         Assert.Equal(expected, actual);
     }
@@ -360,9 +362,10 @@ public sealed class EmailViewModelTests
     [InlineData("23/1/2024", "Tuesday 23\x02B3\x1D48 January 2024")]
     [InlineData("31/1/2024", "Wednesday 31\x02E2\x1d57 January 2024")]
     [InlineData("12/02/2024", "Monday 12\x1D57\x02B0 February 2024")] // Issue #40
-    private void ToOrdinalWorkingDate_WithHexSuperscript(string date, string expected)
+    public void ToOrdinalWorkingDate_WithHexSuperscript(string date, string expected)
     {
-        string actual = EmailViewModel.ToOrdinalWorkingDate(DateTime.Parse(date), true);
+        CultureInfo culture = new("en-GB");
+        string actual = EmailViewModel.ToOrdinalWorkingDate(DateTime.Parse(date,culture), true);
 
         Assert.Equal(expected, actual);
     }

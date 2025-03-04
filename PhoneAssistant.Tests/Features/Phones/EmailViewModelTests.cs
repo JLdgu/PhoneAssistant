@@ -6,6 +6,7 @@ using PhoneAssistant.WPF.Application.Repositories;
 using System.Text;
 using System.ComponentModel;
 using System.Globalization;
+using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 

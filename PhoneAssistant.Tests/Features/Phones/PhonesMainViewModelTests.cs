@@ -11,6 +11,7 @@ using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.Sims;
+using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 

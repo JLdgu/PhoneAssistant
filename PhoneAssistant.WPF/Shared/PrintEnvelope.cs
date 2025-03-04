@@ -7,7 +7,7 @@ using Microsoft.Extensions.FileProviders;
 
 using PhoneAssistant.WPF.Application;
 
-namespace PhoneAssistant.WPF.Features.Phones;
+namespace PhoneAssistant.WPF.Shared;
 internal sealed class PrintEnvelope : IPrintEnvelope
 {
     const int A4_PAGE_HEIGHT = 1169;
@@ -130,7 +130,7 @@ internal sealed class PrintEnvelope : IPrintEnvelope
         }
         StringFormat stringFormat = new StringFormat();
         float[] tabs = { 225 };
-        stringFormat.SetTabStops(0,tabs);
+        stringFormat.SetTabStops(0, tabs);
 
         graphics.DrawString(bodyText.ToString(), _bodyFont, _blackBrush, bodyRectangle, stringFormat);
 

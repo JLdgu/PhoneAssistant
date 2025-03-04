@@ -1,4 +1,7 @@
-﻿using PhoneAssistant.WPF.Application.Entities;
+﻿using System.ComponentModel;
+using System.Text;
+
+using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Shared;
 
@@ -13,35 +16,66 @@ public sealed class OrderDetails
         Phone = phone;
 
         DeviceType = DeviceType.Phone;
-        if (Phone.Model != null && Phone.Model.Contains("ipad", StringComparison.InvariantCultureIgnoreCase))
-            DeviceType = DeviceType.Tablet;
+        if (Phone.Model != null)
+        {
+            if (Phone.Model.Contains("ipad", StringComparison.InvariantCultureIgnoreCase))
+                DeviceType = DeviceType.Tablet;
+            else if (Phone.Model.Contains("SIM", StringComparison.InvariantCultureIgnoreCase))
+                DeviceType = DeviceType.SIM;
+        }
 
-        if (Phone.PhoneNumber is null)
-            OrderType = OrderType.Replacement;
+        OrderType = Phone.PhoneNumber is null ? OrderType.Replacement : OrderType.New;
+
+        StringBuilder envelopeText = new();
+        if (Phone.SR > 999999)
+            envelopeText.AppendLine($"Issue:\t#{Phone.SR}");
         else
-            OrderType = OrderType.New;
+            envelopeText.AppendLine($"Service Request:\t#{Phone.SR}");
+
+        envelopeText.AppendLine("");
+        envelopeText.AppendLine($"Device User:\t{Phone.NewUser}");
+        envelopeText.AppendLine("");
+        envelopeText.AppendLine($"Order type:\t{OrderedItem}");
+        envelopeText.AppendLine("");
+        if (DeviceType != DeviceType.SIM)
+        {
+            envelopeText.AppendLine($"Device supplied:\t{DeviceSupplied}");
+            envelopeText.AppendLine("");
+            envelopeText.AppendLine($"Handset identifier:\t{Phone.Imei}");
+            envelopeText.AppendLine("");
+            envelopeText.AppendLine($"Asset Tag:\t{Phone.AssetTag}");
+            envelopeText.AppendLine("");
+        }
+        if (!string.IsNullOrWhiteSpace(Phone.PhoneNumber))
+        {
+            envelopeText.AppendLine($"Phone number:\t{Phone.PhoneNumber}");
+            envelopeText.AppendLine("");
+            envelopeText.AppendLine($"SIM:\t{Phone.SimNumber}");
+        }
+        EnvelopeText = envelopeText.ToString();
     }
 
-    public OrderType OrderType { get; set; } = OrderType.None;
+    public string DeviceSupplied
+    {
+        get
+        {
+            return Phone.Condition == "N" ? $"New {Phone.OEM} {Phone.Model}" : $"Repurposed {Phone.OEM} {Phone.Model}";
+        }
+    }
+
     public DeviceType DeviceType { get; }
+
+    public string EnvelopeText { get; init; }
 
     public string OrderedItem
     {
         get
         {
-            return $"{OrderType.ToString()} {DeviceType.ToString()}";
-        }
-    }
-    public string DeviceSupplied
-    {
-        get
-        {
-            if (Phone.Condition == "N")
-                return $"New {Phone.OEM} {Phone.Model}";
-            return $"Repurposed {Phone.OEM} {Phone.Model}";
+            return $"{OrderType} {DeviceType}";
         }
     }
 
+    public OrderType OrderType { get; set; } = OrderType.None;
 }
 
 public enum OrderType
@@ -55,5 +89,7 @@ public enum DeviceType
 {
     None = 0,
     Phone = 1,
-    Tablet = 2
+    Tablet = 2,
+    [Description("SIM Card")]
+    SIM
 }

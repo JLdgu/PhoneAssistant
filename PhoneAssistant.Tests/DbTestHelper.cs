@@ -20,6 +20,12 @@ public class DbTestHelper : IDisposable
         DbContext.Database.EnsureCreated();
     }
 
+    [After(HookType.Test)]
+    public void CleanUp()
+    {
+        DbContext.Dispose();
+    }
+
     internal SqliteConnection CreateConnection(string datasource)
     {
         var connection = new SqliteConnection(datasource);

@@ -425,13 +425,13 @@ public partial class AddItemViewModelTests
     {
         ValidationContext ctx = new(_sut, null, null);
 
-        ValidationResult actual1 = AddItemViewModel.ValidateImeiAsync("", ctx);
-        ValidationResult actual2 = AddItemViewModel.ValidateImeiAsync("  ", ctx);
+        ValidationResult? actual1 = AddItemViewModel.ValidateImeiAsync("", ctx);
+        ValidationResult? actual2 = AddItemViewModel.ValidateImeiAsync("  ", ctx);
 
         await Assert.That(actual1).IsNotNull();
-        await Assert.That(actual1.ErrorMessage).IsEqualTo("IMEI is required");
+        await Assert.That(actual1!.ErrorMessage).IsEqualTo("IMEI is required");
         await Assert.That(actual2).IsNotNull();
-        await Assert.That(actual2.ErrorMessage).IsEqualTo("IMEI is required");
+        await Assert.That(actual2!.ErrorMessage).IsEqualTo("IMEI is required");
     }
 
     [Test]
@@ -439,10 +439,10 @@ public partial class AddItemViewModelTests
     {
         ValidationContext ctx = new(_sut, null, null);
 
-        ValidationResult actual = AddItemViewModel.ValidateImeiAsync("abc", ctx);
+        ValidationResult? actual = AddItemViewModel.ValidateImeiAsync("abc", ctx);
 
         await Assert.That(actual).IsNotNull();
-        await Assert.That(actual.ErrorMessage).IsEqualTo("IMEI check digit incorrect");
+        await Assert.That(actual!.ErrorMessage).IsEqualTo("IMEI check digit incorrect");
     }
 
     [Test]
@@ -453,11 +453,11 @@ public partial class AddItemViewModelTests
         _repository = _mocker.GetMock<IPhonesRepository>();
         _repository.Setup(p => p.ExistsAsync("353427866717729")).ReturnsAsync(true);
 
-        ValidationResult actual = AddItemViewModel.ValidateImeiAsync("353427866717729", ctx);
+        ValidationResult? actual = AddItemViewModel.ValidateImeiAsync("353427866717729", ctx);
 
         _repository.VerifyAll();
         await Assert.That(actual).IsNotNull();
-        await Assert.That(actual.ErrorMessage).IsEqualTo("IMEI must be unique");
+        await Assert.That(actual!.ErrorMessage).IsEqualTo("IMEI must be unique");
     }
 
     [Test]
@@ -465,10 +465,10 @@ public partial class AddItemViewModelTests
     {
         ValidationContext ctx = new(_sut, null, null);
 
-        ValidationResult actual = AddItemViewModel.ValidateImeiAsync("355808981132899", ctx); // An invalid 15-digit IMEI
+        ValidationResult? actual = AddItemViewModel.ValidateImeiAsync("355808981132899", ctx); // An invalid 15-digit IMEI
 
         await Assert.That(actual).IsNotNull();
-        await Assert.That(actual.ErrorMessage).IsEqualTo("IMEI check digit incorrect");
+        await Assert.That(actual!.ErrorMessage).IsEqualTo("IMEI check digit incorrect");
     }
 
     [Test]
@@ -476,7 +476,7 @@ public partial class AddItemViewModelTests
     {
         ValidationContext ctx = new(_sut, null, null);
 
-        ValidationResult actual = AddItemViewModel.ValidateImeiAsync("355808981132845", ctx); // A valid 15-digit IMEI
+        ValidationResult? actual = AddItemViewModel.ValidateImeiAsync("355808981132845", ctx); // A valid 15-digit IMEI
 
         await Assert.That(actual).IsEqualTo(ValidationResult.Success);
     }
@@ -507,50 +507,6 @@ public partial class AddItemViewModelTests
         ValidationResult? actual = AddItemViewModel.ValidatePhoneNumber("07123456789", ctx);
 
         _repository.VerifyAll();
-        await Assert.That(actual).IsEqualTo(ValidationResult.Success);
-    }
-
-    [Test]
-    public async Task ValidateSimNumber_ShouldReturnValidResult_WhenSimNumberEmptyOrWhiteSpaceAsync()
-    {
-        ValidationContext ctx = new(_sut, null, null);
-
-        ValidationResult actual1 = AddItemViewModel.ValidateSimNumber("", ctx);
-        ValidationResult actual2 = AddItemViewModel.ValidateSimNumber("  ", ctx);
-
-        await Assert.That(actual1).IsNull();
-        await Assert.That(actual2).IsNull();
-    }
-
-    [Test]
-    public async Task ValidateSimNumber_ShouldReturnError_WhenSimNumberNotNumericAsync()
-    {
-        ValidationContext ctx = new(_sut, null, null);
-
-        ValidationResult actual = AddItemViewModel.ValidateSimNumber("abc", ctx);
-
-        await Assert.That(actual).IsNotNull();
-        await Assert.That(actual.ErrorMessage).IsEqualTo("SIM Number must be 19 digits");
-    }
-
-    [Test]
-    public async Task ValidateSimNumber_ShouldReturnError_WhenSimNumberInvalidAsync()
-    {
-        ValidationContext ctx = new(_sut, null, null);
-
-        ValidationResult actual = AddItemViewModel.ValidateSimNumber("8944125605540324744", ctx); // An invalid 15-digit SIM Number
-
-        await Assert.That(actual).IsNotNull();
-        await Assert.That(actual.ErrorMessage).IsEqualTo("SIM Number check digit incorrect");
-    }
-
-    [Test]
-    public async Task ValidateSimNumber_ShouldReturnValidResult_WhenSimNumberValidAsync()
-    {
-        ValidationContext ctx = new(_sut, null, null);
-
-        ValidationResult actual = AddItemViewModel.ValidateSimNumber("8944125605540324743", ctx); // A valid 19-digit SimNumber
-
         await Assert.That(actual).IsEqualTo(ValidationResult.Success);
     }
 

@@ -93,11 +93,11 @@
 
                         <RadioButton Content="New"
                                      GroupName="OrderType"
-                                     IsChecked="{Binding OrderType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:OrderType.New}}"
+                                     IsChecked="{Binding OrderType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static shared:OrderType.New}}"
                                      Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}" />
                         <RadioButton Content="Replacement"
                                      GroupName="OrderType"
-                                     IsChecked="{Binding OrderType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:OrderType.Replacement}}"
+                                     IsChecked="{Binding OrderType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static shared:OrderType.Replacement}}"
                                      Style="{StaticResource MaterialDesignChoiceChipSecondaryRadioButton}" />
                         <Button Margin="20,0,0,0"
                                 Padding="0"

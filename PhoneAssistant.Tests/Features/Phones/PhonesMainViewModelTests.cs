@@ -10,17 +10,16 @@ using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Features.Phones;
-using PhoneAssistant.WPF.Features.Sims;
 using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
 public sealed class PhonesMainViewModelTests
-{
+{    
     [Test]
-    async Task Receive_ShouldAddPhoneAsync()
+    public async Task Receive_ShouldAddPhoneAsync()
     {
-        AutoMocker mocker = new AutoMocker();
+        AutoMocker mocker = new();
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
 
         vm.Receive(new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""});
@@ -39,8 +38,6 @@ public sealed class PhonesMainViewModelTests
 
         PhonesMainViewModel vm = ViewModelMockSetup(phones, false);
         await vm.LoadAsync();
-        index = 0;
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
         vm.IncludeDisposals = false;
 
@@ -59,9 +56,8 @@ public sealed class PhonesMainViewModelTests
         ];
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
-        index = 0;
 
-        vm.IncludeDisposals = true;        
+        vm.IncludeDisposals = true;
 
         Mock.VerifyAll();
     }
@@ -74,7 +70,20 @@ public sealed class PhonesMainViewModelTests
             new Phone() { Imei = "2" , AssetTag = "Tag Bb2", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
             new Phone() { Imei = "3" , AssetTag = "Tag Ccc3", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""}
         ];
-        PhonesMainViewModel vm = ViewModelMockSetup(phones);
+        int index = 0;
+        AutoMocker mocker = new();
+        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.GetActivePhonesAsync()).ReturnsAsync(phones);
+        Mock<IBaseReportRepository> sims = mocker.GetMock<IBaseReportRepository>();
+        Mock<IUserSettings> settings = mocker.GetMock<IUserSettings>();
+        Mock<IPrintEnvelope> print = mocker.GetMock<IPrintEnvelope>();
+        Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
+        Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
+        factory.Setup(r => r.Create(It.IsAny<Phone>()))
+                            .Returns(() => new PhonesItemViewModel(repository.Object, sims.Object, settings.Object, print.Object, messenger.Object, phones[index]))
+                            .Callback(() => index++);
+
+        PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
         await vm.LoadAsync();
         index = 0;
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
@@ -82,7 +91,7 @@ public sealed class PhonesMainViewModelTests
 
         vm.RefreshPhonesCommand.Execute(null);
 
-        PhonesItemViewModel? actual = view.OfType<PhonesItemViewModel>().SingleOrDefault(vm => vm.Imei == "444");            
+        PhonesItemViewModel? actual = view.OfType<PhonesItemViewModel>().SingleOrDefault(vm => vm.Imei == "444");
         await Assert.That(actual).IsNotNull();
     }
 
@@ -297,10 +306,10 @@ public sealed class PhonesMainViewModelTests
         await Assert.That(actual[0].Status).IsEqualTo(phones[1].Status);
     }
 
-    private int index = 0;
     private PhonesMainViewModel ViewModelMockSetup(List<Phone> phones, bool getActive = true)
     {
-        AutoMocker mocker = new AutoMocker();
+        int index = 0;
+        AutoMocker mocker = new();
 
         Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
         if (getActive ) 
@@ -313,10 +322,7 @@ public sealed class PhonesMainViewModelTests
         Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
         Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
         factory.Setup(r => r.Create(It.IsAny<Phone>()))
-                            .Returns(() => {
-                                return new PhonesItemViewModel(repository.Object, sims.Object, settings.Object, print.Object,messenger.Object, phones[index]);
-                                }
-                            )
+                            .Returns(() => new PhonesItemViewModel(repository.Object, sims.Object, settings.Object, print.Object, messenger.Object, phones[index]))
                             .Callback(() => index++);
 
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();

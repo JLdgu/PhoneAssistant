@@ -15,7 +15,6 @@
     <PackageReference Include="FluentResults" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="NPOI" />
-    <PackageReference Include="Serilog.Sinks.XUnit" />
     <PackageReference Include="SixLabors.ImageSharp" />
     <PackageReference Include="TUnit" />
   </ItemGroup>

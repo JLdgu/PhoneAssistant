@@ -106,33 +106,11 @@ internal sealed class PrintEnvelope : IPrintEnvelope
         float fontLineHeight = _bodyFont.GetHeight(graphics);
         RectangleF bodyRectangle = new(MARGIN_LEFT, _vertialPostion, A4_BODY_WIDTH, fontLineHeight * 15);
 
-        StringBuilder bodyText = new();
-        if (_orderDetails.Phone.SR > 999999)
-            bodyText.AppendLine($"Issue:\t#{_orderDetails.Phone.SR}");
-        else
-            bodyText.AppendLine($"Service Request:\t#{_orderDetails.Phone.SR}");
-        bodyText.AppendLine("");
-        bodyText.AppendLine($"Device User:\t{_orderDetails.Phone.NewUser}");
-        bodyText.AppendLine("");
-        bodyText.AppendLine($"Order type:\t{_orderDetails.OrderedItem}");
-        bodyText.AppendLine("");
-        bodyText.AppendLine($"Device supplied:\t{_orderDetails.DeviceSupplied}");
-        bodyText.AppendLine("");
-        bodyText.AppendLine($"Handset identifier:\t{_orderDetails.Phone.Imei}");
-        bodyText.AppendLine("");
-        bodyText.AppendLine($"Asset Tag:\t{_orderDetails.Phone.AssetTag}");
-        if (!string.IsNullOrWhiteSpace(_orderDetails.Phone.PhoneNumber))
-        {
-            bodyText.AppendLine("");
-            bodyText.AppendLine($"Phone number:\t{_orderDetails.Phone.PhoneNumber}");
-            bodyText.AppendLine("");
-            bodyText.AppendLine($"SIM:\t{_orderDetails.Phone.SimNumber}");
-        }
         StringFormat stringFormat = new StringFormat();
         float[] tabs = { 225 };
         stringFormat.SetTabStops(0, tabs);
 
-        graphics.DrawString(bodyText.ToString(), _bodyFont, _blackBrush, bodyRectangle, stringFormat);
+        graphics.DrawString(_orderDetails.EnvelopeText, _bodyFont, _blackBrush, bodyRectangle, stringFormat);
 
         //_vertialPostion += (int)fontLineHeight * 15;
 

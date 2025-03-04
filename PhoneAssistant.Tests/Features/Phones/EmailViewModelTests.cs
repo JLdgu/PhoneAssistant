@@ -8,6 +8,7 @@ using System.Text;
 using System.ComponentModel;
 using FluentAssertions;
 using System.Globalization;
+using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 

@@ -1,6 +1,6 @@
 ﻿using PhoneAssistant.WPF.Application.Entities;
 
-namespace PhoneAssistant.WPF.Features.Phones;
+namespace PhoneAssistant.WPF.Shared;
 
 public sealed record class Order(OrderDetails OrderDetails);
 
@@ -13,8 +13,8 @@ public sealed class OrderDetails
         Phone = phone;
 
         DeviceType = DeviceType.Phone;
-        if (Phone.Model != null && Phone.Model.Contains("ipad",StringComparison.InvariantCultureIgnoreCase))
-            DeviceType  = DeviceType.Tablet;
+        if (Phone.Model != null && Phone.Model.Contains("ipad", StringComparison.InvariantCultureIgnoreCase))
+            DeviceType = DeviceType.Tablet;
 
         if (Phone.PhoneNumber is null)
             OrderType = OrderType.Replacement;
@@ -38,7 +38,7 @@ public sealed class OrderDetails
         {
             if (Phone.Condition == "N")
                 return $"New {Phone.OEM} {Phone.Model}";
-            return $"Repurposed {Phone.OEM} {Phone.Model}";            
+            return $"Repurposed {Phone.OEM} {Phone.Model}";
         }
     }
 

@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
+using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 

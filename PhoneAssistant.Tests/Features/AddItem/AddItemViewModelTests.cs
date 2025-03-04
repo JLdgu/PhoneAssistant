@@ -428,8 +428,8 @@ public partial class AddItemViewModelTests
     {
         ValidationContext ctx = new(_sut, null, null);
 
-        ValidationResult actual1 = AddItemViewModel.ValidateImeiAsync("", ctx);
-        ValidationResult actual2 = AddItemViewModel.ValidateImeiAsync("  ", ctx);
+        ValidationResult? actual1 = AddItemViewModel.ValidateImeiAsync("", ctx);
+        ValidationResult? actual2 = AddItemViewModel.ValidateImeiAsync("  ", ctx);
 
         Assert.NotNull(actual1);
         Assert.Equal("IMEI is required", actual1.ErrorMessage);
@@ -442,7 +442,7 @@ public partial class AddItemViewModelTests
     {
         ValidationContext ctx = new(_sut, null, null);
 
-        ValidationResult actual = AddItemViewModel.ValidateImeiAsync("abc", ctx);
+        ValidationResult? actual = AddItemViewModel.ValidateImeiAsync("abc", ctx);
 
         Assert.NotNull(actual);
         Assert.Equal("IMEI check digit incorrect", actual.ErrorMessage);
@@ -456,7 +456,7 @@ public partial class AddItemViewModelTests
         _repository = _mocker.GetMock<IPhonesRepository>();
         _repository.Setup(p => p.ExistsAsync("353427866717729")).ReturnsAsync(true);
 
-        ValidationResult actual = AddItemViewModel.ValidateImeiAsync("353427866717729", ctx);
+        ValidationResult? actual = AddItemViewModel.ValidateImeiAsync("353427866717729", ctx);
         _repository.VerifyAll();
         Assert.NotNull(actual);
         Assert.Equal("IMEI must be unique", actual.ErrorMessage);
@@ -467,7 +467,7 @@ public partial class AddItemViewModelTests
     {
         ValidationContext ctx = new(_sut, null, null);
 
-        ValidationResult actual = AddItemViewModel.ValidateImeiAsync("355808981132899", ctx); // An invalid 15-digit IMEI
+        ValidationResult? actual = AddItemViewModel.ValidateImeiAsync("355808981132899", ctx); // An invalid 15-digit IMEI
 
         Assert.NotNull(actual);
         Assert.Equal("IMEI check digit incorrect", actual.ErrorMessage);
@@ -478,7 +478,7 @@ public partial class AddItemViewModelTests
     {
         ValidationContext ctx = new(_sut, null, null);
 
-        ValidationResult actual = AddItemViewModel.ValidateImeiAsync("355808981132845", ctx); // A valid 15-digit IMEI
+        ValidationResult? actual = AddItemViewModel.ValidateImeiAsync("355808981132845", ctx); // A valid 15-digit IMEI
 
         Assert.Equal(ValidationResult.Success, actual);
     }
@@ -509,50 +509,6 @@ public partial class AddItemViewModelTests
         ValidationResult? actual = AddItemViewModel.ValidatePhoneNumber("07123456789", ctx);
 
         _repository.VerifyAll();
-        Assert.Equal(ValidationResult.Success, actual);
-    }
-
-    [Fact]
-    public void ValidateSimNumber_ShouldReturnValidResult_WhenSimNumberEmptyOrWhiteSpace()
-    {
-        ValidationContext ctx = new(_sut, null, null);
-
-        ValidationResult actual1 = AddItemViewModel.ValidateSimNumber("", ctx);
-        ValidationResult actual2 = AddItemViewModel.ValidateSimNumber("  ", ctx);
-
-        Assert.Null(actual1);
-        Assert.Null(actual2);
-    }
-
-    [Fact]
-    public void ValidateSimNumber_ShouldReturnError_WhenSimNumberNotNumeric()
-    {
-        ValidationContext ctx = new(_sut, null, null);
-
-        ValidationResult actual = AddItemViewModel.ValidateSimNumber("abc", ctx);
-
-        Assert.NotNull(actual);
-        Assert.Equal("SIM Number must be 19 digits", actual.ErrorMessage);
-    }
-
-    [Fact]
-    public void ValidateSimNumber_ShouldReturnError_WhenSimNumberInvalid()
-    {
-        ValidationContext ctx = new(_sut, null, null);
-
-        ValidationResult actual = AddItemViewModel.ValidateSimNumber("8944125605540324744", ctx); // An invalid 15-digit SIM Number
-
-        Assert.NotNull(actual);
-        Assert.Equal("SIM Number check digit incorrect", actual.ErrorMessage);
-    }
-
-    [Fact]
-    public void ValidateSimNumber_ShouldReturnValidResult_WhenSimNumberValid()
-    {
-        ValidationContext ctx = new(_sut, null, null);
-
-        ValidationResult actual = AddItemViewModel.ValidateSimNumber("8944125605540324743", ctx); // A valid 19-digit SimNumber
-
         Assert.Equal(ValidationResult.Success, actual);
     }
 

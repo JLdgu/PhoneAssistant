@@ -6,7 +6,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
              xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.Sims"
-             d:DataContext="{d:DesignInstance Type=viewmodel:SimsMainViewModel}"
+             d:Background="AntiqueWhite"
+             d:DataContext="{d:DesignInstance Type=viewmodel:SimsMainViewModel,
+                                              IsDesignTimeCreatable=False}"
              d:DesignHeight="250"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -18,6 +20,48 @@
 
         </Grid.RowDefinitions>
         <shared:HeaderMainView HeaderIcon="SimOutline" HeaderText="SIM Cards" />
+        <StackPanel Grid.Row="1"
+                    Margin="0,10,0,25"
+                    Orientation="Horizontal">
+            <TextBox MinWidth="85"
+                     Margin="10,0,0,0"
+                     materialDesign:HintAssist.Hint="Ticket #"
+                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                     MaxLength="7"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     Text="{Binding Ticket}" />
 
+            <TextBox MinWidth="150"
+                     Margin="10,0,0,0"
+                     materialDesign:HintAssist.Hint="New User"
+                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     Text="{Binding NewUser}" />
+
+            <TextBox MinWidth="125  "
+                     Margin="10,0,0,0"
+                     materialDesign:HintAssist.Hint="Phone Number"
+                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                     MaxLength="11"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     Text="{Binding PhoneNumber}" />
+
+            <TextBox MinWidth="160"
+                     Margin="10,0,0,0"
+                     materialDesign:HintAssist.Hint="SIM Number"
+                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                     MaxLength="19"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     Text="{Binding SimNumber}" />
+
+            <Button Margin="20,0,0,0"
+                    Padding="0"
+                    Command="{Binding PrintEnvelopeCommand}"
+                    Content="{materialDesign:PackIcon Kind=EmailOutline,
+                                                      Size=35}"
+                    Style="{StaticResource MaterialDesignFlatLightButton}"
+                    ToolTip="Print Envelope" />
+
+        </StackPanel>
     </Grid>
 </UserControl>

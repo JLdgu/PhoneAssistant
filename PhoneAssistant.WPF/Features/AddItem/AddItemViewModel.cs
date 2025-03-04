@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -49,20 +50,16 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         ValidateProperty(Status, "Status");
     }
 
+    [return: MaybeNull]
     public static ValidationResult ValidateAssetTag(string assetTag, ValidationContext context)
     {
-#pragma warning disable CS8603 // Possible null reference return.
         if (assetTag is null) return ValidationResult.Success;
-#pragma warning restore CS8603 // Possible null reference return.
 
         AddItemViewModel vm = (AddItemViewModel)context.ObjectInstance;
 
         bool unique = Task.Run(() => vm.IsAssetTagUniqueAsync()).GetAwaiter().GetResult();
                 
-#pragma warning disable CS8603 // Possible null reference return.
         if (unique) return ValidationResult.Success;
-#pragma warning restore CS8603 // Possible null reference return.
-
         return new ValidationResult("Asset Tag must be unique");
     }
     private async Task<bool> IsAssetTagUniqueAsync() => await _phonesRepository.AssetTagUniqueAsync(AssetTag);
@@ -82,6 +79,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     [CustomValidation(typeof(AddItemViewModel), nameof(ValidateImeiAsync))]
     private string _imei = string.Empty;
 
+    [return: MaybeNull]
     public static ValidationResult ValidateImeiAsync(string imei, ValidationContext context)
     {   
         if (string.IsNullOrWhiteSpace(imei)) return new ValidationResult("IMEI is required");
@@ -91,11 +89,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         AddItemViewModel vm = (AddItemViewModel)context.ObjectInstance;
 
         bool unique = Task.Run(() => vm.IsIMEIUniqueAsync(imei)).GetAwaiter().GetResult();
-
-#pragma warning disable CS8603 // Possible null reference return.
         if (unique) return ValidationResult.Success;
-#pragma warning restore CS8603 // Possible null reference return.
-        
         return new ValidationResult("IMEI must be unique");
     }
 
@@ -145,20 +139,15 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     [CustomValidation(typeof(AddItemViewModel), nameof(ValidateStatus))]
     private string _status = ApplicationConstants.StatusInStock;
 
+    [return: MaybeNull]
     public static ValidationResult ValidateStatus(string status, ValidationContext context)
     {
-#pragma warning disable CS8603 // Possible null reference return.
         if (status != ApplicationConstants.StatusInStock)
             return ValidationResult.Success;
-#pragma warning restore CS8603 // Possible null reference return.
-    
         AddItemViewModel vm = (AddItemViewModel)context.ObjectInstance;
         if (string.IsNullOrEmpty(vm.AssetTag))
             return new ValidationResult("Asset Tag required");
-
-#pragma warning disable CS8603 // Possible null reference return.
         return ValidationResult.Success;
-#pragma warning restore CS8603 // Possible null reference return.
     }
 
     partial void OnStatusChanged(string value)
@@ -171,34 +160,8 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
 
     [ObservableProperty]
     [NotifyDataErrorInfo]
-    [CustomValidation(typeof(AddItemViewModel), nameof(ValidateTicket))]
+    [CustomValidation(typeof(Validation), nameof(Validation.ValidateTicket))]
     private string? _ticket;
-
-    public static ValidationResult ValidateTicket(string? ticket, ValidationContext context)
-    {
-        if (!string.IsNullOrEmpty(ticket))
-        {
-            if (int.TryParse(ticket, out int result))
-            {
-                if (result < 100000 || result > 9999999)
-                    return new ValidationResult("Ticket must 6 or 7 digits");
-            }
-            else
-            {
-                return new ValidationResult("Ticket must 6 or 7 digits");
-            }
-        }
-
-        AddItemViewModel vm = (AddItemViewModel)context.ObjectInstance;
-
-        if (vm.Status == "Decommissioned" || vm.Status == "Disposed")
-            if (ticket is null)
-                return new ValidationResult("Ticket required when disposal");
-
-#pragma warning disable CS8603 // Possible null reference return.
-        return ValidationResult.Success;
-#pragma warning restore CS8603 // Possible null reference return.
-    }
 
     [RelayCommand]
     private void PhoneClear()
@@ -284,22 +247,8 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
     [NotifyDataErrorInfo]
     [RegularExpression(@"8944\d{15}", ErrorMessage = "SIM Number must be 19 digits")]
-    [CustomValidation(typeof(AddItemViewModel), nameof(ValidateSimNumber))]
+    [CustomValidation(typeof(Validation), nameof(Validation.ValidateSimNumber))]
     private string? _simNumber;
-
-    public static ValidationResult ValidateSimNumber(string? simNumber, ValidationContext context)
-    {
-        Regex regex = ImeiFormat();
-
-        if (string.IsNullOrWhiteSpace(simNumber)) return ValidationResult.Success!;
-
-        if (!regex.IsMatch(simNumber))
-            return new ValidationResult("SIM Number must be 19 digits");
-
-        if (!LuhnValidator.IsValid(simNumber, 19)) return new ValidationResult("SIM Number check digit incorrect");
-
-        return ValidationResult.Success!;
-    }
 
     [GeneratedRegex(@"8944\d{15}", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-GB")]
     private static partial Regex ImeiFormat();

@@ -44,6 +44,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
     <PackageReference Include="NPOI" />
+    <PackageReference Include="SixLabors.ImageSharp" />
     <PackageReference Include="System.Drawing.Common" />
     <PackageReference Include="Velopack" />
   </ItemGroup>

@@ -8,7 +8,7 @@ using NPOI.XSSF.UserModel;
 namespace Reconcile.Tests;
 public sealed class ImportSCCTests()
 {
-    [Fact]
+    [Test]
     public void GetDisposal_ShouldFail_WhenAccountCellNotD1024CT()
     {
         using XSSFWorkbook workbook = new();
@@ -22,7 +22,7 @@ public sealed class ImportSCCTests()
         result.Errors.First().Message.Should().Be("Ignore: Account not D1024CT");
     }
 
-    [Fact]
+    [Test]
     public void GetDisposal_ShouldFail_WhenAccountCellNull()
     {
         using XSSFWorkbook workbook = new();
@@ -36,7 +36,7 @@ public sealed class ImportSCCTests()
         result.Errors.First().Message.Should().Be("Ignore: Account not D1024CT");
     }
 
-    [Fact]
+    [Test]
     public void GetDisposal_ShouldFail_WhenAccountCellTypeInvalid()
     {
         using XSSFWorkbook workbook = new();
@@ -55,7 +55,7 @@ public sealed class ImportSCCTests()
         number.Errors.First().Message.Should().Be("Ignore: Account not D1024CT");
     }
 
-    [Fact]
+    [Test]
     public void GetDisposal_ShouldFail_WhenProductTypeToBeIgnored()
     {
         using XSSFWorkbook workbook = new();
@@ -73,7 +73,7 @@ public sealed class ImportSCCTests()
 
 
 
-    [Fact]
+    [Test]
     public void GetDisposal_ShouldFail_WhenRowNull()
     {
         using XSSFWorkbook workbook = new();
@@ -86,9 +86,9 @@ public sealed class ImportSCCTests()
         result.Errors.First().Message.Should().Be("Ignore: Null row");
     }
 
-    [Theory]
-    [InlineData("NONE")]
-    [InlineData("UNREADABLE")]
+    [Test]
+    [Arguments("NONE")]
+    [Arguments("UNREADABLE")]
     public void GetDisposal_ShouldFail_WhenSerialNumberToBeIgnored(string serialNumber)
     {
         using XSSFWorkbook workbook = new();
@@ -103,9 +103,9 @@ public sealed class ImportSCCTests()
         result.Errors.First().Message.Should().Be("Ignore: Unidentifiable");
     }
 
-    [Theory]
-    [InlineData("123456789012345", "NONE", null, 15)]
-    [InlineData("123456789054321", "PC12345", "PC12345", 16)]
+    [Test]
+    [Arguments("123456789012345", "NONE", null, 15)]
+    [Arguments("123456789054321", "PC12345", "PC12345", 16)]
     public void GetDisposal_ShouldSucceed(string serialNumber, string? assetNumber, string? expectedAssetNumber, int certificate)
     {
         using XSSFWorkbook workbook = new();

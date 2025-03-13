@@ -1,8 +1,5 @@
 ﻿using PhoneAssistant.WPF.Application.Entities;
 
-using Xunit;
-using Xunit.Abstractions;
-
 namespace PhoneAssistant.Tests.Application;
 public class DbContextTriggerTests(ITestOutputHelper output) : DbTestHelper
 {

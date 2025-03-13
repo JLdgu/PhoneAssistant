@@ -8,7 +8,6 @@ using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
 using Xunit;
-using Xunit.Abstractions;
 
 namespace PhoneAssistant.Tests.Application.Repositories;
 
@@ -165,13 +164,13 @@ public sealed class PhonesRepositoryTests : DbTestHelper
             OEM = OEMs.Apple,
             Status = ApplicationConstants.Statuses[1]
         };
-        await _helper.DbContext.Phones.AddAsync(original);
-        await _helper.DbContext.SaveChangesAsync();
+        await _helper.DbContext.Phones.AddAsync(original, TestContext.Current.CancellationToken);
+        await _helper.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
         string lastUpdate = original.LastUpdate;
 
         await _repository.UpdateAsync(_phone);
 
-        Phone? actual = await _helper.DbContext.Phones.FindAsync(_phone.Imei);
+        Phone? actual = await _helper.DbContext.Phones.FindAsync(new object?[] { _phone.Imei }, TestContext.Current.CancellationToken);
         Assert.NotNull(actual);
         Assert.Equal(_phone.AssetTag, actual.AssetTag);
         Assert.Equal(_phone.Condition, actual.Condition);
@@ -187,7 +186,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Assert.Equal(_phone.SR, actual.SR);
         Assert.Equal(_phone.Status, actual.Status);
 
-        UpdateHistoryPhone? history = await _helper.DbContext.UpdateHistoryPhones.FirstOrDefaultAsync(h => h.Id > 0);
+        UpdateHistoryPhone? history = await _helper.DbContext.UpdateHistoryPhones.FirstOrDefaultAsync(h => h.Id > 0, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(history);
         Assert.Equal(history.AssetTag, actual.AssetTag);
         Assert.Equal(history.Condition, actual.Condition);

@@ -6,8 +6,8 @@ namespace DbUtil.Tests;
 
 public class ProgramTests()
 {
-    [Fact]
-    public void ApplyScript_ShouldApplyScript_WhenScriptNotAlreadyApplied()
+    [Test]
+    public async Task ApplyScript_ShouldApplyScript_WhenScriptNotAlreadyApplied()
     {
         using SqliteConnection connection = CreateAndOpenSqliteConnection();
         CreateSchemaVersionsTable(connection);
@@ -15,11 +15,11 @@ public class ProgramTests()
 
         Result<bool> scriptApplied = Program.ApplyScript(connection, script);
 
-        scriptApplied.Value.Should().BeTrue();
+        await Assert.That(scriptApplied.Value).IsTrue();
     }
 
-    [Fact]
-    public void ApplyScript_ShouldNotApplyScript_WhenScriptAlreadyApplied()
+    [Test]
+    public async Task ApplyScript_ShouldNotApplyScript_WhenScriptAlreadyApplied()
     {
         using SqliteConnection connection = CreateAndOpenSqliteConnection();
         CreateSchemaVersionsTable(connection);
@@ -30,11 +30,11 @@ public class ProgramTests()
 
         Result<bool> scriptApplied = Program.ApplyScript(connection,script);
 
-        scriptApplied.Value.Should().BeFalse();
+        await Assert.That(scriptApplied.Value).IsFalse();
     }
 
-    [Fact]
-    public void ApplyScript_ShouldReturnError_WhenScriptInvalid()
+    [Test]
+    public async Task ApplyScript_ShouldReturnError_WhenScriptInvalid()
     {
         using SqliteConnection connection = CreateAndOpenSqliteConnection();
         CreateSchemaVersionsTable(connection);
@@ -42,12 +42,12 @@ public class ProgramTests()
 
         Result<bool> scriptApplied = Program.ApplyScript(connection, script);
 
-        scriptApplied.IsFailed.Should().BeTrue();
-        scriptApplied.Reasons.Select(reason => reason.Message).First().Should().StartWith("SQLite Error 1:");
+        await Assert.That(scriptApplied.IsFailed).IsTrue();
+        await Assert.That(scriptApplied.Reasons.Select(reason => reason.Message).First()).StartsWith("SQLite Error 1:");
     }
 
-    [Fact]
-    public void CheckSchemaVersionsExists_ShouldCreateSchemaVersionTable_WhenTableDoesNotExist()
+    [Test]
+    public async Task CheckSchemaVersionsExists_ShouldCreateSchemaVersionTable_WhenTableDoesNotExist()
     {
         using SqliteConnection connection = CreateAndOpenSqliteConnection();
         
@@ -59,11 +59,11 @@ public class ProgramTests()
         using var reader = command.ExecuteReader();
         reader.Read();
         var count = reader.GetInt32(0);
-        count.Should().Be(1);
+        await Assert.That(count).IsEqualTo(1);
     }
 
-    [Fact]
-    public void CheckSchemaVersionsExists_ShouldReturnFalse_WhenTableExists()
+    [Test]
+    public async Task CheckSchemaVersionsExists_ShouldReturnFalse_WhenTableExists()
     {
         using SqliteConnection connection = CreateAndOpenSqliteConnection();
         CreateSchemaVersionsTable(connection);

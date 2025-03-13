@@ -10,7 +10,7 @@ namespace Reconcile.Tests;
 
 public sealed class ImportTests
 {
-    [Fact]
+    [Test]
     public void IsValidSheet_ShouldFail_WhenCheckCellInvalid()
     {
         using XSSFWorkbook workbook = new();
@@ -24,7 +24,7 @@ public sealed class ImportTests
         actual.Errors.First().Message.Should().Be("Unable to find 'CheckValue' in cell A1");
     }
 
-    [Fact]
+    [Test]
     public void IsValidSheet_ShouldFail_WhenNoRows()
     {
         using XSSFWorkbook workbook = new();
@@ -36,7 +36,7 @@ public sealed class ImportTests
         actual.Errors.First().Message.Should().Be("No rows found in sheet Data");
     }
 
-    [Fact]
+    [Test]
     public void IsValidSheet_ShouldFail_WhenSheetNameInvalid()
     {
         using XSSFWorkbook workbook = new();
@@ -48,7 +48,7 @@ public sealed class ImportTests
         actual.Errors.First().Message.Should().Be($"First sheet in workbook not named SheetName");
     }
 
-    [Fact]
+    [Test]
     public void IsValidSheet_ShouldSucceed_WhenValidSheet()
     {
         using XSSFWorkbook workbook = new();

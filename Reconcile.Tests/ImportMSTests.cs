@@ -2,7 +2,6 @@ using FluentAssertions;
 
 using FluentResults;
 
-using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
@@ -10,7 +9,7 @@ namespace Reconcile.Tests;
 
 public sealed class ImportMSTests
 {
-    [Fact]
+    [Test]
     public void GetDevice_ShouldFail_WhenItemTypeToBeIgnored()
     {
         IRow row = SetupRow("Item Type", "", "", "", "", "", "");
@@ -21,7 +20,7 @@ public sealed class ImportMSTests
         actual.Errors.First().Message.Should().Be("Ignore: Item Type");
     }
 
-    [Fact]
+    [Test]
     public void GetDevice_ShouldFail_WhenItemTypePhoneAndModelToBeIgnored()
     {
         IRow row = SetupRow("Phone", "", "", "", "oem", "SIM Card", "");
@@ -32,7 +31,7 @@ public sealed class ImportMSTests
         actual.Errors.First().Message.Should().Be("Ignore: Model");
     }
 
-    [Fact]
+    [Test]
     public void GetDevice_ShouldFail_WhenItemTypeComputerAndOEMInvalid()
     {
         IRow row = SetupRow("Computer", "", "", "", "oem", "", "");
@@ -43,11 +42,11 @@ public sealed class ImportMSTests
         actual.Errors.First().Message.Should().Be("Ignore: Manufacturer");
     }
 
-    [Theory]
-    [InlineData("Computer", "computer", "asset tag", "status", "Apple", "model", "serial")]
-    [InlineData("Computer", "computer", "", "", "Apple", "model", "")]
-    [InlineData("Phone", "phone", "asset tag", "status", "oem", "model", "serial")]
-    [InlineData("Phone", "phone", "", "", "oem", "model", "")]
+    [Test]
+    [Arguments("Computer", "computer", "asset tag", "status", "Apple", "model", "serial")]
+    [Arguments("Computer", "computer", "", "", "Apple", "model", "")]
+    [Arguments("Phone", "phone", "asset tag", "status", "oem", "model", "serial")]
+    [Arguments("Phone", "phone", "", "", "oem", "model", "")]
     public void GetDevice_ShouldSucceed_WhenValidDevice(string itemType, string name, string assetTag, string status, string oem, string model, string serialNumber)
     {
         IRow row = SetupRow(itemType, name, assetTag, status, oem, model, serialNumber);

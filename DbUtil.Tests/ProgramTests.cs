@@ -70,7 +70,7 @@ public class ProgramTests()
 
         bool tableCreated = Program.CheckSchemaVersionsExists(connection);
 
-        tableCreated.Should().BeFalse();
+        await Assert.That(tableCreated).IsFalse();
     }
 
     private static void CreateSchemaVersionsTable(SqliteConnection connection)

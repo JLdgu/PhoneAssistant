@@ -12,24 +12,22 @@ using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.Sims;
 
-using Xunit;
-
 namespace PhoneAssistant.Tests.Features.Phones;
 
 public sealed class PhonesMainViewModelTests
 {
-    [Fact]
-    void Receive_ShouldAddPhone()
+    [Test]
+    async Task Receive_ShouldAddPhoneAsync()
     {
         AutoMocker mocker = new AutoMocker();
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
 
         vm.Receive(new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""});
 
-        Assert.True(vm.PhoneItems.Any());
+        await Assert.That(vm.PhoneItems.Any()).IsTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task RefreshPhonesCommand_AfterCRUDChanges_UpdatesViewAsync()
     {
         List<Phone> phones = [
@@ -48,7 +46,7 @@ public sealed class PhonesMainViewModelTests
         Mock.VerifyAll();
     }
 
-    [Fact]
+    [Test]
     public async Task IncludeDisposals_ShouldGetAllPhones_WhenTrue()
     {
         List<Phone> phones = [
@@ -67,7 +65,7 @@ public sealed class PhonesMainViewModelTests
         Mock.VerifyAll();
     }
 
-    [Fact]
+    [Test]
     public async Task RefreshPhonesCommand_ShouldUpdateView_WhenDatabaseChanged()
     {
         List<Phone> phones = [
@@ -84,10 +82,10 @@ public sealed class PhonesMainViewModelTests
         vm.RefreshPhonesCommand.Execute(null);
 
         PhonesItemViewModel? actual = view.OfType<PhonesItemViewModel>().SingleOrDefault(vm => vm.Imei == "444");            
-        Assert.NotNull(actual);
+        await Assert.That(actual).IsNotNull();
     }
 
-    [Fact]
+    [Test]
     public async Task ChangingFilterAssetTag_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
@@ -102,11 +100,11 @@ public sealed class PhonesMainViewModelTests
         vm.FilterAssetTag = "B2";
 
         PhonesItemViewModel[] actual = view.OfType<PhonesItemViewModel>().ToArray();
-        Assert.Single(actual);
-        Assert.Equal(phones[1].AssetTag , actual[0].AssetTag);
+        await Assert.That(actual).HasSingleItem();
+        await Assert.That(actual[0].AssetTag).IsEqualTo(phones[1].AssetTag );
     }
 
-    [Fact]
+    [Test]
     public async Task ChangingFilterFormerUser_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
@@ -121,11 +119,11 @@ public sealed class PhonesMainViewModelTests
         vm.FilterFormerUser = "BB";
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
-        Assert.Single(actual);
-        Assert.Equal(phones[1].FormerUser, actual[0].FormerUser);
+        await Assert.That(actual).HasSingleItem();
+        await Assert.That(actual[0].FormerUser).IsEqualTo(phones[1].FormerUser);
     }
 
-    [Fact]
+    [Test]
     public async Task ChangingFilterImei_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
@@ -140,11 +138,11 @@ public sealed class PhonesMainViewModelTests
         vm.FilterImei = "22";
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
-        Assert.Single(actual);
-        Assert.Equal(phones[1].Imei, actual[0].Imei);
+        await Assert.That(actual).HasSingleItem();
+        await Assert.That(actual[0].Imei).IsEqualTo(phones[1].Imei);
     }
 
-    [Fact]
+    [Test]
     public async Task ChangingFilterNorR_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
@@ -159,11 +157,11 @@ public sealed class PhonesMainViewModelTests
         vm.FilterNorR = "R";
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
-        Assert.Single(actual);
-        Assert.Equal(phones[1].Condition, actual[0].NorR);
+        await Assert.That(actual).HasSingleItem();
+        await Assert.That(actual[0].NorR).IsEqualTo(phones[1].Condition);
     }
 
-    [Fact]
+    [Test]
     public async Task ChangingFilterNewUser_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
@@ -178,11 +176,11 @@ public sealed class PhonesMainViewModelTests
         vm.FilterNewUser = "BB";
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
-        Assert.Single(actual);
-        Assert.Equal(phones[1].NewUser, actual[0].NewUser);
+        await Assert.That(actual).HasSingleItem();
+        await Assert.That(actual[0].NewUser).IsEqualTo(phones[1].NewUser);
     }
 
-    [Fact]
+    [Test]
     public async Task ChangingFilterNotes_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
@@ -197,11 +195,11 @@ public sealed class PhonesMainViewModelTests
         vm.FilterNotes = "e2";
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
-        Assert.Single(actual);
-        Assert.Equal(phones[1].Notes, actual[0].Notes);
+        await Assert.That(actual).HasSingleItem();
+        await Assert.That(actual[0].Notes).IsEqualTo(phones[1].Notes);
     }
 
-    [Fact]
+    [Test]
     public async Task ChangingFilterOEM_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
@@ -216,11 +214,11 @@ public sealed class PhonesMainViewModelTests
         vm.FilterOEM = OEMs.Samsung;
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
-        Assert.Single(actual);
-        Assert.Equal(phones[2].OEM, actual[0].OEM);
+        await Assert.That(actual).HasSingleItem();
+        await Assert.That(actual[0].OEM).IsEqualTo(phones[2].OEM);
     }
 
-    [Fact]
+    [Test]
     public async Task ChangingFilterPhoneNumber_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
@@ -235,11 +233,11 @@ public sealed class PhonesMainViewModelTests
         vm.FilterPhoneNumber = "02";
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
-        Assert.Single(actual);
-        Assert.Equal(phones[1].PhoneNumber, actual[0].PhoneNumber);
+        await Assert.That(actual).HasSingleItem();
+        await Assert.That(actual[0].PhoneNumber).IsEqualTo(phones[1].PhoneNumber);
     }
 
-    [Fact]
+    [Test]
     public async Task ChangingFilterSimNumber_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
@@ -254,11 +252,11 @@ public sealed class PhonesMainViewModelTests
         vm.FilterSimNumber = "02";
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
-        Assert.Single(actual);
-        Assert.Equal(phones[1].SimNumber, actual[0].SimNumber);
+        await Assert.That(actual).HasSingleItem();
+        await Assert.That(actual[0].SimNumber).IsEqualTo(phones[1].SimNumber);
     }
 
-    [Fact]
+    [Test]
     public async Task ChangingFilterSR_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
@@ -274,12 +272,12 @@ public sealed class PhonesMainViewModelTests
         vm.FilterSR = "22";
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
-        Assert.Equal(2, actual.Count());
-        Assert.Equal(phones[1].SR.ToString(), actual[0].SR);
-        Assert.Equal(phones[3].SR.ToString(), actual[1].SR);
+        await Assert.That(actual.Count()).IsEqualTo(2);
+        await Assert.That(actual[0].SR).IsEqualTo(phones[1].SR.ToString());
+        await Assert.That(actual[1].SR).IsEqualTo(phones[3].SR.ToString());
     }
 
-    [Fact]
+    [Test]
     public async Task ChangingFilterStatus_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
@@ -294,8 +292,8 @@ public sealed class PhonesMainViewModelTests
         vm.FilterStatus = "stock";
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
-        Assert.Single(actual);
-        Assert.Equal(phones[1].Status, actual[0].Status);
+        await Assert.That(actual).HasSingleItem();
+        await Assert.That(actual[0].Status).IsEqualTo(phones[1].Status);
     }
 
     private int index = 0;

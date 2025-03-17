@@ -1,17 +1,16 @@
 ﻿namespace PhoneAssistant.Tests.Shared;
 
 using System.Globalization;
+using System.Threading.Tasks;
 
 using PhoneAssistant.WPF.Shared;
 
-using Xunit;
-
 public class EmptyOrNumericValidationRuleTests
 {
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    void Validate_WithNullOrEmptyString_ReturnsIsValid_True(string? value)
+    [Test]
+    [Arguments(null)]
+    [Arguments("")]
+    public async Task Validate_WithNullOrEmptyString_ReturnsIsValid_TrueAsync(string? value)
     {
         EmptyOrNumericValidationRule vr = new ();
 
@@ -19,26 +18,26 @@ public class EmptyOrNumericValidationRuleTests
         var actual = vr.Validate(value, CultureInfo.InvariantCulture);
 #pragma warning restore CS8604 // Possible null reference argument.
 
-        Assert.True(actual.IsValid);
+        await Assert.That(actual.IsValid).IsTrue();
     }
 
-    [Fact]
-    void Validate_WithNoneNumeric_ReturnsIsValid_False()
+    [Test]
+    public async Task Validate_WithNoneNumeric_ReturnsIsValid_False()
     {
         EmptyOrNumericValidationRule vr = new();
 
         var actual = vr.Validate("Not a number", CultureInfo.InvariantCulture);
 
-        Assert.False(actual.IsValid);
+        await Assert.That(actual.IsValid).IsFalse();
     }
 
-    [Fact]
-    void Validate_WithNumeric_ReturnsIsValid_True()
+    [Test]
+    public async Task Validate_WithNumeric_ReturnsIsValid_True()
     {
         EmptyOrNumericValidationRule vr = new();
 
         var actual = vr.Validate("123456", CultureInfo.InvariantCulture);
 
-        Assert.True(actual.IsValid);
+        await Assert.That(actual.IsValid).IsTrue();
     }
 }

@@ -4,16 +4,14 @@ using Moq.AutoMock;
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.Settings;
 
-using Xunit;
-
 namespace PhoneAssistant.Tests.Features.Settings;
 
 public sealed class SettingsMainViewModelTests
 {
-    [Theory]
-    [InlineData(true, false, true)]
-    [InlineData(false, true ,false)]
-    public void Constructor_SetsVMProperties(bool printToFile, bool dymoPrintToFile, bool darkMode)
+    [Test]
+    [Arguments(true, false, true)]
+    [Arguments(false, true ,false)]
+    public async Task Constructor_SetsVMPropertiesAsync(bool printToFile, bool dymoPrintToFile, bool darkMode)
     {
         const string VERSION = "0.0.0.1";
         AutoMocker mocker = new AutoMocker();
@@ -29,24 +27,24 @@ public sealed class SettingsMainViewModelTests
         userSettings.Setup(s => s.AssemblyVersion).Returns(new Version(VERSION));
         SettingsMainViewModel vm = mocker.CreateInstance<SettingsMainViewModel>();
 
-        Assert.Equal(printToFile, vm.PrintToFile);
-        Assert.Equal(!printToFile, vm.PrintToPrinter);
-        Assert.Equal("Printer", vm.Printer);
-        Assert.Equal("PrintFile", vm.PrintFile);
+        await Assert.That(vm.PrintToFile).IsEqualTo(printToFile);
+        await Assert.That(vm.PrintToPrinter).IsEqualTo(!printToFile);
+        await Assert.That(vm.Printer).IsEqualTo("Printer");
+        await Assert.That(vm.PrintFile).IsEqualTo("PrintFile");
 
-        Assert.Equal(dymoPrintToFile, vm.DymoPrintToFile);
-        Assert.Equal(!dymoPrintToFile, vm.DymoPrintToPrinter);
-        Assert.Equal("DymoPrinter", vm.DymoPrinter);
-        Assert.Equal("DymoPrintFile", vm.DymoPrintFile);
+        await Assert.That(vm.DymoPrintToFile).IsEqualTo(dymoPrintToFile);
+        await Assert.That(vm.DymoPrintToPrinter).IsEqualTo(!dymoPrintToFile);
+        await Assert.That(vm.DymoPrinter).IsEqualTo("DymoPrinter");
+        await Assert.That(vm.DymoPrintFile).IsEqualTo("DymoPrintFile");
 
-        Assert.Equal(darkMode,vm.ColourThemeDark);
-        Assert.Equal(!darkMode,vm.ColourThemeLight);
+        await Assert.That(vm.ColourThemeDark).IsEqualTo(darkMode);
+        await Assert.That(vm.ColourThemeLight).IsNotEqualTo(darkMode);
 
-        Assert.Equal(VERSION, vm.CurrentVersion);
+        await Assert.That(vm.CurrentVersion).IsEqualTo(VERSION);
         userSettings.VerifyGet(s => s.AssemblyVersion);
     }
 
-    [Fact]
+    [Test]
     public void Database_PropertyChanged_SavesUpdatedSettings()
     {
         AutoMocker mocker = new AutoMocker();
@@ -61,7 +59,7 @@ public sealed class SettingsMainViewModelTests
         userStettingsMock.Verify(s => s.Save(), Times.Once());
     }
 
-    [Fact]
+    [Test]
     public void Printer_PropertyChanged_SavesUpdatedSettings()
     {
         AutoMocker mocker = new AutoMocker();
@@ -76,7 +74,7 @@ public sealed class SettingsMainViewModelTests
         userStettingsMock.Verify(s => s.Save(), Times.Once());
     }
 
-    [Fact]
+    [Test]
     public void PrinterFile_PropertyChanged_SavesUpdatedSettings()
     {
         AutoMocker mocker = new AutoMocker();
@@ -90,7 +88,7 @@ public sealed class SettingsMainViewModelTests
         userStettingsMock.VerifySet(s => s.PrintFile = NEW_VALUE);
         userStettingsMock.Verify(s => s.Save(), Times.Once());
     }
-    [Fact]
+    [Test]
     public void DymoPrinter_PropertyChanged_SavesUpdatedSettings()
     {
         AutoMocker mocker = new AutoMocker();
@@ -105,7 +103,7 @@ public sealed class SettingsMainViewModelTests
         userStettingsMock.Verify(s => s.Save(), Times.Once());
     }
 
-    [Fact]
+    [Test]
     public void DymoPrinterFile_PropertyChanged_SavesUpdatedSettings()
     {
         AutoMocker mocker = new AutoMocker();
@@ -120,7 +118,7 @@ public sealed class SettingsMainViewModelTests
         userStettingsMock.Verify(s => s.Save(), Times.Once());
     }
 
-    [Fact]
+    [Test]
     public void ColourThemeDark_PropertyChanged_SavesUpdatedSettings()
     {
         AutoMocker mocker = new AutoMocker();

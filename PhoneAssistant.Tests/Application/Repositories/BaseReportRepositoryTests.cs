@@ -1,8 +1,6 @@
 ﻿using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
-using Xunit;
-
 namespace PhoneAssistant.Tests.Application.Repositories;
 public sealed class BaseReportRepositoryTests
 {
@@ -14,15 +12,15 @@ public sealed class BaseReportRepositoryTests
         _repository = new(_helper.DbContext);
     }
 
-    [Fact]
+    [Test]
     public async Task GetSimNumber_ShouldReturnNull_WhenSIMDoesNotExist()
     {
         string? actual = await _repository.GetSimNumberAsync("DoesNotExist");
 
-        Assert.Null(actual);
+        await Assert.That(actual).IsNull();
     }
 
-    [Fact]
+    [Test]
     public async Task GetSimNumber_ShouldReturnSimNumber_WhenSimDoesExist()
     {
         _helper.DbContext.BaseReport.Add(new BaseReport() { PhoneNumber = "phonenumber", SimNumber = "sim number", ConnectedIMEI = "", ContractEndDate = "", Handset = "", LastUsedIMEI = "", TalkPlan = "", UserName = "" });
@@ -30,6 +28,6 @@ public sealed class BaseReportRepositoryTests
 
         string? actual = await _repository.GetSimNumberAsync("phonenumber");
 
-        Assert.Equal("sim number", actual);
+        await Assert.That(actual).IsEqualTo("sim number");
     }
 }

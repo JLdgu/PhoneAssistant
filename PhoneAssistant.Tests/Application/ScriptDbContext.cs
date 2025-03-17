@@ -1,13 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 
-using Xunit;
-
 namespace PhoneAssistant.Tests.Application;
 
 public class ScriptDBContext
 {
-    [Fact(Skip ="Manual run only")]
-    //[Fact]
+    [Test]
+    [Skip("Manual run only")]
     public void GenerateSQLScript()
     {
         

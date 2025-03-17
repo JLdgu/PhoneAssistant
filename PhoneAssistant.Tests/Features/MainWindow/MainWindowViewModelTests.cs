@@ -5,14 +5,13 @@ using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Features.Sims;
 using PhoneAssistant.WPF.Features.Dashboard;
 using PhoneAssistant.WPF.Features.Users;
-using Xunit;
 using Moq.AutoMock;
 
 namespace PhoneAssistant.Tests.Features.MainWindow;
 
 public sealed class MainWindowViewModelTests
 {
-    [Fact]
+    [Test]
     public async Task UpdateViewAsync_NullViewModelType_ThrowsArgumentNullException()
     {
         AutoMocker mocker = new();
@@ -21,7 +20,7 @@ public sealed class MainWindowViewModelTests
         await Assert.ThrowsAsync<ArgumentException>(() => vm.UpdateViewCommand.ExecuteAsync(null));               
     }
 
-    [Fact]
+    [Test]
     public async Task UpdateViewAsync_StringViewModelType_ThrowsArgumenException()
     {
         AutoMocker mocker = new AutoMocker();
@@ -30,13 +29,13 @@ public sealed class MainWindowViewModelTests
         await Assert.ThrowsAsync<ArgumentException>(() => vm.UpdateViewCommand.ExecuteAsync("Wrong Type"));
     }
 
-    [Theory]
-    [InlineData(ViewModelType.None)]
-    [InlineData(ViewModelType.Dashboard)]  
-    [InlineData(ViewModelType.Phones)]
-    [InlineData(ViewModelType.Sims)]
-    [InlineData(ViewModelType.Settings)]
-    [InlineData(ViewModelType.Users)]
+    [Test]
+    [Arguments(ViewModelType.None)]
+    [Arguments(ViewModelType.Dashboard)]  
+    [Arguments(ViewModelType.Phones)]
+    [Arguments(ViewModelType.Sims)]
+    [Arguments(ViewModelType.Settings)]
+    [Arguments(ViewModelType.Users)]
     public async Task UpdateViewAsync_WithValidViewModelType_CallUpdateAsync(ViewModelType viewModelType)
     {
         AutoMocker mocker = new AutoMocker();

@@ -2,7 +2,6 @@
 using Moq.AutoMock;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Application.Entities;
-using Xunit;
 using PhoneAssistant.WPF.Application.Repositories;
 using FluentAssertions;
 using PhoneAssistant.WPF.Application;
@@ -44,7 +43,7 @@ public sealed class PhonesItemViewModelTests
     };
 
     private readonly AutoMocker _mocker = new AutoMocker();
-    private PhonesItemViewModel _vm;
+    private readonly PhonesItemViewModel _vm;
     private readonly Mock<IPhonesRepository> _repository;
 
     public PhonesItemViewModelTests()
@@ -56,163 +55,163 @@ public sealed class PhonesItemViewModelTests
             .Callback<Phone>((p) => _phone = p);
     }
 
-    [Theory]
-    [InlineData("phone number", "sim number","In Stock")]
-    [InlineData(null, "sim number","In Stock")]
-    [InlineData("phone number", null,"In Stock")]
-    [InlineData(null, null, "In Stock")]
-    [InlineData("phone number", "sim number",  "Production")]
-    [InlineData(null, "sim number", "Production")]
-    [InlineData("phone number", null, "Production")]
-    [InlineData(null, null, "Production")]
-    public void PhonePropertySet_SetsBoundProperties(string? phoneNumber, string? simNumber, string status)
+    [Test]
+    [Arguments("phone number", "sim number","In Stock")]
+    [Arguments(null, "sim number","In Stock")]
+    [Arguments("phone number", null,"In Stock")]
+    [Arguments(null, null, "In Stock")]
+    [Arguments("phone number", "sim number",  "Production")]
+    [Arguments(null, "sim number", "Production")]
+    [Arguments("phone number", null, "Production")]
+    [Arguments(null, null, "Production")]
+    public async Task PhonePropertySet_SetsBoundPropertiesAsync(string? phoneNumber, string? simNumber, string status)
     {
         _phone.PhoneNumber = phoneNumber;
         _phone.SimNumber = simNumber;
         _phone.Status = status;
-        _vm = _mocker.CreateInstance<PhonesItemViewModel>();
+        var vm = _mocker.CreateInstance<PhonesItemViewModel>();
 
-        Assert.Equal(_phone.AssetTag, _vm.AssetTag);
-        Assert.Equal(_phone.FormerUser, _vm.FormerUser);
-        Assert.Equal(_phone.Imei, _vm.Imei);
-        Assert.Equal(_phone.Model, _vm.Model);
-        Assert.Equal(_phone.NewUser, _vm.NewUser);
-        Assert.Equal(_phone.Condition, _vm.NorR);
-        Assert.Equal(_phone.Notes, _vm.Notes);
-        Assert.Equal(_phone.OEM, _vm.OEM);
-        Assert.Equal(_phone.PhoneNumber ?? string.Empty, _vm.PhoneNumber);
-        Assert.Equal(_phone.SimNumber ?? string.Empty, _vm.SimNumber);
-        Assert.Equal(_phone.SR.ToString(), _vm.SR);
-        Assert.Equal(_phone.Status, _vm.Status);
+        await Assert.That(vm.AssetTag).IsEqualTo(_phone.AssetTag);
+        await Assert.That(vm.FormerUser).IsEqualTo(_phone.FormerUser);
+        await Assert.That(vm.Imei).IsEqualTo(_phone.Imei);
+        await Assert.That(vm.Model).IsEqualTo(_phone.Model);
+        await Assert.That(vm.NewUser).IsEqualTo(_phone.NewUser);
+        await Assert.That(vm.NorR).IsEqualTo(_phone.Condition);
+        await Assert.That(vm.Notes).IsEqualTo(_phone.Notes);
+        await Assert.That(vm.OEM).IsEqualTo(_phone.OEM);
+        await Assert.That(vm.PhoneNumber).IsEqualTo(_phone.PhoneNumber ?? string.Empty);
+        await Assert.That(vm.SimNumber).IsEqualTo(_phone.SimNumber ?? string.Empty);
+        await Assert.That(vm.SR).IsEqualTo(_phone.SR.ToString());
+        await Assert.That(vm.Status).IsEqualTo(_phone.Status);
     }
 
     #region Update
-    [Fact]
-    public void OnAssetTagChanged_CallsUpdateAsync_WithChangedValue()
+    [Test]
+    public async Task OnAssetTagChanged_CallsUpdateAsync_WithChangedValueAsync()
     {
         _vm.AssetTag = "Updated";
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        Assert.Equal("Updated", _phone.AssetTag);
+        await Assert.That(_phone.AssetTag).IsEqualTo("Updated");
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
 
-    [Theory]
-    [InlineData("Former User", "Former User")]
-    [InlineData("", null)]
-    public void OnFormerUserChanged_CallsUpdateAsync_WithChangedValue(string actual, string? expected)
+    [Test]
+    [Arguments("Former User", "Former User")]
+    [Arguments("", null)]
+    public async Task OnFormerUserChanged_CallsUpdateAsync_WithChangedValueAsync(string actual, string? expected)
     {
         _vm.FormerUser = actual;
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        Assert.Equal(expected, _phone.FormerUser);
+        await Assert.That(_phone.FormerUser).IsEqualTo(expected);
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
 
-    [Fact]
-    public void OnModelChanged_CallsUpdateAsync_WithChangedValue()
+    [Test]
+    public async Task OnModelChanged_CallsUpdateAsync_WithChangedValueAsync()
     {
         _vm.Model = "Updated";
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        Assert.Equal("Updated", _phone.Model);
+        await Assert.That(_phone.Model).IsEqualTo("Updated");
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
 
-    [Theory]
-    [InlineData("New User", "New User")]
-    [InlineData("", null)]
-    public void OnNewUserChanged_CallsUpdateAsync_WithChangedValue(string actual, string? expected)
+    [Test]
+    [Arguments("New User", "New User")]
+    [Arguments("", null)]
+    public async Task OnNewUserChanged_CallsUpdateAsync_WithChangedValueAsync(string actual, string? expected)
     {
         _vm.NewUser = actual;
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        Assert.Equal(expected, _phone.NewUser);
+        await Assert.That(_phone.NewUser).IsEqualTo(expected);
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
 
     }
 
-    [Fact]
-    public void OnNorRChanged_CallsUpdateAsync_WithChangedValue()
+    [Test]
+    public async Task OnNorRChanged_CallsUpdateAsync_WithChangedValueAsync()
     {
         _vm.NorR = "changed";
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        Assert.Equal("changed", _phone.Condition);
+        await Assert.That(_phone.Condition).IsEqualTo("changed");
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
 
-    [Theory]
-    [InlineData("New note", "New note")]
-    [InlineData("", null)]
-    public void OnNotesChanged_CallsUpdateAsync_WithChangedValue(string actual, string? expected)
+    [Test]
+    [Arguments("New note", "New note")]
+    [Arguments("", null)]
+    public async Task OnNotesChanged_CallsUpdateAsync_WithChangedValueAsync(string actual, string? expected)
     {
         _vm.Notes = actual;
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        Assert.Equal(expected, _phone.Notes);
+        await Assert.That(_phone.Notes).IsEqualTo(expected);
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
 
-    [Fact]
-    public void OnOEMChanged_CallsUpdateAsync_WithChangedValue()
+    [Test]
+    public async Task OnOEMChanged_CallsUpdateAsync_WithChangedValueAsync()
     {
         _vm.OEM = OEMs.Nokia;
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        Assert.Equal(OEMs.Nokia, _phone.OEM);
+        await Assert.That(_phone.OEM).IsEqualTo(OEMs.Nokia);
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
 
-    [Theory]
-    [InlineData("phone number", "phone number")]
-    [InlineData("", null)]
-    public void OnPhoneNumberChanged_CallsUpdateAsync_WithChangedValue(string actual, string? expected)
+    [Test]
+    [Arguments("phone number", "phone number")]
+    [Arguments("", null)]
+    public async Task OnPhoneNumberChanged_CallsUpdateAsync_WithChangedValueAsync(string actual, string? expected)
     {
         _vm.PhoneNumber = actual;
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        Assert.Equal(expected, _phone.PhoneNumber);
+        await Assert.That(_phone.PhoneNumber).IsEqualTo(expected);
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
 
-    [Theory]
-    [InlineData("sim number", "sim number")]
-    [InlineData("", null)]
-    public void OnSimNumberChanged_CallsUpdateAsync_WithChangedValue(string actual, string? expected)
+    [Test]
+    [Arguments("sim number", "sim number")]
+    [Arguments("", null)]
+    public async Task OnSimNumberChanged_CallsUpdateAsync_WithChangedValueAsync(string actual, string? expected)
     {
         _vm.SimNumber = actual;
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        Assert.Equal(expected, _phone.SimNumber);
+        await Assert.That(_phone.SimNumber).IsEqualTo(expected);
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
 
-    [Theory]
-    [InlineData("345", 345)]
-    [InlineData("", null)]
-    public void OnSRChanged_CallsUpdateAsync_WithChangedValue(string actual, int? expected)
+    [Test]
+    [Arguments("345", 345)]
+    [Arguments("", null)]
+    public async Task OnSRChanged_CallsUpdateAsync_WithChangedValueAsync(string actual, int? expected)
     {
         _vm.SR = actual;
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        Assert.Equal(expected, _phone.SR);
+        await Assert.That(_phone.SR).IsEqualTo(expected);
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
 
-    [Fact]
-    public void OnStatusChanged_CallsUpdateAsync_WithChangedValue()
+    [Test]
+    public async Task OnStatusChanged_CallsUpdateAsync_WithChangedValueAsync()
     {
         _vm.Status = "changed";
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        Assert.Equal("changed", _phone.Status);
+        await Assert.That(_phone.Status).IsEqualTo("changed");
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
 
-    [Theory]
-    [InlineData("In Stock")]
-    [InlineData("Decommissioned")]
+    [Test]
+    [Arguments("In Stock")]
+    [Arguments("Decommissioned")]
     public void OnStatusChanged_ShouldClearNotes_WhenNewStatusInStockOrDecomissioned(string status)
     {
         string? expectedFormerUser = _phone.NewUser;
@@ -221,41 +220,41 @@ public sealed class PhonesItemViewModelTests
         _vm.Notes.Should().BeEmpty();
     }
 
-    [Theory]
-    [InlineData("Decommissioned")]
-    [InlineData("In Stock")]
-    [InlineData("In Repair")]
-    public void OnStatusChanged_ShouldClearProductionFields_WhenNewStatusInStockOrInRepairOrDecommissioned(string status)
+    [Test]
+    [Arguments("Decommissioned")]
+    [Arguments("In Stock")]
+    [Arguments("In Repair")]
+    public async Task OnStatusChanged_ShouldClearProductionFields_WhenNewStatusInStockOrInRepairOrDecommissionedAsync(string status)
     {
         string? expectedFormerUser = _phone.NewUser;
         _vm.Status = status;
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        Assert.Null(_phone.DespatchDetails);
-        Assert.Equal(expectedFormerUser, _vm.FormerUser);
-        Assert.Null(_phone.NewUser);
+        await Assert.That(_phone.DespatchDetails).IsNull();
+        await Assert.That(_vm.FormerUser).IsEqualTo(expectedFormerUser);
+        await Assert.That(_phone.NewUser).IsNull();
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
 
-    [Theory]
-    [InlineData("Awaiting Return")]
-    [InlineData("Disposed")]
-    [InlineData("Misplaced")]
-    [InlineData("Production")]
-    public void OnStatusChanged_ShouldKeepProductionFields_WhenNewStatusNotInStockOrInRepairOrDecommissioned(string status)
+    [Test]
+    [Arguments("Awaiting Return")]
+    [Arguments("Disposed")]
+    [Arguments("Misplaced")]
+    [Arguments("Production")]
+    public async Task OnStatusChanged_ShouldKeepProductionFields_WhenNewStatusNotInStockOrInRepairOrDecommissionedAsync(string status)
     {
         _vm.Status = status;
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        Assert.Equal("despatch", _phone.DespatchDetails);
-        Assert.Equal(_phone.FormerUser, _vm.FormerUser);
-        Assert.Equal(_phone.NewUser, _vm.NewUser);
+        await Assert.That(_phone.DespatchDetails).IsEqualTo("despatch");
+        await Assert.That(_vm.FormerUser).IsEqualTo(_phone.FormerUser);
+        await Assert.That(_vm.NewUser).IsEqualTo(_phone.NewUser);
         _vm.LastUpdate.Should().Be(_phone.LastUpdate);
     }
 
-    [Theory]
-    [InlineData("In Stock")]
-    [InlineData("In Repair")]
+    [Test]
+    [Arguments("In Stock")]
+    [Arguments("In Repair")]
     public void OnStatusChanged_ShouldClearTicket(string status)
     {
         _vm.Status = status;
@@ -263,11 +262,11 @@ public sealed class PhonesItemViewModelTests
         _vm.SR.Should().BeNullOrEmpty();
     }
 
-    [Theory]
-    [InlineData("Awaiting Return")]
-    [InlineData("Disposed")]
-    [InlineData("Misplaced")]
-    [InlineData("Production")]
+    [Test]
+    [Arguments("Awaiting Return")]
+    [Arguments("Disposed")]
+    [Arguments("Misplaced")]
+    [Arguments("Production")]
     public void OnStatusChanged_ShouldKeepTicket(string status)
     {
         _vm.Status = status;
@@ -275,7 +274,7 @@ public sealed class PhonesItemViewModelTests
         _vm.SR.Should().Be(_phone.SR.ToString());
     }
 
-    [Fact]
+    [Test]
     public void OnStatusChanged_ShouldSetTicketToDefault_WhenDecommissioned()
     {
         Mock<IUserSettings> settings;
@@ -289,39 +288,39 @@ public sealed class PhonesItemViewModelTests
     #endregion
 
     #region RemoveSim
-    [Fact]
-    public void RemoveSim_SetsBoundProperties()
+    [Test]
+    public async Task RemoveSim_SetsBoundPropertiesAsync()
     {
         _vm.RemoveSimCommand.Execute(null);
 
-        Assert.Equal(string.Empty, _vm.PhoneNumber);
-        Assert.Equal(string.Empty, _vm.SimNumber);
-        Assert.Equal(_updatedPhone.LastUpdate, _vm.LastUpdate);
+        await Assert.That(_vm.PhoneNumber).IsEqualTo(string.Empty);
+        await Assert.That(_vm.SimNumber).IsEqualTo(string.Empty);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_updatedPhone.LastUpdate);
     }
 
-    [Fact]
-    public void RemoveSimCommand_SetsCanExecute_False()
+    [Test]
+    public async Task RemoveSimCommand_SetsCanExecute_FalseAsync()
     {
         _vm.RemoveSimCommand.Execute(null);
 
-        Assert.False(_vm.RemoveSimCommand.CanExecute(null));
+        await Assert.That(_vm.RemoveSimCommand.CanExecute(null)).IsFalse();
     }
     #endregion
 
-    [Theory]
-    [InlineData("In Stock", null, null, false)]
-    [InlineData("In Repair", null, null, false)]
-    [InlineData("Production", null, null, false)]
-    [InlineData("Production", 123, null, false)]
-    [InlineData("Production", null, "new user", false)]
-    [InlineData("Production", 123, "new user", true)]
-    private void CreateEmailCommand_CanExecute(string status, int? sr, string? newUser, bool canExecute)
+    [Test]
+    [Arguments("In Stock", null, null, false)]
+    [Arguments("In Repair", null, null, false)]
+    [Arguments("Production", null, null, false)]
+    [Arguments("Production", 123, null, false)]
+    [Arguments("Production", null, "new user", false)]
+    [Arguments("Production", 123, "new user", true)]
+    public async Task CreateEmailCommand_CanExecuteAsync(string status, int? sr, string? newUser, bool canExecute)
     {
         _phone.Status = status;
         _phone.SR = sr;
         _phone.NewUser = newUser;
-        _vm = _mocker.CreateInstance<PhonesItemViewModel>();
+        var vm = _mocker.CreateInstance<PhonesItemViewModel>();
 
-        Assert.Equal(canExecute, _vm.CreateEmailCommand.CanExecute(null));
+        await Assert.That(vm.CreateEmailCommand.CanExecute(null)).IsEqualTo(canExecute);
     }
 }

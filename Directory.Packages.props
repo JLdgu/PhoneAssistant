@@ -46,8 +46,5 @@
     <PackageVersion Include="System.Drawing.Common" Version="9.0.3" />
     <PackageVersion Include="TUnit" Version="0.18.21" />
     <PackageVersion Include="Velopack" Version="0.0.1053" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.2" />
-    <PackageVersion Include="Xunit.StaFact" Version="2.0.44" />
-    <PackageVersion Include="xunit.v3" Version="2.0.0" />
   </ItemGroup>
 </Project>

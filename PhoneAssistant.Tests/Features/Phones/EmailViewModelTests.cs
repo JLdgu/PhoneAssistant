@@ -1,6 +1,5 @@
 ﻿using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Application.Entities;
-using Xunit;
 using Moq.AutoMock;
 using Moq;
 using PhoneAssistant.WPF.Application.Repositories;
@@ -53,17 +52,17 @@ public sealed class EmailViewModelTests
         _vm.OrderDetails = orderDetails;
     }
 
-    [Fact]
-    public void CloseCommand_SetsGeneratingEmail_False()
+    [Test]
+    public async Task CloseCommand_SetsGeneratingEmail_FalseAsync()
     {
         TestSetup(_phone);
 
         _vm.CloseCommand.Execute(null);
 
-        Assert.False(_vm.GeneratingEmail);
+        await Assert.That(_vm.GeneratingEmail).IsFalse();
     }
 
-    [Fact]
+    [Test]
     public void CloseCommand_UpdatesDb()
     {
         TestSetup(_phone);
@@ -73,40 +72,40 @@ public sealed class EmailViewModelTests
         _phones.Verify(r => r.UpdateAsync(_phone), Times.Once);
     }
 
-    [Fact]
-    public void Constructor_SetsGeneratingEmail_True()
+    [Test]
+    public async Task Constructor_SetsGeneratingEmail_TrueAsync()
     {
         TestSetup(_phone);
 
-        Assert.True(_vm.GeneratingEmail);
+        await Assert.That(_vm.GeneratingEmail).IsTrue();
     }
 
-    [Fact]
-    public void DefaultPhone_Contains_BoilerPlate()
+    [Test]
+    public async Task DefaultPhone_Contains_BoilerPlateAsync()
     {
         TestSetup(_phone);
 
-        Assert.Contains(
+        await Assert.That(_vm.EmailHtml).Contains(
             """
             <span style="font-size:14px; font-family:Verdana;">
-            """, _vm.EmailHtml);
-        Assert.Contains("</span>", _vm.EmailHtml);
+            """);
+        await Assert.That(_vm.EmailHtml).Contains("</span>");
 
-        Assert.Contains(@"<p><br />Before setting up your phone please ensure you register with <a href=""https://www.wifi.service.gov.uk/connect-to-govwifi/"">GovWifi</a></p>", _vm.EmailHtml);
+        await Assert.That(_vm.EmailHtml).Contains(@"<p><br />Before setting up your phone please ensure you register with <a href=""https://www.wifi.service.gov.uk/connect-to-govwifi/"">GovWifi</a></p>");
     }
 
-    [Fact]
-    public void DespatchDetails_Null_SetsDeliveryAddress()
+    [Test]
+    public async Task DespatchDetails_Null_SetsDeliveryAddressAsync()
     {
         _phone.DespatchDetails = null;
         TestSetup(_phone);
         StringBuilder expected = new();
         expected.AppendLine(_phone.NewUser);
 
-        Assert.Equal(expected.ToString(), _vm.DeliveryAddress);
+        await Assert.That(_vm.DeliveryAddress).IsEqualTo(expected.ToString());
     }
 
-    [Fact]
+    [Test]
     public void GenerateEmail_ShouldBeCollection_WhenPrintDateTrue()
     {
         TestSetup(_phone);
@@ -118,7 +117,7 @@ public sealed class EmailViewModelTests
         _vm.EmailHtml.Should().Contain($"<p>Your {_vm.OrderDetails.Phone.OEM} {_vm.OrderDetails.Phone.Model} {_vm.OrderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
     }
 
-    [Fact]
+    [Test]
     public void GenerateEmail_ShouldDelivery_WhenPrintDateFalse()
     {
         TestSetup(_phone);
@@ -129,7 +128,7 @@ public sealed class EmailViewModelTests
         _vm.EmailHtml.Should().Contain($"<p>Your {_vm.OrderDetails.Phone.OEM} {_vm.OrderDetails.Phone.Model} {_vm.OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />");
     }
 
-    [Fact]
+    [Test]
     public void GenerateEmail_ShouldDelivery_WhenSelectedLocationNull()
     {
         TestSetup(_phone);
@@ -139,119 +138,119 @@ public sealed class EmailViewModelTests
         _vm.EmailHtml.Should().Contain($"<p>Your {_vm.OrderDetails.Phone.OEM} {_vm.OrderDetails.Phone.Model} {_vm.OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />");
     }
 
-    [Theory]
-    [InlineData("N", "New")]
-    [InlineData("R", "Repurposed")]
-    public void NorR_Includes_DeviceSupplied(string norr, string norrDescription)
+    [Test]
+    [Arguments("N", "New")]
+    [Arguments("R", "Repurposed")]
+    public async Task NorR_Includes_DeviceSuppliedAsync(string norr, string norrDescription)
     {
         _phone.Condition = norr;
         OrderDetails orderDetails = new(_phone);
         _vm.OrderDetails = orderDetails;
 
-        Assert.Contains($"<td>Device supplied:</td><td>{norrDescription} {_phone.OEM} {_phone.Model}</td>", _vm.EmailHtml);
+        await Assert.That(_vm.EmailHtml).Contains($"<td>Device supplied:</td><td>{norrDescription} {_phone.OEM} {_phone.Model}</td>");
     }
 
-    [Fact]
-    public void OrderDetails_ShouldSetDeviceTypePhone_WhenModelDoesNotContanIPad()
+    [Test]
+    public async Task OrderDetails_ShouldSetDeviceTypePhone_WhenModelDoesNotContanIPadAsync()
     {
         TestSetup(_phone);
 
-        Assert.Equal(DeviceType.Phone, _vm.OrderDetails.DeviceType);
+        await Assert.That(_vm.OrderDetails.DeviceType).IsEqualTo(DeviceType.Phone);
     }
 
-    [Fact]
-    public void OrderDetails_ShouldSetDeviceTypeTable_WhenModelContainsIPad()
+    [Test]
+    public async Task OrderDetails_ShouldSetDeviceTypeTable_WhenModelContainsIPadAsync()
     {
         _phone.Model = "iPad";
         TestSetup(_phone);
 
-        Assert.Equal(DeviceType.Tablet, _vm.OrderDetails.DeviceType);
+        await Assert.That(_vm.OrderDetails.DeviceType).IsEqualTo(DeviceType.Tablet);
     }
 
-    [Fact]
-    public void OrderDetails_ShouldSetOrderTypeNew_WhenPhoneDetailsSupplied()
+    [Test]
+    public async Task OrderDetails_ShouldSetOrderTypeNew_WhenPhoneDetailsSuppliedAsync()
     {
         TestSetup(_phone);
 
-        Assert.Equal(OrderType.New, _vm.OrderType);
+        await Assert.That(_vm.OrderType).IsEqualTo(OrderType.New);
     }
 
-    [Fact]
-    public void OrderDetails_ShouldSetOrderTypeReplacement_WhenPhoneDetailsNotSupplied()
+    [Test]
+    public async Task OrderDetails_ShouldSetOrderTypeReplacement_WhenPhoneDetailsNotSuppliedAsync()
     {
         _phone.PhoneNumber = null;
         _phone.SimNumber = null;
         TestSetup(_phone);
 
-        Assert.Equal(OrderType.Replacement, _vm.OrderType);
+        await Assert.That(_vm.OrderType).IsEqualTo(OrderType.Replacement);
     }
 
-    [Fact]
-    public void OrderType_New_GeneratesHtml()
+    [Test]
+    public async Task OrderType_New_GeneratesHtmlAsync()
     {
         TestSetup(_phone);
 
         _vm.OrderType = OrderType.New;
 
-        Assert.DoesNotContain("Don't forget to transfer your old sim", _vm.EmailHtml);
-        Assert.Contains("<td>Order type:</td><td>New ", _vm.EmailHtml);
+        await Assert.That(_vm.EmailHtml).DoesNotContain("Don't forget to transfer your old sim");
+        await Assert.That(_vm.EmailHtml).Contains("<td>Order type:</td><td>New ");
     }
 
-    [Fact]
-    public void OrderType_Replacement_GeneratesHtml()
+    [Test]
+    public async Task OrderType_Replacement_GeneratesHtmlAsync()
     {
         TestSetup(_phone);
 
         _vm.OrderType = OrderType.Replacement;
 
-        Assert.Contains("Don't forget to transfer your old sim", _vm.EmailHtml);
-        Assert.Contains("<td>Order type:</td><td>Replacement ", _vm.EmailHtml);
+        await Assert.That(_vm.EmailHtml).Contains("Don't forget to transfer your old sim");
+        await Assert.That(_vm.EmailHtml).Contains("<td>Order type:</td><td>Replacement ");
     }
 
-    [Fact]
-    public void OEM_Apple_Includes_AppleDetails()
+    [Test]
+    public async Task OEM_Apple_Includes_AppleDetailsAsync()
     {
         _phone.OEM = OEMs.Apple;
         TestSetup(_phone);
 
-        Assert.Contains(DataUsage, _vm.EmailHtml);
+        await Assert.That(_vm.EmailHtml).Contains(DataUsage);
         _vm.EmailHtml.Should().Contain(@"<a href=""https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/_layouts/15/Doc.aspx?sourcedoc=%7BABC3F4D7-1159-4F72-9C0B-7E155B970A28%7D&file=How%20to%20set%20up%20your%20new%20DCC%20iPhone.docx&action=default&mobileredirect=true"">");
-        Assert.Contains("Apple (iOS) Smartphone", _vm.EmailHtml);
+        await Assert.That(_vm.EmailHtml).Contains("Apple (iOS) Smartphone");
     }
 
-    [Fact]
+    [Test]
     [Description("Issue 43")]
-    public void OEM_Nokia_Includes_NokiaDetails()
+    public async Task OEM_Nokia_Includes_NokiaDetailsAsync()
     {
         _phone.OEM = OEMs.Nokia;
         TestSetup(_phone);
 
-        Assert.DoesNotContain(DataUsage, _vm.EmailHtml);
-        Assert.DoesNotContain("Smartphone", _vm.EmailHtml);
+        await Assert.That(_vm.EmailHtml).DoesNotContain(DataUsage);
+        await Assert.That(_vm.EmailHtml).DoesNotContain("Smartphone");
     }
 
-    [Fact]
-    public void OEM_Samsung_Includes_SamsungDetails()
+    [Test]
+    public async Task OEM_Samsung_Includes_SamsungDetailsAsync()
     {
         _phone.OEM = OEMs.Samsung;
         TestSetup(_phone);
 
-        Assert.Contains(DataUsage, _vm.EmailHtml);
+        await Assert.That(_vm.EmailHtml).Contains(DataUsage);
         _vm.EmailHtml.Should().Contain(@"<a href=""https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/Android%20Enterprise%20-%20Setting%20up%20your%20Android%20Phone.docx?d=w64bb3f0a09e44557a64bb78311ee513b&csf=1&web=1"">");
-        Assert.Contains("Android Smartphone", _vm.EmailHtml);
+        await Assert.That(_vm.EmailHtml).Contains("Android Smartphone");
     }
 
-    [Fact]
-    public void PhoneNumber_Null_ExcludesPhoneNumber()
+    [Test]
+    public async Task PhoneNumber_Null_ExcludesPhoneNumberAsync()
     {
         _phone.PhoneNumber = null;
         TestSetup(_phone);
 
-        Assert.DoesNotContain($"<tr><td>Phone number:</td><td>", _vm.EmailHtml);
+        await Assert.That(_vm.EmailHtml).DoesNotContain($"<tr><td>Phone number:</td><td>");
     }
 
-    [Fact]
-    public void ReformatDeliveryAddress_ShouldStripHeadings()
+    [Test]
+    public async Task ReformatDeliveryAddress_ShouldStripHeadingsAsync()
     {
         string actual = EmailViewModel.ReformatDeliveryAddress("""
             User Name
@@ -267,26 +266,26 @@ public sealed class EmailViewModelTests
             EX31 3UD
             """);
 
-        Assert.Equal("""
+        await Assert.That(actual).IsEqualTo("""
             User Name
             DCS, Springfield Court
             Fishleigh Road
             Barnstaple
             Devon
             EX31 3UD
-            """, actual);
+            """);
     }
 
-    [Fact]
-    public void PhoneNumber_NotNull_IncludesPhoneNumber()
+    [Test]
+    public async Task PhoneNumber_NotNull_IncludesPhoneNumberAsync()
     {
         TestSetup(_phone);
 
-        Assert.Contains($"<tr><td>Phone number:</td><td>{_phone.PhoneNumber}</td></tr></table>", _vm.EmailHtml);
+        await Assert.That(_vm.EmailHtml).Contains($"<tr><td>Phone number:</td><td>{_phone.PhoneNumber}</td></tr></table>");
     }
 
-    [Fact]
-    public void SelectedLocation_InterpolatesValuesFor_DeliveryAddress()
+    [Test]
+    public async Task SelectedLocation_InterpolatesValuesFor_DeliveryAddressAsync()
     {
         _phone.NewUser = "New User";
         _phone.SR = 42;
@@ -295,78 +294,78 @@ public sealed class EmailViewModelTests
 
         _vm.SelectedLocation = new Location { Name = "Collect", Address = "{NewUser}, {SR}, {PhoneNumber}", PrintDate = true };
 
-        Assert.Contains(_phone.NewUser, _vm.DeliveryAddress);
-        Assert.Contains(_phone.SR.ToString()!, _vm.DeliveryAddress);
-        Assert.Contains(_phone.PhoneNumber, _vm.DeliveryAddress);
+        await Assert.That(_vm.DeliveryAddress).Contains(_phone.NewUser);
+        await Assert.That(_vm.DeliveryAddress).Contains(_phone.SR.ToString()!);
+        await Assert.That(_vm.DeliveryAddress).Contains(_phone.PhoneNumber);
     }
 
-    [Fact]
-    public void SelectedLocation_WithPrintDateTrue_SetsCollectionDetails()
+    [Test]
+    public async Task SelectedLocation_WithPrintDateTrue_SetsCollectionDetailsAsync()
     {
         TestSetup(_phone);
 
         _vm.SelectedLocation = new Location { Name = "Collect", Address = "Collection Address", PrintDate = true };
 
-        Assert.Contains(" can be collected from</br>", _vm.EmailHtml);
-        Assert.Contains("It will be available for collection from", _vm.EmailHtml);
+        await Assert.That(_vm.EmailHtml).Contains(" can be collected from</br>");
+        await Assert.That(_vm.EmailHtml).Contains("It will be available for collection from");
     }
 
-    [Fact]
-    public void SelectedLocation_WithPrintDateTrueAndNameIncludesL87_AddTeamChatDetails()
+    [Test]
+    public async Task SelectedLocation_WithPrintDateTrueAndNameIncludesL87_AddTeamChatDetailsAsync()
     {
         TestSetup(_phone);
 
         _vm.SelectedLocation = new Location { Name = "Collect L87", Address = "Collection Address", PrintDate = true };
 
-        Assert.Contains("County Hall EUC Appointments &amp; Collections", _vm.EmailHtml);        
+        await Assert.That(_vm.EmailHtml).Contains("County Hall EUC Appointments &amp; Collections");        
     }
 
-    [Fact]
-    public void SelectedLocation_WithPrintDateFalse_SetsDeliveryDetails()
+    [Test]
+    public async Task SelectedLocation_WithPrintDateFalse_SetsDeliveryDetailsAsync()
     {
         TestSetup(_phone);
 
         _vm.SelectedLocation = new Location { Name = "Deliver", Address = "Delivery Address", PrintDate = false };
 
-        Assert.Contains(" has been sent to", _vm.EmailHtml);
-        Assert.Contains("It was sent on", _vm.EmailHtml);
+        await Assert.That(_vm.EmailHtml).Contains(" has been sent to");
+        await Assert.That(_vm.EmailHtml).Contains("It was sent on");
     }
 
-    [Theory]
-    [InlineData("2/12/2023", "Monday 4<sup>th</sup> December 2023")]
-    [InlineData("3/12/2023", "Monday 4<sup>th</sup> December 2023")]
-    [InlineData("1/1/2024", "Monday 1<sup>st</sup> January 2024")]
-    [InlineData("2/1/2024", "Tuesday 2<sup>nd</sup> January 2024")]
-    [InlineData("3/1/2024", "Wednesday 3<sup>rd</sup> January 2024")]
-    [InlineData("21/12/2023", "Thursday 21<sup>st</sup> December 2023")]
-    [InlineData("22/12/2023", "Friday 22<sup>nd</sup> December 2023")]
-    [InlineData("23/1/2024", "Tuesday 23<sup>rd</sup> January 2024")]
-    [InlineData("31/1/2024", "Wednesday 31<sup>st</sup> January 2024")]
-    [InlineData("12/02/2024", "Monday 12<sup>th</sup> February 2024")] // Issue #40
-    public void ToOrdinalWorkingDate_IgnoresWeekends(string date, string expected)
+    [Test]
+    [Arguments("2/12/2023", "Monday 4<sup>th</sup> December 2023")]
+    [Arguments("3/12/2023", "Monday 4<sup>th</sup> December 2023")]
+    [Arguments("1/1/2024", "Monday 1<sup>st</sup> January 2024")]
+    [Arguments("2/1/2024", "Tuesday 2<sup>nd</sup> January 2024")]
+    [Arguments("3/1/2024", "Wednesday 3<sup>rd</sup> January 2024")]
+    [Arguments("21/12/2023", "Thursday 21<sup>st</sup> December 2023")]
+    [Arguments("22/12/2023", "Friday 22<sup>nd</sup> December 2023")]
+    [Arguments("23/1/2024", "Tuesday 23<sup>rd</sup> January 2024")]
+    [Arguments("31/1/2024", "Wednesday 31<sup>st</sup> January 2024")]
+    [Arguments("12/02/2024", "Monday 12<sup>th</sup> February 2024")] // Issue #40
+    public async Task ToOrdinalWorkingDate_IgnoresWeekendsAsync(string date, string expected)
     {
         CultureInfo culture = new("en-GB");
         string actual = EmailViewModel.ToOrdinalWorkingDate(DateTime.Parse(date,culture));
 
-        Assert.Equal(expected, actual);
+        await Assert.That(actual).IsEqualTo(expected);
     }
 
-    [Theory]
-    [InlineData("2/12/2023", "Monday 4\x1D57\x02B0 December 2023")]
-    [InlineData("3/12/2023", "Monday 4\x1D57\x02B0 December 2023")]
-    [InlineData("1/1/2024", "Monday 1\x02E2\x1D57 January 2024")]
-    [InlineData("2/1/2024", "Tuesday 2\x207F\x1D48 January 2024")]
-    [InlineData("3/1/2024", "Wednesday 3\x02B3\x1D48 January 2024")]
-    [InlineData("21/12/2023", "Thursday 21\x02E2\x1D57 December 2023")]
-    [InlineData("22/12/2023", "Friday 22\x207F\x1D48 December 2023")]
-    [InlineData("23/1/2024", "Tuesday 23\x02B3\x1D48 January 2024")]
-    [InlineData("31/1/2024", "Wednesday 31\x02E2\x1d57 January 2024")]
-    [InlineData("12/02/2024", "Monday 12\x1D57\x02B0 February 2024")] // Issue #40
-    public void ToOrdinalWorkingDate_WithHexSuperscript(string date, string expected)
+    [Test]
+    [Arguments("2/12/2023", "Monday 4\x1D57\x02B0 December 2023")]
+    [Arguments("3/12/2023", "Monday 4\x1D57\x02B0 December 2023")]
+    [Arguments("1/1/2024", "Monday 1\x02E2\x1D57 January 2024")]
+    [Arguments("2/1/2024", "Tuesday 2\x207F\x1D48 January 2024")]
+    [Arguments("3/1/2024", "Wednesday 3\x02B3\x1D48 January 2024")]
+    [Arguments("21/12/2023", "Thursday 21\x02E2\x1D57 December 2023")]
+    [Arguments("22/12/2023", "Friday 22\x207F\x1D48 December 2023")]
+    [Arguments("23/1/2024", "Tuesday 23\x02B3\x1D48 January 2024")]
+    [Arguments("31/1/2024", "Wednesday 31\x02E2\x1d57 January 2024")]
+    [Arguments("12/02/2024", "Monday 12\x1D57\x02B0 February 2024")] // Issue #40
+    public async Task ToOrdinalWorkingDate_WithHexSuperscriptAsync(string date, string expected)
     {
         CultureInfo culture = new("en-GB");
         string actual = EmailViewModel.ToOrdinalWorkingDate(DateTime.Parse(date,culture), true);
 
-        Assert.Equal(expected, actual);
+        await Assert.That(actual).IsEqualTo(expected);
     }
 }

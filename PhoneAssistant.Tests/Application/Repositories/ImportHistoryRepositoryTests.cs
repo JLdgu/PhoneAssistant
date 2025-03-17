@@ -1,8 +1,6 @@
 ﻿using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
-using Xunit;
-
 namespace PhoneAssistant.Tests.Application.Repositories;
 public class ImportHistoryRepositoryTests
 {
@@ -14,7 +12,7 @@ public class ImportHistoryRepositoryTests
         _repository = new(_helper.DbContext);
     }
 
-    [Fact]
+    [Test]
     async Task GetLatestImport_WhenImportExists_ShouldReturnLatest()
     {
         ImportHistory import1 = new() {Id = 1, Name = ImportType.BaseReport, File = "Import 1", ImportDate = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd HH:mm:ss") };
@@ -26,6 +24,6 @@ public class ImportHistoryRepositoryTests
 
         ImportHistory? actual = await _repository.GetLatestImportAsync(ImportType.BaseReport);
 
-        Assert.Equal(import2, actual);
+        await Assert.That(actual).IsEqualTo(import2);
     }
 }

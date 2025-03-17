@@ -1,23 +1,25 @@
 ﻿using PhoneAssistant.WPF.Application.Entities;
 
+using System.Threading.Tasks;
+
 namespace PhoneAssistant.Tests.Application;
-public class DbContextTriggerTests(ITestOutputHelper output) : DbTestHelper
+public class DbContextTriggerTests() : DbTestHelper
 {
     readonly DbTestHelper _helper = new();
 
-    [Fact]
+    [Test]
     public async Task AddPhone_ShouldSetLastUpdate()
     {
-        Phone phone = new() { Condition="R", Imei="imei", Model="model", OEM= OEMs.Nokia, Status="Production"};
-        Assert.Empty(phone.LastUpdate);
+        Phone phone = new() { Condition = "R", Imei = "imei", Model = "model", OEM = OEMs.Nokia, Status = "Production" };
+        await Assert.That(phone.LastUpdate).IsEmpty();
 
         await _helper.DbContext.Phones.AddAsync(phone);
         await _helper.DbContext.SaveChangesAsync();
 
-        Assert.NotEmpty(phone.LastUpdate);
+        await Assert.That(phone.LastUpdate).IsNotEmpty();
     }
 
-    [Fact]
+    [Test]
     public async Task UpdatePhone_ShouldChangeLastUpdate()
     {
         Phone phone = new() { Condition = "R", Imei = "imei", Model = "model", OEM = OEMs.Nokia, Status = "Production" };
@@ -25,11 +27,11 @@ public class DbContextTriggerTests(ITestOutputHelper output) : DbTestHelper
         await _helper.DbContext.SaveChangesAsync();
         string addDateTime = phone.LastUpdate;
         phone.AssetTag = "AssetTag";
-
         await Task.Delay(1000); // make sure timestamps differ
+
         _helper.DbContext.Phones.Update(phone);
         await _helper.DbContext.SaveChangesAsync();
 
-        Assert.NotEqual(addDateTime, phone.LastUpdate);
+        await Assert.That(phone.LastUpdate).IsNotEqualTo(addDateTime);
     }
 }

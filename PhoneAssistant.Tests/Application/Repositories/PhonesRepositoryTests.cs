@@ -1,19 +1,15 @@
-using System.ComponentModel;
-
 using Microsoft.EntityFrameworkCore;
 
 using PhoneAssistant.Model;
-using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 
-using Xunit;
+using TUnit.Assertions.Extensions;
 
 namespace PhoneAssistant.Tests.Application.Repositories;
 
 public sealed class PhonesRepositoryTests : DbTestHelper
 {
-    private readonly ITestOutputHelper _output;
     readonly DbTestHelper _helper = new();
     readonly PhonesRepository _repository;
 
@@ -48,29 +44,28 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Status = STATUS
     };
 
-    public PhonesRepositoryTests(ITestOutputHelper output)
+    public PhonesRepositoryTests()
     {
-        _output = output;
         _repository = new(_helper.DbContext);
     }
 
-    [Fact]
+    [Test]
     async Task AssetTagUnique_ShouldReturnTrue_WhenAssetTagNull()
     {
         bool actual = await _repository.AssetTagUniqueAsync(null);
 
-        Assert.True(actual);
+        await Assert.That(actual).IsTrue();
     }
 
-    [Fact]
+    [Test]
     async Task AssetTagUnique_ShouldReturnTrue_WhenPhoneDoesNotExist()
     {
         bool actual = await _repository.AssetTagUniqueAsync("DoesNotExist");
 
-        Assert.True(actual);
+        await Assert.That(actual).IsTrue();
     }
 
-    [Fact]
+    [Test]
     async Task AssetTagUnique_ShouldReturnFalse_WhenPhoneDoesExistAsync()
     {
         _helper.DbContext.Phones.Add(_phone);
@@ -78,18 +73,18 @@ public sealed class PhonesRepositoryTests : DbTestHelper
 
         bool actual = await _repository.AssetTagUniqueAsync(_phone.AssetTag);
 
-        Assert.False(actual);
+        await Assert.That(actual).IsFalse();
     }
 
-    [Fact]
+    [Test]
     async Task Exists_ShouldReturnFalse_WhenPhoneDoesNotExist()
     {
         bool actual = await _repository.ExistsAsync("DoesNotExist");
 
-        Assert.False(actual);
+        await Assert.That(actual).IsFalse();
     }
 
-    [Fact]
+    [Test]
     async Task Exists_ShouldReturnTrue_WhenPhoneDoesExistAsync()
     {
         _helper.DbContext.Phones.Add(_phone);
@@ -97,10 +92,10 @@ public sealed class PhonesRepositoryTests : DbTestHelper
 
         bool actual = await _repository.ExistsAsync(_phone.Imei);
 
-        Assert.True(actual);
+        await Assert.That(actual).IsTrue();
     }
 
-    [Fact]
+    [Test]
     public async Task UpdateStatusAsync_WithNullImei_ThrowsException()
     {
 #pragma warning disable CS8604 // Converting null literal or possible null value to non-nullable type.
@@ -109,7 +104,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
 #pragma warning restore CS8604 // Possible null reference argument.
     }
 
-    [Fact]
+    [Test]
     public async Task UpdateStatusAsync_WithNullStatus_ThrowsException()
     {
 #pragma warning disable CS8604 // Converting null literal or possible null value to non-nullable type.
@@ -118,13 +113,13 @@ public sealed class PhonesRepositoryTests : DbTestHelper
 #pragma warning restore CS8604 // Possible null reference argument.
     }
 
-    [Fact]
+    [Test]
     public async Task UpdateStatusAsync_WithPhoneNotFound_ThrowsException()
     {
         await Assert.ThrowsAsync<ArgumentException>(() => _repository.UpdateStatusAsync("not found", ApplicationConstants.StatusDisposed));
     }
 
-    [Fact]
+    [Test]
     public async Task UpdateStatusAsync_WithStatusChange_Succeeds()
     {
         _phone.Status = ApplicationConstants.StatusDecommissioned;
@@ -134,11 +129,11 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         await _repository.UpdateStatusAsync(_phone.Imei, ApplicationConstants.StatusDisposed);
 
         Phone? actual = await _helper.DbContext.Phones.FindAsync(_phone.Imei);
-        Assert.NotNull(actual);
-        Assert.Equal(ApplicationConstants.StatusDisposed,actual.Status);
+        await Assert.That(actual).IsNotNull();
+        await Assert.That(actual!.Status).IsEqualTo(ApplicationConstants.StatusDisposed);
     }
 
-    [Fact]
+    [Test]
     public async Task UpdateAsync_WithNullPhone_ThrowsException()
     {
 #pragma warning disable CS8600, CS8604 // Converting null literal or possible null value to non-nullable type.
@@ -147,13 +142,13 @@ public sealed class PhonesRepositoryTests : DbTestHelper
 #pragma warning restore CS8600, CS8604 // Possible null reference argument.
     }
 
-    [Fact]
+    [Test]
     public async Task UpdateAsync_WithPhoneNotFound_ThrowsException()
     {
         await Assert.ThrowsAsync<ArgumentException>(() => _repository.UpdateAsync(_phone));
     }
 
-    [Fact]
+    [Test]
     public async Task UpdateAsync_WithPhoneFound_Succeeds()
     {
         Phone original = new()
@@ -164,46 +159,46 @@ public sealed class PhonesRepositoryTests : DbTestHelper
             OEM = OEMs.Apple,
             Status = ApplicationConstants.Statuses[1]
         };
-        await _helper.DbContext.Phones.AddAsync(original, TestContext.Current.CancellationToken);
-        await _helper.DbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+        await _helper.DbContext.Phones.AddAsync(original);
+        await _helper.DbContext.SaveChangesAsync();
         string lastUpdate = original.LastUpdate;
 
         await _repository.UpdateAsync(_phone);
 
-        Phone? actual = await _helper.DbContext.Phones.FindAsync(new object?[] { _phone.Imei }, TestContext.Current.CancellationToken);
-        Assert.NotNull(actual);
-        Assert.Equal(_phone.AssetTag, actual.AssetTag);
-        Assert.Equal(_phone.Condition, actual.Condition);
-        Assert.Equal(_phone.DespatchDetails, actual.DespatchDetails);
-        Assert.Equal(_phone.FormerUser, actual.FormerUser);
-        Assert.Equal(_phone.Imei, actual.Imei);
-        Assert.Equal(_phone.Model, actual.Model);
-        Assert.Equal(_phone.NewUser, actual.NewUser);
-        Assert.Equal(_phone.Notes, actual.Notes);
-        Assert.Equal(_phone.OEM, actual.OEM);
-        Assert.Equal(_phone.PhoneNumber, actual.PhoneNumber);
-        Assert.Equal(_phone.SimNumber, actual.SimNumber);
-        Assert.Equal(_phone.SR, actual.SR);
-        Assert.Equal(_phone.Status, actual.Status);
+        Phone? actual = await _helper.DbContext.Phones.FindAsync(new object?[] { _phone.Imei });
+        await Assert.That(actual).IsNotNull();
+        await Assert.That(actual!.AssetTag).IsEqualTo(_phone.AssetTag);
+        await Assert.That(actual.Condition).IsEqualTo(_phone.Condition);
+        await Assert.That(actual.DespatchDetails).IsEqualTo(_phone.DespatchDetails);
+        await Assert.That(actual.FormerUser).IsEqualTo(_phone.FormerUser);
+        await Assert.That(actual.Imei).IsEqualTo(_phone.Imei);
+        await Assert.That(actual.Model).IsEqualTo(_phone.Model);
+        await Assert.That(actual.NewUser).IsEqualTo(_phone.NewUser);
+        await Assert.That(actual.Notes).IsEqualTo(_phone.Notes);
+        await Assert.That(actual.OEM).IsEqualTo(_phone.OEM);
+        await Assert.That(actual.PhoneNumber).IsEqualTo(_phone.PhoneNumber);
+        await Assert.That(actual.SimNumber).IsEqualTo(_phone.SimNumber);
+        await Assert.That(actual.SR).IsEqualTo(_phone.SR);
+        await Assert.That(actual.Status).IsEqualTo(_phone.Status);
 
-        UpdateHistoryPhone? history = await _helper.DbContext.UpdateHistoryPhones.FirstOrDefaultAsync(h => h.Id > 0, cancellationToken: TestContext.Current.CancellationToken);
-        Assert.NotNull(history);
-        Assert.Equal(history.AssetTag, actual.AssetTag);
-        Assert.Equal(history.Condition, actual.Condition);
-        Assert.Equal(history.DespatchDetails, actual.DespatchDetails);
-        Assert.Equal(history.FormerUser, actual.FormerUser);
-        Assert.Equal(history.Imei, actual.Imei);
-        Assert.Equal(history.Model, actual.Model);
-        Assert.Equal(history.NewUser, actual.NewUser);
-        Assert.Equal(history.Notes, actual.Notes);
-        Assert.Equal(history.OEM, actual.OEM);
-        Assert.Equal(history.PhoneNumber, actual.PhoneNumber);
-        Assert.Equal(history.SimNumber, actual.SimNumber);
-        Assert.Equal(history.SR, actual.SR);
-        Assert.Equal(history.Status, actual.Status);
+        UpdateHistoryPhone? history = await _helper.DbContext.UpdateHistoryPhones.FirstOrDefaultAsync(h => h.Id > 0);
+        await Assert.That(history).IsNotNull();
+        await Assert.That(actual.AssetTag).IsEqualTo(history!.AssetTag);
+        await Assert.That(actual.Condition).IsEqualTo(history.Condition);
+        await Assert.That(actual.DespatchDetails).IsEqualTo(history.DespatchDetails);
+        await Assert.That(actual.FormerUser).IsEqualTo(history.FormerUser);
+        await Assert.That(actual.Imei).IsEqualTo(history.Imei);
+        await Assert.That(actual.Model).IsEqualTo(history.Model);
+        await Assert.That(actual.NewUser).IsEqualTo(history.NewUser);
+        await Assert.That(actual.Notes).IsEqualTo(history.Notes);
+        await Assert.That(actual.OEM).IsEqualTo(history.OEM);
+        await Assert.That(actual.PhoneNumber).IsEqualTo(history.PhoneNumber);
+        await Assert.That(actual.SimNumber).IsEqualTo(history.SimNumber);
+        await Assert.That(actual.SR).IsEqualTo(history.SR);
+        await Assert.That(actual.Status).IsEqualTo(history.Status);
     }
 
-    [Fact]
+    [Test]
     public async Task UpdateAsync_WithDuplicateUpdate()
     {
         await _helper.DbContext.Phones.AddAsync(
@@ -220,54 +215,12 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         await _repository.UpdateAsync(_phone);
 
         await _repository.UpdateAsync(_phone);
-
-        Phone? actual = await _helper.DbContext.Phones.FindAsync(_phone.Imei);
+        _ = await _helper.DbContext.Phones.FindAsync(_phone.Imei);
 
         UpdateHistoryPhone? history = await _helper.DbContext.UpdateHistoryPhones.FindAsync(1);
-        Assert.NotNull(history);
+        await Assert.That(history).IsNotNull();
 
         history = await _helper.DbContext.UpdateHistoryPhones.FindAsync(2);
-        Assert.Null(history);
-    }
-
-    //    [Fact]
-    //    public async Task UpdateKeyAsync_WithNullOldImei_ThrowsException()
-    //    {
-    //#pragma warning disable CS8625 // Converting null literal or possible null value to non-nullable type.
-    //        await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.UpdateKeyAsync(null, "new"));
-    //#pragma warning restore CS8625 // Possible null reference argument.
-    //    }
-
-    //    [Fact]
-    //    public async Task UpdateKeyAsync_WithNullNewImei_ThrowsException()
-    //    {
-    //#pragma warning disable CS8625 // Converting null literal or possible null value to non-nullable type.
-    //        await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.UpdateKeyAsync("old", null));
-    //#pragma warning restore CS8625 // Possible null reference argument.
-    //    }
-
-    //    [Fact]
-    //    public async Task UpdateKeyAsync_WithPhoneNotFound_ThrowsException()
-    //    {
-    //        await Assert.ThrowsAsync<ArgumentException>(() => _repository.UpdateAsync(_phone));
-    //    }
-
-    //    [Fact]
-    //    public async Task UpdateKeyAsync_WithPhoneFound_Succeeds()
-    //    {
-    //        const string OLD_IMEI = "old IMEI";
-    //        _phone.Imei = OLD_IMEI;
-    //        await _helper.DbContext.Phones.AddAsync(_phone);
-    //        await _helper.DbContext.SaveChangesAsync();
-    //        const string NEW_IMEI = "new IMEI";
-
-    //        string lastUpdate = await _repository.UpdateKeyAsync(OLD_IMEI, NEW_IMEI);
-
-    //        Phone? removed = await _helper.DbContext.Phones.FindAsync(OLD_IMEI);
-    //        Assert.Null(removed);
-    //        Phone? actual = await _helper.DbContext.Phones.FindAsync(NEW_IMEI);
-    //        Assert.NotNull(actual);
-    //        Assert.Equal(NEW_IMEI, actual.Imei);
-    //        Assert.Matches("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", lastUpdate);
-    //    }
+        await Assert.That(history).IsNull();
+    }    
 }

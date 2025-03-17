@@ -1,75 +1,73 @@
 ﻿using PhoneAssistant.WPF.Shared;
 
-using Xunit;
-
 namespace PhoneAssistant.Tests.Shared;
 
 public sealed class LuhnValidatorTests
 {
-    [Theory]
-    [InlineData(0)]
-    [InlineData(1)]
-    public void IsValid_ReturnsFalse_When_requiredLength_Invalid(int requiredLength)
+    [Test]
+    [Arguments(0)]
+    [Arguments(1)]
+    public async Task IsValid_ReturnsFalse_When_requiredLength_InvalidAsync(int requiredLength)
     {
         const string luhn = "1234";
 
         var actual = LuhnValidator.IsValid(luhn, requiredLength);
 
-        Xunit.Assert.False(actual);
+        await Assert.That(actual).IsFalse();
     }
 
-    [Theory]
-    [InlineData("361568", 3)]
-    [InlineData("361568", 9)]
-    public void IsValid_ReturnFalse_When_luhnString_ShorterThan_RequiredLength(string luhn, int requiredLength)
+    [Test]
+    [Arguments("361568", 3)]
+    [Arguments("361568", 9)]
+    public async Task IsValid_ReturnFalse_When_luhnString_ShorterThan_RequiredLengthAsync(string luhn, int requiredLength)
     {       
         var actual = LuhnValidator.IsValid(luhn, requiredLength);
 
-        Xunit.Assert.False(actual);
+        await Assert.That(actual).IsFalse();
     }
 
-    [Fact]
-    public void IsValid_ReturnsFalse_WhenInputNull()
+    [Test]
+    public async Task IsValid_ReturnsFalse_WhenInputNullAsync()
     {
         string? input = null;
 
         var actual = LuhnValidator.IsValid(input);
 
-        Xunit.Assert.False(actual);
+        await Assert.That(actual).IsFalse();
     }
 
-    [Fact]
-    public void IsValid_ReturnsFalse_WhenInputOneDigit()
+    [Test]
+    public async Task IsValid_ReturnsFalse_WhenInputOneDigitAsync()
     {
         string input = "7";
 
         var actual = LuhnValidator.IsValid(input);
 
-        Xunit.Assert.False(actual);
-
+        await Assert.That(actual).IsFalse();
     }
-    [Fact]
-    public void IsValid_ReturnsFalse_WhenInputNotNumeric()
+
+    [Test]
+    public async Task IsValid_ReturnsFalse_WhenInputNotNumericAsync()
     {
         string input = "6a";
 
         var actual = LuhnValidator.IsValid(input);
 
-        Xunit.Assert.False(actual);
+        await Assert.That(actual).IsFalse();
     }
 
-    [Theory]
-    [InlineData("79927398713")]
-    [InlineData("35145120840121")]
-    [InlineData("361568")]
-    [InlineData("361576")]
-    [InlineData("4012888888881881")]
-    public void IsValid_ReturnsTrue_WhenInputValid(string luhnString)
+    [Test]
+    [Arguments("79927398713")]
+    [Arguments("35145120840121")]
+    [Arguments("361568")]
+    [Arguments("361576")]
+    [Arguments("4012888888881881")]
+    public async Task IsValid_ReturnsTrue_WhenInputValidAsync(string luhnString)
     {        
         // Act
         var actual = LuhnValidator.IsValid(luhnString);
 
         //Assert
-        Xunit.Assert.True(actual);
+        await Assert.That(actual).IsTrue();
     }
 }

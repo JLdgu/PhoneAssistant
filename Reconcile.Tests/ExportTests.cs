@@ -63,17 +63,17 @@ public sealed class ExportTests()
 
         result.IsFailed.Should().BeTrue();
     }
-    public static IEnumerable<(Disposal disposal, string status)> NotFoundOrStatusDisposedTestData()
-        {
-            yield return ( new Disposal("notfound",null, 0), "");
-            yield return ( new Disposal("notfound","notfound", 1), "" );
-            yield return ( new Disposal("name",null, 2), "Disposed" );
-            yield return ( new Disposal("assetTag",null, 3), "Disposed" );
-            yield return ( new Disposal("serialNumber",null, 4), "Disposed" );
-            yield return ( new Disposal("notfound","name", 5), "Disposed" );
-            yield return ( new Disposal("notfound","assetTag", 6), "Disposed" );
-            yield return ( new Disposal("notfound", "serialNumber", 7), "Disposed");
-        }
+    public static IEnumerable<Func<(Disposal disposal, string status)>> NotFoundOrStatusDisposedTestData()
+    {
+        yield return () => (new Disposal("notfound", null, 0), "");
+        yield return () => (new Disposal("notfound", "notfound", 1), "");
+        yield return () => (new Disposal("name", null, 2), "Disposed");
+        yield return () => (new Disposal("assetTag", null, 3), "Disposed");
+        yield return () => (new Disposal("serialNumber", null, 4), "Disposed");
+        yield return () => (new Disposal("notfound", "name", 5), "Disposed");
+        yield return () => (new Disposal("notfound", "assetTag", 6), "Disposed");
+        yield return () => (new Disposal("notfound", "serialNumber", 7), "Disposed");
+    }
 
     [Test]
     [MethodDataSource(nameof(FoundTestData))]
@@ -88,13 +88,13 @@ public sealed class ExportTests()
         result.IsSuccess.Should().BeTrue();
         result.Value.Certificate.Should().Be(disposal.Certificate);
     }
-    public static IEnumerable<Disposal> FoundTestData()
+    public static IEnumerable<Func<Disposal>> FoundTestData()
     {
-        yield return (new Disposal("name", null, 1));
-        yield return (new Disposal("assetTag", null, 2));
-        yield return (new Disposal("serialNumber", null, 3));
-        yield return (new Disposal("notfound", "name", 4));
-        yield return (new Disposal("notfound", "assetTag", 5));
-        yield return (new Disposal("notfound", "serialNumber", 6));
+        yield return () => new Disposal("name", null, 1);
+        yield return () => new Disposal("assetTag", null, 2);
+        yield return () => new Disposal("serialNumber", null, 3);
+        yield return () => new Disposal("notfound", "name", 4);
+        yield return () => new Disposal("notfound", "assetTag", 5);
+        yield return () => new Disposal("notfound", "serialNumber", 6);
     }
 }

@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using FluentResults;
+﻿using FluentResults;
 using Microsoft.Data.Sqlite;
 
 namespace DbUtil.Tests;
@@ -53,7 +52,7 @@ public class ProgramTests()
         
         bool tableCreated = Program.CheckSchemaVersionsExists(connection);
 
-        tableCreated.Should().BeTrue();
+        await Assert.That(tableCreated).IsTrue();
         var command = connection.CreateCommand();
         command.CommandText = "SELECT count(*) FROM sqlite_master WHERE type = 'table' and name = 'SchemaVersion';";
         using var reader = command.ExecuteReader();

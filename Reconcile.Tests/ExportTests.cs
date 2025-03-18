@@ -1,59 +1,56 @@
-﻿using FluentAssertions;
-
-using FluentResults;
+﻿using FluentResults;
 
 namespace Reconcile.Tests;
 
 public sealed class ExportTests()
 {
     [Test]
-    public void AddRow_ShouldAddHeaderAndDataRow_WhenFirstRowAdded()
+    public async Task AddRow_ShouldAddHeaderAndDataRow_WhenFirstRowAddedAsync()
     {
         var export = new Export(0, [], [], new DirectoryInfo("c:"));
 
         export.AddRow(new("name", 5));
 
-        export.RowCount.Should().Be(1);
+        await Assert.That(export.RowCount).IsEqualTo(1);
         var header = export.DisposalsSheet.GetRow(0);
-        header.GetCell(Export.Name.Item1).StringCellValue.Should().Be(Export.Name.Item2);
-        header.GetCell(Export.Owner.Item1).StringCellValue.Should().Be(Export.Owner.Item2);
-        header.GetCell(Export.Status.Item1).StringCellValue.Should().Be(Export.Status.Item2);
-        header.GetCell(Export.SubLocation.Item1).StringCellValue.Should().Be(Export.SubLocation.Item2);
+        await Assert.That(header.GetCell(Export.Name.Item1).StringCellValue).IsEqualTo(Export.Name.Item2);
+        await Assert.That(header.GetCell(Export.Owner.Item1).StringCellValue).IsEqualTo(Export.Owner.Item2);
+        await Assert.That(header.GetCell(Export.Status.Item1).StringCellValue).IsEqualTo(Export.Status.Item2);
+        await Assert.That(header.GetCell(Export.SubLocation.Item1).StringCellValue).IsEqualTo(Export.SubLocation.Item2);
         var actualRow = export.DisposalsSheet.GetRow(1);
-        actualRow.GetCell(Export.Name.Item1).StringCellValue.Should().Be("name");
-        actualRow.GetCell(Export.Owner.Item1).StringCellValue.Should().Be("");
-        actualRow.GetCell(Export.Status.Item1).StringCellValue.Should().Be("Disposed");
-        actualRow.GetCell(Export.SubLocation.Item1).StringCellValue.Should().Be("");
-
+        await Assert.That(actualRow.GetCell(Export.Name.Item1).StringCellValue).IsEqualTo("name");
+        await Assert.That(actualRow.GetCell(Export.Owner.Item1).StringCellValue).IsEqualTo("");
+        await Assert.That(actualRow.GetCell(Export.Status.Item1).StringCellValue).IsEqualTo("Disposed");
+        await Assert.That(actualRow.GetCell(Export.SubLocation.Item1).StringCellValue).IsEqualTo("");
         var notesHeader = export.NotesSheet.GetRow(0);
-        notesHeader.GetCell(Export.Name.Item1).StringCellValue.Should().Be(Export.Name.Item2);
-        notesHeader.GetCell(Export.Notes.Item1).StringCellValue.Should().Be(Export.Notes.Item2);
+        await Assert.That(notesHeader.GetCell(Export.Name.Item1).StringCellValue).IsEqualTo(Export.Name.Item2);
+        await Assert.That(notesHeader.GetCell(Export.Notes.Item1).StringCellValue).IsEqualTo(Export.Notes.Item2);
         var notesRow = export.NotesSheet.GetRow(1);
-        notesRow.GetCell(Export.Name.Item1).StringCellValue.Should().Be("name");
-        notesRow.GetCell(Export.Notes.Item1).StringCellValue.Should().Be($"SCC Certificate # 5");
+        await Assert.That(notesRow.GetCell(Export.Name.Item1).StringCellValue).IsEqualTo("name");
+        await Assert.That(notesRow.GetCell(Export.Notes.Item1).StringCellValue).IsEqualTo("SCC Certificate # 5");
     }
 
     [Test]
-    public void AddRow_ShouldOnlyAddDataRow_WhenSubsequentRowsAdded()
+    public async Task AddRow_ShouldOnlyAddDataRow_WhenSubsequentRowsAddedAsync()
     {
         var export = new Export(0, [], [], new DirectoryInfo("c:"));
         export.AddRow(new("name", 6));
         export.AddRow(new("name2", 7));
 
-        export.RowCount.Should().Be(2);
+        await Assert.That(export.RowCount).IsEqualTo(2);
         var actualRow = export.DisposalsSheet.GetRow(2);
-        actualRow.GetCell(Export.Name.Item1).StringCellValue.Should().Be("name2");
-        actualRow.GetCell(Export.Owner.Item1).StringCellValue.Should().Be("");
-        actualRow.GetCell(Export.Status.Item1).StringCellValue.Should().Be("Disposed");
-        actualRow.GetCell(Export.SubLocation.Item1).StringCellValue.Should().Be("");
+        await Assert.That(actualRow.GetCell(Export.Name.Item1).StringCellValue).IsEqualTo("name2");
+        await Assert.That(actualRow.GetCell(Export.Owner.Item1).StringCellValue).IsEqualTo("");
+        await Assert.That(actualRow.GetCell(Export.Status.Item1).StringCellValue).IsEqualTo("Disposed");
+        await Assert.That(actualRow.GetCell(Export.SubLocation.Item1).StringCellValue).IsEqualTo("");
         var notesRow = export.NotesSheet.GetRow(2);
-        notesRow.GetCell(Export.Name.Item1).StringCellValue.Should().Be("name2");
-        notesRow.GetCell(Export.Notes.Item1).StringCellValue.Should().Be($"SCC Certificate # 7");
+        await Assert.That(notesRow.GetCell(Export.Name.Item1).StringCellValue).IsEqualTo("name2");
+        await Assert.That(notesRow.GetCell(Export.Notes.Item1).StringCellValue).IsEqualTo($"SCC Certificate # 7");
     }
 
     [Test]
     [MethodDataSource(nameof(NotFoundOrStatusDisposedTestData))]
-    public void GetDevice_ShouldFail_WhenNotFoundOrStatusDisposed(Disposal disposal, string status)
+    public async Task GetDevice_ShouldFail_WhenNotFoundOrStatusDisposedAsync(Disposal disposal, string status)
     {
         var disposals = new List<Disposal>();
         var devices = new List<Device>() { new("name", "assetTag", "serialNumber", status) };
@@ -61,7 +58,7 @@ public sealed class ExportTests()
 
         Result<ExcelRow> result = export.GetDevice(disposal);
 
-        result.IsFailed.Should().BeTrue();
+        await Assert.That(result.IsFailed).IsTrue();
     }
     public static IEnumerable<Func<(Disposal disposal, string status)>> NotFoundOrStatusDisposedTestData()
     {
@@ -77,7 +74,7 @@ public sealed class ExportTests()
 
     [Test]
     [MethodDataSource(nameof(FoundTestData))]
-    public void GetDeviceShouldSucceedWhenFound(Disposal disposal)
+    public async Task GetDeviceShouldSucceedWhenFoundAsync(Disposal disposal)
     {
         var disposals = new List<Disposal>();
         var devices = new List<Device>() { new("name", "assetTag", "serialNumber", "status") };
@@ -85,8 +82,8 @@ public sealed class ExportTests()
 
         Result<ExcelRow> result = export.GetDevice(disposal);
 
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Certificate.Should().Be(disposal.Certificate);
+        await Assert.That(result.IsSuccess).IsTrue();
+        await Assert.That(result.Value.Certificate).IsEqualTo(disposal.Certificate);
     }
     public static IEnumerable<Func<Disposal>> FoundTestData()
     {

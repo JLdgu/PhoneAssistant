@@ -17,7 +17,6 @@
   This would typically list all NuGet packages used within this solution.
   -->
   <ItemGroup>
-    <PackageVersion Include="AwesomeAssertions" Version="8.0.2" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>

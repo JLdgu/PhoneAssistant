@@ -1,7 +1,5 @@
-﻿using FluentAssertions;
-using FluentResults;
+﻿using FluentResults;
 
-using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
@@ -9,7 +7,7 @@ namespace Reconcile.Tests;
 public sealed class ImportSCCTests()
 {
     [Test]
-    public void GetDisposal_ShouldFail_WhenAccountCellNotD1024CT()
+    public async Task GetDisposal_ShouldFail_WhenAccountCellNotD1024CTAsync()
     {
         using XSSFWorkbook workbook = new();
         ISheet sheet = workbook.CreateSheet("Data");
@@ -18,12 +16,12 @@ public sealed class ImportSCCTests()
 
         Result<Disposal> result = ImportSCC.GetDisposal(row);
 
-        result.IsFailed.Should().BeTrue();
-        result.Errors.First().Message.Should().Be("Ignore: Account not D1024CT");
+        await Assert.That(result.IsFailed).IsTrue();
+        await Assert.That(result.Errors.First().Message).IsEqualTo("Ignore: Account not D1024CT");
     }
 
     [Test]
-    public void GetDisposal_ShouldFail_WhenAccountCellNull()
+    public async Task GetDisposal_ShouldFail_WhenAccountCellNullAsync()
     {
         using XSSFWorkbook workbook = new();
         ISheet sheet = workbook.CreateSheet("Data");
@@ -32,12 +30,12 @@ public sealed class ImportSCCTests()
 
         Result<Disposal> result = ImportSCC.GetDisposal(row);
 
-        result.IsFailed.Should().BeTrue();
-        result.Errors.First().Message.Should().Be("Ignore: Account not D1024CT");
+        await Assert.That(result.IsFailed).IsTrue();
+        await Assert.That(result.Errors.First().Message).IsEqualTo("Ignore: Account not D1024CT");
     }
 
     [Test]
-    public void GetDisposal_ShouldFail_WhenAccountCellTypeInvalid()
+    public async Task GetDisposal_ShouldFail_WhenAccountCellTypeInvalidAsync()
     {
         using XSSFWorkbook workbook = new();
         ISheet sheet = workbook.CreateSheet("Data");
@@ -49,14 +47,14 @@ public sealed class ImportSCCTests()
         Result<Disposal> formula = ImportSCC.GetDisposal(row0);
         Result<Disposal> number = ImportSCC.GetDisposal(row1);
 
-        formula.IsFailed.Should().BeTrue();
-        formula.Errors.First().Message.Should().Be("Ignore: Account not D1024CT");
-        number.IsFailed.Should().BeTrue();
-        number.Errors.First().Message.Should().Be("Ignore: Account not D1024CT");
+        await Assert.That(formula.IsFailed).IsTrue();
+        await Assert.That(formula.Errors.First().Message).IsEqualTo("Ignore: Account not D1024CT");
+        await Assert.That(number.IsFailed).IsTrue();
+        await Assert.That(number.Errors.First().Message).IsEqualTo("Ignore: Account not D1024CT");
     }
 
     [Test]
-    public void GetDisposal_ShouldFail_WhenProductTypeToBeIgnored()
+    public async Task GetDisposal_ShouldFail_WhenProductTypeToBeIgnoredAsync()
     {
         using XSSFWorkbook workbook = new();
         ISheet sheet = workbook.CreateSheet("Data");
@@ -67,14 +65,12 @@ public sealed class ImportSCCTests()
 
         Result<Disposal> result = ImportSCC.GetDisposal(row);
 
-        result.IsFailed.Should().BeTrue();
-        result.Errors.First().Message.Should().Be("Ignore: Invalid product type");
+        await Assert.That(result.IsFailed).IsTrue();
+        await Assert.That(result.Errors.First().Message).IsEqualTo("Ignore: Invalid product type");
     }
 
-
-
     [Test]
-    public void GetDisposal_ShouldFail_WhenRowNull()
+    public async Task GetDisposal_ShouldFail_WhenRowNullAsync()
     {
         using XSSFWorkbook workbook = new();
         ISheet sheet = workbook.CreateSheet("Data");
@@ -82,14 +78,14 @@ public sealed class ImportSCCTests()
 
         Result<Disposal> result = ImportSCC.GetDisposal(row);
 
-        result.IsFailed.Should().BeTrue();
-        result.Errors.First().Message.Should().Be("Ignore: Null row");
+        await Assert.That(result.IsFailed).IsTrue();
+        await Assert.That(result.Errors.First().Message).IsEqualTo("Ignore: Null row");
     }
 
     [Test]
     [Arguments("NONE")]
     [Arguments("UNREADABLE")]
-    public void GetDisposal_ShouldFail_WhenSerialNumberToBeIgnored(string serialNumber)
+    public async Task GetDisposal_ShouldFail_WhenSerialNumberToBeIgnoredAsync(string serialNumber)
     {
         using XSSFWorkbook workbook = new();
         ISheet sheet = workbook.CreateSheet("Data");
@@ -99,14 +95,14 @@ public sealed class ImportSCCTests()
 
         Result<Disposal> result = ImportSCC.GetDisposal(row);
 
-        result.IsFailed.Should().BeTrue();
-        result.Errors.First().Message.Should().Be("Ignore: Unidentifiable");
+        await Assert.That(result.IsFailed).IsTrue();
+        await Assert.That(result.Errors.First().Message).IsEqualTo("Ignore: Unidentifiable");
     }
 
     [Test]
     [Arguments("123456789012345", "NONE", null, 15)]
     [Arguments("123456789054321", "PC12345", "PC12345", 16)]
-    public void GetDisposal_ShouldSucceed(string serialNumber, string? assetNumber, string? expectedAssetNumber, int certificate)
+    public async Task GetDisposal_ShouldSucceedAsync(string serialNumber, string? assetNumber, string? expectedAssetNumber, int certificate)
     {
         using XSSFWorkbook workbook = new();
         ISheet sheet = workbook.CreateSheet("Data");
@@ -120,9 +116,9 @@ public sealed class ImportSCCTests()
         Result<Disposal> result = ImportSCC.GetDisposal(row);
 
         Disposal actual = result.Value;
-        result.IsSuccess.Should().BeTrue();
-        actual.PrimaryKey.Should().Be(serialNumber);
-        actual.SecondaryKey.Should().Be(expectedAssetNumber);
-        actual.Certificate.Should().Be(certificate);
+        await Assert.That(result.IsSuccess).IsTrue();
+        await Assert.That(actual.PrimaryKey).IsEqualTo(serialNumber);
+        await Assert.That(actual.SecondaryKey).IsEqualTo(expectedAssetNumber);
+        await Assert.That(actual.Certificate).IsEqualTo(certificate);
     }
 }

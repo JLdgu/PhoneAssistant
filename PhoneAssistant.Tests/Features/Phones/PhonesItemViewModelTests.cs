@@ -3,7 +3,6 @@ using Moq.AutoMock;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
-using FluentAssertions;
 using PhoneAssistant.WPF.Application;
 
 namespace PhoneAssistant.Tests.Features.Phones;
@@ -93,7 +92,7 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         await Assert.That(_phone.AssetTag).IsEqualTo("Updated");
-        _vm.LastUpdate.Should().Be(_phone.LastUpdate);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 
     [Test]
@@ -105,7 +104,7 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         await Assert.That(_phone.FormerUser).IsEqualTo(expected);
-        _vm.LastUpdate.Should().Be(_phone.LastUpdate);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 
     [Test]
@@ -115,7 +114,7 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         await Assert.That(_phone.Model).IsEqualTo("Updated");
-        _vm.LastUpdate.Should().Be(_phone.LastUpdate);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 
     [Test]
@@ -127,7 +126,7 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         await Assert.That(_phone.NewUser).IsEqualTo(expected);
-        _vm.LastUpdate.Should().Be(_phone.LastUpdate);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
 
     }
 
@@ -138,7 +137,7 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         await Assert.That(_phone.Condition).IsEqualTo("changed");
-        _vm.LastUpdate.Should().Be(_phone.LastUpdate);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 
     [Test]
@@ -150,7 +149,7 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         await Assert.That(_phone.Notes).IsEqualTo(expected);
-        _vm.LastUpdate.Should().Be(_phone.LastUpdate);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 
     [Test]
@@ -160,7 +159,7 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         await Assert.That(_phone.OEM).IsEqualTo(OEMs.Nokia);
-        _vm.LastUpdate.Should().Be(_phone.LastUpdate);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 
     [Test]
@@ -172,7 +171,7 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         await Assert.That(_phone.PhoneNumber).IsEqualTo(expected);
-        _vm.LastUpdate.Should().Be(_phone.LastUpdate);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 
     [Test]
@@ -184,7 +183,7 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         await Assert.That(_phone.SimNumber).IsEqualTo(expected);
-        _vm.LastUpdate.Should().Be(_phone.LastUpdate);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 
     [Test]
@@ -196,7 +195,7 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         await Assert.That(_phone.SR).IsEqualTo(expected);
-        _vm.LastUpdate.Should().Be(_phone.LastUpdate);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 
     [Test]
@@ -206,18 +205,18 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         await Assert.That(_phone.Status).IsEqualTo("changed");
-        _vm.LastUpdate.Should().Be(_phone.LastUpdate);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 
     [Test]
     [Arguments("In Stock")]
     [Arguments("Decommissioned")]
-    public void OnStatusChanged_ShouldClearNotes_WhenNewStatusInStockOrDecomissioned(string status)
+    public async Task OnStatusChanged_ShouldClearNotes_WhenNewStatusInStockOrDecomissionedAsync(string status)
     {
         string? expectedFormerUser = _phone.NewUser;
         _vm.Status = status;
 
-        _vm.Notes.Should().BeEmpty();
+        await Assert.That(_vm.Notes).IsEmpty();
     }
 
     [Test]
@@ -233,7 +232,7 @@ public sealed class PhonesItemViewModelTests
         await Assert.That(_phone.DespatchDetails).IsNull();
         await Assert.That(_vm.FormerUser).IsEqualTo(expectedFormerUser);
         await Assert.That(_phone.NewUser).IsNull();
-        _vm.LastUpdate.Should().Be(_phone.LastUpdate);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 
     [Test]
@@ -249,17 +248,17 @@ public sealed class PhonesItemViewModelTests
         await Assert.That(_phone.DespatchDetails).IsEqualTo("despatch");
         await Assert.That(_vm.FormerUser).IsEqualTo(_phone.FormerUser);
         await Assert.That(_vm.NewUser).IsEqualTo(_phone.NewUser);
-        _vm.LastUpdate.Should().Be(_phone.LastUpdate);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 
     [Test]
     [Arguments("In Stock")]
     [Arguments("In Repair")]
-    public void OnStatusChanged_ShouldClearTicket(string status)
+    public async Task OnStatusChanged_ShouldClearTicketAsync(string status)
     {
         _vm.Status = status;
 
-        _vm.SR.Should().BeNullOrEmpty();
+        await Assert.That(_vm.SR).IsNullOrEmpty();
     }
 
     [Test]
@@ -267,15 +266,15 @@ public sealed class PhonesItemViewModelTests
     [Arguments("Disposed")]
     [Arguments("Misplaced")]
     [Arguments("Production")]
-    public void OnStatusChanged_ShouldKeepTicket(string status)
+    public async Task OnStatusChanged_ShouldKeepTicketAsync(string status)
     {
         _vm.Status = status;
 
-        _vm.SR.Should().Be(_phone.SR.ToString());
+        await Assert.That(_vm.SR).IsEqualTo(_phone.SR.ToString());
     }
 
     [Test]
-    public void OnStatusChanged_ShouldSetTicketToDefault_WhenDecommissioned()
+    public async Task OnStatusChanged_ShouldSetTicketToDefault_WhenDecommissionedAsync()
     {
         Mock<IUserSettings> settings;
         settings = _mocker.GetMock<IUserSettings>();
@@ -283,7 +282,7 @@ public sealed class PhonesItemViewModelTests
 
         _vm.Status = "Decommissioned";
 
-        _vm.SR.Should().Be("987654");
+        await Assert.That(_vm.SR).IsEqualTo("987654");
     }
     #endregion
 

@@ -5,7 +5,6 @@ using Moq;
 using PhoneAssistant.WPF.Application.Repositories;
 using System.Text;
 using System.ComponentModel;
-using FluentAssertions;
 using System.Globalization;
 
 namespace PhoneAssistant.Tests.Features.Phones;
@@ -106,7 +105,7 @@ public sealed class EmailViewModelTests
     }
 
     [Test]
-    public void GenerateEmail_ShouldBeCollection_WhenPrintDateTrue()
+    public async Task GenerateEmail_ShouldBeCollection_WhenPrintDateTrueAsync()
     {
         TestSetup(_phone);
         Location location = new() { Name = "name", Address = "address", PrintDate = true};
@@ -114,28 +113,28 @@ public sealed class EmailViewModelTests
 
         _vm.GenerateEmailHtml();
 
-        _vm.EmailHtml.Should().Contain($"<p>Your {_vm.OrderDetails.Phone.OEM} {_vm.OrderDetails.Phone.Model} {_vm.OrderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
+        await Assert.That(_vm.EmailHtml).Contains($"<p>Your {_vm.OrderDetails.Phone.OEM} {_vm.OrderDetails.Phone.Model} {_vm.OrderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
     }
 
     [Test]
-    public void GenerateEmail_ShouldDelivery_WhenPrintDateFalse()
+    public async Task GenerateEmail_ShouldDelivery_WhenPrintDateFalseAsync()
     {
         TestSetup(_phone);
         Location location = new() { Name = "name", Address = "address", PrintDate = false };
 
         _vm.GenerateEmailHtml();
 
-        _vm.EmailHtml.Should().Contain($"<p>Your {_vm.OrderDetails.Phone.OEM} {_vm.OrderDetails.Phone.Model} {_vm.OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />");
+        await Assert.That(_vm.EmailHtml).Contains($"<p>Your {_vm.OrderDetails.Phone.OEM} {_vm.OrderDetails.Phone.Model} {_vm.OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />");
     }
 
     [Test]
-    public void GenerateEmail_ShouldDelivery_WhenSelectedLocationNull()
+    public async Task GenerateEmail_ShouldDelivery_WhenSelectedLocationNullAsync()
     {
         TestSetup(_phone);
 
         _vm.GenerateEmailHtml();
 
-        _vm.EmailHtml.Should().Contain($"<p>Your {_vm.OrderDetails.Phone.OEM} {_vm.OrderDetails.Phone.Model} {_vm.OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />");
+        await Assert.That(_vm.EmailHtml).Contains($"<p>Your {_vm.OrderDetails.Phone.OEM} {_vm.OrderDetails.Phone.Model} {_vm.OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />");
     }
 
     [Test]
@@ -214,7 +213,7 @@ public sealed class EmailViewModelTests
         TestSetup(_phone);
 
         await Assert.That(_vm.EmailHtml).Contains(DataUsage);
-        _vm.EmailHtml.Should().Contain(@"<a href=""https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/_layouts/15/Doc.aspx?sourcedoc=%7BABC3F4D7-1159-4F72-9C0B-7E155B970A28%7D&file=How%20to%20set%20up%20your%20new%20DCC%20iPhone.docx&action=default&mobileredirect=true"">");
+        await Assert.That(_vm.EmailHtml).Contains(@"<a href=""https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/_layouts/15/Doc.aspx?sourcedoc=%7BABC3F4D7-1159-4F72-9C0B-7E155B970A28%7D&file=How%20to%20set%20up%20your%20new%20DCC%20iPhone.docx&action=default&mobileredirect=true"">");
         await Assert.That(_vm.EmailHtml).Contains("Apple (iOS) Smartphone");
     }
 
@@ -236,7 +235,7 @@ public sealed class EmailViewModelTests
         TestSetup(_phone);
 
         await Assert.That(_vm.EmailHtml).Contains(DataUsage);
-        _vm.EmailHtml.Should().Contain(@"<a href=""https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/Android%20Enterprise%20-%20Setting%20up%20your%20Android%20Phone.docx?d=w64bb3f0a09e44557a64bb78311ee513b&csf=1&web=1"">");
+        await Assert.That(_vm.EmailHtml).Contains(@"<a href=""https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/Android%20Enterprise%20-%20Setting%20up%20your%20Android%20Phone.docx?d=w64bb3f0a09e44557a64bb78311ee513b&csf=1&web=1"">");
         await Assert.That(_vm.EmailHtml).Contains("Android Smartphone");
     }
 

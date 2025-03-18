@@ -9,7 +9,6 @@ using PhoneAssistant.WPF.Application;
 using CommunityToolkit.Mvvm.Messaging;
 using PhoneAssistant.Tests.Shared;
 using PhoneAssistant.Model;
-using FluentAssertions;
 using System.ComponentModel;
 
 namespace PhoneAssistant.Tests.Features.AddItem;
@@ -24,10 +23,10 @@ public partial class AddItemViewModelTests
     }
 
     [Test]
-    public void AddItemViewModel_DefaultOEMAndModel()
+    public async Task AddItemViewModel_DefaultOEMAndModelAsync()
     {
-        _sut.OEM.Should().Be(OEMs.Apple);
-        _sut.Model.Should().Be("iPhone SE 2022");
+        await Assert.That(_sut.OEM).IsEqualTo(OEMs.Apple);
+        await Assert.That(_sut.Model).IsEqualTo("iPhone SE 2022");
     }
 
     [Test]
@@ -35,11 +34,11 @@ public partial class AddItemViewModelTests
     [Arguments(OEMs.Nokia, "110 4G")]
     [Arguments(OEMs.Other, "")]
     [Arguments(OEMs.Samsung, "A32")]
-    public void OnOEMChanged_ShouldChangeModel(OEMs oem, string model)
+    public async Task OnOEMChanged_ShouldChangeModelAsync(OEMs oem, string model)
     {
         _sut.OEM = oem;
 
-        _sut.Model.Should().Be(model);
+        await Assert.That(_sut.Model).IsEqualTo(model);
     }
 
     [Test]
@@ -290,7 +289,7 @@ public partial class AddItemViewModelTests
 
     [Test]
     [Description("Issue #65")]
-    public void PhoneSaveCommand_WithConditionN_ShouldLogNew()
+    public async Task PhoneSaveCommand_WithConditionN_ShouldLogNewAsync()
     {
         _sut.Condition = ApplicationConstants.Conditions[0].Substring(0, 1);
         _sut.Imei = "355808981147090";
@@ -301,12 +300,12 @@ public partial class AddItemViewModelTests
         _sut.PhoneSaveCommand.Execute(null);
 
         var actual = _sut.LogItems.First();
-        actual.Should().Contain("New");
+        await Assert.That(actual).Contains("New");
     }
 
     [Test]
     [Description("Issue #65")]
-    public void PhoneSaveCommand_WithConditionR_ShouldLogRepurposed()
+    public async Task PhoneSaveCommand_WithConditionR_ShouldLogRepurposedAsync()
     {
         _sut.Condition = ApplicationConstants.Conditions[1].Substring(0, 1);
         _sut.Imei = "355808981147090";
@@ -317,7 +316,7 @@ public partial class AddItemViewModelTests
         _sut.PhoneSaveCommand.Execute(null);
 
         var actual = _sut.LogItems.First();
-        actual.Should().Contain("Repurposed");
+        await Assert.That(actual).Contains("Repurposed");
     }
 
     [Test]
@@ -575,10 +574,10 @@ public partial class AddItemViewModelTests
         await Assert.That(_sut.Condition).IsEqualTo(ApplicationConstants.Conditions[1].Substring(0, 1));
         await Assert.That(_sut.FormerUser).IsNull();
         await Assert.That(_sut.Imei).IsEqualTo(string.Empty);
-        _sut.Model.Should().Be("iPhone SE 2022");
+        await Assert.That(_sut.Model).IsEqualTo("iPhone SE 2022");
         await Assert.That(_sut.PhoneNotes).IsNull();
         await Assert.That(_sut.PhoneNumber).IsNull();
-        _sut.OEM.Should().Be(OEMs.Apple);
+        await Assert.That(_sut.OEM).IsEqualTo(OEMs.Apple);
         await Assert.That(_sut.Status).IsEqualTo(ApplicationConstants.Statuses[1]);
         await Assert.That(_sut.SimNumber).IsNull();
         await Assert.That(_sut.Ticket).IsNull();

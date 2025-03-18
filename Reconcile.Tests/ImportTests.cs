@@ -1,8 +1,5 @@
-﻿using FluentAssertions;
+﻿using FluentResults;
 
-using FluentResults;
-
-using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
@@ -11,7 +8,7 @@ namespace Reconcile.Tests;
 public sealed class ImportTests
 {
     [Test]
-    public void IsValidSheet_ShouldFail_WhenCheckCellInvalid()
+    public async Task IsValidSheet_ShouldFail_WhenCheckCellInvalidAsync()
     {
         using XSSFWorkbook workbook = new();
         ISheet sheet = workbook.CreateSheet("SheetName");
@@ -20,36 +17,36 @@ public sealed class ImportTests
 
         Result<ISheet> actual = Import.IsValidSheet(workbook, "SheetName" , "CheckValue", "A1");
 
-        actual.IsFailed.Should().BeTrue();
-        actual.Errors.First().Message.Should().Be("Unable to find 'CheckValue' in cell A1");
+        await Assert.That(actual.IsFailed).IsTrue();
+        await Assert.That(actual.Errors.First().Message).IsEqualTo("Unable to find 'CheckValue' in cell A1");
     }
 
     [Test]
-    public void IsValidSheet_ShouldFail_WhenNoRows()
+    public async Task IsValidSheet_ShouldFail_WhenNoRowsAsync()
     {
         using XSSFWorkbook workbook = new();
         _ = workbook.CreateSheet("SheetName");
 
         Result<ISheet> actual = Import.IsValidSheet(workbook, "SheetName", "CheckValue", "A1");
 
-        actual.IsFailed.Should().BeTrue();
-        actual.Errors.First().Message.Should().Be("No rows found in sheet Data");
+        await Assert.That(actual.IsFailed).IsTrue();
+        await Assert.That(actual.Errors.First().Message).IsEqualTo("No rows found in sheet Data");
     }
 
     [Test]
-    public void IsValidSheet_ShouldFail_WhenSheetNameInvalid()
+    public async Task IsValidSheet_ShouldFail_WhenSheetNameInvalidAsync()
     {
         using XSSFWorkbook workbook = new();
         workbook.CreateSheet("invalid");
 
         Result<ISheet> actual = Import.IsValidSheet(workbook, "SheetName", "CheckValue", "A1");
 
-        actual.IsFailed.Should().BeTrue();
-        actual.Errors.First().Message.Should().Be($"First sheet in workbook not named SheetName");
+        await Assert.That(actual.IsFailed).IsTrue();
+        await Assert.That(actual.Errors.First().Message).IsEqualTo($"First sheet in workbook not named SheetName");
     }
 
     [Test]
-    public void IsValidSheet_ShouldSucceed_WhenValidSheet()
+    public async Task IsValidSheet_ShouldSucceed_WhenValidSheetAsync()
     {
         using XSSFWorkbook workbook = new();
         ISheet sheet = workbook.CreateSheet("SheetName");
@@ -58,6 +55,6 @@ public sealed class ImportTests
 
         Result<ISheet> actual = Import.IsValidSheet(workbook, "SheetName", "CheckValue", "A1");
 
-        actual.IsSuccess.Should().BeTrue();
+        await Assert.That(actual.IsSuccess).IsTrue();
     }
 }

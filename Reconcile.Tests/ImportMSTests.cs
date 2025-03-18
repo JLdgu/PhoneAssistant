@@ -1,5 +1,3 @@
-using FluentAssertions;
-
 using FluentResults;
 
 using NPOI.SS.UserModel;
@@ -10,36 +8,36 @@ namespace Reconcile.Tests;
 public sealed class ImportMSTests
 {
     [Test]
-    public void GetDevice_ShouldFail_WhenItemTypeToBeIgnored()
+    public async Task GetDevice_ShouldFail_WhenItemTypeToBeIgnoredAsync()
     {
         IRow row = SetupRow("Item Type", "", "", "", "", "", "");
 
         Result<Device> actual = ImportMS.GetDevice(row);
 
-        actual.IsFailed.Should().BeTrue();
-        actual.Errors.First().Message.Should().Be("Ignore: Item Type");
+        await Assert.That(actual.IsFailed).IsTrue();
+        await Assert.That(actual.Errors.First().Message).IsEqualTo("Ignore: Item Type");
     }
 
     [Test]
-    public void GetDevice_ShouldFail_WhenItemTypePhoneAndModelToBeIgnored()
+    public async Task GetDevice_ShouldFail_WhenItemTypePhoneAndModelToBeIgnoredAsync()
     {
         IRow row = SetupRow("Phone", "", "", "", "oem", "SIM Card", "");
 
         Result<Device> actual = ImportMS.GetDevice(row);
 
-        actual.IsFailed.Should().BeTrue();
-        actual.Errors.First().Message.Should().Be("Ignore: Model");
+        await Assert.That(actual.IsFailed).IsTrue();
+        await Assert.That(actual.Errors.First().Message).IsEqualTo("Ignore: Model");
     }
 
     [Test]
-    public void GetDevice_ShouldFail_WhenItemTypeComputerAndOEMInvalid()
+    public async Task GetDevice_ShouldFail_WhenItemTypeComputerAndOEMInvalidAsync()
     {
         IRow row = SetupRow("Computer", "", "", "", "oem", "", "");
 
         Result<Device> actual = ImportMS.GetDevice(row);
 
-        actual.IsFailed.Should().BeTrue();
-        actual.Errors.First().Message.Should().Be("Ignore: Manufacturer");
+        await Assert.That(actual.IsFailed).IsTrue();
+        await Assert.That(actual.Errors.First().Message).IsEqualTo("Ignore: Manufacturer");
     }
 
     [Test]
@@ -47,16 +45,16 @@ public sealed class ImportMSTests
     [Arguments("Computer", "computer", "", "", "Apple", "model", "")]
     [Arguments("Phone", "phone", "asset tag", "status", "oem", "model", "serial")]
     [Arguments("Phone", "phone", "", "", "oem", "model", "")]
-    public void GetDevice_ShouldSucceed_WhenValidDevice(string itemType, string name, string assetTag, string status, string oem, string model, string serialNumber)
+    public async Task GetDevice_ShouldSucceed_WhenValidDeviceAsync(string itemType, string name, string assetTag, string status, string oem, string model, string serialNumber)
     {
         IRow row = SetupRow(itemType, name, assetTag, status, oem, model, serialNumber);
 
         Result<Device> result = ImportMS.GetDevice(row);
         Device device = result.Value;
 
-        result.IsSuccess.Should().BeTrue();
-        device.Name.Should().Be(name);
-        device.AssetTag.Should().Be(assetTag);
+        await Assert.That(result.IsSuccess).IsTrue();
+        await Assert.That(device.Name).IsEqualTo(name);
+        await Assert.That(device.AssetTag).IsEqualTo(assetTag);
     }
 
     private static IRow SetupRow(string itemType, string name, string assetTag, string status, string oem, string model, string serialNumber)

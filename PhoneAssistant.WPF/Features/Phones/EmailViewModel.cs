@@ -167,10 +167,10 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             {
                 html.AppendLine("DTS End User Compute Team, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
                 html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now)}</p>");
-                html.AppendLine("""
-                    <p><br /><span style="color: red;"><b>Important Note</b></span><br>You have been added to the Teams Chat 'County Hall EUC Appointments &amp; Collections'<br>
-                    Please notify this chat on your arrival at County Hall and your device will be brought to Reception.</p>
-                    """);
+                //html.AppendLine("""
+                //    <p><br /><span style="color: red;"><b>Important Note</b></span><br>You have been added to the Teams Chat 'County Hall EUC Appointments &amp; Collections'<br>
+                //    Please notify this chat on your arrival at County Hall and your device will be brought to Reception.</p>
+                //    """);
             }
         }
         else
@@ -212,7 +212,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
         if (OrderType == OrderType.Replacement && OrderDetails.DeviceType == DeviceType.Phone)
         {
-            html.AppendLine("<p>Don't forget to transfer your old sim to the replacement phone before returning the old phone to");
+            html.AppendLine("<p><br /><span style=\"color: red;\">Don't forget to transfer your old sim to the replacement phone</span> before returning the old phone to");
             html.AppendLine("DTS End User Compute, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
             html.AppendLine(
                 """

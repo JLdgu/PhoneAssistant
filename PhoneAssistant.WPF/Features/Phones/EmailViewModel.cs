@@ -161,7 +161,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             if (SelectedLocation.Name.Contains("GMH"))
             {
                 html.AppendLine("DTS End User Compute Team, Hardware Room, Great Moor House, Bittern Road, Exeter, EX2 7FW</br>");
-                html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now.AddDays(2))}</p>");
+                html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now,buffer: 2)}</p>");
             }
             else
             {
@@ -237,19 +237,14 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         EmailHtml = html.ToString();
     }
 
-    public static string ToOrdinalWorkingDate(DateTime date, bool hexSuperscript = false)
+    public static string ToOrdinalWorkingDate(DateTime date, bool hexSuperscript = false, int buffer = 0)
     {
-        int addDays = 0;
-        switch (date.DayOfWeek)
+        DateTime weekDay = date.AddDays(buffer);
+        if (buffer > 0)
         {
-            case DayOfWeek.Sunday:
-                addDays = 1;
-                break;
-            case DayOfWeek.Saturday:
-                addDays = 2;
-                break;
+            while (weekDay.DayOfWeek == DayOfWeek.Saturday || weekDay.DayOfWeek == DayOfWeek.Sunday)
+                weekDay = weekDay.AddDays(buffer);
         }
-        DateTime weekDay = date.AddDays(addDays);
 
         string ordinalDay = string.Empty;
         int number = weekDay.Day;

@@ -29,6 +29,14 @@
             <StackPanel Orientation="Vertical">
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.504.16" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #90 Deliveries to GMH correctly account for weekends" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #88 Minor changes to email formatting" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
                         <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.501.22" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #76 Change iOS setup url" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #73 Change processing for decommissioned phones" />

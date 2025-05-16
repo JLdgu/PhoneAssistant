@@ -311,14 +311,13 @@ public sealed class EmailViewModelTests
     }
 
     [Test]
-    [Skip("Update deferred")]
     public async Task SelectedLocation_WithPrintDateTrueAndNameIncludesL87_AddTeamChatDetailsAsync()
     {
         TestSetup(_phone);
 
         _vm.SelectedLocation = new Location { Name = "Collect L87", Address = "Collection Address", PrintDate = true };
 
-        await Assert.That(_vm.EmailHtml).Contains("County Hall EUC Appointments &amp; Collections");        
+        await Assert.That(_vm.EmailHtml).Contains("When attending your appointment please wait in the Reception waiting room and ring 2050");        
     }
 
     [Test]

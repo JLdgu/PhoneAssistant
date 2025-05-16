@@ -167,10 +167,10 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             {
                 html.AppendLine("DTS End User Compute Team, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
                 html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now)}</p>");
-                //html.AppendLine("""
-                //    <p><br /><span style="color: red;"><b>Important Note</b></span><br>You have been added to the Teams Chat 'County Hall EUC Appointments &amp; Collections'<br>
-                //    Please notify this chat on your arrival at County Hall and your device will be brought to Reception.</p>
-                //    """);
+                html.AppendLine("""
+                    <p><br /><span style="color: red;"><b>Important Note</b></span><br>When attending your appointment please wait in the Reception waiting room and ring 2050 then choose option 1 (Collect mobile phone).
+                    (01392 382050 from a mobile phone)</p>
+                    """);
             }
         }
         else

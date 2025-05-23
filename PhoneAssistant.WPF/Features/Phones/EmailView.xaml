@@ -9,7 +9,7 @@
              d:DataContext="{d:DesignInstance Type=local:EmailViewModel,
                                               IsDesignTimeCreatable=False}"
              d:DesignHeight="400"
-             d:DesignWidth="900"
+             d:DesignWidth="1500"
              mc:Ignorable="d">
     <UserControl.Resources>
         <shared:EnumBooleanConverter x:Key="EnumBooleanConverter" />
@@ -23,6 +23,7 @@
 
             <Grid d:Background="Aquamarine">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="auto" />
@@ -105,7 +106,7 @@
                                 Content="{materialDesign:PackIcon Kind=EmailOutline,
                                                                   Size=35}"
                                 Style="{StaticResource MaterialDesignFlatLightButton}"
-                                ToolTip="Print Envelope" />
+                                ToolTip="Print Envelope Insert" />
                     </StackPanel>
 
                     <Button Margin="0,10,0,20"
@@ -148,11 +149,12 @@
                         Content="{materialDesign:PackIcon Kind=LabelOutline,
                                                           Size=35}"
                         Style="{StaticResource MaterialDesignFlatLightButton}"
-                        ToolTip="Dymo Label" />
+                        ToolTip="Print Dymo Label" />
 
-                <WebBrowser Grid.Row="1"
+                <WebBrowser Grid.Row="0"
+                            Grid.Column="3"
                             Grid.ColumnSpan="4"
-                            Height="250"
+                            Height="350"
                             d:Visibility="Visible"
                             local:WebBrowserHelper.NavigateTo="{Binding EmailHtml}"
                             Visibility="{Binding GeneratingEmail, Converter={StaticResource BooleanToVisibilityConverter}}" />

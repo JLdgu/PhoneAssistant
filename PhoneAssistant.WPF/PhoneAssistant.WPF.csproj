@@ -1,58 +1,60 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <StartupObject>PhoneAssistant.WPF.App</StartupObject>
-    <ApplicationIcon Condition="'$(Configuration)'=='Debug'">Resources\DebugPhone.ico</ApplicationIcon>
-    <ApplicationIcon Condition="'$(Configuration)'=='Release'">Resources\Phone.ico</ApplicationIcon>
-    <AssemblyName>PhoneAssistant</AssemblyName>
-    <AssemblyVersion>1.505.16</AssemblyVersion>
-    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Resources\DebugPhone.ico" />
-    <None Remove="Resources\EUC.png" />
-    <None Remove="Resources\Keyboard.jpg" />
-    <None Remove="Resources\MobilePhone.jpg" />
-    <None Remove="Resources\Monitor.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ApplicationDefinition Remove="App.xaml" />
-    <Content Include="Resources\DebugPhone.ico" />
-    <Content Include="Resources\Phone.ico" />
-    <Page Include="App.xaml" />
-  </ItemGroup>
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <UseWPF>true</UseWPF>
+        <StartupObject>PhoneAssistant.WPF.App</StartupObject>
+        <ApplicationIcon Condition="'$(Configuration)'=='Debug'">Resources\DebugPhone.ico</ApplicationIcon>
+        <ApplicationIcon Condition="'$(Configuration)'=='Release'">Resources\Phone.ico</ApplicationIcon>
+        <AssemblyName>PhoneAssistant</AssemblyName>
+        <AssemblyVersion>1.505.16</AssemblyVersion>
+        <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+    </PropertyGroup>
 
     <ItemGroup>
-    <EmbeddedResource Include="Resources\EUC.png" />
-    <EmbeddedResource Include="Resources\Keyboard.jpg" />
-    <EmbeddedResource Include="Resources\MobilePhone.jpg" />
-    <EmbeddedResource Include="Resources\Monitor.png" />
-  </ItemGroup>
+        <None Remove="Resources\DebugPhone.ico" />
+        <None Remove="Resources\EUC.png" />
+        <None Remove="Resources\Keyboard.jpg" />
+        <None Remove="Resources\MobilePhone.jpg" />
+        <None Remove="Resources\Monitor.png" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="EntityFrameworkCore.Triggered" />
-    <PackageReference Include="MaterialDesignThemes" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
-    <PackageReference Include="NPOI" />
-    <PackageReference Include="SixLabors.ImageSharp" />
-    <PackageReference Include="System.Drawing.Common" />
-    <PackageReference Include="Velopack" />
-  </ItemGroup>
+    <ItemGroup>
+        <ApplicationDefinition Remove="App.xaml" />
+        <Content Include="Resources\DebugPhone.ico" />
+        <Content Include="Resources\Phone.ico" />
+        <Page Include="App.xaml" />
+    </ItemGroup>
 
-  <Import Project="..\PhoneAssistant.Shared\PhoneAssistant.Shared.projitems" Label="Shared" />
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\EUC.png" />
+        <EmbeddedResource Include="Resources\Keyboard.jpg" />
+        <EmbeddedResource Include="Resources\MobilePhone.jpg" />
+        <EmbeddedResource Include="Resources\Monitor.png" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Mvvm" />
+        <PackageReference Include="EntityFrameworkCore.Triggered" />
+        <PackageReference Include="MaterialDesignThemes" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+        <PackageReference Include="NPOI" />
+        <PackageReference Include="Serilog.Sinks.Console" />
+        <PackageReference Include="Serilog.Sinks.File" />
+        <PackageReference Include="SixLabors.ImageSharp" />
+        <PackageReference Include="System.Drawing.Common" />
+        <PackageReference Include="Velopack" />
+    </ItemGroup>
+
+    <Import Project="..\PhoneAssistant.Shared\PhoneAssistant.Shared.projitems" Label="Shared" />
+
+    <ItemGroup>
+        <Folder Include="Properties\" />
+    </ItemGroup>
 
 </Project>

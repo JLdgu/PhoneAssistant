@@ -2,6 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using PhoneAssistant.WPF.Application;
+
+using Serilog;
+
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Windows;
@@ -39,9 +42,10 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
         ColourThemeDark = _userSettings.DarkMode;
         ColourThemeLight = !_userSettings.DarkMode;
 
+        Log.Verbose("SettingsMainViewModel constructor called");
         CurrentVersion = _userSettings.AssemblyVersion?.ToString();
         _updateManager = new(ReleaseUrl, 
-            new UpdateOptions() { AllowVersionDowngrade = true });
+            new UpdateOptions() { AllowVersionDowngrade = true });        
     }
 #pragma warning restore CS8618
 
@@ -189,10 +193,11 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
 
     private async Task CheckForUpdate()
     {
-        Trace.TraceInformation("CheckForUpdate Started");
+        Log.Information("CheckForUpdate Started");
 
-        if (_updateManager is null) return;
-
+        if (_updateManager is null)
+            return;
+            
         if (!_updateManager.IsInstalled)
         {
             NewVersion = $" Version 9.9.999 available";
@@ -201,7 +206,7 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
         }
 
         _updateInfo = await _updateManager.CheckForUpdatesAsync().ConfigureAwait(true);
-        Trace.TraceInformation("UpdateCommand CheckForUpdatesAsync() called");
+        Log.Information("UpdateCommand CheckForUpdatesAsync() called");
 
         if (_updateInfo is null)
         {
@@ -224,14 +229,14 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
         if (_updateManager is null || _updateInfo is null)
             return;
 
-        Trace.TraceInformation("UpdateAndRestart Started");
+        Log.Information("UpdateAndRestart Started");
         
         await _updateManager.DownloadUpdatesAsync(_updateInfo).ConfigureAwait(true);
-        Trace.TraceInformation("DownloadUpdate DownloadUpdatesAsync() called");
+        Log.Information("DownloadUpdate DownloadUpdatesAsync() called");
         UpdateState = ApplicationUpdateState.UpdateDownloaded;
 
         _updateManager.ApplyUpdatesAndRestart(_updateInfo);
-        Trace.TraceInformation("UpdateAndRestart Completed");
+        Log.Information("UpdateAndRestart Completed");
     }
     #endregion
 

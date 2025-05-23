@@ -1,17 +1,14 @@
-﻿using System.Diagnostics;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Threading;
-
-using MaterialDesignThemes.Wpf;
-
+﻿using MaterialDesignThemes.Wpf;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.Settings;
-
+using Serilog.Sinks.SystemConsole.Themes;
+using Serilog;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Threading;
 using Velopack;
 
 namespace PhoneAssistant.WPF;
@@ -23,18 +20,32 @@ public partial class App : System.Windows.Application
     [STAThread]
     private static void Main(string[] args)
     {
-        Trace.Listeners.Add(new TextWriterTraceListener("PhoneAssistant.log", "logListener"));
-        Trace.AutoFlush = true;
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen)
+            .MinimumLevel.Verbose()
+            .WriteTo.File("PhoneAssistant.log")
+            .CreateLogger();
+        Log.Information("Starting Phone Assistant");
 
         if (!UserSettings.DatabaseFullPathRetrieved())
         {
-            Trace.Close();
             return;
         }
         
         VelopackApp.Build().Run();
-        
-        MainAsync(args).GetAwaiter().GetResult();
+        try
+        {
+            MainAsync(args).GetAwaiter().GetResult();
+        }
+        catch (Exception ex)
+        {
+            LogAndHandleException(ex);
+        }
+        finally
+        {
+            Log.CloseAndFlush();
+        }
     }
 
     private static async Task MainAsync(string[] args)
@@ -71,43 +82,34 @@ public partial class App : System.Windows.Application
 
         base.OnStartup(e);
     }
-    private void OnExit(object sender, ExitEventArgs e)
-    {
-        Trace.Close();
-    }
-
-    protected override void OnExit(ExitEventArgs e)
-    {
-        base.OnExit(e);
-    }
 
     private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
-        Trace.TraceError(DateTime.Now.ToString());
+        e.Handled = true;
+        LogAndHandleException(e.Exception);
+    }
 
-        Exception? ex = e.Exception;
-
-        while (ex is not null)
+    private static void LogAndHandleException(Exception ex)
+    {
+        var exception = ex;
+        while (exception is not null)
         {
 
-            Trace.TraceError(ex.GetType().FullName);
-            Trace.TraceError("HResult=" + ex.HResult);
-            Trace.TraceError("Message=" + ex.Message);
-            Trace.TraceError("StackTrace:");
-            Trace.TraceError(ex.StackTrace);
+            Log.Error(ex.GetType().FullName ?? "PhoneAssistant");
+            Log.Error("HResult=" + ex.HResult);
+            Log.Error("Message=" + ex.Message);
+            Log.Error("StackTrace:");
+            Log.Error(ex.StackTrace ?? "No StackTrace found");
 
-            ex = ex.InnerException;
+            exception = exception.InnerException;
         }
-        Trace.TraceError("-----------------------------------------------------------------------------");
-        Trace.TraceError("");
+        Log.Error("-----------------------------------------------------------------------------");
 
-        Trace.Close();
-
-        e.Handled = true;
-
-        MessageBox.Show($"An unexpected exception has occured {Environment.NewLine}See PhoneAssistant.log for more details.",
+        MessageBox.Show($"An unexpected exception has occurred {Environment.NewLine}See PhoneAssistant.log for more details.",
             "Phone Assistant", MessageBoxButton.OK, MessageBoxImage.Stop);
 
         App.Current.Shutdown();
     }
+
+
 }

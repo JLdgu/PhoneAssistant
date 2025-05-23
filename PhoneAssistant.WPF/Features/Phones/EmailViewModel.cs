@@ -1,13 +1,12 @@
-﻿using System.Collections.ObjectModel;
-using System.Text;
-using System.Text.RegularExpressions;
-
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Shared;
+using System.Collections.ObjectModel;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
@@ -100,6 +99,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
             _dymoLabel.Execute(DeliveryAddress, includeDate);
         });
+
+        Clipboard.SetText(DeliveryAddress);
     }
 
     private bool loaded = false;

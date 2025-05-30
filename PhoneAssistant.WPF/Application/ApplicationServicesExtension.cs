@@ -17,6 +17,7 @@ using PhoneAssistant.WPF.Features.Sims;
 using PhoneAssistant.WPF.Features.Users;
 using PhoneAssistant.WPF.Shared;
 using PhoneAssistant.Model;
+using Velopack;
 
 namespace PhoneAssistant.WPF.Application;
 
@@ -37,6 +38,13 @@ public static class ApplicationServicesExtensions
 
             services.AddSingleton<WeakReferenceMessenger>();
             services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider => provider.GetRequiredService<WeakReferenceMessenger>());
+
+            services.AddTransient(x =>
+            {
+                const string ReleaseUrl = @"\\countyhall.ds2.devon.gov.uk\docs\exeter, county hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application";
+                return new UpdateManager(ReleaseUrl,
+                            new UpdateOptions() { AllowVersionDowngrade = true });
+            });
 
             // Repositories
             services.AddSingleton<IBaseReportRepository, BaseReportRepository>();

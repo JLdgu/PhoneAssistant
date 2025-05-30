@@ -4,6 +4,9 @@ using Moq.AutoMock;
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.Settings;
 
+using Velopack;
+using Velopack.Locators;
+
 namespace PhoneAssistant.Tests.Features.Settings;
 
 public sealed class SettingsMainViewModelTests
@@ -63,6 +66,8 @@ public sealed class SettingsMainViewModelTests
     public void Printer_PropertyChanged_SavesUpdatedSettings()
     {
         AutoMocker mocker = new AutoMocker();
+        mocker.Use(new UpdateManager("fake-path", locator: new TestVelopackLocator("my-app", "1.0.0", "packages")));
+
         Mock<IUserSettings> userStettingsMock = mocker.GetMock<IUserSettings>();
         userStettingsMock.Setup(s => s.Printer).Returns("Printer");
         SettingsMainViewModel vm = mocker.CreateInstance<SettingsMainViewModel>();

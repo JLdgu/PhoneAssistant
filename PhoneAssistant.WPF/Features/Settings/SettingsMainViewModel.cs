@@ -1,13 +1,15 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Windows;
+
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+
 using Microsoft.Win32;
+
 using PhoneAssistant.WPF.Application;
 
 using Serilog;
 
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Windows;
 using Velopack;
 
 namespace PhoneAssistant.WPF.Features.Settings;
@@ -16,15 +18,16 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
 {
     private readonly IUserSettings _userSettings;
     private readonly IThemeWrapper _themeWrapper;
-    const string ReleaseUrl = @"\\countyhall.ds2.devon.gov.uk\docs\exeter, county hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application";
-    private UpdateManager _updateManager;
-    private UpdateInfo? _updateInfo;        
+    private readonly UpdateManager _updateManager;
+    private UpdateInfo? _updateInfo;
 
 #pragma warning disable CS8618
-    public SettingsMainViewModel(IUserSettings userSettings, IThemeWrapper themeWrapper)
+    public SettingsMainViewModel(IUserSettings userSettings, IThemeWrapper themeWrapper, UpdateManager updateManager)
     {
         _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
         _themeWrapper = themeWrapper ?? throw new ArgumentNullException(nameof(themeWrapper));
+        _updateManager = updateManager ?? throw new ArgumentNullException(nameof(updateManager));
+
         Database = _userSettings.Database;
 
         PrintToFile = _userSettings.PrintToFile;
@@ -44,8 +47,6 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
 
         Log.Verbose("SettingsMainViewModel constructor called");
         CurrentVersion = _userSettings.AssemblyVersion?.ToString();
-        _updateManager = new(ReleaseUrl, 
-            new UpdateOptions() { AllowVersionDowngrade = true });        
     }
 #pragma warning restore CS8618
 

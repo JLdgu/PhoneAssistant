@@ -8,7 +8,7 @@
              xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
              d:DataContext="{d:DesignInstance Type=local:EmailViewModel,
                                               IsDesignTimeCreatable=False}"
-             d:DesignHeight="400"
+             d:DesignHeight="700"
              d:DesignWidth="1500"
              mc:Ignorable="d">
     <UserControl.Resources>
@@ -154,7 +154,7 @@
                 <WebBrowser Grid.Row="0"
                             Grid.Column="3"
                             Grid.ColumnSpan="4"
-                            Height="350"
+                            Height="375"
                             d:Visibility="Visible"
                             local:WebBrowserHelper.NavigateTo="{Binding EmailHtml}"
                             Visibility="{Binding GeneratingEmail, Converter={StaticResource BooleanToVisibilityConverter}}" />

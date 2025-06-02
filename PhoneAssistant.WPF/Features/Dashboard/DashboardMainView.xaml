@@ -29,6 +29,14 @@
             <StackPanel Orientation="Vertical">
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.506.2" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Rearrange email view controls" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Copy Dymo label contents to clipboard on printing label" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
                         <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.505.16" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Add details of access restrictions for collections from L87" />
                     </StackPanel>

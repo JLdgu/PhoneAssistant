@@ -8,7 +8,11 @@ public class SqlScripts
 
     public SqlScripts()
     {
-        Scripts = [new Script("Drop table SchemaVersions", "DROP TABLE SchemaVersions;")];
+        Scripts = [
+            new Script("Drop table SchemaVersions", "DROP TABLE SchemaVersions;"),
+            new Script("Add SerialNumber to Phone",
+                "ALTER TABLE Phones ADD COLUMN SerialNumber Text;")
+                ];
     }
 
     public SqlScripts(Collection<Script> scripts)

@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Data;
@@ -9,7 +8,6 @@ using CommunityToolkit.Mvvm.Input;
 
 using Microsoft.Win32;
 
-using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 
 using PhoneAssistant.WPF.Application.Entities;
@@ -166,7 +164,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     {
         OpenFileDialog openFileDialog = new()
         {
-            Filter = "Devon Base Report (*.xls)|*.xls",
+            Filter = "Devon Base Report (*.xlsx)|*.xlsx",
             Multiselect = false
         };
 
@@ -196,7 +194,8 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         await Task.Delay(100);
 
         using FileStream? stream = new FileStream(DevonBaseReport!, FileMode.Open, FileAccess.Read);
-        using HSSFWorkbook workbook = new HSSFWorkbook(stream);
+        using IWorkbook workbook = WorkbookFactory.Create(stream, readOnly: true);
+        //using HSSFWorkbook workbook = new HSSFWorkbook(stream);
 
         ISheet sheet = workbook.GetSheetAt(0);
 
@@ -204,7 +203,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         ICell cell = header.GetCell(0);
         if (cell is null || cell.StringCellValue != "Group")
         {
-            LogItems.Add($"Unable to find Group Id in cell A1, check you are importing the correct file.");
+            LogItems.Add($"Unable to find Group in cell A1, check you are importing the correct file.");
             return;
         }
 
@@ -219,16 +218,25 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
 
             _ = row.GetCell(11).DateCellValue.ToString() ?? string.Empty;
 
+            var PhoneNumber = row.GetCell(6).StringCellValue;
+            var UserName = row.GetCell(5).StringCellValue;
+            var ContractEndDate = row.GetCell(15).DateCellValue.ToString() ?? string.Empty;
+            var TalkPlan = row.GetCell(8).StringCellValue.ToString();
+            var Handset = row.GetCell(21).StringCellValue;
+            var SimNumber = row.GetCell(17).StringCellValue;
+            var ConnectedIMEI = string.Empty;
+            var LastUsedIMEI = row.GetCell(18).StringCellValue; 
+
             Application.Entities.BaseReport item = new()
             {
                 PhoneNumber = row.GetCell(6).StringCellValue,
                 UserName = row.GetCell(5).StringCellValue,
-                ContractEndDate = row.GetCell(11).DateCellValue.ToString() ?? string.Empty,
-                TalkPlan = row.GetCell(9).NumericCellValue.ToString(),
-                Handset = string.Empty,
-                SimNumber = row.GetCell(14).StringCellValue,
+                ContractEndDate = row.GetCell(15).DateCellValue.ToString() ?? string.Empty,
+                TalkPlan = TalkPlan = row.GetCell(8).StringCellValue.ToString(),
+                Handset = row.GetCell(21).StringCellValue,
+                SimNumber = row.GetCell(17).StringCellValue,
                 ConnectedIMEI = string.Empty,
-                LastUsedIMEI = string.Empty
+                LastUsedIMEI = row.GetCell(18).StringCellValue
             };
 
             await _repository.CreateAsync(item);
@@ -272,6 +280,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         foreach (Application.Entities.BaseReport phone in report)
         {
             BaseReport.Add(phone);
-        };
+        }
+        ;
     }
 }

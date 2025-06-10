@@ -74,7 +74,7 @@
                 <TextBlock Grid.ColumnSpan="2"
                            VerticalAlignment="Center"
                            Style="{StaticResource MaterialDesignBody1TextBlock}"
-                           Text="Devon Base Report to Import (*.xls)" />
+                           Text="Devon Base Report to Import (*.xlsx)" />
                 <Button Grid.Row="1"
                         Grid.Column="0"
                         Margin="0,4,10,0"
@@ -163,15 +163,15 @@
                     </DataGridTextColumn.HeaderTemplate>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Binding="{Binding ConnectedIMEI}" Header="Connected IMEI">
+                <DataGridTextColumn Binding="{Binding UserName}" Header="User Name">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
                             <StackPanel>
                                 <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                <TextBox MinWidth="140"
+                                <TextBox MinWidth="130"
                                          materialDesign:HintAssist.Hint="Filter"
                                          materialDesign:TextFieldAssist.HasClearButton="True"
-                                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterConnectedIMEI, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterUserName, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTextColumn.HeaderTemplate>
@@ -186,20 +186,6 @@
                                          materialDesign:HintAssist.Hint="Filter"
                                          materialDesign:TextFieldAssist.HasClearButton="True"
                                          Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterLastUsedIMEI, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTextColumn.HeaderTemplate>
-                </DataGridTextColumn>
-
-                <DataGridTextColumn Binding="{Binding UserName}" Header="User Name">
-                    <DataGridTextColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                <TextBox MinWidth="130"
-                                         materialDesign:HintAssist.Hint="Filter"
-                                         materialDesign:TextFieldAssist.HasClearButton="True"
-                                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterUserName, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTextColumn.HeaderTemplate>
@@ -242,6 +228,20 @@
                                          materialDesign:HintAssist.Hint="Filter"
                                          materialDesign:TextFieldAssist.HasClearButton="True"
                                          Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterTalkPlan, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTextColumn.HeaderTemplate>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Binding="{Binding ConnectedIMEI}" Header="Connected IMEI">
+                    <DataGridTextColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                <TextBox MinWidth="140"
+                                         materialDesign:HintAssist.Hint="Filter"
+                                         materialDesign:TextFieldAssist.HasClearButton="True"
+                                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterConnectedIMEI, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTextColumn.HeaderTemplate>

@@ -153,10 +153,12 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
     public void GenerateEmailHtml()
     {
+        if (SelectedLocation is null) return;
+
         StringBuilder html = new("""
             <span style="font-size:14px; font-family:Verdana;">
             """);
-        if (SelectedLocation is not null && SelectedLocation.PrintDate)
+        if (SelectedLocation.PrintDate)
         {
             html.AppendLine($"<p>Your {OrderDetails.Phone.OEM} {OrderDetails.Phone.Model} {OrderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
             if (SelectedLocation.Name.Contains("GMH"))
@@ -168,10 +170,6 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             {
                 html.AppendLine("DTS End User Compute Team, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
                 html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now)}</p>");
-                html.AppendLine("""
-                    <p><br /><span style="color: red;"><b>Important Note</b></span><br>When attending your appointment please wait in the Reception waiting room and ring 2050 then choose option 1 (Collect mobile phone).
-                    (01392 382050 from a mobile phone)</p>
-                    """);
             }
         }
         else
@@ -179,6 +177,9 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             html.AppendLine($"<p>Your {OrderDetails.Phone.OEM} {OrderDetails.Phone.Model} {OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />{_formattedAddress}</br>");
             html.AppendLine($"It was sent on {ToOrdinalWorkingDate(DateTime.Now)}</p>");
         }
+
+        if (SelectedLocation.Note is not null)            
+            html.AppendLine(SelectedLocation.Note);
 
         if (OrderDetails.Phone.OEM != OEMs.Nokia)
         {
@@ -190,7 +191,6 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             html.AppendLine("""
                 <p><br />Before setting up your phone please ensure you register with <a href="https://www.wifi.service.gov.uk/connect-to-govwifi/">GovWifi</a></p>
                 """);
-            //html.AppendLine("<p><br />To setup the phone either use Gov Wi-Fi, tether the phone to another phone, setup at another site or setup at home.</p>");
             
             html.AppendLine($"<p><br />Detailed setup instructions for your {OrderDetails.DeviceType.ToString().ToLower()}, are available here:</br>");
             if (OrderDetails.Phone.OEM == OEMs.Apple)

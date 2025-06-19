@@ -5,7 +5,7 @@ using PhoneAssistant.WPF.Application;
 
 namespace PhoneAssistant.WPF.Shared
 {
-    public sealed class PrintDymoLabel : IPrintDymoLabel
+    public sealed class PrintDymoLabel(IUserSettings userSettings) : IPrintDymoLabel
     {
         // For Dymo 450 printer and Label 30256 Shipping w231 x h400
         // the largest rectangle we can draw is
@@ -15,19 +15,13 @@ namespace PhoneAssistant.WPF.Shared
         const int MarginTop = 20;
         const int MarginLeft = 2;
 
-        private readonly IUserSettings _userSettings;
+        private readonly IUserSettings _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
         private string? _address;
         private string? _includeDate;
 
-        public PrintDymoLabel(IUserSettings userSettings)
-        {
-            _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
-        }
-
-
         public void Execute(string address, string? includeDate)
         {
-            _address = address;
+            _address = address.Trim();
             _includeDate = includeDate;
 
             PrintDocument pd = new();

@@ -1,11 +1,15 @@
-﻿using PhoneAssistant.WPF.Features.Phones;
-using PhoneAssistant.WPF.Application.Entities;
-using Moq.AutoMock;
-using Moq;
-using PhoneAssistant.WPF.Application.Repositories;
-using System.Text;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
+using System.Text;
+
+using Moq;
+using Moq.AutoMock;
+
+using NPOI.OpenXmlFormats.Spreadsheet;
+
+using PhoneAssistant.WPF.Application.Entities;
+using PhoneAssistant.WPF.Application.Repositories;
+using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.Tests.Features.Phones;
@@ -29,13 +33,6 @@ public sealed class EmailViewModelTests
         SR = 123456
     };
 
-    private readonly Location _location = new()
-    {
-        Name = "name",
-        Address = "address",
-        PrintDate = false
-    };
-
     private const string DataUsage = """
             <p><br /><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1">
             DCC mobile phone data usage guidance and policies</a></p>
@@ -53,17 +50,16 @@ public sealed class EmailViewModelTests
         _vm = _mocker.CreateInstance<EmailViewModel>();
     }
 
-    private void TestSetup(Phone phone, Location location)
+    private void TestSetup(Phone phone)
     {
         OrderDetails orderDetails = new(phone);
         _vm.OrderDetails = orderDetails;
-        _vm.SelectedLocation = location;
     }
 
     [Test]
     public async Task CloseCommand_SetsGeneratingEmail_FalseAsync()
     {
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
 
         _vm.CloseCommand.Execute(null);
 
@@ -73,7 +69,7 @@ public sealed class EmailViewModelTests
     [Test]
     public void CloseCommand_UpdatesDb()
     {
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
 
         _vm.CloseCommand.Execute(null);
 
@@ -83,7 +79,7 @@ public sealed class EmailViewModelTests
     [Test]
     public async Task Constructor_SetsGeneratingEmail_TrueAsync()
     {
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
 
         await Assert.That(_vm.GeneratingEmail).IsTrue();
     }
@@ -91,8 +87,7 @@ public sealed class EmailViewModelTests
     [Test]
     public async Task DefaultPhone_Contains_BoilerPlateAsync()
     {
-        TestSetup(_phone, _location);
-        _vm.SelectedLocation = new Location { Name = "name", Address = "address", PrintDate = false};
+        TestSetup(_phone);
 
         await Assert.That(_vm.EmailHtml).Contains(
             """
@@ -104,11 +99,10 @@ public sealed class EmailViewModelTests
     }
 
     [Test]
-    public async Task DespatchDetails_Null_SetsDeliveryAddress()
+    public async Task DespatchDetails_Null_SetsDeliveryAddressAsync()
     {
         _phone.DespatchDetails = null;
-        OrderDetails orderDetails = new(_phone);
-        _vm.OrderDetails = orderDetails;
+        TestSetup(_phone);
         StringBuilder expected = new();
         expected.AppendLine(_phone.NewUser);
 
@@ -118,7 +112,7 @@ public sealed class EmailViewModelTests
     [Test]
     public async Task GenerateEmail_ShouldBeCollection_WhenPrintDateTrueAsync()
     {
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
         Location location = new() { Name = "name", Address = "address", PrintDate = true};
         _vm.SelectedLocation = location;
 
@@ -130,8 +124,8 @@ public sealed class EmailViewModelTests
     [Test]
     public async Task GenerateEmail_ShouldBeDelivery_WhenPrintDateFalseAsync()
     {
-        TestSetup(_phone, _location);
-        _vm.SelectedLocation = new Location { Name = "name", Address = "address", PrintDate = false};
+        TestSetup(_phone);
+        Location location = new() { Name = "name", Address = "address", PrintDate = false };
 
         _vm.GenerateEmailHtml();
 
@@ -141,8 +135,7 @@ public sealed class EmailViewModelTests
     [Test]
     public async Task GenerateEmail_ShouldBeDelivery_WhenSelectedLocationNullAsync()
     {
-        TestSetup(_phone, _location);
-        _vm.SelectedLocation = new Location { Name = "name", Address = "address", PrintDate = false};
+        TestSetup(_phone);
 
         _vm.GenerateEmailHtml();
 
@@ -155,8 +148,8 @@ public sealed class EmailViewModelTests
     public async Task NorR_Includes_DeviceSuppliedAsync(string norr, string norrDescription)
     {
         _phone.Condition = norr;
-        TestSetup(_phone, _location);
-        _vm.SelectedLocation = new Location { Name = "name", Address = "address", PrintDate = false };
+        OrderDetails orderDetails = new(_phone);
+        _vm.OrderDetails = orderDetails;
 
         await Assert.That(_vm.EmailHtml).Contains($"<td>Device supplied:</td><td>{norrDescription} {_phone.OEM} {_phone.Model}</td>");
     }
@@ -164,7 +157,7 @@ public sealed class EmailViewModelTests
     [Test]
     public async Task OrderDetails_ShouldSetDeviceTypePhone_WhenModelDoesNotContanIPadAsync()
     {
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
 
         await Assert.That(_vm.OrderDetails.DeviceType).IsEqualTo(DeviceType.Phone);
     }
@@ -173,7 +166,7 @@ public sealed class EmailViewModelTests
     public async Task OrderDetails_ShouldSetDeviceTypeTable_WhenModelContainsIPadAsync()
     {
         _phone.Model = "iPad";
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
 
         await Assert.That(_vm.OrderDetails.DeviceType).IsEqualTo(DeviceType.Tablet);
     }
@@ -181,7 +174,7 @@ public sealed class EmailViewModelTests
     [Test]
     public async Task OrderDetails_ShouldSetOrderTypeNew_WhenPhoneDetailsSuppliedAsync()
     {
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
 
         await Assert.That(_vm.OrderType).IsEqualTo(OrderType.New);
     }
@@ -191,7 +184,7 @@ public sealed class EmailViewModelTests
     {
         _phone.PhoneNumber = null;
         _phone.SimNumber = null;
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
 
         await Assert.That(_vm.OrderType).IsEqualTo(OrderType.Replacement);
     }
@@ -199,7 +192,7 @@ public sealed class EmailViewModelTests
     [Test]
     public async Task OrderType_New_GeneratesHtmlAsync()
     {
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
 
         _vm.OrderType = OrderType.New;
 
@@ -210,7 +203,7 @@ public sealed class EmailViewModelTests
     [Test]
     public async Task OrderType_Replacement_GeneratesHtmlAsync()
     {
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
 
         _vm.OrderType = OrderType.Replacement;
 
@@ -222,7 +215,7 @@ public sealed class EmailViewModelTests
     public async Task OEM_Apple_Includes_AppleDetailsAsync()
     {
         _phone.OEM = OEMs.Apple;
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
 
         await Assert.That(_vm.EmailHtml).Contains(DataUsage);
         await Assert.That(_vm.EmailHtml).Contains(@"<a href=""https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/_layouts/15/Doc.aspx?sourcedoc=%7BABC3F4D7-1159-4F72-9C0B-7E155B970A28%7D&file=How%20to%20set%20up%20your%20new%20DCC%20iPhone.docx&action=default&mobileredirect=true"">");
@@ -234,7 +227,7 @@ public sealed class EmailViewModelTests
     public async Task OEM_Nokia_Includes_NokiaDetailsAsync()
     {
         _phone.OEM = OEMs.Nokia;
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
 
         await Assert.That(_vm.EmailHtml).DoesNotContain(DataUsage);
         await Assert.That(_vm.EmailHtml).DoesNotContain("Smartphone");
@@ -244,7 +237,7 @@ public sealed class EmailViewModelTests
     public async Task OEM_Samsung_Includes_SamsungDetailsAsync()
     {
         _phone.OEM = OEMs.Samsung;
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
 
         await Assert.That(_vm.EmailHtml).Contains(DataUsage);
         await Assert.That(_vm.EmailHtml).Contains(@"<a href=""https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/Android%20Enterprise%20-%20Setting%20up%20your%20Android%20Phone.docx?d=w64bb3f0a09e44557a64bb78311ee513b&csf=1&web=1"">");
@@ -255,7 +248,7 @@ public sealed class EmailViewModelTests
     public async Task PhoneNumber_Null_ExcludesPhoneNumberAsync()
     {
         _phone.PhoneNumber = null;
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
 
         await Assert.That(_vm.EmailHtml).DoesNotContain($"<tr><td>Phone number:</td><td>");
     }
@@ -290,7 +283,7 @@ public sealed class EmailViewModelTests
     [Test]
     public async Task PhoneNumber_NotNull_IncludesPhoneNumberAsync()
     {
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
 
         await Assert.That(_vm.EmailHtml).Contains($"<tr><td>Phone number:</td><td>{_phone.PhoneNumber}</td></tr></table>");
     }
@@ -301,8 +294,9 @@ public sealed class EmailViewModelTests
         _phone.NewUser = "New User";
         _phone.SR = 42;
         _phone.PhoneNumber = "999";
-        _location.Address = "{NewUser}, {SR}, {PhoneNumber}";
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
+
+        _vm.SelectedLocation = new Location { Name = "Collect", Address = "{NewUser}, {SR}, {PhoneNumber}", PrintDate = true };
 
         await Assert.That(_vm.DeliveryAddress).Contains(_phone.NewUser);
         await Assert.That(_vm.DeliveryAddress).Contains(_phone.SR.ToString()!);
@@ -310,19 +304,11 @@ public sealed class EmailViewModelTests
     }
 
     [Test]
-    public async Task SelectedLocation_WithNote_IncludedInEmail()
-    {
-        _location.Note ="**note**";
-        TestSetup(_phone, _location);
-
-        await Assert.That(_vm.EmailHtml).Contains("**note**");
-    }
-
-    [Test]
     public async Task SelectedLocation_WithPrintDateTrue_SetsCollectionDetailsAsync()
     {
-        _location.PrintDate = true;
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
+
+        _vm.SelectedLocation = new Location { Name = "Collect", Address = "Collection Address", PrintDate = true };
 
         await Assert.That(_vm.EmailHtml).Contains(" can be collected from</br>");
         await Assert.That(_vm.EmailHtml).Contains("It will be available for collection from");
@@ -331,10 +317,21 @@ public sealed class EmailViewModelTests
     [Test]
     public async Task SelectedLocation_WithPrintDateFalse_SetsDeliveryDetailsAsync()
     {
-        TestSetup(_phone, _location);
+        TestSetup(_phone);
+
+        _vm.SelectedLocation = new Location { Name = "Deliver", Address = "Delivery Address", PrintDate = false };
 
         await Assert.That(_vm.EmailHtml).Contains(" has been sent to");
         await Assert.That(_vm.EmailHtml).Contains("It was sent on");
+    }
+
+    [Test]
+    public async Task SelectedLocation_WithNote_IncludedInEmail()
+    {
+        TestSetup(_phone);
+        _vm.SelectedLocation = new Location { Name = "Deliver", Address = "Delivery Address", PrintDate = false, Note = "**note**" };
+
+        await Assert.That(_vm.EmailHtml).Contains("**note**");
     }
 
     [Test]

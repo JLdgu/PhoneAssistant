@@ -153,15 +153,16 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
     public void GenerateEmailHtml()
     {
-        if (SelectedLocation is null) return;
-
+        Location location = new () { Name = string.Empty, Address = string.Empty, PrintDate = false };
+        if (SelectedLocation is not null)
+            location = SelectedLocation;
         StringBuilder html = new("""
             <span style="font-size:14px; font-family:Verdana;">
             """);
-        if (SelectedLocation.PrintDate)
+        if (location.PrintDate)
         {
             html.AppendLine($"<p>Your {OrderDetails.Phone.OEM} {OrderDetails.Phone.Model} {OrderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
-            if (SelectedLocation.Name.Contains("GMH"))
+            if (location.Name.Contains("GMH"))
             {
                 html.AppendLine("DTS End User Compute Team, Hardware Room, Great Moor House, Bittern Road, Exeter, EX2 7FW</br>");
                 html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now,buffer: 2)}</p>");
@@ -178,8 +179,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             html.AppendLine($"It was sent on {ToOrdinalWorkingDate(DateTime.Now)}</p>");
         }
 
-        if (SelectedLocation.Note is not null)            
-            html.AppendLine(SelectedLocation.Note);
+        if (location.Note is not null)
+            html.AppendLine(location.Note);
 
         if (OrderDetails.Phone.OEM != OEMs.Nokia)
         {

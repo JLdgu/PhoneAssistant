@@ -1,22 +1,23 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Windows.Data;
-
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-
+using CsvHelper;
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application.Entities;
 using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Shared;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Globalization;
+using System.IO;
+using System.Windows.Data;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
-public sealed partial class PhonesMainViewModel : 
-    ObservableValidator, 
-    IRecipient<Order>, 
-    IRecipient<Phone>, 
+public sealed partial class PhonesMainViewModel :
+    ObservableValidator,
+    IRecipient<Order>,
+    IRecipient<Phone>,
     IPhonesMainViewModel
 {
     private readonly IPhonesItemViewModelFactory _phonesItemViewModelFactory;
@@ -30,11 +31,8 @@ public sealed partial class PhonesMainViewModel :
 
     public List<string> Conditions { get; } = ApplicationConstants.Conditions;
 
-    public IEnumerable<OEMs> OEMs
-    {
-        get { return Enum.GetValues(typeof(OEMs)).Cast<OEMs>(); }
-    }
-    
+    public IEnumerable<OEMs> OEMs => Enum.GetValues(typeof(OEMs)).Cast<OEMs>();
+
     public List<string> Statuses { get; } = ApplicationConstants.Statuses;
 
     public PhonesMainViewModel(IPhonesItemViewModelFactory phonesItemViewModelFactory,
@@ -51,6 +49,46 @@ public sealed partial class PhonesMainViewModel :
         messenger.RegisterAll(this);
     }
 
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private void ExportFiltered()
+    {
+        IEnumerable<PhonesItemViewModel> filtered = _filterView.Cast<PhonesItemViewModel>();
+        List<Phone> phones = [];
+        foreach (PhonesItemViewModel item in filtered)
+        {
+            Phone phone = new Phone
+            {
+                AssetTag = item.AssetTag,
+                FormerUser = item.FormerUser,
+                Imei = item.Imei,
+                LastUpdate = item.LastUpdate,
+                Model = item.Model,
+                NewUser = item.NewUser,
+                Condition = item.NorR,
+                Notes = item.Notes,
+                OEM = item.OEM,
+                PhoneNumber = item.PhoneNumber,
+                SimNumber = item.SimNumber,
+                Status = item.Status
+            };
+            if (item.SR == string.Empty || item.SR == "0")
+                phone.SR = null;
+            else
+                phone.SR = int.Parse(item.SR);
+            phones.Add(phone);
+        }
+
+        string exportCsv = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            "Downloads",
+            $"Phones {DateTime.Now:yyyy-MM-dd HHmmss}.csv");
+        StreamWriter writer = new(exportCsv);
+        CsvWriter csv = new(writer, CultureInfo.InvariantCulture);
+        csv.WriteRecords(phones);
+    }
+
+    private bool CanExport => !_filterView.IsEmpty;
+
     [RelayCommand]
     private async Task RefreshPhones()
     {
@@ -63,6 +101,7 @@ public sealed partial class PhonesMainViewModel :
         if (_filterView.IsEditingItem)
             _filterView.CommitEdit();
         _filterView.Refresh();
+        ExportFilteredCommand.NotifyCanExecuteChanged();
     }
 
     [ObservableProperty]

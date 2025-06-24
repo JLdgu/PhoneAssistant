@@ -36,6 +36,14 @@
                 <CheckBox Content="Include Disposals"
                           Foreground="#F5FFFFFF"
                           IsChecked="{Binding IncludeDisposals}" />
+
+                <Button Margin="5,5"
+                        Command="{Binding ExportFilteredCommand}"
+                        Content="{materialDesign:PackIcon Kind=MicrosoftExcel,
+                                                          Size=25}"
+                        Style="{StaticResource MaterialDesignOutlinedLightButton}"
+                        ToolTip="Export phones to csv" />
+
             </StackPanel>
         </Grid>
 

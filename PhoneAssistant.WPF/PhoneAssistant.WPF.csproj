@@ -13,6 +13,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Application\Entities\**" />
+      <EmbeddedResource Remove="Application\Entities\**" />
+      <None Remove="Application\Entities\**" />
+      <Page Remove="Application\Entities\**" />
+    </ItemGroup>
+
+    <ItemGroup>
         <None Remove="Resources\DebugPhone.ico" />
         <None Remove="Resources\EUC.png" />
         <None Remove="Resources\Keyboard.jpg" />
@@ -53,7 +60,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Application\Entities\" />
         <Folder Include="Properties\" />
     </ItemGroup>
 

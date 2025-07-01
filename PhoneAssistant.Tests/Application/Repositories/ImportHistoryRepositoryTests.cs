@@ -1,5 +1,4 @@
 ﻿using PhoneAssistant.Model;
-using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.Tests.Application.Repositories;
 public class ImportHistoryRepositoryTests

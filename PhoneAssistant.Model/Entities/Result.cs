@@ -1,4 +1,4 @@
-﻿namespace PhoneAssistant.WPF.Application.Repositories;
+﻿namespace PhoneAssistant.Model;
 
 public enum Result
 {

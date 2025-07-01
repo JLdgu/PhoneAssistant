@@ -1,6 +1,5 @@
-﻿using PhoneAssistant.Model;
+﻿namespace PhoneAssistant.Model.Tests;
 
-namespace PhoneAssistant.Tests.Application;
 public class DbContextTriggerTests() : DbTestHelper
 {
     readonly DbTestHelper _helper = new();

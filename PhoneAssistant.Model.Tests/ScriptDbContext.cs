@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PhoneAssistant.Tests.Application;
+namespace PhoneAssistant.Model.Tests;
 
 public class ScriptDBContext
 {
@@ -13,6 +13,6 @@ public class ScriptDBContext
 
         string sql = helper.DbContext.Database.GenerateCreateScript();
 
-        File.WriteAllText("c:/temp/DbCreate.sql", sql);
+        File.WriteAllText("c:/temp/DbCreate1.sql", sql);
     }
 }

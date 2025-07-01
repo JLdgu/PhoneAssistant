@@ -1,4 +1,4 @@
-﻿namespace PhoneAssistant.WPF.Application.Entities;
+﻿namespace PhoneAssistant.Model;
 
 public class Phone
 {
@@ -8,7 +8,7 @@ public class Phone
     public string? FormerUser { get; set; }
     public required string Condition { get; set; }
     public required string Status { get; set; }
-    public required OEMs OEM { get; set; }
+    public required Manufacturer OEM { get; set; }
     public required string Model { get; set; }
     public int? SR { get; set; }
     public string? AssetTag { get; set; }
@@ -16,12 +16,4 @@ public class Phone
     public string? Notes { get; set; }
     public string? DespatchDetails { get; set; }
     public string LastUpdate { get; set; } = string.Empty;
-}
-
-public enum OEMs
-{
-    Apple,
-    Nokia,
-    Samsung,
-    Other
 }

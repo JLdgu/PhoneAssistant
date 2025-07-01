@@ -1,11 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
-using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Application.Repositories;
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Shared;
+using System.ComponentModel.DataAnnotations;
 
 namespace PhoneAssistant.WPF.Features.Sims;
 
@@ -27,7 +24,7 @@ public sealed partial class SimsMainViewModel : ObservableValidator, ISimsMainVi
         NewUser = "Rosie Lane",
         Condition = "norr",
         Notes = "note",
-        OEM = OEMs.Apple,
+        OEM = Manufacturer.Apple,
         SR = 262281
     };
 
@@ -60,7 +57,7 @@ public sealed partial class SimsMainViewModel : ObservableValidator, ISimsMainVi
             Model = "SIM Card",
             NewUser = NewUser,
             Condition = "norr",
-            OEM = OEMs.Apple,
+            OEM = Manufacturer.Apple,
             SR = ticket
         };
 

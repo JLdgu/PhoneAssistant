@@ -52,10 +52,13 @@
         <PackageReference Include="Velopack" />
     </ItemGroup>
 
-    <Import Project="..\PhoneAssistant.Shared\PhoneAssistant.Shared.projitems" Label="Shared" />
+    <ItemGroup>
+        <Folder Include="Application\Entities\" />
+        <Folder Include="Properties\" />
+    </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Properties\" />
+      <ProjectReference Include="..\PhoneAssistant.Model\PhoneAssistant.Model.csproj" />
     </ItemGroup>
 
 </Project>

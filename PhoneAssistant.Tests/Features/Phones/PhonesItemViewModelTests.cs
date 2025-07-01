@@ -1,8 +1,7 @@
 ﻿using Moq;
 using Moq.AutoMock;
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Features.Phones;
-using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Application;
 
 namespace PhoneAssistant.Tests.Features.Phones;
@@ -22,7 +21,7 @@ public sealed class PhonesItemViewModelTests
         NewUser = "nu",
         Condition = "norr",
         Notes = "note",
-        OEM = OEMs.Apple,
+        OEM = Manufacturer.Apple,
         SR = 123456
     };
     private readonly Phone _updatedPhone = new()
@@ -37,7 +36,7 @@ public sealed class PhonesItemViewModelTests
         NewUser = "nu",
         Condition = "norr",
         Notes = "note",
-        OEM = OEMs.Apple,
+        OEM = Manufacturer.Apple,
         SR = 123456
     };
 
@@ -155,10 +154,10 @@ public sealed class PhonesItemViewModelTests
     [Test]
     public async Task OnOEMChanged_CallsUpdateAsync_WithChangedValueAsync()
     {
-        _vm.OEM = OEMs.Nokia;
+        _vm.OEM = Manufacturer.Nokia;
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        await Assert.That(_phone.OEM).IsEqualTo(OEMs.Nokia);
+        await Assert.That(_phone.OEM).IsEqualTo(Manufacturer.Nokia);
         await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 

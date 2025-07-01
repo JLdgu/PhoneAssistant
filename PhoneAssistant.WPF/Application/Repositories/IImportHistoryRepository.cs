@@ -1,4 +1,4 @@
-﻿using PhoneAssistant.WPF.Application.Entities;
+﻿using PhoneAssistant.Model;
 
 namespace PhoneAssistant.WPF.Application.Repositories;
 public interface IImportHistoryRepository

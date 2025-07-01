@@ -1,7 +1,6 @@
-﻿using System.ComponentModel;
+﻿using PhoneAssistant.Model;
+using System.ComponentModel;
 using System.Text;
-
-using PhoneAssistant.WPF.Application.Entities;
 
 namespace PhoneAssistant.WPF.Shared;
 

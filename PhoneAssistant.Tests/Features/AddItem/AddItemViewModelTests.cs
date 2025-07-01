@@ -1,14 +1,11 @@
-using Moq.AutoMock;
-
-using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Features.AddItem;
-using PhoneAssistant.WPF.Application.Repositories;
-using Moq;
-using System.ComponentModel.DataAnnotations;
-using PhoneAssistant.WPF.Application;
 using CommunityToolkit.Mvvm.Messaging;
-using PhoneAssistant.Tests.Shared;
+using Moq;
+using Moq.AutoMock;
 using PhoneAssistant.Model;
+using PhoneAssistant.Tests.Shared;
+using PhoneAssistant.WPF.Application;
+using PhoneAssistant.WPF.Features.AddItem;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
 namespace PhoneAssistant.Tests.Features.AddItem;
@@ -25,16 +22,16 @@ public partial class AddItemViewModelTests
     [Test]
     public async Task AddItemViewModel_DefaultOEMAndModelAsync()
     {
-        await Assert.That(_sut.OEM).IsEqualTo(OEMs.Apple);
+        await Assert.That((Manufacturer)_sut.OEM).IsEqualTo(Manufacturer.Apple);
         await Assert.That(_sut.Model).IsEqualTo("iPhone SE 2022");
     }
 
     [Test]
-    [Arguments(OEMs.Apple,"iPhone SE 2022")]
-    [Arguments(OEMs.Nokia, "110 4G")]
-    [Arguments(OEMs.Other, "")]
-    [Arguments(OEMs.Samsung, "A32")]
-    public async Task OnOEMChanged_ShouldChangeModelAsync(OEMs oem, string model)
+    [Arguments(Manufacturer.Apple,"iPhone SE 2022")]
+    [Arguments(Manufacturer.Nokia, "110 4G")]
+    [Arguments(Manufacturer.Other, "")]
+    [Arguments(Manufacturer.Samsung, "A32")]
+    public async Task OnOEMChanged_ShouldChangeModelAsync(Manufacturer oem, string model)
     {
         _sut.OEM = oem;
 
@@ -294,7 +291,7 @@ public partial class AddItemViewModelTests
         _sut.Condition = ApplicationConstants.Conditions[0].Substring(0, 1);
         _sut.Imei = "355808981147090";
         _sut.Model = "model";
-        _sut.OEM = OEMs.Apple;
+        _sut.OEM = Manufacturer.Apple;
         _sut.Status = "status";
 
         _sut.PhoneSaveCommand.Execute(null);
@@ -310,7 +307,7 @@ public partial class AddItemViewModelTests
         _sut.Condition = ApplicationConstants.Conditions[1].Substring(0, 1);
         _sut.Imei = "355808981147090";
         _sut.Model = "model";
-        _sut.OEM = OEMs.Apple;
+        _sut.OEM = Manufacturer.Apple;
         _sut.Status = "status";
 
         _sut.PhoneSaveCommand.Execute(null);
@@ -332,7 +329,7 @@ public partial class AddItemViewModelTests
             Condition = "norr",
             Imei = "imei",
             Model = "model",
-            OEM = OEMs.Apple,
+            OEM = Manufacturer.Apple,
             Status = "status"
         };
         Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
@@ -366,7 +363,7 @@ public partial class AddItemViewModelTests
             Condition = "norr",
             Imei = "imei",
             Model = "model",
-            OEM = OEMs.Apple,
+            OEM = Manufacturer.Apple,
             Status = "status"
         };
         Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
@@ -533,7 +530,7 @@ public partial class AddItemViewModelTests
         await Assert.That(_sut.Model).IsEqualTo("iPhone SE 2022");
         await Assert.That(_sut.PhoneNotes).IsNull();
         await Assert.That(_sut.PhoneNumber).IsNull();
-        await Assert.That(_sut.OEM).IsEqualTo(OEMs.Apple);
+        await Assert.That((Manufacturer)_sut.OEM).IsEqualTo(Manufacturer.Apple);
         await Assert.That(_sut.Status).IsEqualTo(ApplicationConstants.Statuses[1]);
         await Assert.That(_sut.SimNumber).IsNull();
         await Assert.That(_sut.Ticket).IsNull();

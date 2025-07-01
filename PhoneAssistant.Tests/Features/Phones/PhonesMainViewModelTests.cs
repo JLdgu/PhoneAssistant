@@ -1,16 +1,12 @@
-using System.ComponentModel;
-using System.Windows.Data;
-
 using CommunityToolkit.Mvvm.Messaging;
-
 using Moq;
 using Moq.AutoMock;
-
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application;
-using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Shared;
+using System.ComponentModel;
+using System.Windows.Data;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -22,7 +18,7 @@ public sealed class PhonesMainViewModelTests
         AutoMocker mocker = new();
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
 
-        vm.Receive(new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""});
+        vm.Receive(new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""});
 
         await Assert.That(vm.PhoneItems.Any()).IsTrue();
     }
@@ -31,9 +27,9 @@ public sealed class PhonesMainViewModelTests
     public async Task RefreshPhonesCommand_AfterCRUDChanges_UpdatesViewAsync()
     {
         List<Phone> phones = [
-            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = OEMs.Apple, Status = "In Stock"},
-            new Phone() { Imei = "2" , AssetTag = "Tag B2", Model = "", Condition = "", OEM = OEMs.Samsung, Status = "In Repair"},
-            new Phone() { Imei = "3" , AssetTag = "Tag C3", Model = "", Condition = "", OEM = OEMs.Nokia, Status = "Production"},
+            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "In Stock"},
+            new Phone() { Imei = "2" , AssetTag = "Tag B2", Model = "", Condition = "", OEM = Manufacturer.Samsung, Status = "In Repair"},
+            new Phone() { Imei = "3" , AssetTag = "Tag C3", Model = "", Condition = "", OEM = Manufacturer.Nokia, Status = "Production"},
         ];
 
         PhonesMainViewModel vm = ViewModelMockSetup(phones, false);
@@ -48,11 +44,11 @@ public sealed class PhonesMainViewModelTests
     public async Task IncludeDisposals_ShouldGetAllPhones_WhenTrue()
     {
         List<Phone> phones = [
-            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = OEMs.Apple, Status = "In Stock"},
-            new Phone() { Imei = "2" , AssetTag = "Tag B2", Model = "", Condition = "", OEM = OEMs.Samsung, Status = "In Repair"},
-            new Phone() { Imei = "3" , AssetTag = "Tag C3", Model = "", Condition = "", OEM = OEMs.Nokia, Status = "Production"},
-            new Phone() { Imei = "4" , AssetTag = "Tag D4", Model = "", Condition = "", OEM = OEMs.Other, Status = "Decommissioned"},
-            new Phone() { Imei = "5" , AssetTag = "Tag E5", Model = "", Condition = "", OEM = OEMs.Apple, Status = "Disposed"},
+            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "In Stock"},
+            new Phone() { Imei = "2" , AssetTag = "Tag B2", Model = "", Condition = "", OEM = Manufacturer.Samsung, Status = "In Repair"},
+            new Phone() { Imei = "3" , AssetTag = "Tag C3", Model = "", Condition = "", OEM = Manufacturer.Nokia, Status = "Production"},
+            new Phone() { Imei = "4" , AssetTag = "Tag D4", Model = "", Condition = "", OEM = Manufacturer.Other, Status = "Decommissioned"},
+            new Phone() { Imei = "5" , AssetTag = "Tag E5", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "Disposed"},
         ];
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
@@ -66,9 +62,9 @@ public sealed class PhonesMainViewModelTests
     public async Task RefreshPhonesCommand_ShouldUpdateView_WhenDatabaseChanged()
     {
         List<Phone> phones = [
-            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() { Imei = "2" , AssetTag = "Tag Bb2", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() { Imei = "3" , AssetTag = "Tag Ccc3", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""}
+            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() { Imei = "2" , AssetTag = "Tag Bb2", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() { Imei = "3" , AssetTag = "Tag Ccc3", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
         ];
         int index = 0;
         AutoMocker mocker = new();
@@ -87,7 +83,7 @@ public sealed class PhonesMainViewModelTests
         await vm.LoadAsync();
         index = 0;
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
-        phones.Add(new Phone() { Imei = "444", AssetTag = "Tag ddd4", Model = "", Condition = "", OEM = OEMs.Apple, Status = "" });
+        phones.Add(new Phone() { Imei = "444", AssetTag = "Tag ddd4", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "" });
 
         vm.RefreshPhonesCommand.Execute(null);
 
@@ -99,9 +95,9 @@ public sealed class PhonesMainViewModelTests
     public async Task ChangingFilterAssetTag_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
-            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() { Imei = "2" , AssetTag = "Tag Bb2", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() {Imei = "3", AssetTag = "Tag Ccc3", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""}
+            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() { Imei = "2" , AssetTag = "Tag Bb2", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() {Imei = "3", AssetTag = "Tag Ccc3", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
@@ -118,9 +114,9 @@ public sealed class PhonesMainViewModelTests
     public async Task ChangingFilterFormerUser_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
-            new Phone() { Imei = "1" , FormerUser = "Aa", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() {Imei = "2", FormerUser = "Bbb", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() {Imei = "3", FormerUser = "Ccc", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""}
+            new Phone() { Imei = "1" , FormerUser = "Aa", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() {Imei = "2", FormerUser = "Bbb", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() {Imei = "3", FormerUser = "Ccc", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
@@ -137,9 +133,9 @@ public sealed class PhonesMainViewModelTests
     public async Task ChangingFilterImei_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
-            new Phone() { Imei = "11", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() {Imei = "22", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() {Imei = "33", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""}
+            new Phone() { Imei = "11", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() {Imei = "22", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() {Imei = "33", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
@@ -156,9 +152,9 @@ public sealed class PhonesMainViewModelTests
     public async Task ChangingFilterNorR_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
-            new Phone() { Imei = "1", Condition="N", Model = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() { Imei = "2", Condition="R", Model = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() {Imei = "3", Condition = "N", Model = "", OEM = OEMs.Apple, Status = ""}
+            new Phone() { Imei = "1", Condition="N", Model = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() { Imei = "2", Condition="R", Model = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() {Imei = "3", Condition = "N", Model = "", OEM = Manufacturer.Apple, Status = ""}
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
@@ -175,9 +171,9 @@ public sealed class PhonesMainViewModelTests
     public async Task ChangingFilterNewUser_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
-            new Phone() { Imei = "1" , NewUser = "User Aa", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() {Imei = "2", NewUser = "User Bbb", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() {Imei = "3", NewUser = "User Ccc", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""}
+            new Phone() { Imei = "1" , NewUser = "User Aa", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() {Imei = "2", NewUser = "User Bbb", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() {Imei = "3", NewUser = "User Ccc", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
@@ -194,9 +190,9 @@ public sealed class PhonesMainViewModelTests
     public async Task ChangingFilterNotes_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
-            new Phone() { Imei = "1" , Notes = "Note1", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() { Imei = "2" , Notes = "Note2", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() {Imei = "3", Notes = "Note3", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""}
+            new Phone() { Imei = "1" , Notes = "Note1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() { Imei = "2" , Notes = "Note2", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() {Imei = "3", Notes = "Note3", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
@@ -213,15 +209,15 @@ public sealed class PhonesMainViewModelTests
     public async Task ChangingFilterOEM_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
-            new Phone() { Imei = "1" , OEM = OEMs.Apple, Model = "", Condition = "", Status = ""},
-            new Phone() {Imei = "2", OEM = OEMs.Nokia, Model = "", Condition = "", Status = ""},
-            new Phone() {Imei = "3", OEM = OEMs.Samsung, Model = "", Condition = "", Status = ""}
+            new Phone() { Imei = "1" , OEM = Manufacturer.Apple, Model = "", Condition = "", Status = ""},
+            new Phone() {Imei = "2", OEM = Manufacturer.Nokia, Model = "", Condition = "", Status = ""},
+            new Phone() {Imei = "3", OEM = Manufacturer.Samsung, Model = "", Condition = "", Status = ""}
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
 
-        vm.FilterOEM = OEMs.Samsung;
+        vm.FilterOEM = Manufacturer.Samsung;
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
         await Assert.That(actual).HasSingleItem();
@@ -232,9 +228,9 @@ public sealed class PhonesMainViewModelTests
     public async Task ChangingFilterPhoneNumber_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
-            new Phone() {Imei = "1", PhoneNumber = "01", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() { Imei = "2", PhoneNumber="02", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() {Imei = "3", PhoneNumber = "03", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""}
+            new Phone() {Imei = "1", PhoneNumber = "01", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() { Imei = "2", PhoneNumber="02", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() {Imei = "3", PhoneNumber = "03", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
@@ -251,9 +247,9 @@ public sealed class PhonesMainViewModelTests
     public async Task ChangingFilterSimNumber_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
-            new Phone() {Imei = "1", SimNumber = "101", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() { Imei = "2", SimNumber="202", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() {Imei = "3", SimNumber = "303", Model = "", Condition = "", OEM = OEMs.Apple, Status = ""}
+            new Phone() {Imei = "1", SimNumber = "101", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() { Imei = "2", SimNumber="202", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() {Imei = "3", SimNumber = "303", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
@@ -270,10 +266,10 @@ public sealed class PhonesMainViewModelTests
     public async Task ChangingFilterSR_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
-            new Phone() { Imei = "1", SR=111, Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() { Imei = "2", SR=222, Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() {Imei = "3", SR = 333, Model = "", Condition = "", OEM = OEMs.Apple, Status = ""},
-            new Phone() {Imei = "4", SR = 112233, Model = "", Condition = "", OEM = OEMs.Apple, Status = ""}
+            new Phone() { Imei = "1", SR=111, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() { Imei = "2", SR=222, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() {Imei = "3", SR = 333, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() {Imei = "4", SR = 112233, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
@@ -291,9 +287,9 @@ public sealed class PhonesMainViewModelTests
     public async Task ChangingFilterStatus_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
-            new Phone() { Imei = "1", Status="Production", Model = "", Condition = "", OEM = OEMs.Apple},
-            new Phone() { Imei = "2", Status="In Stock", Model = "", Condition = "", OEM = OEMs.Apple},
-            new Phone() { Imei = "3", Status="In Repair", Model = "", Condition = "", OEM = OEMs.Apple}
+            new Phone() { Imei = "1", Status="Production", Model = "", Condition = "", OEM = Manufacturer.Apple},
+            new Phone() { Imei = "2", Status="In Stock", Model = "", Condition = "", OEM = Manufacturer.Apple},
+            new Phone() { Imei = "3", Status="In Repair", Model = "", Condition = "", OEM = Manufacturer.Apple}
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();

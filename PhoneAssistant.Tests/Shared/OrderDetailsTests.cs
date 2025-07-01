@@ -1,4 +1,4 @@
-﻿using PhoneAssistant.WPF.Application.Entities;
+﻿using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.Tests.Shared;
@@ -13,7 +13,7 @@ public sealed class OrderDetailsTests
             Condition = "norr",
             Imei = "imei",
             Model = "model",
-            OEM = OEMs.Apple,
+            OEM = Manufacturer.Apple,
             Status = "status"
         };
 
@@ -35,7 +35,7 @@ public sealed class OrderDetailsTests
             Condition = "norr",
             Imei = "imei",
             Model = model,
-            OEM = OEMs.Apple,
+            OEM = Manufacturer.Apple,
             Status = "status"
         };
 
@@ -54,7 +54,7 @@ public sealed class OrderDetailsTests
             Condition = "norr",
             Imei = "imei",
             Model = "model",
-            OEM = OEMs.Apple,
+            OEM = Manufacturer.Apple,
             PhoneNumber = phoneNumber,
             Status = "status"
         };

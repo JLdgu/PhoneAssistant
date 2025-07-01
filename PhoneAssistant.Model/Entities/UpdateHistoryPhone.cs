@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace PhoneAssistant.WPF.Application.Entities;
+namespace PhoneAssistant.Model;
 
 public class UpdateHistoryPhone
 {
@@ -37,7 +37,7 @@ public class UpdateHistoryPhone
     public string? FormerUser { get; set; }
     public required string Condition { get; set; }
     public required string Status { get; set; }
-    public required OEMs OEM { get; set; }
+    public required Manufacturer OEM { get; set; }
     public required string Model { get; set; }
     public int? SR { get; set; }
     public string? AssetTag { get; set; }

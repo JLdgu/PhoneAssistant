@@ -1,11 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application;
-using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.Phones;
@@ -170,8 +167,8 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     }
 
     [ObservableProperty]
-    private OEMs _oEM;
-    async partial void OnOEMChanged(OEMs value)
+    private Manufacturer _oEM;
+    async partial void OnOEMChanged(Manufacturer value)
     {
         if (value == _phone.OEM) return;
 

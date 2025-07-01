@@ -1,16 +1,11 @@
-﻿using System.ComponentModel;
-using System.Globalization;
-using System.Text;
-
-using Moq;
+﻿using Moq;
 using Moq.AutoMock;
-
-using NPOI.OpenXmlFormats.Spreadsheet;
-
-using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Application.Repositories;
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Shared;
+using System.ComponentModel;
+using System.Globalization;
+using System.Text;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -29,7 +24,7 @@ public sealed class EmailViewModelTests
         NewUser = "nu",
         Condition = "norr",
         Notes = "note",
-        OEM = OEMs.Apple,
+        OEM = Manufacturer.Apple,
         SR = 123456
     };
 
@@ -214,7 +209,7 @@ public sealed class EmailViewModelTests
     [Test]
     public async Task OEM_Apple_Includes_AppleDetailsAsync()
     {
-        _phone.OEM = OEMs.Apple;
+        _phone.OEM = Manufacturer.Apple;
         TestSetup(_phone);
 
         await Assert.That(_vm.EmailHtml).Contains(DataUsage);
@@ -226,7 +221,7 @@ public sealed class EmailViewModelTests
     [Description("Issue 43")]
     public async Task OEM_Nokia_Includes_NokiaDetailsAsync()
     {
-        _phone.OEM = OEMs.Nokia;
+        _phone.OEM = Manufacturer.Nokia;
         TestSetup(_phone);
 
         await Assert.That(_vm.EmailHtml).DoesNotContain(DataUsage);
@@ -236,7 +231,7 @@ public sealed class EmailViewModelTests
     [Test]
     public async Task OEM_Samsung_Includes_SamsungDetailsAsync()
     {
-        _phone.OEM = OEMs.Samsung;
+        _phone.OEM = Manufacturer.Samsung;
         TestSetup(_phone);
 
         await Assert.That(_vm.EmailHtml).Contains(DataUsage);

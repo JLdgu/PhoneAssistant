@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Application.Repositories;
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Shared;
 using System.Collections.ObjectModel;
 using System.Text;
@@ -182,7 +181,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         if (location.Note is not null)
             html.AppendLine(location.Note);
 
-        if (OrderDetails.Phone.OEM != OEMs.Nokia)
+        if (OrderDetails.Phone.OEM != Manufacturer.Nokia)
         {
             html.AppendLine("""
             <p><br /><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1">
@@ -194,7 +193,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
                 """);
             
             html.AppendLine($"<p><br />Detailed setup instructions for your {OrderDetails.DeviceType.ToString().ToLower()}, are available here:</br>");
-            if (OrderDetails.Phone.OEM == OEMs.Apple)
+            if (OrderDetails.Phone.OEM == Manufacturer.Apple)
             {
                 html.Append(
                     """

@@ -1,6 +1,6 @@
 ﻿using EntityFrameworkCore.Triggered;
 
-namespace PhoneAssistant.WPF.Application.Entities;
+namespace PhoneAssistant.Model;
 
 public sealed class PhoneTrigger : IBeforeSaveTrigger<Phone>
 {

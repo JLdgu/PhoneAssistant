@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-using PhoneAssistant.WPF.Application.Entities;
-
 namespace PhoneAssistant.Model;
 
 public partial class PhoneAssistantDbContext : DbContext
@@ -72,7 +70,7 @@ public partial class PhoneAssistantDbContext : DbContext
             entity.Property(e => e.Imei).HasColumnName("IMEI");
             entity.Property(e => e.Condition).HasColumnName("NorR");
             entity.Property(e => e.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.OEM).HasConversion(o => o.ToString(), o => (OEMs)Enum.Parse(typeof(OEMs), o));
+            entity.Property(e => e.OEM).HasConversion(o => o.ToString(), o => (Manufacturer)Enum.Parse(typeof(Manufacturer), o));
             entity.Property(e => e.SR)
                 .HasColumnType("INTEGER")
                 .HasColumnName("SRNumber");
@@ -92,7 +90,7 @@ public partial class PhoneAssistantDbContext : DbContext
             entity.Property(e => e.Condition).HasColumnName("NorR");
             entity.Property(e => e.Imei).HasColumnName("IMEI");
             entity.Property(e => e.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.OEM).HasConversion(o => o.ToString(), o => (OEMs)Enum.Parse(typeof(OEMs), o));
+            entity.Property(e => e.OEM).HasConversion(o => o.ToString(), o => (Manufacturer)Enum.Parse(typeof(Manufacturer), o));
             entity.Property(e => e.SimNumber)
                 .HasColumnName("SIMNumber");
             entity.Property(e => e.SR)

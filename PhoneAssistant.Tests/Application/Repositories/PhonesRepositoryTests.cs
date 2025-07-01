@@ -1,10 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-
 using PhoneAssistant.Model;
-using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Application.Repositories;
-
-using TUnit.Assertions.Extensions;
 
 namespace PhoneAssistant.Tests.Application.Repositories;
 
@@ -37,7 +32,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Model = MODEL,
         NewUser = NEW_USER,
         Notes = NOTES,
-        OEM = OEMs.Nokia,
+        OEM = Manufacturer.Nokia,
         PhoneNumber = PHONE_NUMBER,
         SimNumber = SIM_NUMBER,
         SR = SR,
@@ -156,7 +151,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
             Imei = _phone.Imei,
             Condition = CONDITION_N,
             Model = "old model",
-            OEM = OEMs.Apple,
+            OEM = Manufacturer.Apple,
             Status = ApplicationConstants.Statuses[1]
         };
         await _helper.DbContext.Phones.AddAsync(original);
@@ -207,7 +202,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
                 Imei = _phone.Imei,
                 Condition = CONDITION_N,
                 Model = "old model",
-                OEM = OEMs.Apple,
+                OEM = Manufacturer.Apple,
                 Status = ApplicationConstants.Statuses[1]
             });
         await _helper.DbContext.SaveChangesAsync();

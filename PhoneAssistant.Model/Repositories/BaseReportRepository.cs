@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-using PhoneAssistant.Model;
-using PhoneAssistant.WPF.Application.Entities;
-
-namespace PhoneAssistant.WPF.Application.Repositories;
+namespace PhoneAssistant.Model;
 
 public sealed class BaseReportRepository(PhoneAssistantDbContext dbContext) : IBaseReportRepository
 {

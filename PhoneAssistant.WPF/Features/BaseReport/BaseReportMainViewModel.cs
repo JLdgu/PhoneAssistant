@@ -1,17 +1,13 @@
 ﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
+using NPOI.SS.UserModel;
+using PhoneAssistant.Model;
+using PhoneAssistant.WPF.Application.Repositories;
 using System.IO;
 using System.Windows;
 using System.Windows.Data;
-
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-
-using Microsoft.Win32;
-
-using NPOI.SS.UserModel;
-
-using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.WPF.Features.BaseReport;
 
@@ -35,7 +31,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
 
     public ObservableCollection<string> LogItems { get; } = new();
 
-    public ObservableCollection<Application.Entities.BaseReport> BaseReport { get; } = new();
+    public ObservableCollection<Model.BaseReport> BaseReport { get; } = new();
 
     [RelayCommand]
     private async Task Refresh()
@@ -63,7 +59,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     #region Filter
     public bool FilterView(object item)
     {
-        if (item is not Application.Entities.BaseReport vm) return false;
+        if (item is not Model.BaseReport vm) return false;
 
         if (FilterOutItem(FilterConnectedIMEI, vm.ConnectedIMEI)) return false;
 
@@ -227,7 +223,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
             var ConnectedIMEI = string.Empty;
             var LastUsedIMEI = row.GetCell(18).StringCellValue; 
 
-            Application.Entities.BaseReport item = new()
+            Model.BaseReport item = new()
             {
                 PhoneNumber = row.GetCell(6).StringCellValue,
                 UserName = row.GetCell(5).StringCellValue,
@@ -275,9 +271,9 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         else
             LatestImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
 
-        IEnumerable<Application.Entities.BaseReport> report = await _repository.GetBaseReportAsync();
+        IEnumerable<Model.BaseReport> report = await _repository.GetBaseReportAsync();
 
-        foreach (Application.Entities.BaseReport phone in report)
+        foreach (Model.BaseReport phone in report)
         {
             BaseReport.Add(phone);
         }

@@ -1,4 +1,4 @@
-﻿using PhoneAssistant.WPF.Application.Entities;
+﻿using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application.Repositories;
 
 namespace PhoneAssistant.Tests.Application.Repositories;

@@ -1,6 +1,4 @@
-﻿using PhoneAssistant.WPF.Application.Entities;
-
-using System.Threading.Tasks;
+﻿using PhoneAssistant.Model;
 
 namespace PhoneAssistant.Tests.Application;
 public class DbContextTriggerTests() : DbTestHelper
@@ -10,7 +8,7 @@ public class DbContextTriggerTests() : DbTestHelper
     [Test]
     public async Task AddPhone_ShouldSetLastUpdate()
     {
-        Phone phone = new() { Condition = "R", Imei = "imei", Model = "model", OEM = OEMs.Nokia, Status = "Production" };
+        Phone phone = new() { Condition = "R", Imei = "imei", Model = "model", OEM = Manufacturer.Nokia, Status = "Production" };
         await Assert.That(phone.LastUpdate).IsEmpty();
 
         await _helper.DbContext.Phones.AddAsync(phone);
@@ -22,7 +20,7 @@ public class DbContextTriggerTests() : DbTestHelper
     [Test]
     public async Task UpdatePhone_ShouldChangeLastUpdate()
     {
-        Phone phone = new() { Condition = "R", Imei = "imei", Model = "model", OEM = OEMs.Nokia, Status = "Production" };
+        Phone phone = new() { Condition = "R", Imei = "imei", Model = "model", OEM = Manufacturer.Nokia, Status = "Production" };
         await _helper.DbContext.Phones.AddAsync(phone);
         await _helper.DbContext.SaveChangesAsync();
         string addDateTime = phone.LastUpdate;

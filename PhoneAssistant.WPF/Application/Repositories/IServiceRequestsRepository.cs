@@ -1,6 +1,5 @@
-﻿using PhoneAssistant.WPF.Application.Entities;
+﻿namespace PhoneAssistant.Model;
 
-namespace PhoneAssistant.WPF.Application.Repositories;
 public interface IServiceRequestsRepository
 {
 }

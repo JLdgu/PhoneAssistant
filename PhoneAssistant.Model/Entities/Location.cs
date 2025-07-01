@@ -1,4 +1,4 @@
-﻿namespace PhoneAssistant.WPF.Application.Entities;
+﻿namespace PhoneAssistant.Model;
 
 public class Location
 {

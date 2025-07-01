@@ -3,8 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CsvHelper;
 using PhoneAssistant.Model;
-using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Shared;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -31,7 +29,7 @@ public sealed partial class PhonesMainViewModel :
 
     public List<string> Conditions { get; } = ApplicationConstants.Conditions;
 
-    public IEnumerable<OEMs> OEMs => Enum.GetValues(typeof(OEMs)).Cast<OEMs>();
+    public IEnumerable<Manufacturer> OEMs => Enum.GetValues(typeof(Manufacturer)).Cast<Manufacturer>();
 
     public List<string> Statuses { get; } = ApplicationConstants.Statuses;
 
@@ -251,8 +249,8 @@ public sealed partial class PhonesMainViewModel :
     }
 
     [ObservableProperty]
-    private OEMs? _filterOEM;
-    partial void OnFilterOEMChanged(OEMs? value)
+    private Manufacturer? _filterOEM;
+    partial void OnFilterOEMChanged(Manufacturer? value)
     {
         RefreshFilterView();
     }

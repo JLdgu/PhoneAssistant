@@ -9,8 +9,6 @@ using CommunityToolkit.Mvvm.Messaging;
 
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application;
-using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.AddItem;
@@ -32,7 +30,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         _baseReportRepository = baseReportRepository ?? throw new ArgumentNullException(nameof(baseReportRepository));
         _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
-        OEM = Application.Entities.OEMs.Apple;
+        OEM = Manufacturer.Apple;
         Model = "iPhone SE 2022";
         ValidateAllProperties();
     }
@@ -104,25 +102,25 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     [ObservableProperty]
     private string? _phoneNotes;
 
-    public static IEnumerable<OEMs> OEMs => Enum.GetValues(typeof(OEMs)).Cast<OEMs>();
+    public static IEnumerable<Manufacturer> OEMs => Enum.GetValues(typeof(Manufacturer)).Cast<Manufacturer>();
 
     [ObservableProperty]
-    private OEMs _oEM;
+    private Manufacturer _oEM;
 
-    partial void OnOEMChanged(OEMs value)
+    partial void OnOEMChanged(Manufacturer value)
     {
         switch (value)
         {
-            case Application.Entities.OEMs.Apple:
+            case Manufacturer.Apple:
                 Model = "iPhone SE 2022";
                 break;
-            case Application.Entities.OEMs.Nokia:
+            case Manufacturer.Nokia:
                 Model = "110 4G";
                 break;
-            case Application.Entities.OEMs.Samsung:
+            case Manufacturer.Samsung:
                Model = "A32";
                 break;
-            case Application.Entities.OEMs.Other:
+            case Manufacturer.Other:
                 Model = "";
                 break;
             default:
@@ -172,7 +170,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         Imei = string.Empty;
         PhoneNotes = null;
         PhoneNumber = null;
-        OEM = Application.Entities.OEMs.Apple;
+        OEM = Manufacturer.Apple;
         SimNumber = null;
         Status = ApplicationConstants.Statuses[1];
         SimNumber = null;

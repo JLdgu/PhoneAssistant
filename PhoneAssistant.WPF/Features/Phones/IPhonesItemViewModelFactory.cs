@@ -1,4 +1,4 @@
-﻿using PhoneAssistant.WPF.Application.Entities;
+﻿using PhoneAssistant.Model;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 public interface IPhonesItemViewModelFactory

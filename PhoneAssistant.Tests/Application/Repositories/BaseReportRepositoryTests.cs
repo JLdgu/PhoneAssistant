@@ -1,5 +1,4 @@
-﻿using PhoneAssistant.WPF.Application.Entities;
-using PhoneAssistant.WPF.Application.Repositories;
+﻿using PhoneAssistant.Model;
 
 namespace PhoneAssistant.Tests.Application.Repositories;
 public sealed class BaseReportRepositoryTests

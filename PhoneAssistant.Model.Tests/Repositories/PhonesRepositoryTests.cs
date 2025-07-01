@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using PhoneAssistant.Model;
 
-namespace PhoneAssistant.Tests.Application.Repositories;
+namespace PhoneAssistant.Model.Tests;
 
 public sealed class PhonesRepositoryTests : DbTestHelper
 {

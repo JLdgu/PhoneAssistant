@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PhoneAssistant.Model;
 
-namespace PhoneAssistant.WPF.Application.Repositories;
+namespace PhoneAssistant.Model;
 
 public sealed class ImportHistoryRepository(PhoneAssistantDbContext dbContext) : IImportHistoryRepository
 {

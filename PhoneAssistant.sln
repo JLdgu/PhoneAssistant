@@ -38,6 +38,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhoneAssistant.Model", "PhoneAssistant.Model\PhoneAssistant.Model.csproj", "{298D1B49-FFAA-4896-852E-7BA0E26F24B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhoneAssistant.Model.Tests", "PhoneAssistant.Model.Tests\PhoneAssistant.Model.Tests.csproj", "{7FAA9B04-F306-4533-A22F-D1067394B718}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +74,10 @@ Global
 		{298D1B49-FFAA-4896-852E-7BA0E26F24B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{298D1B49-FFAA-4896-852E-7BA0E26F24B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{298D1B49-FFAA-4896-852E-7BA0E26F24B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FAA9B04-F306-4533-A22F-D1067394B718}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FAA9B04-F306-4533-A22F-D1067394B718}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FAA9B04-F306-4533-A22F-D1067394B718}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FAA9B04-F306-4533-A22F-D1067394B718}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

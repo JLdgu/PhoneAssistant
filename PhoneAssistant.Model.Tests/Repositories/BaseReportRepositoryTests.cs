@@ -1,6 +1,5 @@
-﻿using PhoneAssistant.Model;
+﻿namespace PhoneAssistant.Model.Tests;
 
-namespace PhoneAssistant.Tests.Application.Repositories;
 public sealed class BaseReportRepositoryTests
 {
     readonly DbTestHelper _helper = new();

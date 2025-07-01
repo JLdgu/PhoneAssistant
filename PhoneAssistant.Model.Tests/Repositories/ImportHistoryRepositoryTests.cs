@@ -1,7 +1,5 @@
-﻿using PhoneAssistant.Model;
-using PhoneAssistant.WPF.Application.Repositories;
+﻿namespace PhoneAssistant.Model.Tests; 
 
-namespace PhoneAssistant.Tests.Application.Repositories;
 public class ImportHistoryRepositoryTests
 {
     readonly DbTestHelper _helper = new();

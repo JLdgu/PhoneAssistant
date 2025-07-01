@@ -1,10 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
-using PhoneAssistant.WPF.Application.Repositories;
 using PhoneAssistant.WPF.Features.AddItem;
 using PhoneAssistant.WPF.Features.BaseReport;
 using PhoneAssistant.WPF.Features.Dashboard;

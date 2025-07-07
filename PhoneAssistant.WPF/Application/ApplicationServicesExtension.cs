@@ -25,12 +25,13 @@ public static class ApplicationServicesExtensions
         host.ConfigureServices((context, services) =>
         {
             // Application
-            UserSettings settings = new();
-            string database = settings.Database;
-            string connectionString = $@"DataSource={database};";
+            services.AddSingleton<ApplicationSettingsRepository>();
+            ApplicationSettingsRepository repo = new();
+            string connectionString = $@"DataSource={repo.ApplicationSettings.Database};";
             services.AddDbContext<PhoneAssistantDbContext>(
                             options => options.UseSqlite(connectionString),
                             ServiceLifetime.Singleton);
+            
             services.AddSingleton<IUserSettings, UserSettings>();
 
             services.AddSingleton<WeakReferenceMessenger>();

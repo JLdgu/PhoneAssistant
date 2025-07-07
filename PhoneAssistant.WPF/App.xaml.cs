@@ -35,11 +35,6 @@ public partial class App : System.Windows.Application
         Log.Information("Starting Phone Assistant");
 
         VelopackApp.Build().Run();
-
-        if (!UserSettings.DatabaseFullPathRetrieved())
-        {
-            return;
-        }
         
         try
         {
@@ -61,24 +56,15 @@ public partial class App : System.Windows.Application
             .ConfigureApplicationServices()
             .Build();
 
-        IConfiguration config = host.Services.GetRequiredService<IConfiguration>();
-
-        if (config is IConfigurationRoot aaa)
-            Log.Information("IonfigurationRoot");
-        else if (config is IConfigurationBuilder bbb)
-            Log.Information("IonfigurationBuilder");
-        else if (config is IConfiguration ccc)
-             Log.Information("Ionfiguration");
-
-        int ddt = config.GetValue<int>("DefaultDecommionedTicket");
-
         await host.StartAsync().ConfigureAwait(true);
+
+
+        App app = new();
+        app.InitializeComponent();
 
         var settings = host.Services.GetRequiredService<ISettingsMainViewModel>();
         await settings.LoadAsync();
 
-        App app = new();
-        app.InitializeComponent();
         app.MainWindow = host.Services.GetRequiredService<MainWindow>();
         app.MainWindow.Visibility = Visibility.Visible;
         app.Run();
@@ -129,6 +115,4 @@ public partial class App : System.Windows.Application
 
         App.Current.Shutdown();
     }
-
-
 }

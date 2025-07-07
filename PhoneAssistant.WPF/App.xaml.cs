@@ -1,14 +1,20 @@
-﻿using MaterialDesignThemes.Wpf;
+﻿using System.Windows;
+using System.Windows.Media;
+using System.Windows.Threading;
+
+using MaterialDesignThemes.Wpf;
+
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.Settings;
-using Serilog.Sinks.SystemConsole.Themes;
+
 using Serilog;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Threading;
+using Serilog.Sinks.SystemConsole.Themes;
+
 using Velopack;
 
 namespace PhoneAssistant.WPF;
@@ -28,12 +34,13 @@ public partial class App : System.Windows.Application
             .CreateLogger();
         Log.Information("Starting Phone Assistant");
 
+        VelopackApp.Build().Run();
+
         if (!UserSettings.DatabaseFullPathRetrieved())
         {
             return;
         }
         
-        VelopackApp.Build().Run();
         try
         {
             MainAsync(args).GetAwaiter().GetResult();
@@ -52,7 +59,19 @@ public partial class App : System.Windows.Application
     {
         using IHost host = Host.CreateDefaultBuilder()
             .ConfigureApplicationServices()
-            .Build();        
+            .Build();
+
+        IConfiguration config = host.Services.GetRequiredService<IConfiguration>();
+
+        if (config is IConfigurationRoot aaa)
+            Log.Information("IonfigurationRoot");
+        else if (config is IConfigurationBuilder bbb)
+            Log.Information("IonfigurationBuilder");
+        else if (config is IConfiguration ccc)
+             Log.Information("Ionfiguration");
+
+        int ddt = config.GetValue<int>("DefaultDecommionedTicket");
+
         await host.StartAsync().ConfigureAwait(true);
 
         var settings = host.Services.GetRequiredService<ISettingsMainViewModel>();

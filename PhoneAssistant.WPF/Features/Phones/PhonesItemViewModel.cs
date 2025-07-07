@@ -2,30 +2,29 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using PhoneAssistant.Model;
-using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
 public sealed partial class PhonesItemViewModel : ObservableObject
 {
-    private readonly IPhonesRepository _repository;
+    private readonly IApplicationSettingsRepository _appSettings;
     private readonly IBaseReportRepository _baseReportRepository;
-    private readonly IUserSettings _userSettings;
+    private readonly IPhonesRepository _repository;
     private readonly IPrintEnvelope _printEnvelope;
     private readonly IMessenger _messenger;
     private readonly Phone _phone;
 
-    public PhonesItemViewModel(IPhonesRepository repository,
+    public PhonesItemViewModel(IApplicationSettingsRepository appSettings,
                                IBaseReportRepository baseReportRepository,
-                               IUserSettings userSettings,
+                               IPhonesRepository repository,
                                IPrintEnvelope printEnvelope,
                                IMessenger messenger,
                                Phone phone)
     {
+        _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _baseReportRepository = baseReportRepository ?? throw new ArgumentNullException(nameof(baseReportRepository));
-        _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
         _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         _phone = phone ?? throw new ArgumentNullException(nameof(phone));
@@ -260,7 +259,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         }
         if (value == "Decommissioned")
         {
-            SR = _userSettings.DefaultDecommissionedTicket.ToString();             
+            SR = _appSettings.ApplicationSettings.DefaultDecommissionedTicket.ToString();             
         }
 
         if (value == "In Stock" || value == "Decommissioned") 

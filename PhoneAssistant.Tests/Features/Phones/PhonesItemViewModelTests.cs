@@ -1,8 +1,11 @@
-﻿using Moq;
+﻿using System.Net.Sockets;
+
+using Moq;
 using Moq.AutoMock;
+
 using PhoneAssistant.Model;
-using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Application;
+using PhoneAssistant.WPF.Features.Phones;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -210,9 +213,11 @@ public sealed class PhonesItemViewModelTests
     [Test]
     [Arguments("In Stock")]
     [Arguments("Decommissioned")]
-    public async Task OnStatusChanged_ShouldClearNotes_WhenNewStatusInStockOrDecomissionedAsync(string status)
+    public async Task OnStatusChanged_ShouldClearNotes_WhenNewStatusInStockOrDecommissionedAsync(string status)
     {
-        string? expectedFormerUser = _phone.NewUser;
+        Mock<IApplicationSettingsRepository> settings = _mocker.GetMock<IApplicationSettingsRepository>();
+        settings.Setup(s => s.ApplicationSettings).Returns(new ApplicationSettings());
+
         _vm.Status = status;
 
         await Assert.That(_vm.Notes).IsEmpty();
@@ -225,6 +230,9 @@ public sealed class PhonesItemViewModelTests
     public async Task OnStatusChanged_ShouldClearProductionFields_WhenNewStatusInStockOrInRepairOrDecommissionedAsync(string status)
     {
         string? expectedFormerUser = _phone.NewUser;
+        Mock<IApplicationSettingsRepository> settings = _mocker.GetMock<IApplicationSettingsRepository>();
+        settings.Setup(s => s.ApplicationSettings).Returns(new ApplicationSettings());
+
         _vm.Status = status;
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
@@ -275,9 +283,8 @@ public sealed class PhonesItemViewModelTests
     [Test]
     public async Task OnStatusChanged_ShouldSetTicketToDefault_WhenDecommissionedAsync()
     {
-        Mock<IUserSettings> settings;
-        settings = _mocker.GetMock<IUserSettings>();
-        settings.Setup(r => r.DefaultDecommissionedTicket).Returns(987654);
+        Mock<IApplicationSettingsRepository> settings = _mocker.GetMock<IApplicationSettingsRepository>();
+        settings.Setup(s => s.ApplicationSettings).Returns(new ApplicationSettings() { DefaultDecommissionedTicket = 987654 });
 
         _vm.Status = "Decommissioned";
 

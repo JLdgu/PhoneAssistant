@@ -25,24 +25,18 @@ public static class ApplicationServicesExtensions
         host.ConfigureServices((context, services) =>
         {
             // Application
-            services.AddSingleton<ApplicationSettingsRepository>();
+            services.AddSingleton<IApplicationSettingsRepository, ApplicationSettingsRepository>();
             ApplicationSettingsRepository repo = new();
             string connectionString = $@"DataSource={repo.ApplicationSettings.Database};";
             services.AddDbContext<PhoneAssistantDbContext>(
                             options => options.UseSqlite(connectionString),
                             ServiceLifetime.Singleton);
             
-            services.AddSingleton<IUserSettings, UserSettings>();
-
             services.AddSingleton<WeakReferenceMessenger>();
             services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider => provider.GetRequiredService<WeakReferenceMessenger>());
 
-            services.AddTransient(x =>
-            {
-                const string ReleaseUrl = @"\\countyhall.ds2.devon.gov.uk\docs\exeter, county hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application";
-                return new UpdateManager(ReleaseUrl,
-                            new UpdateOptions() { AllowVersionDowngrade = true });
-            });
+            services.AddTransient(x => new UpdateManager(repo.ApplicationSettings.ReleaseUrl,
+                            new UpdateOptions() { AllowVersionDowngrade = true }));
 
             // Repositories
             services.AddSingleton<IBaseReportRepository, BaseReportRepository>();

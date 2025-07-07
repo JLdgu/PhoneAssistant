@@ -7,7 +7,7 @@ public static class DatabaseServices
 {
     public static void BackupDatabase(IHost host)
     {
-        ApplicationSettingsRepository repo =  host.Services.GetRequiredService<ApplicationSettingsRepository>();
+        IApplicationSettingsRepository repo =  host.Services.GetRequiredService<IApplicationSettingsRepository>();
 
         string database = repo.ApplicationSettings.Database;
         if (!File.Exists(database)) throw new FileNotFoundException();

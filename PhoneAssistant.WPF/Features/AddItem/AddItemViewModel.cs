@@ -8,27 +8,26 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using PhoneAssistant.Model;
-using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.AddItem;
 public partial class AddItemViewModel : ObservableValidator, IViewModel
 {
-    private readonly IPhonesRepository _phonesRepository;
+    private readonly IApplicationSettingsRepository _appSettings;
     private readonly IBaseReportRepository _baseReportRepository;
-    private readonly IUserSettings _userSettings;
     private readonly IMessenger _messenger;
+    private readonly IPhonesRepository _phonesRepository;
 
     public ObservableCollection<string> LogItems { get; } = [];
 
     public AddItemViewModel(IPhonesRepository phonesRepository,
                             IBaseReportRepository baseReportRepository,
-                            IUserSettings userSettings,
+                            IApplicationSettingsRepository appSettings,
                             IMessenger messenger)
     {
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
         _baseReportRepository = baseReportRepository ?? throw new ArgumentNullException(nameof(baseReportRepository));
-        _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
+        _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         OEM = Manufacturer.Apple;
         Model = "iPhone SE 2022";
@@ -151,7 +150,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
     partial void OnStatusChanged(string value)
     {
         if ((value == "Decommissioned" || value == "Disposed") && string.IsNullOrEmpty(Ticket))
-            Ticket = _userSettings.DefaultDecommissionedTicket.ToString();
+            Ticket = _appSettings.ApplicationSettings.DefaultDecommissionedTicket.ToString();
         else
             ValidateProperty(Ticket, "Ticket");
     }

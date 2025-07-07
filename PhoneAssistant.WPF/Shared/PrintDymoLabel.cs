@@ -1,11 +1,11 @@
 ﻿using System.Drawing;
 using System.Drawing.Printing;
 
-using PhoneAssistant.WPF.Application;
+using PhoneAssistant.Model;
 
 namespace PhoneAssistant.WPF.Shared
 {
-    public sealed class PrintDymoLabel(IUserSettings userSettings) : IPrintDymoLabel
+    public sealed class PrintDymoLabel(IApplicationSettingsRepository appSettings) : IPrintDymoLabel
     {
         // For Dymo 450 printer and Label 30256 Shipping w231 x h400
         // the largest rectangle we can draw is
@@ -15,7 +15,7 @@ namespace PhoneAssistant.WPF.Shared
         const int MarginTop = 20;
         const int MarginLeft = 2;
 
-        private readonly IUserSettings _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
+        private readonly IApplicationSettingsRepository _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         private string? _address;
         private string? _includeDate;
 
@@ -29,15 +29,15 @@ namespace PhoneAssistant.WPF.Shared
             pd.DefaultPageSettings.Color = false;
             pd.DefaultPageSettings.PaperSize = new PaperSize("30256 Shipping", 231, 400);
 
-            if (_userSettings.DymoPrintToFile)
+            if (_appSettings.ApplicationSettings.DymoPrintToFile)
             {
                 pd.PrinterSettings.PrinterName = "Microsoft Print to PDF";
                 pd.DefaultPageSettings.PrinterSettings.PrintToFile = true;
-                pd.DefaultPageSettings.PrinterSettings.PrintFileName = _userSettings.DymoPrintFile;
+                pd.DefaultPageSettings.PrinterSettings.PrintFileName = _appSettings.ApplicationSettings.DymoPrintFile;
             }
             else
             {
-                pd.PrinterSettings.PrinterName = _userSettings.DymoPrinter;
+                pd.PrinterSettings.PrinterName = _appSettings.ApplicationSettings.DymoPrinter;
                 pd.DefaultPageSettings.PrinterSettings.PrintToFile = false;
             }
 

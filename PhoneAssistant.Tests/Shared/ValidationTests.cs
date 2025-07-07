@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Moq;
 using Moq.AutoMock;
 
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Features.AddItem;
 using PhoneAssistant.WPF.Features.Sims;
 using PhoneAssistant.WPF.Shared;
@@ -93,7 +95,11 @@ public sealed class ValidationTests
     public async Task ValidateTicket_ShouldReturnFailure_WithAddItemVM_WhenDisposalAndTicketNotPresentAsync(string status)
     {
         AutoMocker mocker = new();
+        Mock<IApplicationSettingsRepository> _applicationSettingsRepository;
+        _applicationSettingsRepository = mocker.GetMock<IApplicationSettingsRepository>();
+        _applicationSettingsRepository.Setup(s => s.ApplicationSettings).Returns(new ApplicationSettings());
         AddItemViewModel model = mocker.CreateInstance<AddItemViewModel>();
+
         model.Status = status;
         ValidationContext context = new(model);
 
@@ -107,6 +113,9 @@ public sealed class ValidationTests
     public async Task ValidateTicket_ShouldReturnFailure_WithSimsMainVM_WhenTicketNotPresentAsync()
     {
         AutoMocker mocker = new();
+        Mock<IApplicationSettingsRepository> _applicationSettingsRepository;
+        _applicationSettingsRepository = mocker.GetMock<IApplicationSettingsRepository>();
+        _applicationSettingsRepository.Setup(s => s.ApplicationSettings).Returns(new ApplicationSettings());
         SimsMainViewModel model = mocker.CreateInstance<SimsMainViewModel>();
         ValidationContext context = new(model);
 

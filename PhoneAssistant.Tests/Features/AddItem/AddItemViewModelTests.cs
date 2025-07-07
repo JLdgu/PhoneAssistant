@@ -3,7 +3,6 @@ using Moq;
 using Moq.AutoMock;
 using PhoneAssistant.Model;
 using PhoneAssistant.Tests.Shared;
-using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.AddItem;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
@@ -105,26 +104,15 @@ public partial class AddItemViewModelTests
     [Test]
     [Arguments(ApplicationConstants.StatusDecommissioned)]
     [Arguments(ApplicationConstants.StatusDisposed)]
-    public async Task GetErrors_ShouldContainError_WhenDisposalWithDefaultTicketAsync(string status)
+    public async Task GetErrors_ShouldNotContainError_WhenDisposalWithDefaultTicketAsync(string status)
     {
-        Mock<IUserSettings> setings = _mocker.GetMock<IUserSettings>();
-        setings.Setup(s => s.DefaultDecommissionedTicket).Returns(123456);
+        Mock<IApplicationSettingsRepository> settings = _mocker.GetMock<IApplicationSettingsRepository>();
+        settings.Setup(s => s.ApplicationSettings).Returns(new ApplicationSettings());
 
         _sut.Status = status;
 
         IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Ticket));
         await Assert.That(errors).IsEmpty();
-    }
-
-    [Test]
-    [Arguments(ApplicationConstants.StatusDecommissioned)]
-    [Arguments(ApplicationConstants.StatusDisposed)]
-    public async Task GetErrors_ShouldContainError_WhenDisposalWithNoDefaultTicketAsync(string status)
-    {
-        _sut.Status = status;
-
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Ticket));
-        await Assert.That(errors.First().ToString()).IsEqualTo("Ticket must 6 or 7 digits");
     }
 
     [Test]

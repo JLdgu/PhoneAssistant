@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-
 using TUnit.Assertions.AssertConditions.Throws;
 
 namespace PhoneAssistant.Model.Tests.Repositories;
@@ -7,7 +6,7 @@ namespace PhoneAssistant.Model.Tests.Repositories;
 public sealed class ApplicationSettingsRepositoryTests
 {
     private readonly string _appSettingsPath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
-    JsonSerializerOptions _options = new() { WriteIndented = true };
+    private readonly JsonSerializerOptions _options = new() { WriteIndented = true };
 
     [Test]
     [NotInParallel]
@@ -22,7 +21,7 @@ public sealed class ApplicationSettingsRepositoryTests
         string json = File.ReadAllText(_appSettingsPath);
         var appSettings = JsonSerializer.Deserialize<ApplicationSettings>(json) ?? new ApplicationSettings();
 
-        await Assert.That(repository.ApplicationSettings.DefaultDecommissionedTicket).IsEqualTo(263323);
+        await Assert.That(appSettings.DefaultDecommissionedTicket).IsEqualTo(repository.ApplicationSettings.DefaultDecommissionedTicket);
     }
 
     [Test]

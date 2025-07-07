@@ -3,7 +3,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using PhoneAssistant.WPF.Application;
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Features.AddItem;
 using PhoneAssistant.WPF.Features.BaseReport;
 using PhoneAssistant.WPF.Features.Dashboard;
@@ -34,6 +34,7 @@ public enum ViewModelType
 public sealed partial class MainWindowViewModel : ObservableObject
 {
     private readonly AddItemViewModel _addItemViewModel;
+    private readonly IApplicationSettingsRepository _appSettings;
     private readonly IBaseReportMainViewModel _baseReportMainViewModel;
     private readonly IDashboardMainViewModel _dashboardMainViewModel;
     private readonly IDisposalsMainViewModel _disposalsMainViewModel;
@@ -42,9 +43,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private readonly ISimsMainViewModel _simsMainViewModel;
     private readonly ISettingsMainViewModel _settingsMainViewModel;
     private readonly IUsersMainViewModel _usersMainViewModel;
-    private readonly IUserSettings _userSettings;
 
     public MainWindowViewModel(AddItemViewModel addItemViewModel,
+                               IApplicationSettingsRepository appSettings,
                                IBaseReportMainViewModel baseReportMainViewModel,
                                IDashboardMainViewModel dashboardMainViewModel,
                                IDisposalsMainViewModel disposalsMainViewModel,
@@ -52,10 +53,10 @@ public sealed partial class MainWindowViewModel : ObservableObject
                                IPhonesMainViewModel phonesMainViewModel,
                                ISimsMainViewModel simsMainViewModel,
                                ISettingsMainViewModel settingsMainViewModel,
-                               IUsersMainViewModel usersMainViewModel,
-                               IUserSettings userSettings)
+                               IUsersMainViewModel usersMainViewModel)
     {
         _addItemViewModel = addItemViewModel ?? throw new ArgumentNullException(nameof(addItemViewModel));
+        _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         _baseReportMainViewModel = baseReportMainViewModel ?? throw new ArgumentNullException(nameof(baseReportMainViewModel));
         _dashboardMainViewModel = dashboardMainViewModel ?? throw new ArgumentNullException(nameof(dashboardMainViewModel));
         _disposalsMainViewModel = disposalsMainViewModel ?? throw new ArgumentNullException(nameof(disposalsMainViewModel));
@@ -64,7 +65,6 @@ public sealed partial class MainWindowViewModel : ObservableObject
         _simsMainViewModel = simsMainViewModel ?? throw new ArgumentNullException(nameof(simsMainViewModel));
         _settingsMainViewModel = settingsMainViewModel ?? throw new ArgumentNullException(nameof(settingsMainViewModel));
         _usersMainViewModel = usersMainViewModel ?? throw new ArgumentNullException(nameof(usersMainViewModel));
-        _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
 
 #if DEBUG
         Development = true;
@@ -72,7 +72,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
         if (_settingsMainViewModel.UpdateState == ApplicationUpdateState.UpdateAvailable)
             ShowUpdateBadge = Visibility.Visible;
 
-        SelectedView = _userSettings.CurrentView;
+        SelectedView = (ViewModelType)appSettings.ApplicationSettings.CurrentView;
         _ = UpdateViewAsync(SelectedView);
     }
 
@@ -104,8 +104,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
             ViewModelType.Users => _usersMainViewModel,
             _ => throw new NotImplementedException()
         };
-        _userSettings.CurrentView = selectedViewModelType;
-        _userSettings.Save();
+        _appSettings.ApplicationSettings.CurrentView = (int)selectedViewModelType;
+        _appSettings.Save();
 
         await SelectedViewModel.LoadAsync();
     }

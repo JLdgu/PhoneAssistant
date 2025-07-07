@@ -68,15 +68,16 @@ public sealed class PhonesMainViewModelTests
         ];
         int index = 0;
         AutoMocker mocker = new();
+        Mock<IApplicationSettingsRepository> settings = mocker.GetMock<IApplicationSettingsRepository>();
+        settings.Setup(s => s.ApplicationSettings).Returns(new ApplicationSettings());
         Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
         repository.Setup(r => r.GetActivePhonesAsync()).ReturnsAsync(phones);
         Mock<IBaseReportRepository> sims = mocker.GetMock<IBaseReportRepository>();
-        Mock<IUserSettings> settings = mocker.GetMock<IUserSettings>();
         Mock<IPrintEnvelope> print = mocker.GetMock<IPrintEnvelope>();
         Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
         Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
         factory.Setup(r => r.Create(It.IsAny<Phone>()))
-                            .Returns(() => new PhonesItemViewModel(repository.Object, sims.Object, settings.Object, print.Object, messenger.Object, phones[index]))
+                            .Returns(() => new PhonesItemViewModel(settings.Object, sims.Object, repository.Object,  print.Object, messenger.Object, phones[index]))
                             .Callback(() => index++);
 
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
@@ -307,18 +308,19 @@ public sealed class PhonesMainViewModelTests
         int index = 0;
         AutoMocker mocker = new();
 
+        Mock<IApplicationSettingsRepository> settings = mocker.GetMock<IApplicationSettingsRepository>();
+        settings.Setup(s => s.ApplicationSettings).Returns(new ApplicationSettings());
         Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
         if (getActive ) 
             repository.Setup(r => r.GetActivePhonesAsync()).ReturnsAsync(phones);
         else
             repository.Setup(r => r.GetAllPhonesAsync()).ReturnsAsync(phones);
         Mock<IBaseReportRepository> sims = mocker.GetMock<IBaseReportRepository>();
-        Mock<IUserSettings> settings = mocker.GetMock<IUserSettings>();
         Mock<IPrintEnvelope> print = mocker.GetMock<IPrintEnvelope>();
         Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
         Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
         factory.Setup(r => r.Create(It.IsAny<Phone>()))
-                            .Returns(() => new PhonesItemViewModel(repository.Object, sims.Object, settings.Object, print.Object, messenger.Object, phones[index]))
+                            .Returns(() => new PhonesItemViewModel(settings.Object, sims.Object, repository.Object, print.Object, messenger.Object, phones[index]))
                             .Callback(() => index++);
 
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();

@@ -1,26 +1,18 @@
-﻿using System.Windows;
-using System.Windows.Media;
-using System.Windows.Threading;
-
-using MaterialDesignThemes.Wpf;
-
-using Microsoft.Extensions.Configuration;
+﻿using MaterialDesignThemes.Wpf;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.Settings;
-
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
-
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Threading;
 using Velopack;
 
 namespace PhoneAssistant.WPF;
-/// <summary>
-/// Interaction logic for App.xaml
-/// </summary>
+
 public partial class App : System.Windows.Application
 {
     [STAThread]
@@ -57,7 +49,6 @@ public partial class App : System.Windows.Application
             .Build();
 
         await host.StartAsync().ConfigureAwait(true);
-
 
         App app = new();
         app.InitializeComponent();

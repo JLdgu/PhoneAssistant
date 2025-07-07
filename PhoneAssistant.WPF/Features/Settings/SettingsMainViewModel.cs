@@ -1,54 +1,55 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Windows;
-
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
 using Microsoft.Win32;
-
-using PhoneAssistant.WPF.Application;
-
+using PhoneAssistant.Model;
 using Serilog;
-
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
+using System.Windows;
 using Velopack;
 
 namespace PhoneAssistant.WPF.Features.Settings;
 
 public sealed partial class SettingsMainViewModel : ObservableValidator, ISettingsMainViewModel
 {
-    private readonly IUserSettings _userSettings;
+    private readonly IApplicationSettingsRepository _appSettings;
     private readonly IThemeWrapper _themeWrapper;
     private readonly UpdateManager _updateManager;
     private UpdateInfo? _updateInfo;
 
-#pragma warning disable CS8618
-    public SettingsMainViewModel(IUserSettings userSettings, IThemeWrapper themeWrapper, UpdateManager updateManager)
+    public SettingsMainViewModel(IApplicationSettingsRepository appSettings, IThemeWrapper themeWrapper, UpdateManager updateManager)
     {
-        _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
+        _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         _themeWrapper = themeWrapper ?? throw new ArgumentNullException(nameof(themeWrapper));
         _updateManager = updateManager ?? throw new ArgumentNullException(nameof(updateManager));
 
-        Database = _userSettings.Database;
+        ColourThemeDark = _appSettings.ApplicationSettings.DarkMode;
+        ColourThemeLight = !_appSettings.ApplicationSettings.DarkMode;
 
-        PrintToFile = _userSettings.PrintToFile;
-        PrintToPrinter = !PrintToFile;
-        Printer = _userSettings.Printer;
-        PrintFile = _userSettings.PrintFile;
+        Database = _appSettings.ApplicationSettings.Database;
 
-        DymoPrintToFile = _userSettings.DymoPrintToFile;
+        DefaultDecommissionedTicket = _appSettings.ApplicationSettings.DefaultDecommissionedTicket.ToString();
+
+        DymoPrintToFile = _appSettings.ApplicationSettings.DymoPrintToFile;
         DymoPrintToPrinter = !DymoPrintToFile;
-        DymoPrinter = _userSettings.DymoPrinter;
-        DymoPrintFile = _userSettings.DymoPrintFile;
+        DymoPrinter = _appSettings.ApplicationSettings.DymoPrinter;
+        DymoPrintFile = _appSettings.ApplicationSettings.DymoPrintFile;
 
-        DefaultDecommissionedTicket = _userSettings.DefaultDecommissionedTicket.ToString();
-
-        ColourThemeDark = _userSettings.DarkMode;
-        ColourThemeLight = !_userSettings.DarkMode;
+        PrintToFile = _appSettings.ApplicationSettings.PrintToFile;
+        PrintToPrinter = !PrintToFile;
+        Printer = _appSettings.ApplicationSettings.Printer;
+        PrintFile = _appSettings.ApplicationSettings.PrintFile;
 
         Log.Verbose("SettingsMainViewModel constructor called");
-        CurrentVersion = _userSettings.AssemblyVersion?.ToString();
+        CurrentVersion = AssemblyVersion()?.ToString();
     }
-#pragma warning restore CS8618
+
+    private static Version? AssemblyVersion()
+    {
+        Assembly assembly = typeof(App).Assembly;
+        AssemblyName assemblyName = assembly.GetName();
+        return assemblyName.Version;
+    }
 
     #region Database Settings
     [ObservableProperty]
@@ -56,10 +57,10 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
 
     partial void OnDatabaseChanged(string value)
     {
-        if (_userSettings.Database != value)
+        if (_appSettings.ApplicationSettings.Database != value)
         {
-            _userSettings.Database = value;
-            _userSettings.Save();
+            _appSettings.ApplicationSettings.Database = value;
+            _appSettings.Save();
         }
     }
 
@@ -76,8 +77,8 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
 
         if (openFileDialog.ShowDialog() == true)
         {
-            _userSettings.Database = openFileDialog.FileName;
-            _userSettings.Save();
+            _appSettings.ApplicationSettings.Database = openFileDialog.FileName;
+            _appSettings.Save();
             App.Current.Shutdown();
         }
     }
@@ -92,18 +93,18 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
 
     partial void OnPrintToFileChanged(bool value)
     {
-        _userSettings.PrintToFile = value;
-        _userSettings.Save();
+        _appSettings.ApplicationSettings.PrintToFile = value;
+        _appSettings.Save();
     }
 
     [ObservableProperty]
     private string _printer;
     partial void OnPrinterChanged(string value)
     {
-        if (_userSettings.Printer == value) return;
+        if (_appSettings.ApplicationSettings.Printer == value) return;
 
-        _userSettings.Printer = value;
-        _userSettings.Save();
+        _appSettings.ApplicationSettings.Printer = value;
+        _appSettings.Save();
     }
 
     [ObservableProperty]
@@ -111,10 +112,10 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
 
     partial void OnPrintFileChanged(string value)
     {
-        if (_userSettings.PrintFile == value) return;
+        if (_appSettings.ApplicationSettings.PrintFile == value) return;
 
-        _userSettings.PrintFile = value;
-        _userSettings.Save();
+        _appSettings.ApplicationSettings.PrintFile = value;
+        _appSettings.Save();
     }
     #endregion
 
@@ -127,18 +128,18 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
 
     partial void OnDymoPrintToFileChanged(bool value)
     {
-        _userSettings.DymoPrintToFile = value;
-        _userSettings.Save();
+        _appSettings.ApplicationSettings.DymoPrintToFile = value;
+        _appSettings.Save();
     }
 
     [ObservableProperty]
     private string _dymoPrinter;
     partial void OnDymoPrinterChanged(string value)
     {
-        if (_userSettings.DymoPrinter == value) return;
+        if (_appSettings.ApplicationSettings.DymoPrinter == value) return;
 
-        _userSettings.DymoPrinter = value;
-        _userSettings.Save();
+        _appSettings.ApplicationSettings.DymoPrinter = value;
+        _appSettings.Save();
     }
 
     [ObservableProperty]
@@ -146,10 +147,10 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
 
     partial void OnDymoPrintFileChanged(string value)
     {
-        if (_userSettings.DymoPrintFile == value) return;
+        if (_appSettings.ApplicationSettings.DymoPrintFile == value) return;
 
-        _userSettings.DymoPrintFile = value;
-        _userSettings.Save();
+        _appSettings.ApplicationSettings.DymoPrintFile = value;
+        _appSettings.Save();
     }
     #endregion
 
@@ -160,11 +161,11 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
 
     partial void OnDefaultDecommissionedTicketChanged(string value)
     {
-        if (_userSettings.DefaultDecommissionedTicket.ToString() == value) return;
+        if (_appSettings.ApplicationSettings.DefaultDecommissionedTicket.ToString() == value) return;
 
         int ticket = int.Parse(value);
-        _userSettings.DefaultDecommissionedTicket = ticket;
-        _userSettings.Save();
+        _appSettings.ApplicationSettings.DefaultDecommissionedTicket = ticket;
+        _appSettings.Save();
     }
 
     #region Mode Setting
@@ -173,8 +174,8 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
 
     partial void OnColourThemeDarkChanged(bool value)
     {
-        _userSettings.DarkMode = value;
-        _userSettings.Save();
+        _appSettings.ApplicationSettings.DarkMode = value;
+        _appSettings.Save();
 
         _themeWrapper.ModifyTheme(value);
     }

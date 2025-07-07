@@ -1,9 +1,9 @@
 ﻿namespace PhoneAssistant.Model;
 
-public sealed class ApplicationSettingsRepository
+public sealed class ApplicationSettingsRepository : IApplicationSettingsRepository
 {
     private readonly string _appSettingsPath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
-    
+
     public ApplicationSettings ApplicationSettings { get; init; }
 
     public ApplicationSettingsRepository()
@@ -11,7 +11,7 @@ public sealed class ApplicationSettingsRepository
         if (!File.Exists(_appSettingsPath))
         {
             ApplicationSettings = new ApplicationSettings();
-            Save();        
+            Save();
         }
         else
         {

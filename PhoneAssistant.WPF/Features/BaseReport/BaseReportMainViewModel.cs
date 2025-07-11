@@ -147,117 +147,6 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     }
     #endregion
 
-    [RelayCommand]
-    private void ShowImport()
-    {
-        ImportViewVisibility = Visibility.Visible;
-        ReportViewVisibility = Visibility.Collapsed;
-    }
-
-    [RelayCommand]
-    private void SelectBaseReportFile()
-    {
-        OpenFileDialog openFileDialog = new()
-        {
-            Filter = "Devon Base Report (*.xlsx)|*.xlsx",
-            Multiselect = false
-        };
-
-        if (openFileDialog.ShowDialog() == true)
-        {
-            DevonBaseReport = openFileDialog.FileName;
-        }
-    }
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ImportCommand))]
-    private string? _devonBaseReport;
-
-    private bool CanImport()
-    {
-        if (_loaded && string.IsNullOrWhiteSpace(DevonBaseReport))
-            return false;
-
-        return true;
-    }
-
-    [RelayCommand(CanExecute = nameof(CanImport))]
-    private async Task Import()
-    {
-        _loaded = false;
-
-        await Task.Delay(100);
-
-        using FileStream? stream = new FileStream(DevonBaseReport!, FileMode.Open, FileAccess.Read);
-        using IWorkbook workbook = WorkbookFactory.Create(stream, readOnly: true);
-        //using HSSFWorkbook workbook = new HSSFWorkbook(stream);
-
-        ISheet sheet = workbook.GetSheetAt(0);
-
-        IRow header = sheet.GetRow(0);
-        ICell cell = header.GetCell(0);
-        if (cell is null || cell.StringCellValue != "Group")
-        {
-            LogItems.Add($"Unable to find Group in cell A1, check you are importing the correct file.");
-            return;
-        }
-
-        await _repository.TruncateAsync();
-
-        int added = 0;
-        for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++)
-        {
-            IRow row = sheet.GetRow(i);
-            if (row == null) continue;
-            if (row.Cells.Count == 4) break;
-
-            _ = row.GetCell(11).DateCellValue.ToString() ?? string.Empty;
-
-            var PhoneNumber = row.GetCell(6).StringCellValue;
-            var UserName = row.GetCell(5).StringCellValue;
-            var ContractEndDate = row.GetCell(15).DateCellValue.ToString() ?? string.Empty;
-            var TalkPlan = row.GetCell(8).StringCellValue.ToString();
-            var Handset = row.GetCell(21).StringCellValue;
-            var SimNumber = row.GetCell(17).StringCellValue;
-            var ConnectedIMEI = string.Empty;
-            var LastUsedIMEI = row.GetCell(18).StringCellValue; 
-
-            Model.BaseReport item = new()
-            {
-                PhoneNumber = row.GetCell(6).StringCellValue,
-                UserName = row.GetCell(5).StringCellValue,
-                ContractEndDate = row.GetCell(15).DateCellValue.ToString() ?? string.Empty,
-                TalkPlan = TalkPlan = row.GetCell(8).StringCellValue.ToString(),
-                Handset = row.GetCell(21).StringCellValue,
-                SimNumber = row.GetCell(17).StringCellValue,
-                ConnectedIMEI = string.Empty,
-                LastUsedIMEI = row.GetCell(18).StringCellValue
-            };
-
-            await _repository.CreateAsync(item);
-            added++;
-        }
-
-        LogItems.Add($"Added {added} disposals");
-        LogItems.Add("Import complete");
-
-        ImportHistory importHistory = await _import.CreateAsync(ImportType.BaseReport, Path.GetFileName(DevonBaseReport!));
-
-        LatestImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
-
-        DevonBaseReport = string.Empty;
-
-        BaseReport.Clear();
-        await LoadAsync();
-    }
-
-    [RelayCommand]
-    private void CloseImport()
-    {
-        ImportViewVisibility = Visibility.Collapsed;
-        ReportViewVisibility = Visibility.Visible;
-    }
-
     public async Task LoadAsync()
     {
         if (_loaded) return;
@@ -265,10 +154,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
         _loaded = true;
 
         ImportHistory? importHistory = await _import.GetLatestImportAsync(ImportType.BaseReport);
-        if (importHistory is null)
-            LatestImport = $"Latest Import: None";
-        else
-            LatestImport = $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
+        LatestImport = importHistory is null ? $"Latest Import: None" : $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
 
         IEnumerable<Model.BaseReport> report = await _repository.GetBaseReportAsync();
 

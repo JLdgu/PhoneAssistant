@@ -70,7 +70,6 @@ public partial class App : System.Windows.Application
 #if DEBUG
         var helper = new PaletteHelper();
         var theme = helper.GetTheme();
-        theme.SetBaseTheme(BaseTheme.Inherit);
         theme.SetPrimaryColor(Colors.Orange);
         theme.SetSecondaryColor(Colors.Yellow);
         helper.SetTheme(theme);

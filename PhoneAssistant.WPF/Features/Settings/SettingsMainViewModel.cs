@@ -25,6 +25,7 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
 
         ColourThemeDark = _appSettings.ApplicationSettings.DarkMode;
         ColourThemeLight = !_appSettings.ApplicationSettings.DarkMode;
+        _themeWrapper.ModifyTheme(ColourThemeDark);
 
         Database = _appSettings.ApplicationSettings.Database;
 

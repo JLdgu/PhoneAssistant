@@ -21,6 +21,10 @@ public partial class PhoneAssistantDbContext : DbContext
 
     public DbSet<SchemaVersion> SchemaVersion => Set<SchemaVersion>();
 
+    public DbSet<Sim> Sims => Set<Sim>();
+
+    public DbSet<SimHistory> SimsHistory => Set<SimHistory>();
+
     public DbSet<UpdateHistoryPhone> UpdateHistoryPhones => Set<UpdateHistoryPhone>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -42,10 +46,8 @@ public partial class PhoneAssistantDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<BaseReport>(entity =>
-        {
-            entity.HasKey(e => e.PhoneNumber);
-        });
+        modelBuilder.Entity<BaseReport>()
+            .HasKey(e => e.PhoneNumber);        
 
         modelBuilder.Entity<ImportHistory>(entity =>
         {
@@ -56,10 +58,8 @@ public partial class PhoneAssistantDbContext : DbContext
             entity.Property(e => e.ImportDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
 
-        modelBuilder.Entity<Location>(entity =>
-        {
-            entity.HasKey(e => e.Name);
-        });
+        modelBuilder.Entity<Location>()
+            .HasKey(e => e.Name);
 
         modelBuilder.Entity<Phone>(entity =>
         {
@@ -85,7 +85,13 @@ public partial class PhoneAssistantDbContext : DbContext
             entity.HasIndex(e => e.ScriptName, "IX_SchemaVersion_ScriptName").IsUnique();
         });
 
-            modelBuilder.Entity<UpdateHistoryPhone>(entity =>
+        modelBuilder.Entity<Sim>()
+            .HasIndex(s => s.PhoneNumber).IsUnique();
+
+        modelBuilder.Entity<SimHistory>()
+            .HasIndex(h => new { h.SimId, h.Period }).IsUnique();
+
+        modelBuilder.Entity<UpdateHistoryPhone>(entity =>
         {
             entity.Property(e => e.Condition).HasColumnName("NorR");
             entity.Property(e => e.Imei).HasColumnName("IMEI");

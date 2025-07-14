@@ -9,7 +9,7 @@ namespace PhoneAssistant.Cli;
 
 public sealed class Program
 {
-    private static void Main(string[] args)
+    private static Task<int> Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
@@ -17,7 +17,20 @@ public sealed class Program
             .MinimumLevel.Debug()
             .WriteTo.File("pac.log")
             .CreateLogger();
+        try
+        {
+            RootCommand rootCommand = GetRootCommand();
+            return rootCommand.InvokeAsync(args);
+        }
+        finally
+        {
+            Log.Information("Closing log");
+            Log.CloseAndFlush();
+        }
+    }
 
+    private static RootCommand GetRootCommand()
+    {
         RootCommand rootCommand = new("Phone Assistant Command Line Interface");
 
         Command baseCommand = new("base", "Import EE base report");
@@ -44,13 +57,6 @@ public sealed class Program
 
         rootCommand.Add(baseCommand);
 
-        try
-        {
-            rootCommand.InvokeAsync(args);
-        }
-        finally
-        {
-            Log.CloseAndFlush();
-        }
-    }
+        return rootCommand;
+    }     
 }

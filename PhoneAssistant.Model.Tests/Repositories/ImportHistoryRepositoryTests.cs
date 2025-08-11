@@ -11,7 +11,7 @@ public class ImportHistoryRepositoryTests
     }
 
     [Test]
-    async Task GetLatestImport_WhenImportExists_ShouldReturnLatest()
+    public async Task GetLatestImport_WhenImportExists_ShouldReturnLatest()
     {
         ImportHistory import1 = new() {Id = 1, Name = ImportType.BaseReport, File = "Import 1", ImportDate = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd HH:mm:ss") };
         ImportHistory import2 = new() {Id = 2, Name = ImportType.BaseReport, File = "Import 2", ImportDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") };

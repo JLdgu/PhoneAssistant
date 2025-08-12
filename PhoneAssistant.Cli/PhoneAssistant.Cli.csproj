@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+      <PackageReference Include="CsvHelper" />
       <PackageReference Include="NPOI" />
       <PackageReference Include="Serilog.Sinks.Console" />
       <PackageReference Include="Serilog.Sinks.File" />

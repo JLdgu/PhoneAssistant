@@ -1,10 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-
 using NPOI.SS.UserModel;
-
 using PhoneAssistant.Model;
-
 using Serilog;
 
 namespace PhoneAssistant.Cli;

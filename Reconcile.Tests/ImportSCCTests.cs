@@ -1,9 +1,9 @@
 ﻿using FluentResults;
-
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
 namespace Reconcile.Tests;
+
 public sealed class ImportSCCTests()
 {
     [Test]
@@ -17,7 +17,7 @@ public sealed class ImportSCCTests()
         Result<Disposal> result = ImportSCC.GetDisposal(row);
 
         await Assert.That(result.IsFailed).IsTrue();
-        await Assert.That(result.Errors.First().Message).IsEqualTo("Ignore: Account not D1024CT");
+        await Assert.That(result.Errors[0].Message).IsEqualTo("Ignore: Account not D1024CT");
     }
 
     [Test]
@@ -31,7 +31,7 @@ public sealed class ImportSCCTests()
         Result<Disposal> result = ImportSCC.GetDisposal(row);
 
         await Assert.That(result.IsFailed).IsTrue();
-        await Assert.That(result.Errors.First().Message).IsEqualTo("Ignore: Account not D1024CT");
+        await Assert.That(result.Errors[0].Message).IsEqualTo("Ignore: Account not D1024CT");
     }
 
     [Test]
@@ -66,7 +66,7 @@ public sealed class ImportSCCTests()
         Result<Disposal> result = ImportSCC.GetDisposal(row);
 
         await Assert.That(result.IsFailed).IsTrue();
-        await Assert.That(result.Errors.First().Message).IsEqualTo("Ignore: Invalid product type");
+        await Assert.That(result.Errors[0].Message).IsEqualTo("Ignore: Invalid product type");
     }
 
     [Test]
@@ -79,7 +79,7 @@ public sealed class ImportSCCTests()
         Result<Disposal> result = ImportSCC.GetDisposal(row);
 
         await Assert.That(result.IsFailed).IsTrue();
-        await Assert.That(result.Errors.First().Message).IsEqualTo("Ignore: Null row");
+        await Assert.That(result.Errors[0].Message).IsEqualTo("Ignore: Null row");
     }
 
     [Test]
@@ -96,13 +96,35 @@ public sealed class ImportSCCTests()
         Result<Disposal> result = ImportSCC.GetDisposal(row);
 
         await Assert.That(result.IsFailed).IsTrue();
-        await Assert.That(result.Errors.First().Message).IsEqualTo("Ignore: Unidentifiable");
+        await Assert.That(result.Errors[0].Message).IsEqualTo("Ignore: Unidentifiable");
     }
 
     [Test]
-    [Arguments("123456789012345", "NONE", null, 15)]
-    [Arguments("123456789054321", "PC12345", "PC12345", 16)]
-    public async Task GetDisposal_ShouldSucceedAsync(string serialNumber, string? assetNumber, string? expectedAssetNumber, int certificate)
+    [Arguments("To be Sold")]
+    [Arguments("On Hold")]
+    public async Task GetDisposal_ShouldFail_WhenStatusNotDespatched(string status)
+    {
+        using XSSFWorkbook workbook = new();
+        ISheet sheet = workbook.CreateSheet("Data");
+        IRow row = sheet.CreateRow(0);
+        row.CreateCell(ImportSCC.Account).SetCellValue("D1024CT");
+        row.CreateCell(ImportSCC.AssetNumber).SetCellValue("NONE");
+        row.CreateCell(ImportSCC.SerialNumber).SetCellValue(123456789012345);
+        row.CreateCell(ImportSCC.ProductType).SetCellValue("productType");
+        row.CreateCell(ImportSCC.TrackerId).SetCellValue(42);
+        row.CreateCell(ImportSCC.Status).SetCellValue(status);
+
+        Result<Disposal> result = ImportSCC.GetDisposal(row);
+
+        await Assert.That(result.IsFailed).IsTrue();
+        await Assert.That(result.Errors[0].Message).IsEqualTo("Ignore: Status not despatched");
+    }
+
+
+    [Test]
+    [Arguments("123456789012345", "NONE", null, 15, "Despatched - Recycled / Disposed")]
+    [Arguments("123456789054321", "PC12345", "PC12345", 16, "Despatched - Sold")]
+    public async Task GetDisposal_ShouldSucceed(string serialNumber, string? assetNumber, string? expectedAssetNumber, int certificate, string status)
     {
         using XSSFWorkbook workbook = new();
         ISheet sheet = workbook.CreateSheet("Data");
@@ -112,6 +134,7 @@ public sealed class ImportSCCTests()
         row.CreateCell(ImportSCC.ProductType).SetCellValue("productType");
         row.CreateCell(ImportSCC.SerialNumber).SetCellValue(serialNumber);
         row.CreateCell(ImportSCC.TrackerId).SetCellValue(certificate);
+        row.CreateCell(ImportSCC.Status).SetCellValue(status);
 
         Result<Disposal> result = ImportSCC.GetDisposal(row);
 

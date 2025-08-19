@@ -18,6 +18,7 @@ public sealed class ImportSCC(string importFile)
     public const int SerialNumber = 3;
     public const int AssetNumber = 4;
     public const int ProductType = 5;
+    public const int Status = 8;
 
     public Result<List<Disposal>> Execute()
     {
@@ -61,6 +62,9 @@ public sealed class ImportSCC(string importFile)
             && (row.GetCell(SerialNumber).StringCellValue == "NONE" || row.GetCell(SerialNumber).StringCellValue == "UNREADABLE")) return Result.Fail("Ignore: Unidentifiable");
 
         if (row.GetCell(ProductType).CellType is CellType.String && row.GetCell(ProductType).StringCellValue == "MONITORS") return Result.Fail("Ignore: Invalid product type");
+
+        if (row.GetCell(Status).CellType is CellType.String && !row.GetCell(Status).StringCellValue.StartsWith("Despatched",StringComparison.OrdinalIgnoreCase)) 
+            return Result.Fail("Ignore: Status not despatched");
 
         string primary;
         if (row.GetCell(SerialNumber).CellType is CellType.Numeric)

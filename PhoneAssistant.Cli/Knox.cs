@@ -79,7 +79,7 @@ public  static class Knox
             matchedIMEIs.Add(new SIM(imei));
 
         }
-        using var writer = new StreamWriter(Path.Combine(workFolder.FullName,"knox_import.csv"));
+        using var writer = new StreamWriter(Path.Combine(workFolder.FullName,"knox_bulk_delete.csv"));
         using var csvOut = new CsvWriter(writer, CultureInfo.InvariantCulture);
         csvOut.WriteRecords(matchedIMEIs);
 

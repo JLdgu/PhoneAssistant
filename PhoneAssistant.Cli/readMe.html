@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhoneAssistant Command Line Interface (CLI) Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>PhoneAssistant Command Line Interface (CLI) Documentation</h1>
+    </header>
+    <main>
+        <h2>CLI Overview</h2>
+        <p>
+            The PhoneAssistant Command Line Interface (CLI) provides a method for bulk operations associated with managing mobile phone and tablets.
+        </p>
+        <h3>Command Structure</h3>
+        <p>
+            CLI command structure consists of the cli application ("pac"), the command ("base", "knox"), and possibly command arguments and options.
+        </p>
+
+        <code class="cli-code-box">
+            <span class="cli-root">.\pac</span> <span class="cli-command">base</span>
+            <span class="cli-root">.\pac</span> <span class="cli-keyword">knox</span><span class="cli-option"> --folder</span> c:\temp
+        </code>
+
+        <h3>base Command</h3>
+        <p>Imports an EE base report into the PhoneAssistant database.</p>
+        <h4>Usage</h4>
+        <code class="cli-code-no-header">
+            <span class="cli-root">.\pac</span> <span class="cli-command">base</span> <span class="cli-option">[-file|-f]</span> <span class="cli-argument">&lt;IMPORT_FILE_PATH&gt;</span>
+        </code>
+        <h4>Options</h4>
+        <code>
+            --file or -f
+        </code>
+        <p>
+            **Required.** Full path to the EE base report file to import (must be an `.xlsx` file).
+        </p>
+        <h3>knox Command</h3>
+        <p>Compares a list of myScomis CIs with one from Samsung Knox and creates a list of decommissioned or disposed devices, suitable for bulk import into Samsung Knox.</p>
+        <h4>Usage</h4>
+        <code class="cli-code-no-header">
+            <span>
+                <span class="cli-root">.\pac</span> <span class="cli-command">knox</span> <span class="cli-option">[--folder|-f]</span> <span class="cli-argument">&lt;WORKING_FOLDER&gt;</span>
+            </span>
+        </code>
+        <h4>Options</h4>
+        <code>
+            --folder or -f
+        </code>
+        <p>
+            Path to the folder where the input files can be found and the output CSV file should be created.<br />
+            If not specified, defaults to the user's Downloads folder.
+        </p>
+        <h4>Input Files</h4>
+        <p>
+            The working folder should contain:<br />
+            - An export from myScomis containing CIs, the most recently modified `CI List*.xlsx` file in the working folder is used.<br />
+            - An export from Samsung Knox containing the complete list of enrolled devices `kme_devices.csv`
+        </p>
+        <h4>Output File</h4>
+        <p>
+            The working folder should contain:<br />
+            - A CSV file suitable for bulk device delete in Samsung Knox `knox_bulk_delete.csv`
+        </p>
+    </main>
+</body>
+
+</html>
+  
+<!--
+  
+
+**Output:**
+- For the `base` command: Updates the application's database with data from the EE base report.
+- For the `knox` command: Generates `knox_import.csv` in the specified folder, containing eligible IMEIs.
+
+**Logging:**
+All operations are logged to the console and to a log file (`pac.log`) in the current directory.
+
+---
+
+## Reconcile
+
+### Overview
+Reconcile is a command-line utility for comparing and reconciling device lists from different sources. It helps ensure that records of mobile device disposals and reuses are accurate and up-to-date.
+
+### Usage
+
+Run the tool from the command line, providing the required parameters.
+
+**Command Syntax:**
+```
+Reconcile <SR> <CR> <folder>
+```
+- `<SR>`: The Service Request number (integer).
+- `<CR>`: The Change Request number (integer).
+- `<folder>`: Path to the folder containing the required input files.
+
+**Input File Requirements:**
+Place the following files in the specified folder before running the tool:
+- `CI List.xlsx`: The main device list for import (must exist in the folder).
+- `SR<SR> CR<CR> Units.xls`: The disposal units list, where `<SR>` and `<CR>` are replaced with the provided numbers.
+
+**Example:**
+```
+Reconcile 123 456 "C:\Users\User\Documents\ReconcileData"
+```
+
+**Output:**
+- Reconciled data is exported to the folder you specify.
+- Progress and error messages are displayed in the console.
+
+**Troubleshooting:**
+- If a required file is missing, the tool will log an error and exit.
+- Check file names and ensure they match the expected format.
+- Review console output for details on any issues.
+
+---
+
+This documentation covers command usage, options, input requirements, and output details for both PhoneAssistant.Cli and Reconcile projects.
+
+
+-->

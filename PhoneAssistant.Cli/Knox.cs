@@ -1,19 +1,39 @@
-﻿using System;
-using System.Globalization;
-
-using CsvHelper;
+﻿using CsvHelper;
 using CsvHelper.Configuration.Attributes;
-
 using NPOI.SS.UserModel;
-
 using Serilog;
+using System.Globalization;
 
 namespace PhoneAssistant.Cli;
 
 public  static class Knox
 {
-    public static void Execute(FileInfo ciFile, FileInfo knoxFile, DirectoryInfo outputFolder)
+    public static void Execute(DirectoryInfo workFolder)
     {
+        workFolder ??= new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads"));
+        if (!workFolder.Exists)
+        {
+            Log.Error("The folder {0} does not exist.", workFolder.FullName);
+            return;
+        }
+
+        // Find the latest "CI List *.xlsx" file in the workFolder directory
+        var ciFiles = workFolder.GetFiles("CI List*.xlsx");
+        if (ciFiles.Length == 0)
+        {
+            Log.Error("No 'CI List *.xlsx' file found in {0}.", workFolder.FullName);
+            return;
+        }
+        FileInfo ciFile = ciFiles.OrderByDescending(f => f.LastWriteTime).First();
+
+        FileInfo knoxFile = new(Path.Combine(workFolder.FullName, "kme_devices.csv"));
+        if (!knoxFile.Exists)
+        {
+            Log.Error("No 'kme_devices.csv' file found in {0}.", workFolder.FullName);
+            return;
+
+        }
+
         using var reader = new StreamReader(knoxFile.FullName);
         using var csvFile = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -59,7 +79,7 @@ public  static class Knox
             matchedIMEIs.Add(new SIM(imei));
 
         }
-        using var writer = new StreamWriter(Path.Combine(outputFolder.FullName,"knox_import.csv"));
+        using var writer = new StreamWriter(Path.Combine(workFolder.FullName,"knox_import.csv"));
         using var csvOut = new CsvWriter(writer, CultureInfo.InvariantCulture);
         csvOut.WriteRecords(matchedIMEIs);
 
@@ -86,7 +106,8 @@ public class ActiveKnoxSIM
     public string? UserID { get; set; }
     public string? Tags { get; set; }
     public string? Submitted { get; set; }
-    public string? Profile { get; set; }
+    [Name("Enrollment Profile")]
+    public string? EnrollmentProfile { get; set; }
     public string? Status { get; set; }
     [Name("Reseller ID")]
     public string? ResellerID { get; set; }

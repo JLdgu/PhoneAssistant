@@ -52,36 +52,33 @@ public sealed class Program
         rootCommand.Add(baseCommand);
 
         StringBuilder sb = new();
-        sb.AppendLine("Create a csv file that can be bulk imported to Samsung Knox");
-        sb.AppendLine("the output file will contain IMEIs that are marked as decommissioned and disposed on myScomis");
-        Command knoxCommand = new("knox", sb.ToString());
-        Option<FileInfo> ciFileOption = new("--ci") { Description = "Full path an xlsx file containing a list of myScomis CIs" };
-        ciFileOption.ExistingOnly();
-        ciFileOption.IsRequired = true;
-        knoxCommand.AddOption(ciFileOption);
-        Option<FileInfo> knoxFileOption = new("--knox") { Description = "Full path to a csv file containing a list of managed IMEIs exported from Samsung Knox" };
-        knoxFileOption.ExistingOnly();
-        knoxFileOption.IsRequired = true;
-        knoxCommand.AddOption(knoxFileOption);
-        Option<DirectoryInfo> outputFolderOption = new("--output") { Description = "Path to the folder where the output csv file should be created" };
-        outputFolderOption.AddAlias("-o");
-        outputFolderOption.ExistingOnly();
-        outputFolderOption.IsRequired = true;
-        knoxCommand.AddOption(outputFolderOption);
+        sb.AppendLine("Create a csv file containing decommissioned/disposed IMEIs that can be bulk imported to Samsung Knox.");
+        sb.AppendLine();
+        sb.AppendLine("The output file (knox_import.csv) will contain IMEIs that are marked as decommissioned and disposed on myScomis.");
+        sb.AppendLine("Input file name expected formats are:");
+        sb.AppendLine("CI List*.xlsx for myScomis import - most recent will be used");
+        sb.AppendLine("kme_devices.csv");
+        sb.AppendLine();
+        sb.AppendLine("All files should be placed in the folder specified. Defaults to users Downloads folder");
 
-        knoxCommand.SetHandler((ciFile, knoxFile, outputFolder) =>
+        Command knoxCommand = new("knox", sb.ToString());
+        Option<DirectoryInfo> workFolderOption = new("--folder") { Description = "Path to the folder where the output csv file should be created" };
+        workFolderOption.AddAlias("-f");
+        knoxCommand.AddOption(workFolderOption);
+
+        knoxCommand.SetHandler((outputFolder) =>
         {
             try
             {
                 Log.Information("Creating Knox import file");
-                Knox.Execute(ciFile, knoxFile, outputFolder);
+                Knox.Execute(outputFolder);
             }
             catch (Exception ex)
             {
 
                 Log.Fatal(exception: ex, "Unhandled exception:");
             }
-        }, ciFileOption, knoxFileOption, outputFolderOption);
+        }, workFolderOption);
 
         rootCommand.Add(knoxCommand);
 

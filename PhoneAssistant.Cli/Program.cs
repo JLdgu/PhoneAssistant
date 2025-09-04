@@ -1,10 +1,7 @@
-﻿using System.CommandLine;
-using System.Text;
-
-using PhoneAssistant.Model;
-
-using Serilog;
+﻿using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
+using System.CommandLine;
+using System.Text;
 
 namespace PhoneAssistant.Cli;
 

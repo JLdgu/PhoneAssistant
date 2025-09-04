@@ -44,21 +44,21 @@ public static class BaseImport
 
             _ = row.GetCell(11).DateCellValue.ToString() ?? string.Empty;
 
-            var PhoneNumber = row.GetCell(6).StringCellValue;
-            var UserName = row.GetCell(5).StringCellValue;
-            var ContractEndDate = row.GetCell(15).DateCellValue.ToString() ?? string.Empty;
-            var TalkPlan = row.GetCell(8).StringCellValue.ToString();
-            var Handset = row.GetCell(21).StringCellValue;
-            var SimNumber = row.GetCell(17).StringCellValue;
-            var ConnectedIMEI = string.Empty;
-            var LastUsedIMEI = row.GetCell(18).StringCellValue;
+            var phoneNumber = row.GetCell(11).StringCellValue;
+            var userName = row.GetCell(10).StringCellValue;
+            var contractEndDate = row.GetCell(15).DateCellValue.ToString() ?? string.Empty;
+            var talkPlan = row.GetCell(6).StringCellValue.ToString();
+            var handset = row.GetCell(21).StringCellValue;
+            var simNumber = row.GetCell(17).StringCellValue;
+            var connectedIMEI = string.Empty;
+            var lastUsedIMEI = row.GetCell(18).StringCellValue;
 
             BaseReport item = new()
             {
-                PhoneNumber = row.GetCell(6).StringCellValue,
-                UserName = row.GetCell(5).StringCellValue,
+                PhoneNumber = row.GetCell(11).StringCellValue,
+                UserName = row.GetCell(10).StringCellValue,
                 ContractEndDate = row.GetCell(15).DateCellValue.ToString() ?? string.Empty,
-                TalkPlan = TalkPlan = row.GetCell(8).StringCellValue.ToString(),
+                TalkPlan = talkPlan = row.GetCell(6).StringCellValue.ToString(),
                 Handset = row.GetCell(21).StringCellValue,
                 SimNumber = row.GetCell(17).StringCellValue,
                 ConnectedIMEI = string.Empty,

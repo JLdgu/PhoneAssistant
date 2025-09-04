@@ -1,8 +1,13 @@
 {
   "profiles": {
-    "pac": {
+    "pac knox": {
       "commandName": "Project",
       "commandLineArgs": "knox --ci \"C:\\dev\\PA Test Data\\CI List2025_25_7_06_07_27.xlsx\" --knox \"C:\\dev\\PA Test Data\\kme_devices.csv\" --output \"C:\\dev\\PA Test Data\" "
+    },
+    "pac base": {
+      "commandName": "Project",
+      "commandLineArgs": "base -f \"C:\\dev\\PA Test Data\\Devon Base Report August.xlsx\" "
     }
+
   }
 }

@@ -45,15 +45,19 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
             {
                 var srp = sr.Properties["mail"];
 
-                User user = new User()
+                User user = new()
                 {
                     Name = ParsePropertyString(sr.Properties["displayName"]),
-                    Description = ParsePropertyString(sr.Properties["description"])
+                    Description = ParsePropertyString(sr.Properties["description"]),
+                    Email = ParsePropertyString(sr.Properties["mail"]),
+                    LastLogonDate = ParsePropertyDateTime(sr.Properties["lastLogon"]),
+                    WhenCreated = ParsePropertyString(sr.Properties["whenCreated"]),
+                    PasswordLastSet = ParsePropertyDateTime(sr.Properties["pwdLastSet"])
                 };
-                user.Email = ParsePropertyString(sr.Properties["mail"]);
-                user.LastLogonDate = ParsePropertyDateTime(sr.Properties["lastLogon"]);
-                user.WhenCreated = ParsePropertyString(sr.Properties["whenCreated"]);
-                user.PasswordLastSet = ParsePropertyDateTime(sr.Properties["pwdLastSet"]);
+                if (string.IsNullOrEmpty(user.LastLogonDate))
+                {
+                    user.LastLogonDate = ParsePropertyDateTime(sr.Properties["lastLogonTimestamp"]);
+                }
                 int flags = (int)sr.Properties["userAccountControl"][0];
                 UserAccountControl userAccountControl = (UserAccountControl)flags;
                 user.Enabled = (userAccountControl & UserAccountControl.ACCOUNTDISABLE) != UserAccountControl.ACCOUNTDISABLE;
@@ -75,6 +79,7 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
         searcher.PropertiesToLoad.Add("displayName");
         searcher.PropertiesToLoad.Add("description");
         searcher.PropertiesToLoad.Add("lastLogon");
+        searcher.PropertiesToLoad.Add("lastLogonTimestamp");
         searcher.PropertiesToLoad.Add("mail");
         searcher.PropertiesToLoad.Add("whenCreated");
         searcher.PropertiesToLoad.Add("pwdLastSet");

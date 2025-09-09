@@ -174,47 +174,5 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         await Assert.That(actual.SimNumber).IsEqualTo(_phone.SimNumber);
         await Assert.That(actual.SR).IsEqualTo(_phone.SR);
         await Assert.That(actual.Status).IsEqualTo(_phone.Status);
-
-        UpdateHistoryPhone? history = await _helper.DbContext.UpdateHistoryPhones.FirstOrDefaultAsync(h => h.Id > 0);
-        await Assert.That(history).IsNotNull();
-        await Assert.That(actual.AssetTag).IsEqualTo(history!.AssetTag);
-        await Assert.That(actual.Condition).IsEqualTo(history.Condition);
-        await Assert.That(actual.DespatchDetails).IsEqualTo(history.DespatchDetails);
-        await Assert.That(actual.FormerUser).IsEqualTo(history.FormerUser);
-        await Assert.That(actual.Imei).IsEqualTo(history.Imei);
-        await Assert.That(actual.Model).IsEqualTo(history.Model);
-        await Assert.That(actual.NewUser).IsEqualTo(history.NewUser);
-        await Assert.That(actual.Notes).IsEqualTo(history.Notes);
-        await Assert.That(actual.OEM).IsEqualTo(history.OEM);
-        await Assert.That(actual.PhoneNumber).IsEqualTo(history.PhoneNumber);
-        await Assert.That(actual.SimNumber).IsEqualTo(history.SimNumber);
-        await Assert.That(actual.SR).IsEqualTo(history.SR);
-        await Assert.That(actual.Status).IsEqualTo(history.Status);
     }
-
-    [Test]
-    public async Task UpdateAsync_WithDuplicateUpdate()
-    {
-        await _helper.DbContext.Phones.AddAsync(
-            new Phone()
-            {
-                Imei = _phone.Imei,
-                Condition = CONDITION_N,
-                Model = "old model",
-                OEM = Manufacturer.Apple,
-                Status = ApplicationConstants.Statuses[1]
-            });
-        await _helper.DbContext.SaveChangesAsync();
-
-        await _repository.UpdateAsync(_phone);
-
-        await _repository.UpdateAsync(_phone);
-        _ = await _helper.DbContext.Phones.FindAsync(_phone.Imei);
-
-        UpdateHistoryPhone? history = await _helper.DbContext.UpdateHistoryPhones.FindAsync(1);
-        await Assert.That(history).IsNotNull();
-
-        history = await _helper.DbContext.UpdateHistoryPhones.FindAsync(2);
-        await Assert.That(history).IsNull();
-    }    
 }

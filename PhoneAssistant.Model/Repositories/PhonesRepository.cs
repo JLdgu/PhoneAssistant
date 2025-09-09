@@ -61,7 +61,6 @@ public sealed class PhonesRepository : IPhonesRepository
     {
         ArgumentNullException.ThrowIfNull(phone);
         Phone? dbPhone = await _dbContext.Phones.FindAsync(phone.Imei) ?? throw new ArgumentException($"IMEI {phone.Imei} not found.");
-        await UpdateHistoryAsync(phone, UpdateTypes.UPDATE);        
 
         dbPhone.AssetTag = phone.AssetTag;
         dbPhone.DespatchDetails = phone.DespatchDetails;
@@ -91,61 +90,4 @@ public sealed class PhonesRepository : IPhonesRepository
         dbPhone.Status = status;
         await UpdateAsync(dbPhone);
     }
-
-    private async Task UpdateHistoryAsync(Phone phone, UpdateTypes updateType)
-    {
-        UpdateHistoryPhone? history = await _dbContext.UpdateHistoryPhones
-            .OrderByDescending(h =>h.Id)
-            .FirstOrDefaultAsync(h => h.Imei == phone.Imei);
-
-        if (history is not null) 
-        {
-            if (phone.AssetTag == history.AssetTag &&
-                phone.Condition == history.Condition &&
-                phone.DespatchDetails == history.DespatchDetails &&
-                phone.FormerUser == history.FormerUser &&
-                phone.Model == history.Model &&
-                phone.NewUser == history.NewUser &&
-                phone.Notes == history.Notes &&
-                phone.OEM == history.OEM &&
-                phone.PhoneNumber == history.PhoneNumber &&
-                phone.SimNumber == history.SimNumber &&
-                phone.SR == history.SR &&   
-                phone.Status == history.Status)
-                return;
-        }
-
-        history = new(phone, updateType);
-        _dbContext.UpdateHistoryPhones.Add(history);
-    }
-
-    //public async Task<string> UpdateKeyAsync(string oldImei, string newImei)
-    //{
-    //    if (oldImei is null)
-    //    {
-    //        throw new ArgumentNullException(nameof(oldImei));
-    //    }
-
-    //    if (newImei is null)
-    //    {
-    //        throw new ArgumentNullException(nameof(newImei));
-    //    }
-
-    //    Phone? phone = await _dbContext.Phones.FindAsync(oldImei);
-    //    if (phone is null)
-    //    {
-    //        throw new ArgumentException($"IMEI {oldImei} not found.");
-    //    }
-
-    //    _dbContext.Phones.Remove(phone);
-    //    await _dbContext.SaveChangesAsync();
-
-    //    phone.Imei = newImei;
-
-    //    _dbContext.Phones.Add(phone);
-    //    await _dbContext.SaveChangesAsync();
-
-    //    Phone updatedPhone = await _dbContext.Phones.AsNoTracking().SingleAsync(x => x.Imei == phone.Imei);
-    //    return updatedPhone.LastUpdate;
-    //}
 }

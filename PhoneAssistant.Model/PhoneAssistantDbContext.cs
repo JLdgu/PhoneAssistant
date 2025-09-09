@@ -25,8 +25,6 @@ public partial class PhoneAssistantDbContext : DbContext
 
     public DbSet<SimHistory> SimsHistory => Set<SimHistory>();
 
-    public DbSet<UpdateHistoryPhone> UpdateHistoryPhones => Set<UpdateHistoryPhone>();
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
@@ -90,20 +88,6 @@ public partial class PhoneAssistantDbContext : DbContext
 
         modelBuilder.Entity<SimHistory>()
             .HasIndex(h => new { h.SimId, h.Period }).IsUnique();
-
-        modelBuilder.Entity<UpdateHistoryPhone>(entity =>
-        {
-            entity.Property(e => e.Condition).HasColumnName("NorR");
-            entity.Property(e => e.Imei).HasColumnName("IMEI");
-            entity.Property(e => e.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.OEM).HasConversion(o => o.ToString(), o => (Manufacturer)Enum.Parse(typeof(Manufacturer), o));
-            entity.Property(e => e.SimNumber)
-                .HasColumnName("SIMNumber");
-            entity.Property(e => e.SR)
-                .HasColumnType("INTEGER")
-                .HasColumnName("SRNumber");
-            entity.Property(e => e.UpdateType).HasConversion(u => u.ToString(), u => (UpdateTypes)Enum.Parse(typeof(UpdateTypes), u));
-        });
 
         OnModelCreatingPartial(modelBuilder);
     }

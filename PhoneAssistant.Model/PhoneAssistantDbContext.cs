@@ -67,6 +67,7 @@ public partial class PhoneAssistantDbContext : DbContext
 
             entity.Property(e => e.Imei).HasColumnName("IMEI");
             entity.Property(e => e.Condition).HasColumnName("NorR");
+            entity.Property(e => e.Esim).HasColumnName("eSIM");
             entity.Property(e => e.LastUpdate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.OEM).HasConversion(o => o.ToString(), o => (Manufacturer)Enum.Parse(typeof(Manufacturer), o));
             entity.Property(e => e.SR)

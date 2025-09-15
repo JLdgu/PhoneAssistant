@@ -29,7 +29,6 @@
                         Command="{Binding RefreshPhonesCommand}"
                         Content="{materialDesign:PackIcon Kind=Refresh,
                                                           Size=25}"
-                        IsEnabled="{Binding CanRefeshPhones}"
                         Style="{StaticResource MaterialDesignOutlinedLightButton}"
                         ToolTip="Refresh" />
 
@@ -176,6 +175,24 @@
                             </Style>
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
+
+                    <DataGridTextColumn Binding="{Binding SerialNumber, UpdateSourceTrigger=LostFocus}" Header="Serial Number">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBox MinWidth="100"
+                                             materialDesign:HintAssist.Hint="Filter"
+                                             materialDesign:TextFieldAssist.HasClearButton="True"
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterSerialNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                        <DataGridTextColumn.EditingElementStyle>
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox" />
+                        </DataGridTextColumn.EditingElementStyle>
+                    </DataGridTextColumn>
+
 
                     <DataGridTextColumn Header="Phone Number">
                         <DataGridTextColumn.HeaderTemplate>

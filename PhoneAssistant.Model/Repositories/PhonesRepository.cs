@@ -32,7 +32,8 @@ public sealed class PhonesRepository : IPhonesRepository
     public async Task<IEnumerable<Phone>> GetActivePhonesAsync()
     {
         IEnumerable<Phone> phones = await _dbContext.Phones
-            .Where(p => p.Status != "Disposed" &&  p.Status != "Decommissioned")                               
+            .Where(p => p.Status != "Disposed" &&  p.Status != "Decommissioned")
+            .OrderByDescending(p => p.LastUpdate)
             .AsNoTracking()
             .ToListAsync();
         return phones;
@@ -41,6 +42,8 @@ public sealed class PhonesRepository : IPhonesRepository
     public async Task<IEnumerable<Phone>> GetAllPhonesAsync()
     {
         IEnumerable<Phone> phones = await _dbContext.Phones
+            .OrderByDescending(p => p.LastUpdate)
+            .AsNoTracking()
             .ToListAsync();
         return phones;
     }
@@ -72,6 +75,7 @@ public sealed class PhonesRepository : IPhonesRepository
         dbPhone.Notes = phone.Notes;
         dbPhone.OEM = phone.OEM;
         dbPhone.PhoneNumber = phone.PhoneNumber;
+        dbPhone.SerialNumber = phone.SerialNumber;
         dbPhone.SimNumber = phone.SimNumber;
         dbPhone.SR = phone.SR;
         dbPhone.Status = phone.Status;

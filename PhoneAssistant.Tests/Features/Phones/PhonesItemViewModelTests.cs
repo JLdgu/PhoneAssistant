@@ -1,10 +1,6 @@
-﻿using System.Net.Sockets;
-
-using Moq;
+﻿using Moq;
 using Moq.AutoMock;
-
 using PhoneAssistant.Model;
-using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.Phones;
 
 namespace PhoneAssistant.Tests.Features.Phones;
@@ -25,7 +21,8 @@ public sealed class PhonesItemViewModelTests
         Condition = "norr",
         Notes = "note",
         OEM = Manufacturer.Apple,
-        SR = 123456
+        SR = 123456,
+        SerialNumber = "sn",
     };
     private readonly Phone _updatedPhone = new()
     {
@@ -81,6 +78,7 @@ public sealed class PhonesItemViewModelTests
         await Assert.That(vm.Notes).IsEqualTo(_phone.Notes);
         await Assert.That(vm.OEM).IsEqualTo(_phone.OEM);
         await Assert.That(vm.PhoneNumber).IsEqualTo(_phone.PhoneNumber ?? string.Empty);
+        await Assert.That(vm.SerialNumber).IsEqualTo(_phone.SerialNumber ?? string.Empty);
         await Assert.That(vm.SimNumber).IsEqualTo(_phone.SimNumber ?? string.Empty);
         await Assert.That(vm.SR).IsEqualTo(_phone.SR.ToString());
         await Assert.That(vm.Status).IsEqualTo(_phone.Status);
@@ -173,6 +171,18 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         await Assert.That(_phone.PhoneNumber).IsEqualTo(expected);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
+    }
+
+    [Test]
+    [Arguments("serial number", "serial number")]
+    [Arguments("", null)]
+    public async Task OnSerialNumberChanged_CallsUpdateAsync_WithChangedValue(string actual, string? expected)
+    {
+        _vm.SerialNumber = actual;
+
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+        await Assert.That(_phone.SerialNumber).IsEqualTo(expected);
         await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 

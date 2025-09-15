@@ -11,21 +11,18 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     private readonly IApplicationSettingsRepository _appSettings;
     private readonly IBaseReportRepository _baseReportRepository;
     private readonly IPhonesRepository _repository;
-    private readonly IPrintEnvelope _printEnvelope;
     private readonly IMessenger _messenger;
     private readonly Phone _phone;
 
     public PhonesItemViewModel(IApplicationSettingsRepository appSettings,
                                IBaseReportRepository baseReportRepository,
                                IPhonesRepository repository,
-                               IPrintEnvelope printEnvelope,
                                IMessenger messenger,
                                Phone phone)
     {
         _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _baseReportRepository = baseReportRepository ?? throw new ArgumentNullException(nameof(baseReportRepository));
-        _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         _phone = phone ?? throw new ArgumentNullException(nameof(phone));
 
@@ -39,6 +36,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         Notes = phone.Notes ?? string.Empty;
         OEM = phone.OEM;
         PhoneNumber = phone.PhoneNumber ?? string.Empty;
+        SerialNumber = phone.SerialNumber ?? string.Empty;
         SimNumber = phone.SimNumber ?? string.Empty;
         SR = phone.SR.ToString() ?? string.Empty;
         Status = phone.Status ?? string.Empty;
@@ -197,6 +195,19 @@ public sealed partial class PhonesItemViewModel : ObservableObject
             }
         }
 
+        await UpdatePhone();
+    }
+
+    [ObservableProperty]
+    private string _serialNumber;
+    async partial void OnSerialNumberChanged(string value)
+    {
+        if (value == _phone.SerialNumber) return;
+        if (string.IsNullOrEmpty(value) && _phone.SerialNumber is null) return;
+        if (string.IsNullOrEmpty(value))
+            _phone.SerialNumber = null;
+        else
+            _phone.SerialNumber = value;
         await UpdatePhone();
     }
 

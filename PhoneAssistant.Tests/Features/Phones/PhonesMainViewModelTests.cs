@@ -73,11 +73,10 @@ public sealed class PhonesMainViewModelTests
         Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
         repository.Setup(r => r.GetActivePhonesAsync()).ReturnsAsync(phones);
         Mock<IBaseReportRepository> sims = mocker.GetMock<IBaseReportRepository>();
-        Mock<IPrintEnvelope> print = mocker.GetMock<IPrintEnvelope>();
         Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
         Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
         factory.Setup(r => r.Create(It.IsAny<Phone>()))
-                            .Returns(() => new PhonesItemViewModel(settings.Object, sims.Object, repository.Object,  print.Object, messenger.Object, phones[index]))
+                            .Returns(() => new PhonesItemViewModel(settings.Object, sims.Object, repository.Object,  messenger.Object, phones[index]))
                             .Callback(() => index++);
 
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
@@ -245,6 +244,25 @@ public sealed class PhonesMainViewModelTests
     }
 
     [Test]
+    public async Task ChangingFilterSerialNumber_ChangesFilterViewAsync()
+    {
+        List<Phone> phones = new List<Phone>() {
+            new() {Imei = "1", SimNumber = "101", Model = "", Condition = "", OEM = Manufacturer.Apple, SerialNumber = "aaa", Status = ""},
+            new() { Imei = "2", SimNumber="202", Model = "", Condition = "", OEM = Manufacturer.Apple, SerialNumber = "bbb",Status = ""},
+            new() {Imei = "3", SimNumber = "303", Model = "", Condition = "", OEM = Manufacturer.Apple, SerialNumber = "ccc",Status = ""}
+        };
+        PhonesMainViewModel vm = ViewModelMockSetup(phones);
+        await vm.LoadAsync();
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+
+        vm.FilterSerialNumber = "b";
+
+        var actual = view.OfType<PhonesItemViewModel>().ToArray();
+        await Assert.That(actual).HasSingleItem();
+        await Assert.That(actual[0].SerialNumber).IsEqualTo(phones[1].SerialNumber);
+    }
+
+    [Test]
     public async Task ChangingFilterSimNumber_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
@@ -316,11 +334,10 @@ public sealed class PhonesMainViewModelTests
         else
             repository.Setup(r => r.GetAllPhonesAsync()).ReturnsAsync(phones);
         Mock<IBaseReportRepository> sims = mocker.GetMock<IBaseReportRepository>();
-        Mock<IPrintEnvelope> print = mocker.GetMock<IPrintEnvelope>();
         Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
         Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
         factory.Setup(r => r.Create(It.IsAny<Phone>()))
-                            .Returns(() => new PhonesItemViewModel(settings.Object, sims.Object, repository.Object, print.Object, messenger.Object, phones[index]))
+                            .Returns(() => new PhonesItemViewModel(settings.Object, sims.Object, repository.Object, messenger.Object, phones[index]))
                             .Callback(() => index++);
 
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();

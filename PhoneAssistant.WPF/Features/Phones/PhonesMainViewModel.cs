@@ -54,7 +54,7 @@ public sealed partial class PhonesMainViewModel :
         List<Phone> phones = [];
         foreach (PhonesItemViewModel item in filtered)
         {
-            Phone phone = new Phone
+            Phone phone = new()
             {
                 AssetTag = item.AssetTag,
                 FormerUser = item.FormerUser,
@@ -69,10 +69,7 @@ public sealed partial class PhonesMainViewModel :
                 SimNumber = item.SimNumber,
                 Status = item.Status
             };
-            if (item.SR == string.Empty || item.SR == "0")
-                phone.SR = null;
-            else
-                phone.SR = int.Parse(item.SR);
+            phone.SR = item.SR == string.Empty || item.SR == "0" ? null : int.Parse(item.SR);
             phones.Add(phone);
         }
 
@@ -87,12 +84,13 @@ public sealed partial class PhonesMainViewModel :
 
     private bool CanExport => !_filterView.IsEmpty;
 
-    [RelayCommand]
+    [RelayCommand(CanExecute =nameof(CanRefreshPhones))]
     private async Task RefreshPhones()
     {
-        CanRefeshPhones = false;
+        CanRefreshPhones = false;
         await LoadAsync();
     }
+    public bool CanRefreshPhones { get; set; }
 
     private void RefreshFilterView()
     {
@@ -102,14 +100,12 @@ public sealed partial class PhonesMainViewModel :
         ExportFilteredCommand.NotifyCanExecuteChanged();
     }
 
-    [ObservableProperty]
-    private bool _canRefeshPhones;
 
     [ObservableProperty]
     private bool _includeDisposals;
     async partial void OnIncludeDisposalsChanged(bool value)
     {
-        CanRefeshPhones = false;
+        CanRefreshPhones = false;
         await LoadAsync();
     }
 
@@ -118,18 +114,10 @@ public sealed partial class PhonesMainViewModel :
     {
         if (item is not PhonesItemViewModel vm) return false;
 
-        if (FilterNorR is not null && FilterNorR.Length == 1)
-            if (vm.NorR is not null && !vm.NorR.StartsWith(FilterNorR, StringComparison.InvariantCultureIgnoreCase))
+        if (FilterAssetTag is not null && FilterAssetTag.Length > 0)
+            if (vm.AssetTag is null)
                 return false;
-
-        if (FilterStatus is not null && FilterStatus.Length > 0)
-            if (vm.Status is not null && !vm.Status.Contains(FilterStatus, StringComparison.InvariantCultureIgnoreCase))
-                return false;
-
-        if (FilterSR is not null && FilterSR.Length > 0)
-            if (vm.SR is null)
-                return false;
-            else if (!vm.SR.ToString()!.Contains(FilterSR))
+            else if (!vm.AssetTag.Contains(FilterAssetTag, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         if (FilterImei is not null && FilterImei.Length > 0)
@@ -142,26 +130,39 @@ public sealed partial class PhonesMainViewModel :
             else if (!vm.PhoneNumber.Contains(FilterPhoneNumber))
                 return false;
 
-        if (FilterSimNumber is not null && FilterSimNumber.Length > 0)
-            if (vm.SimNumber is null)
-                return false;
-            else if (!vm.SimNumber.Contains(FilterSimNumber))
-                return false;
-
         if (FilterNewUser is not null && FilterNewUser.Length > 0)
             if (vm.NewUser is null)
                 return false;
             else if (!vm.NewUser.Contains(FilterNewUser, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
-        if (FilterAssetTag is not null && FilterAssetTag.Length > 0)
-            if (vm.AssetTag is null)
+        if (FilterNorR is not null && FilterNorR.Length == 1)
+            if (vm.NorR is not null && !vm.NorR.StartsWith(FilterNorR, StringComparison.InvariantCultureIgnoreCase))
                 return false;
-            else if (!vm.AssetTag.Contains(FilterAssetTag, StringComparison.InvariantCultureIgnoreCase))
+
+        if (FilterSerialNumber is not null && FilterSerialNumber.Length > 0)
+            if (vm.SerialNumber is null)
+                return false;
+            else if (!vm.SerialNumber.Contains(FilterSerialNumber, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+        if (FilterSimNumber is not null && FilterSimNumber.Length > 0)
+            if (vm.SimNumber is null)
+                return false;
+            else if (!vm.SimNumber.Contains(FilterSimNumber))
+                return false;
+
+        if (FilterSR is not null && FilterSR.Length > 0)
+            if (vm.SR is null)
+                return false;
+            else if (!vm.SR.ToString()!.Contains(FilterSR))
+                return false;
+
+        if (FilterStatus is not null && FilterStatus.Length > 0)
+            if (vm.Status is not null && !vm.Status.Contains(FilterStatus, StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
         if (FilterOEM is not null)
-            //if (vm.OEM.Contains(FilterOEM, StringComparison.InvariantCultureIgnoreCase))
             if (vm.OEM != FilterOEM)
                 return false;
 
@@ -228,6 +229,13 @@ public sealed partial class PhonesMainViewModel :
     }
 
     [ObservableProperty]
+    private string? _filterSerialNumber;
+    partial void OnFilterSerialNumberChanged(string? value)
+    {
+        RefreshFilterView();
+    }
+
+    [ObservableProperty]
     private string? _filterSimNumber;
     partial void OnFilterSimNumberChanged(string? value)
     {
@@ -288,7 +296,7 @@ public sealed partial class PhonesMainViewModel :
     {
         await EmailViewModel.LoadAsync();
 
-        if (!CanRefeshPhones)
+        if (!CanRefreshPhones)
         {
             PhoneItems.Clear();
             IEnumerable<Phone> phones = IncludeDisposals ? await _phonesRepository.GetAllPhonesAsync() : await _phonesRepository.GetActivePhonesAsync();
@@ -299,10 +307,9 @@ public sealed partial class PhonesMainViewModel :
         }
 
         _filterView.SortDescriptions.Clear();
-        _filterView.SortDescriptions.Add(new SortDescription("LastUpdate", ListSortDirection.Descending));
         RefreshFilterView();
 
-        CanRefeshPhones = true;
+        CanRefreshPhones = true;
     }
 
     public void Receive(Order message)

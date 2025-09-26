@@ -27,6 +27,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         _phone = phone ?? throw new ArgumentNullException(nameof(phone));
 
         AssetTag = phone.AssetTag ?? string.Empty;
+        Esim = phone.Esim ?? false;
         FormerUser = phone.FormerUser ?? string.Empty;
         Imei = phone.Imei;
         LastUpdate = phone.LastUpdate ?? string.Empty;
@@ -55,6 +56,15 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         else
             _phone.AssetTag = value;
 
+        await UpdatePhone();
+    }
+
+    [ObservableProperty]
+    private bool _esim;
+    async partial void OnEsimChanged(bool value)
+    {
+        if (value == _phone.Esim) return;
+        _phone.Esim = value;
         await UpdatePhone();
     }
 

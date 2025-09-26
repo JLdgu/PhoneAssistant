@@ -68,6 +68,7 @@ public sealed class PhonesRepository : IPhonesRepository
         dbPhone.AssetTag = phone.AssetTag;
         dbPhone.DespatchDetails = phone.DespatchDetails;
         dbPhone.FormerUser = phone.FormerUser;
+        dbPhone.Esim = phone.Esim;
         dbPhone.Imei = phone.Imei;
         dbPhone.Model = phone.Model;
         dbPhone.NewUser = phone.NewUser;

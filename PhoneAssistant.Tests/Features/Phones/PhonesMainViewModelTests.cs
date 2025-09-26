@@ -5,6 +5,9 @@ using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.Phones;
 using PhoneAssistant.WPF.Shared;
+
+using Serilog.Filters;
+
 using System.ComponentModel;
 using System.Windows.Data;
 
@@ -109,6 +112,28 @@ public sealed class PhonesMainViewModelTests
         await Assert.That(actual).HasSingleItem();
         await Assert.That(actual[0].AssetTag).IsEqualTo(phones[1].AssetTag );
     }
+
+    [Test]
+    [Arguments( null, 3)]
+    [Arguments( false, 2)]
+    [Arguments( true, 1)]
+    public async Task ChangingFilterEsim_ChangesFilterView(bool? filterValue, int matchingCount)
+    {
+        List<Phone> phones = [
+            new() { Esim = false, Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new() { Esim = true, Imei = "2" , AssetTag = "Tag Bb2", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new() { Esim = null, Imei = "3", AssetTag = "Tag Ccc3", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
+        ];
+        PhonesMainViewModel vm = ViewModelMockSetup(phones);
+        await vm.LoadAsync();
+        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+
+        vm.FilterEsim = filterValue;
+
+        PhonesItemViewModel[] actual = view.OfType<PhonesItemViewModel>().ToArray();
+        await Assert.That(actual).HasCount(matchingCount);
+    }
+
 
     [Test]
     public async Task ChangingFilterFormerUser_ChangesFilterViewAsync()

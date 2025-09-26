@@ -193,7 +193,6 @@
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
 
-
                     <DataGridTextColumn Header="Phone Number">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
@@ -222,6 +221,21 @@
                             </Style>
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
+
+                    <DataGridCheckBoxColumn Binding="{Binding Esim, UpdateSourceTrigger=PropertyChanged}" Header="eSIM">
+                        <DataGridCheckBoxColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <materialDesign:PackIcon Width="20"
+                                                             Height="20"
+                                                             HorizontalAlignment="Center"
+                                                             Kind="SimAlertOutline"
+                                                             ToolTip="eSIM" />
+                                    <CheckBox IsChecked="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterEsim, UpdateSourceTrigger=PropertyChanged}" IsThreeState="True" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridCheckBoxColumn.HeaderTemplate>
+                    </DataGridCheckBoxColumn>
 
                     <DataGridTemplateColumn CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>

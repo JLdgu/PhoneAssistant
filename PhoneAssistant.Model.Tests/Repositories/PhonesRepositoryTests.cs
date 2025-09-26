@@ -26,6 +26,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         AssetTag = ASSET_TAG,
         Condition = CONDITION_R,
         DespatchDetails = DESPATCH_DETAILS,
+        Esim = true,
         FormerUser = FORMER_USER,
         Imei = IMEI,
         Model = MODEL,
@@ -149,13 +150,13 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         {
             Imei = _phone.Imei,
             Condition = CONDITION_N,
+            Esim = null,
             Model = "old model",
             OEM = Manufacturer.Apple,
             Status = ApplicationConstants.Statuses[1]
         };
         await _helper.DbContext.Phones.AddAsync(original);
         await _helper.DbContext.SaveChangesAsync();
-        string lastUpdate = original.LastUpdate;
 
         await _repository.UpdateAsync(_phone);
 
@@ -164,6 +165,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         await Assert.That(actual!.AssetTag).IsEqualTo(_phone.AssetTag);
         await Assert.That(actual.Condition).IsEqualTo(_phone.Condition);
         await Assert.That(actual.DespatchDetails).IsEqualTo(_phone.DespatchDetails);
+        await Assert.That(actual.Esim).IsTrue();
         await Assert.That(actual.FormerUser).IsEqualTo(_phone.FormerUser);
         await Assert.That(actual.Imei).IsEqualTo(_phone.Imei);
         await Assert.That(actual.Model).IsEqualTo(_phone.Model);

@@ -57,19 +57,20 @@ public sealed partial class PhonesMainViewModel :
             Phone phone = new()
             {
                 AssetTag = item.AssetTag,
+                Condition = item.NorR,
                 FormerUser = item.FormerUser,
+                Esim = item.Esim,
                 Imei = item.Imei,
                 LastUpdate = item.LastUpdate,
                 Model = item.Model,
                 NewUser = item.NewUser,
-                Condition = item.NorR,
                 Notes = item.Notes,
                 OEM = item.OEM,
                 PhoneNumber = item.PhoneNumber,
                 SimNumber = item.SimNumber,
-                Status = item.Status
+                Status = item.Status,
+                SR = item.SR == string.Empty || item.SR == "0" ? null : int.Parse(item.SR)
             };
-            phone.SR = item.SR == string.Empty || item.SR == "0" ? null : int.Parse(item.SR);
             phones.Add(phone);
         }
 
@@ -118,6 +119,9 @@ public sealed partial class PhonesMainViewModel :
             if (vm.AssetTag is null)
                 return false;
             else if (!vm.AssetTag.Contains(FilterAssetTag, StringComparison.InvariantCultureIgnoreCase))
+                return false;
+
+        if ((FilterEsim is true && vm.Esim is false) || (FilterEsim is false && vm.Esim is true))
                 return false;
 
         if (FilterImei is not null && FilterImei.Length > 0)
@@ -196,6 +200,13 @@ public sealed partial class PhonesMainViewModel :
     [ObservableProperty]
     private string? _filterNorR;
     partial void OnFilterNorRChanged(string? value)
+    {
+        RefreshFilterView();
+    }
+
+    [ObservableProperty]
+    private bool? _filterEsim;
+    partial void OnFilterEsimChanged(bool? value)
     {
         RefreshFilterView();
     }

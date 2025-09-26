@@ -1,5 +1,6 @@
 ﻿using Moq;
 using Moq.AutoMock;
+
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Features.Phones;
 
@@ -9,35 +10,21 @@ public sealed class PhonesItemViewModelTests
 {
     private Phone _phone = new()
     {
-        PhoneNumber = "phoneNumber",
-        SimNumber = "simNumber",
-        Status = "status",
         AssetTag = "at",
-        DespatchDetails = "despatch",
-        FormerUser = "fu",
-        Imei = "imei",  
-        Model = "model",
-        NewUser = "nu",
         Condition = "norr",
-        Notes = "note",
-        OEM = Manufacturer.Apple,
-        SR = 123456,
-        SerialNumber = "sn",
-    };
-    private readonly Phone _updatedPhone = new()
-    {
-        PhoneNumber = null,
-        SimNumber = null,
-        Status = "status",
-        AssetTag = "at",
+        DespatchDetails = "despatch",
+        Esim = null,
         FormerUser = "fu",
         Imei = "imei",
         Model = "model",
         NewUser = "nu",
-        Condition = "norr",
         Notes = "note",
         OEM = Manufacturer.Apple,
-        SR = 123456
+        PhoneNumber = "phoneNumber",
+        SimNumber = "simNumber",
+        Status = "status",
+        SR = 123456,
+        SerialNumber = "sn",
     };
 
     private readonly AutoMocker _mocker = new AutoMocker();
@@ -54,15 +41,15 @@ public sealed class PhonesItemViewModelTests
     }
 
     [Test]
-    [Arguments("phone number", "sim number","In Stock")]
-    [Arguments(null, "sim number","In Stock")]
-    [Arguments("phone number", null,"In Stock")]
+    [Arguments("phone number", "sim number", "In Stock")]
+    [Arguments(null, "sim number", "In Stock")]
+    [Arguments("phone number", null, "In Stock")]
     [Arguments(null, null, "In Stock")]
-    [Arguments("phone number", "sim number",  "Production")]
+    [Arguments("phone number", "sim number", "Production")]
     [Arguments(null, "sim number", "Production")]
     [Arguments("phone number", null, "Production")]
     [Arguments(null, null, "Production")]
-    public async Task PhonePropertySet_SetsBoundPropertiesAsync(string? phoneNumber, string? simNumber, string status)
+    public async Task PhonePropertySet_SetsBoundProperties(string? phoneNumber, string? simNumber, string status)
     {
         _phone.PhoneNumber = phoneNumber;
         _phone.SimNumber = simNumber;
@@ -70,6 +57,7 @@ public sealed class PhonesItemViewModelTests
         var vm = _mocker.CreateInstance<PhonesItemViewModel>();
 
         await Assert.That(vm.AssetTag).IsEqualTo(_phone.AssetTag);
+        await Assert.That(vm.Esim).IsEqualTo(_phone.Esim ?? false);
         await Assert.That(vm.FormerUser).IsEqualTo(_phone.FormerUser);
         await Assert.That(vm.Imei).IsEqualTo(_phone.Imei);
         await Assert.That(vm.Model).IsEqualTo(_phone.Model);
@@ -92,6 +80,16 @@ public sealed class PhonesItemViewModelTests
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         await Assert.That(_phone.AssetTag).IsEqualTo("Updated");
+        await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
+    }
+
+    [Test]
+    public async Task OnEsimChanged_CallsUpdateAsync_WithChangedValueAsync()
+    {
+        _vm.Esim = true;
+
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+        await Assert.That(_phone.Esim).IsTrue();
         await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 
@@ -306,11 +304,27 @@ public sealed class PhonesItemViewModelTests
     [Test]
     public async Task RemoveSim_SetsBoundPropertiesAsync()
     {
+        Phone updatedPhone = new()
+        {
+            AssetTag = "at",
+            Condition = "norr",
+            FormerUser = "fu",
+            Imei = "imei",
+            Model = "model",
+            NewUser = "nu",
+            Notes = "note",
+            OEM = Manufacturer.Apple,
+            PhoneNumber = null,
+            SimNumber = null,
+            Status = "status",
+            SR = 123456
+        };
+
         _vm.RemoveSimCommand.Execute(null);
 
         await Assert.That(_vm.PhoneNumber).IsEqualTo(string.Empty);
         await Assert.That(_vm.SimNumber).IsEqualTo(string.Empty);
-        await Assert.That(_vm.LastUpdate).IsEqualTo(_updatedPhone.LastUpdate);
+        await Assert.That(_vm.LastUpdate).IsEqualTo(updatedPhone.LastUpdate);
     }
 
     [Test]

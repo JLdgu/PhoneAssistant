@@ -9,17 +9,13 @@
 
     <ItemGroup>
         <PackageReference Include="FluentResults" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
         <PackageReference Include="Microsoft.Extensions.Hosting" />
         <PackageReference Include="NPOI" />
         <PackageReference Include="Serilog" />
-        <PackageReference Include="Serilog.Extensions.Hosting" />
         <PackageReference Include="Serilog.Sinks.Console" />
         <PackageReference Include="Serilog.Sinks.File" />
         <PackageReference Include="SixLabors.ImageSharp" />
         <PackageReference Include="System.CommandLine" />
     </ItemGroup>
-
-    <!--<Import Project="..\PhoneAssistant.Shared\PhoneAssistant.Shared.projitems" Label="Shared" />-->
 
 </Project>

@@ -9,7 +9,7 @@
     <ItemGroup>
         <PackageReference Include="EntityFrameworkCore.Triggered" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" VersionOverride="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
         <PackageReference Include="Microsoft.Extensions.Hosting" />
     </ItemGroup>
 

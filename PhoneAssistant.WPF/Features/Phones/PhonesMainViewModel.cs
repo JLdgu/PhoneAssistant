@@ -307,17 +307,24 @@ public sealed partial class PhonesMainViewModel :
     {
         await EmailViewModel.LoadAsync();
 
+        var currentSorts = _filterView.SortDescriptions.ToList();
+
         if (!CanRefreshPhones)
         {
             PhoneItems.Clear();
             IEnumerable<Phone> phones = IncludeDisposals ? await _phonesRepository.GetAllPhonesAsync() : await _phonesRepository.GetActivePhonesAsync();
+
             foreach (Phone phone in phones)
             {
                 PhoneItems.Add(_phonesItemViewModelFactory.Create(phone));
             }
         }
 
+        // Restore previous sort descriptions
         _filterView.SortDescriptions.Clear();
+        foreach (var sort in currentSorts)
+            _filterView.SortDescriptions.Add(sort);
+
         RefreshFilterView();
 
         CanRefreshPhones = true;

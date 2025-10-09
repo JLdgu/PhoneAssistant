@@ -29,7 +29,7 @@ public sealed class ImportMS(string importFile)
         try
         {
             using FileStream stream = new(importFile, FileMode.Open, FileAccess.Read);
-            using IWorkbook workbook = WorkbookFactory.Create(stream, readOnly: true);
+            using IWorkbook workbook = WorkbookFactory.Create(stream);
 
             Result<ISheet> resultSheet = Import.IsValidSheet(workbook, SheetName, CheckValue, A1);
             if (resultSheet.IsFailed)

@@ -41,7 +41,7 @@ public  static class Knox
         HashSet<string> imeiSet = [.. activeSIMs.Select(sim => sim.IMEI_MEID)];
 
         using FileStream stream = new(ciFile.FullName, FileMode.Open, FileAccess.Read);
-        using IWorkbook workbook = WorkbookFactory.Create(stream, readOnly: true);
+        using IWorkbook workbook = WorkbookFactory.Create(stream);
         ISheet ciSheet = workbook.GetSheetAt(0);
 
         IRow headerRow = ciSheet.GetRow(ciSheet.FirstRowNum);

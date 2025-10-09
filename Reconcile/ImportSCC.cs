@@ -28,7 +28,7 @@ public sealed class ImportSCC(string importFile)
         try
         {
             using FileStream stream = new(importFile, FileMode.Open, FileAccess.Read);
-            using IWorkbook workbook = WorkbookFactory.Create(stream, readOnly: true);
+            using IWorkbook workbook = WorkbookFactory.Create(stream);
 
             Result<ISheet> resultSheet = Import.IsValidSheet(workbook, SheetName, CheckValue, A2);
             if (resultSheet.IsFailed) return Result.Fail(resultSheet.Errors);

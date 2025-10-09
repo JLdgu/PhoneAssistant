@@ -14,7 +14,7 @@ public static class BaseImport
         Log.Information("Importing EE Base report from {0}", baseFile.FullName);
 
         using FileStream? stream = new(baseFile.FullName, FileMode.Open, FileAccess.Read);
-        using IWorkbook workbook = WorkbookFactory.Create(stream, readOnly: true);
+        using IWorkbook workbook = WorkbookFactory.Create(stream);
         ISheet sheet = workbook.GetSheetAt(0);
         IRow header = sheet.GetRow(0);
         ICell cell = header.GetCell(0);

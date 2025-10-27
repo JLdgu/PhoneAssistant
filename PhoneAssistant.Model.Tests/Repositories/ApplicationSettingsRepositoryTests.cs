@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using TUnit.Assertions.AssertConditions.Throws;
 
 namespace PhoneAssistant.Model.Tests.Repositories;
 

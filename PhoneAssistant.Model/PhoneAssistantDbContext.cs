@@ -56,8 +56,12 @@ public partial class PhoneAssistantDbContext : DbContext
             entity.Property(e => e.ImportDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
 
-        modelBuilder.Entity<Location>()
-            .HasKey(e => e.Name);
+        modelBuilder.Entity<Location>(l =>
+        {
+            l.HasKey(e => e.Name);
+
+            l.Property(e => e.Collection).HasColumnName("PrintDate");
+        });
 
         modelBuilder.Entity<Phone>(entity =>
         {

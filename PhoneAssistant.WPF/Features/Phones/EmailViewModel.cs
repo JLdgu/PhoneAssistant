@@ -93,7 +93,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         await Task.Run(() =>
         {
             string? includeDate = null;
-            if (SelectedLocation is not null && SelectedLocation.PrintDate)
+            if (SelectedLocation is not null && SelectedLocation.Collection)
                 includeDate = ToOrdinalWorkingDate(DateTime.Now, true);
 
             _dymoLabel.Execute(DeliveryAddress, includeDate);
@@ -152,15 +152,15 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
     public void GenerateEmailHtml()
     {
-        Location location = new () { Name = string.Empty, Address = string.Empty, PrintDate = false };
+        Location location = new () { Name = string.Empty, Address = string.Empty, Collection = false };
         if (SelectedLocation is not null)
             location = SelectedLocation;
         StringBuilder html = new("""
             <span style="font-size:14px; font-family:Verdana;">
             """);
-        if (location.PrintDate)
+        if (location.Collection)
         {
-            html.AppendLine($"<p>Your {OrderDetails.Phone.OEM} {OrderDetails.Phone.Model} {OrderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
+            html.AppendLine($"<p>{OrderDetails.Phone.NewUser} your {OrderDetails.Phone.OEM} {OrderDetails.Phone.Model} {OrderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
             if (location.Name.Contains("GMH"))
             {
                 html.AppendLine("DTS End User Compute Team, Hardware Room, Great Moor House, Bittern Road, Exeter, EX2 7FW</br>");

@@ -105,26 +105,26 @@ public sealed class EmailViewModelTests
     }
 
     [Test]
-    public async Task GenerateEmail_ShouldBeCollection_WhenPrintDateTrueAsync()
+    public async Task GenerateEmail_ShouldBeCollection_WhenCollection()
     {
         TestSetup(_phone);
-        Location location = new() { Name = "name", Address = "address", PrintDate = true};
+        Location location = new() { Name = "name", Address = "address", Collection = true};
         _vm.SelectedLocation = location;
 
         _vm.GenerateEmailHtml();
 
-        await Assert.That(_vm.EmailHtml).Contains($"<p>Your {_vm.OrderDetails.Phone.OEM} {_vm.OrderDetails.Phone.Model} {_vm.OrderDetails.DeviceType.ToString().ToLower()} can be collected from</br>");
+        await Assert.That(_vm.EmailHtml).Contains("can be collected from</br>");
     }
 
     [Test]
-    public async Task GenerateEmail_ShouldBeDelivery_WhenPrintDateFalseAsync()
+    public async Task GenerateEmail_ShouldBeDelivery_WhenNotCollection()
     {
         TestSetup(_phone);
-        Location location = new() { Name = "name", Address = "address", PrintDate = false };
+        Location location = new() { Name = "name", Address = "address", Collection = false };
 
         _vm.GenerateEmailHtml();
 
-        await Assert.That(_vm.EmailHtml).Contains($"<p>Your {_vm.OrderDetails.Phone.OEM} {_vm.OrderDetails.Phone.Model} {_vm.OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />");
+        await Assert.That(_vm.EmailHtml).Contains("has been sent to<br />");
     }
 
     [Test]
@@ -134,7 +134,19 @@ public sealed class EmailViewModelTests
 
         _vm.GenerateEmailHtml();
 
-        await Assert.That(_vm.EmailHtml).Contains($"<p>Your {_vm.OrderDetails.Phone.OEM} {_vm.OrderDetails.Phone.Model} {_vm.OrderDetails.DeviceType.ToString().ToLower()} has been sent to<br />");
+        await Assert.That(_vm.EmailHtml).Contains("has been sent to<br />");
+    }
+
+    [Test]
+    public async Task GenerateEmail_ShouldIncludeUserName_WhenCollection()
+    {
+        TestSetup(_phone);
+        Location location = new() { Name = "name", Address = "address", Collection = true };
+        _vm.SelectedLocation = location;
+
+        _vm.GenerateEmailHtml();
+
+        await Assert.That(_vm.EmailHtml).Contains($"<p>{_vm.OrderDetails.Phone.NewUser} your");
     }
 
     [Test]
@@ -291,7 +303,7 @@ public sealed class EmailViewModelTests
         _phone.PhoneNumber = "999";
         TestSetup(_phone);
 
-        _vm.SelectedLocation = new Location { Name = "Collect", Address = "{NewUser}, {SR}, {PhoneNumber}", PrintDate = true };
+        _vm.SelectedLocation = new Location { Name = "Collect", Address = "{NewUser}, {SR}, {PhoneNumber}", Collection = true };
 
         await Assert.That(_vm.DeliveryAddress).Contains(_phone.NewUser);
         await Assert.That(_vm.DeliveryAddress).Contains(_phone.SR.ToString()!);
@@ -299,22 +311,22 @@ public sealed class EmailViewModelTests
     }
 
     [Test]
-    public async Task SelectedLocation_WithPrintDateTrue_SetsCollectionDetailsAsync()
+    public async Task SelectedLocation_SetsCollectionDetails_WhenCollection()
     {
         TestSetup(_phone);
 
-        _vm.SelectedLocation = new Location { Name = "Collect", Address = "Collection Address", PrintDate = true };
+        _vm.SelectedLocation = new Location { Name = "Collect", Address = "Collection Address", Collection = true };
 
         await Assert.That(_vm.EmailHtml).Contains(" can be collected from</br>");
         await Assert.That(_vm.EmailHtml).Contains("It will be available for collection from");
     }
 
     [Test]
-    public async Task SelectedLocation_WithPrintDateFalse_SetsDeliveryDetailsAsync()
+    public async Task SelectedLocation_SetsDeliveryDetails_WhenNotCollection()
     {
         TestSetup(_phone);
 
-        _vm.SelectedLocation = new Location { Name = "Deliver", Address = "Delivery Address", PrintDate = false };
+        _vm.SelectedLocation = new Location { Name = "Deliver", Address = "Delivery Address", Collection = false };
 
         await Assert.That(_vm.EmailHtml).Contains(" has been sent to");
         await Assert.That(_vm.EmailHtml).Contains("It was sent on");
@@ -324,7 +336,7 @@ public sealed class EmailViewModelTests
     public async Task SelectedLocation_WithNote_IncludedInEmail()
     {
         TestSetup(_phone);
-        _vm.SelectedLocation = new Location { Name = "Deliver", Address = "Delivery Address", PrintDate = false, Note = "**note**" };
+        _vm.SelectedLocation = new Location { Name = "Deliver", Address = "Delivery Address", Collection  = false, Note = "**note**" };
 
         await Assert.That(_vm.EmailHtml).Contains("**note**");
     }

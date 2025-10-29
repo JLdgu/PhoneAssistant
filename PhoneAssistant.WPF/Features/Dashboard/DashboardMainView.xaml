@@ -29,6 +29,14 @@
             <StackPanel Orientation="Vertical">
                 <materialDesign:Card Margin="5,5" Padding="4,2">
                     <StackPanel Orientation="Vertical">
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.510.29" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #127 Add user name to collections emails" />
+                        <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #121 Remove phone history" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="5,5" Padding="4,2">
+                    <StackPanel Orientation="Vertical">
                         <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="v1.510.1" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #74 eSIM column added" />
                         <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" Text="Issue #75 serial number column added" />

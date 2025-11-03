@@ -72,6 +72,7 @@
                          CommandParameter="{x:Static viewmodel:ViewModelType.Dashboard}"
                          DockPanel.Dock="Top"
                          IsChecked="{Binding SelectedView, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static viewmodel:ViewModelType.Dashboard}}"
+                         IsEnabled="False"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon Width="24"

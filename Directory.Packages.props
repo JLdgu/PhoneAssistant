@@ -43,7 +43,7 @@
     <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.11" />
     <PackageVersion Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     <PackageVersion Include="System.Drawing.Common" Version="9.0.10" />
-    <PackageVersion Include="TUnit" Version="0.77.3" />
+    <PackageVersion Include="TUnit" Version="0.90.6" />
     <PackageVersion Include="Velopack" Version="0.0.1298" />
   </ItemGroup>
 </Project>

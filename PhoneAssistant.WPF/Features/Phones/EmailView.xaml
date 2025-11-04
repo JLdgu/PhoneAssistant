@@ -13,6 +13,7 @@
              mc:Ignorable="d">
     <UserControl.Resources>
         <shared:EnumBooleanConverter x:Key="EnumBooleanConverter" />
+        <shared:BooleanToPackIconKindConverter x:Key="BooleanToPackIconKindConverter" />
     </UserControl.Resources>
 
     <GroupBox Margin="16"
@@ -100,13 +101,18 @@
                                      GroupName="OrderType"
                                      IsChecked="{Binding OrderType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static shared:OrderType.Replacement}}"
                                      Style="{StaticResource MaterialDesignChoiceChipSecondaryRadioButton}" />
+
                         <Button Margin="20,0,0,0"
                                 Padding="0"
+                                d:Content="{materialDesign:PackIcon Kind=EmailOpenOutline,
+                                                                    Size=35}"
                                 Command="{Binding PrintEnvelopeCommand}"
-                                Content="{materialDesign:PackIcon Kind=EmailOutline,
-                                                                  Size=35}"
                                 Style="{StaticResource MaterialDesignFlatLightButton}"
-                                ToolTip="Print Envelope Insert" />
+                                ToolTip="Print Envelope Insert">
+                            <materialDesign:PackIcon Width="35"
+                                                     Height="35"
+                                                     Kind="{Binding EnvelopePrinted, Converter={StaticResource BooleanToPackIconKindConverter}}" />
+                        </Button>
                     </StackPanel>
 
                     <Button Margin="0,10,0,20"

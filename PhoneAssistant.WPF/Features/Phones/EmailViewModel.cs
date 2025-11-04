@@ -27,6 +27,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         set
         {
             _orderDetails = value;
+            EnvelopePrinted = false;
 
             Imei = value.Phone.Imei;
             PhoneNumber = value.Phone.PhoneNumber ?? string.Empty;
@@ -47,6 +48,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             GenerateEmailHtml();
         }
     }
+    [ObservableProperty]
+    private bool _envelopePrinted = false;
 
     [ObservableProperty]
     private string _imei = string.Empty;
@@ -75,6 +78,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         await _phonesRepository.UpdateAsync(_orderDetails!.Phone);
         GeneratingEmail = false;
     }
+    
     private bool CanPrintEnvelope() => OrderType != OrderType.None;
     [RelayCommand(CanExecute = nameof(CanPrintEnvelope))]
     private async Task PrintEnvelope()
@@ -85,6 +89,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         {
             _printEnvelope.Execute(_orderDetails);
         });
+        EnvelopePrinted = true;
     }
 
     [RelayCommand]

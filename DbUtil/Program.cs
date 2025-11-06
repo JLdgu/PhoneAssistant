@@ -15,7 +15,7 @@ public sealed class Program
             .Enrich.FromLogContext()
             .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen)
             .MinimumLevel.Debug()
-            .WriteTo.File("reconcile.log")
+            .WriteTo.File("dbutil.log")
             .CreateLogger();
 
         RootCommand rootCommand = new("Utility application to apply schema update scripts to a database");

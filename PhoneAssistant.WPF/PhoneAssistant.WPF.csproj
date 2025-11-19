@@ -5,11 +5,17 @@
         <TargetFramework>net8.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
         <StartupObject>PhoneAssistant.WPF.App</StartupObject>
+        <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+
+        <!-- Assembly Information -->
         <ApplicationIcon Condition="'$(Configuration)'=='Debug'">Resources\DebugPhone.ico</ApplicationIcon>
         <ApplicationIcon Condition="'$(Configuration)'=='Release'">Resources\Phone.ico</ApplicationIcon>
         <AssemblyName>PhoneAssistant</AssemblyName>
-        <AssemblyVersion>1.510.30</AssemblyVersion>
-        <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+        <Authors>Jonathan Linstead</Authors>
+        <Company>Devon County Council</Company>
+        <Copyright>Copyright © 2024 Devon County Council</Copyright>
+        <Product>Phone Assistant</Product>
+        <Version>1.511.19</Version>        
     </PropertyGroup>
 
     <ItemGroup>

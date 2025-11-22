@@ -1,5 +1,8 @@
-﻿using Serilog;
+﻿using PhoneAssistant.Model;
+
+using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
+
 using System.CommandLine;
 using System.Text;
 
@@ -18,7 +21,7 @@ public sealed class Program
         try
         {
             RootCommand rootCommand = GetRootCommand();
-            return rootCommand.InvokeAsync(args);
+            return rootCommand.Parse(args).InvokeAsync();
         }
         finally
         {
@@ -31,24 +34,37 @@ public sealed class Program
         RootCommand rootCommand = new("Phone Assistant Command Line Interface");
 
         Command baseCommand = new("base", "Import EE base report");
-        Option<FileInfo> baseFileOption = new("--file") { Description = "Full path to the EE base report file to import (*.xlsx)" };
-        baseFileOption.AddAlias("-f");
-        baseFileOption.ExistingOnly();
-        baseFileOption.IsRequired = true;
-        baseCommand.AddOption(baseFileOption);
-        baseCommand.SetHandler(async (baseFile) =>
+        Option<FileInfo> baseFileOption = new("--file", "-f")
+        {
+            Description = "Full path to the EE base report file to import (*.xlsx)",
+            Required = true,
+            Validators =
+            {
+                result =>
+                {
+                    var file = result.GetValueOrDefault<FileInfo>();
+                    if (file == null || !file.Exists)
+                    {
+                        result.AddError("The specified file does not exist.");
+                    }
+                }
+            }
+        };
+
+        baseCommand.Add(baseFileOption);
+        baseCommand.SetAction(async parseResult =>
         {
             try
             {
+                var baseFile = parseResult.GetValue(baseFileOption) ?? throw new ArgumentNullException(nameof(baseFileOption));
                 Log.Information("Importing EE Base report");
                 await BaseImport.ExecuteAsync(baseFile);
             }
             catch (Exception ex)
             {
-
                 Log.Fatal(exception: ex, "Unhandled exception:");
             }
-        }, baseFileOption);
+        });
         rootCommand.Add(baseCommand);
 
         StringBuilder sb = new();
@@ -62,26 +78,44 @@ public sealed class Program
         sb.AppendLine("All files should be placed in the folder specified. Defaults to users Downloads folder");
 
         Command knoxCommand = new("knox", sb.ToString());
-        Option<DirectoryInfo> workFolderOption = new("--folder") { Description = "Path to the folder where the output csv file should be created" };
-        workFolderOption.AddAlias("-f");
-        knoxCommand.AddOption(workFolderOption);
+        Option<DirectoryInfo> workFolderOption = new("--folder", "-f")
+        {
+            Description = "Path to the folder where the output csv file should be created",
+            Validators =
+            {
+                result =>
+                {
+                    var dir = result.GetValueOrDefault<DirectoryInfo>();
+                    if (dir == null || !dir.Exists)
+                    {
+                        result.AddError("The specified folder does not exist.");
+                    }
+                }
+            }
+        };
+        knoxCommand.Add(workFolderOption);
 
-        knoxCommand.SetHandler((outputFolder) =>
+        knoxCommand.SetAction(parseResult =>
         {
             try
             {
-                Log.Information("Creating Knox import file");
-                Knox.Execute(outputFolder);
+                var outputFolder = parseResult.GetValue(workFolderOption);
+                if (outputFolder is null)
+                    Log.Fatal("Output folder is required");
+                else
+                {
+                    Log.Information("Creating Knox import file");
+                    Knox.Execute(outputFolder);
+                }
             }
             catch (Exception ex)
             {
-
                 Log.Fatal(exception: ex, "Unhandled exception:");
             }
-        }, workFolderOption);
+        });
 
         rootCommand.Add(knoxCommand);
 
         return rootCommand;
-    }     
+    }
 }

@@ -20,7 +20,7 @@ public sealed class ApplicationSettings
 
     public bool DymoPrintToFile { get; set; } = false;
 
-    public string Printer { get; set; } = @"\\DS2CHL283.ds2.devon.gov.uk\Ricoh-C3503-np04304";
+    public string Printer { get; set; } = "Send to Cirros";
 
     public string PrintFile { get; set; } = string.Empty;
 

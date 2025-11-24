@@ -1,0 +1,27 @@
+<Solution>
+  <Folder Name="/.github/">
+    <File Path=".github/dependabot.yml" />
+  </Folder>
+  <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/ci.yml" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="Live2Test.ps1" />
+    <File Path="NewRelease.ps1" />
+    <File Path="publish.ps1" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="DbUtil.Tests/DbUtil.Tests.csproj" />
+  <Project Path="DbUtil/DbUtil.csproj" />
+  <Project Path="PhoneAssistant.Cli/PhoneAssistant.Cli.csproj" />
+  <Project Path="PhoneAssistant.Model.Tests/PhoneAssistant.Model.Tests.csproj" />
+  <Project Path="PhoneAssistant.Model/PhoneAssistant.Model.csproj" />
+  <Project Path="PhoneAssistant.Tests/PhoneAssistant.Tests.csproj" />
+  <Project Path="PhoneAssistant.WPF/PhoneAssistant.WPF.csproj" />
+  <Project Path="Reconcile.Tests/Reconcile.Tests.csproj" />
+  <Project Path="Reconcile/Reconcile.csproj" />
+</Solution>

@@ -11,3 +11,6 @@ updates:
       interval: "weekly"
     ignore:
       - dependency-name: "System.CommandLine"
+      - dependency-name: "Microsoft.EntityFrameworkCore.Sqlite"
+        versions:
+          - "10.*"

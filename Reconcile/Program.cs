@@ -1,8 +1,6 @@
 using FluentResults;
-
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
-
 using System.CommandLine;
 using System.Text;
 
@@ -31,37 +29,56 @@ public sealed class Program
         sb.AppendLine("SR[sr] CR[cr] Units.xlsx for SCC import");
         RootCommand rootCommand = new(sb.ToString());
 
-        var srOption = new Option<int>("--serviceRequest") { Description = "Service Request of disposals" };
-        srOption.AddAlias("-sr");
-        srOption.IsRequired = true;
-        rootCommand.AddOption(srOption);
+        Option<int> srOption = new("--serviceRequest", "-sr")
+        {
+            Description = "Service Request of disposals",
+            Required = true
+        };
+        rootCommand.Add(srOption);
 
-        var crOption = new Option<int>("--collectionRequest") { Description = "Service Request of disposals" };
-        crOption.AddAlias("-cr");
-        crOption.IsRequired = true;
-        rootCommand.AddOption(crOption);
+        Option<int> crOption = new("--collectionRequest", "-cr")
+        {
+            Description = "Collection Request of disposals",
+            Required = true
+        };
+        rootCommand.Add(crOption);
 
-        var folderOption = new Option<DirectoryInfo>("--folder") { Description = "Path to the folder where import files exist" };
-        folderOption.AddAlias("-f");
-        folderOption.ExistingOnly();
-        folderOption.IsRequired = true;
-        rootCommand.AddOption(folderOption);
+        Option<DirectoryInfo> folderOption = new("--folder", "-f")
+        { 
+            Description = "Path to the folder where import files exist",
+            Required = true,
+            Validators =
+            {
+                result =>
+                {
+                    var dir = result.GetValueOrDefault<DirectoryInfo>();
+                    if (dir == null || !dir.Exists)
+                    {
+                        result.AddError( "The specified folder does not exist.");
+                    }
+                }
+            }
+        };
+        rootCommand.Add(folderOption);
 
-        rootCommand.SetHandler((sr, cr, folder) =>
+        rootCommand.SetAction(parseResult =>
         {
             try
             {
+                var sr = parseResult.GetValue(srOption);
+                var cr = parseResult.GetValue(crOption);
+                var folder = parseResult.GetValue(folderOption);
                 Execute(sr: sr, scc: cr, directory: folder);
             }
             catch (Exception ex)
             {
                 Log.Fatal(exception: ex, "Unhandled exception:");
             }
-        },srOption, crOption, folderOption);
+        });
 
         try
         {
-            rootCommand.Invoke(args);
+            rootCommand.Parse(args).Invoke();
         }
         finally
         {

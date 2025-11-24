@@ -3,12 +3,11 @@ using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using Microsoft.Data.Sqlite;
 using System.CommandLine;
-using System.Text;
 
 namespace DbUtil;
 
 public sealed class Program
-{  
+{
     private static void Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
@@ -19,70 +18,71 @@ public sealed class Program
             .CreateLogger();
 
         RootCommand rootCommand = new("Utility application to apply schema update scripts to a database");
-        
-        var liveArg = new Argument<string>(
-            name: "liveDb",
-            description: "The path to the test PhoneAssistant database",
-            getDefaultValue: ()  => @"\\countyhall.ds2.devon.gov.uk\docs\Exeter, County Hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\phoneassistant.db");
 
-        Command liveCommand = new ("live", "Apply updates to LIVE database") { liveArg };
-        liveCommand.SetHandler(( live ) =>
+        Argument<string> liveArg = new("liveDb")
+        {
+            Description = "The path to the live PhoneAssistant database",
+            DefaultValueFactory = _ => @"\\countyhall.ds2.devon.gov.uk\docs\Exeter, County Hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\phoneassistant.db"
+        };
+
+        Command liveCommand = new("live", "Apply updates to LIVE database");
+        liveCommand.SetAction(parseResult =>
         {
             try
             {
+                var live = parseResult.GetValue(liveArg);
                 Log.Information("Applying update to LIVE database {0}", live);
                 if (string.IsNullOrEmpty(live))
-                {
-                    Log.Fatal("Database path is null when parsing parameter");
-                    return;
-                }
-                Execute(live);
+                    Log.Fatal("Database path is null when parsing parameter");                    
+                else
+                    Execute(live);
             }
             catch (Exception ex)
             {
-
                 Log.Fatal(exception: ex, "Unhandled exception:");
             }
-        },liveArg);
+        });
 
-        var testArg = new Argument<string>(
-            name: "testDb",
-            description: "The path to the test PhoneAssistant database",
-            getDefaultValue: () => @"c:\dev\paTest.db" );
+        Argument<string> testArg = new("testDb")
+        {
+            Description = "The path to the test PhoneAssistant database",
+            DefaultValueFactory = _ => @"c:\dev\paTest.db"
+        };
 
-        Command testCommand = new("test", "Apply updates to TEST database") { testArg };
-        testCommand.SetHandler((test) =>
+        Command testCommand = new("test", "Apply updates to TEST database");
+        testCommand.SetAction(parseResult =>
         {
             try
             {
+                var test = parseResult.GetValue(liveArg);
                 Log.Information("Applying update to TEST database {0}", test);
                 if (string.IsNullOrEmpty(test))
                 {
                     Log.Fatal("Database path is null when parsing parameter");
                     return;
                 }
-                Execute(test);
+                Execute(test.ToString());
             }
             catch (Exception ex)
             {
 
                 Log.Fatal(exception: ex, "Unhandled exception:");
             }
-        },testArg);
+        });
 
         rootCommand.Add(liveCommand);
         rootCommand.Add(testCommand);
 
         try
         {
-            rootCommand.Invoke(args);
+            rootCommand.Parse(args).Invoke();
         }
         finally
         {
             Log.CloseAndFlush();
         }
     }
-    
+
     public static void Execute(string db)
     {
         SqlScripts sqlScripts = new();
@@ -97,7 +97,7 @@ public sealed class Program
             if (result.IsSuccess)
             {
                 if (result.Value == true)
-                    Log.Information("{0} applied successfully",script.Name);
+                    Log.Information("{0} applied successfully", script.Name);
                 else
                     Log.Information("{0} already applied to database", script.Name);
             }
@@ -108,7 +108,7 @@ public sealed class Program
                 return;
             }
         }
-        
+
         Log.Information("Update scripts applied successfully.");
     }
 
@@ -140,7 +140,7 @@ public sealed class Program
     }
 
     public static bool CheckSchemaVersionsExists(SqliteConnection connection)
-    {        
+    {
         var command = connection.CreateCommand();
         command.CommandText = "SELECT count(*) FROM sqlite_master WHERE type = 'table' and name = 'SchemaVersion';";
         SqliteDataReader reader = command.ExecuteReader();

@@ -9,5 +9,5 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
-    ignore:
-      - dependency-name: "System.CommandLine"
+#    ignore:
+#      - dependency-name: "System.CommandLine"

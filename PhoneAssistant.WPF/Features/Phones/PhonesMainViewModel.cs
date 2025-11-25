@@ -82,13 +82,14 @@ public sealed partial class PhonesMainViewModel :
         CsvWriter csv = new(writer, CultureInfo.InvariantCulture);
         csv.WriteRecords(phones);
     }
-
     private bool CanExport => !_filterView.IsEmpty;
 
     [RelayCommand(CanExecute =nameof(CanRefreshPhones))]
     private async Task RefreshPhones()
     {
         CanRefreshPhones = false;
+        await Task.Run(() => Thread.Sleep(50)); // Allow UI to update
+
         await LoadAsync();
     }
     public bool CanRefreshPhones { get; set; }
@@ -104,10 +105,9 @@ public sealed partial class PhonesMainViewModel :
 
     [ObservableProperty]
     private bool _includeDisposals;
-    async partial void OnIncludeDisposalsChanged(bool value)
+    partial void OnIncludeDisposalsChanged(bool value)
     {
-        CanRefreshPhones = false;
-        await LoadAsync();
+        RefreshPhonesCommand.Execute(null);
     }
 
     #region Filtering View

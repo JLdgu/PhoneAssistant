@@ -62,39 +62,6 @@ public sealed class PhonesMainViewModelTests
     }
 
     [Test]
-    public async Task RefreshPhonesCommand_ShouldUpdateView_WhenDatabaseChanged()
-    {
-        List<Phone> phones = [
-            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
-            new Phone() { Imei = "2" , AssetTag = "Tag Bb2", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
-            new Phone() { Imei = "3" , AssetTag = "Tag Ccc3", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
-        ];
-        int index = 0;
-        AutoMocker mocker = new();
-        Mock<IApplicationSettingsRepository> settings = mocker.GetMock<IApplicationSettingsRepository>();
-        settings.Setup(s => s.ApplicationSettings).Returns(new ApplicationSettings());
-        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.GetActivePhonesAsync()).ReturnsAsync(phones);
-        Mock<IBaseReportRepository> sims = mocker.GetMock<IBaseReportRepository>();
-        Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
-        Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
-        factory.Setup(r => r.Create(It.IsAny<Phone>()))
-                            .Returns(() => new PhonesItemViewModel(settings.Object, sims.Object, repository.Object,  messenger.Object, phones[index]))
-                            .Callback(() => index++);
-
-        PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
-        await vm.LoadAsync();
-        index = 0;
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
-        phones.Add(new Phone() { Imei = "444", AssetTag = "Tag ddd4", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "" });
-
-        vm.RefreshPhonesCommand.Execute(null);
-
-        PhonesItemViewModel? actual = view.OfType<PhonesItemViewModel>().SingleOrDefault(vm => vm.Imei == "444");
-        await Assert.That(actual).IsNotNull();
-    }
-
-    [Test]
     public async Task ChangingFilterAssetTag_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {

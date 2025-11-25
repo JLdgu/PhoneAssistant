@@ -43,6 +43,11 @@
                         Command="{Binding UpdateAndRestartCommand}"
                         Content="Update and Restart"
                         Style="{StaticResource MaterialDesignOutlinedButton}" />
+                <Button Margin="10,0"
+                        Click="ReleaseNotes_Click"
+                        Content="Release Notes"
+                        Style="{StaticResource MaterialDesignOutlinedButton}" />
+
             </StackPanel>
         </materialDesign:Card>
 

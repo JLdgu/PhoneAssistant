@@ -56,6 +56,8 @@ jobs:
             exit 1
         }
 
+        dotnet tool install -g vpk
+
         vpk download github --repoUrl "${{ github.server_url }}/${{ github.repository }}" 
 
         vpk pack -u PhoneAssistant `

@@ -13,3 +13,11 @@ updates:
       - dependency-name: "Microsoft.EntityFrameworkCore.Sqlite"
         versions:
           - "10.*"
+  - package-ecosystem: "github-actions" # See documentation for possible values
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "weekly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"

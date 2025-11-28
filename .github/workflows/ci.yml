@@ -8,6 +8,11 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: pwsh
 
 jobs:
   build:
@@ -31,3 +36,34 @@ jobs:
 
     - name: Test
       run: dotnet test --no-build --verbosity normal
+
+    - name: Publish
+      run: dotnet publish PhoneAssistant.WPF/PhoneAssistant.WPF.csproj `
+            -c Release `
+            -o publish `
+            -r win-x64 `
+            --self-contained false
+
+    - name: Velopack Pack
+      if: ${{ github.event_name != 'workflow_dispatch' }}
+      run: |
+        [xml]$projectFile = Get-Content "PhoneAssistant.WPF\PhoneAssistant.WPF.csproj"
+
+        $Version = $projectFile.Project.PropertyGroup.Version | Where-Object { $_ -ne $null } | Select-Object -First 1
+
+        if ([string]::IsNullOrEmpty($Version)) {
+            Write-Host "ERROR: Could not read version from PhoneAssistant.WPF.csproj" -ForegroundColor Red
+            exit 1
+        }
+
+        vpk download github --repoUrl "${{ github.server_url }}/${{ github.repository }}" 
+
+        vpk pack -u PhoneAssistant `
+            -v $Version `
+            -p .\publish `
+            -e PhoneAssistant.exe `
+            -i PhoneAssistant.WPF\Resources\Phone.ico `
+            --packAuthors "Devon County Council" `
+            --noPortable 
+          
+        vpk upload github --publish --merge --tag "$Version" --releaseName "Release $Version""

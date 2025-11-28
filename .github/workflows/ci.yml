@@ -66,4 +66,4 @@ jobs:
             --packAuthors "Devon County Council" `
             --noPortable 
           
-        vpk upload github --publish --merge --tag "$Version" --releaseName "Release $Version""
+        vpk upload github --publish --merge --tag "$Version" --releaseName "Release $Version"

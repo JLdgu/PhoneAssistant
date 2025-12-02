@@ -1,10 +1,8 @@
-﻿using System.Drawing;
+﻿using Microsoft.Extensions.FileProviders;
+using PhoneAssistant.Model;
+using System.Drawing;
 using System.Drawing.Printing;
 using System.Reflection;
-
-using Microsoft.Extensions.FileProviders;
-
-using PhoneAssistant.Model;
 
 namespace PhoneAssistant.WPF.Shared;
 
@@ -26,10 +24,8 @@ internal sealed class PrintEnvelope : IPrintEnvelope
     private readonly Brush _lineBrush = new SolidBrush(Color.FromArgb(255, 91, 155, 213));
     private readonly Pen _linePen;
     private readonly Brush _blackBrush = new SolidBrush(Color.Black);
-    //public Brush BlackBrush => _blackBrush;
 
     private readonly Font _bodyFont = new("Arial", 18);
-    //private readonly Font _footerFont = new("Arial", 16);
     int _verticalPosition = MARGIN_TOP;
 
     private readonly IApplicationSettingsRepository _appSettings;
@@ -43,14 +39,14 @@ internal sealed class PrintEnvelope : IPrintEnvelope
 
     public void Execute(OrderDetails orderDetails)
     {
-        if (orderDetails is null)
-        {
-            throw new ArgumentNullException(nameof(orderDetails));
-        }
+        ArgumentNullException.ThrowIfNull(orderDetails);
         _orderDetails = orderDetails;
         _verticalPosition = MARGIN_TOP;
 
-        PrintDocument pd = new();
+        PrintDocument pd = new()
+        {
+            DocumentName = $"SR{_orderDetails.Phone.SR} {_orderDetails.Phone.NewUser} Envelope Insert"
+        };
         pd.DefaultPageSettings.Landscape = false;
         pd.DefaultPageSettings.Color = true;
         if (_appSettings.ApplicationSettings.PrintToFile)
@@ -76,10 +72,9 @@ internal sealed class PrintEnvelope : IPrintEnvelope
             return;
         Graphics graphics = ev.Graphics;
 
-        var embeddedProvider = new EmbeddedFileProvider(Assembly.GetExecutingAssembly(), "PhoneAssistant.WPF");
-
         DrawLine(graphics);
 
+        var embeddedProvider = new EmbeddedFileProvider(Assembly.GetExecutingAssembly(), "PhoneAssistant.WPF");
         using (var reader = embeddedProvider.GetFileInfo("Resources/EUC.png").CreateReadStream())
         {
             graphics.DrawImage(Image.FromStream(reader), A4_PAGE_WIDTH / 2 - EUC_IMAGE_WIDTH / 2, _verticalPosition, EUC_IMAGE_WIDTH, EUC_IMAGE_HEIGHT);
@@ -106,13 +101,11 @@ internal sealed class PrintEnvelope : IPrintEnvelope
         float fontLineHeight = _bodyFont.GetHeight(graphics);
         RectangleF bodyRectangle = new(MARGIN_LEFT, _verticalPosition, A4_BODY_WIDTH, fontLineHeight * 15);
 
-        StringFormat stringFormat = new StringFormat();
+        StringFormat stringFormat = new();
         float[] tabs = { 225 };
         stringFormat.SetTabStops(0, tabs);
 
         graphics.DrawString(_orderDetails.EnvelopeText, _bodyFont, _blackBrush, bodyRectangle, stringFormat);
-
-        //_vertialPostion += (int)fontLineHeight * 15;
 
         _verticalPosition = A4_PAGE_HEIGHT - MARGIN_BOTTOM;
         DrawLine(graphics);

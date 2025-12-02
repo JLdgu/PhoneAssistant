@@ -25,7 +25,7 @@ public sealed class EmailViewModelTests
         Condition = "norr",
         Notes = "note",
         OEM = Manufacturer.Apple,
-        SR = 123456
+        Ticket = 123456
     };
 
     private const string DataUsage = """
@@ -299,14 +299,14 @@ public sealed class EmailViewModelTests
     public async Task SelectedLocation_InterpolatesValuesFor_DeliveryAddressAsync()
     {
         _phone.NewUser = "New User";
-        _phone.SR = 42;
+        _phone.Ticket = 42;
         _phone.PhoneNumber = "999";
         TestSetup(_phone);
 
         _vm.SelectedLocation = new Location { Name = "Collect", Address = "{NewUser}, {SR}, {PhoneNumber}", Collection = true };
 
         await Assert.That(_vm.DeliveryAddress).Contains(_phone.NewUser);
-        await Assert.That(_vm.DeliveryAddress).Contains(_phone.SR.ToString()!);
+        await Assert.That(_vm.DeliveryAddress).Contains(_phone.Ticket.ToString()!);
         await Assert.That(_vm.DeliveryAddress).Contains(_phone.PhoneNumber);
     }
 

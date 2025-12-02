@@ -277,10 +277,10 @@ public sealed class PhonesMainViewModelTests
     public async Task ChangingFilterSR_ChangesFilterViewAsync()
     {
         List<Phone> phones = new List<Phone>() {
-            new Phone() { Imei = "1", SR=111, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
-            new Phone() { Imei = "2", SR=222, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
-            new Phone() {Imei = "3", SR = 333, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
-            new Phone() {Imei = "4", SR = 112233, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
+            new Phone() { Imei = "1", Ticket=111, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() { Imei = "2", Ticket=222, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() {Imei = "3", Ticket = 333, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new Phone() {Imei = "4", Ticket = 112233, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
@@ -290,8 +290,8 @@ public sealed class PhonesMainViewModelTests
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
         await Assert.That(actual.Count()).IsEqualTo(2);
-        await Assert.That(actual[0].SR).IsEqualTo(phones[1].SR.ToString());
-        await Assert.That(actual[1].SR).IsEqualTo(phones[3].SR.ToString());
+        await Assert.That(actual[0].SR).IsEqualTo(phones[1].Ticket.ToString());
+        await Assert.That(actual[1].SR).IsEqualTo(phones[3].Ticket.ToString());
     }
 
     [Test]

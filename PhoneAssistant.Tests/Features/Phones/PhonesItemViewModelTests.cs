@@ -23,7 +23,7 @@ public sealed class PhonesItemViewModelTests
         PhoneNumber = "phoneNumber",
         SimNumber = "simNumber",
         Status = "status",
-        SR = 123456,
+        Ticket = 123456,
         SerialNumber = "sn",
     };
 
@@ -68,7 +68,7 @@ public sealed class PhonesItemViewModelTests
         await Assert.That(vm.PhoneNumber).IsEqualTo(_phone.PhoneNumber ?? string.Empty);
         await Assert.That(vm.SerialNumber).IsEqualTo(_phone.SerialNumber ?? string.Empty);
         await Assert.That(vm.SimNumber).IsEqualTo(_phone.SimNumber ?? string.Empty);
-        await Assert.That(vm.SR).IsEqualTo(_phone.SR.ToString());
+        await Assert.That(vm.SR).IsEqualTo(_phone.Ticket.ToString());
         await Assert.That(vm.Status).IsEqualTo(_phone.Status);
     }
 
@@ -204,7 +204,7 @@ public sealed class PhonesItemViewModelTests
         _vm.SR = actual;
 
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
-        await Assert.That(_phone.SR).IsEqualTo(expected);
+        await Assert.That(_phone.Ticket).IsEqualTo(expected);
         await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
     }
 
@@ -285,7 +285,7 @@ public sealed class PhonesItemViewModelTests
     {
         _vm.Status = status;
 
-        await Assert.That(_vm.SR).IsEqualTo(_phone.SR.ToString());
+        await Assert.That(_vm.SR).IsEqualTo(_phone.Ticket.ToString());
     }
 
     [Test]
@@ -317,7 +317,7 @@ public sealed class PhonesItemViewModelTests
             PhoneNumber = null,
             SimNumber = null,
             Status = "status",
-            SR = 123456
+            Ticket = 123456
         };
 
         _vm.RemoveSimCommand.Execute(null);
@@ -346,7 +346,7 @@ public sealed class PhonesItemViewModelTests
     public async Task CreateEmailCommand_CanExecuteAsync(string status, int? sr, string? newUser, bool canExecute)
     {
         _phone.Status = status;
-        _phone.SR = sr;
+        _phone.Ticket = sr;
         _phone.NewUser = newUser;
         var vm = _mocker.CreateInstance<PhonesItemViewModel>();
 

@@ -10,7 +10,7 @@ public class Phone
     public required string Status { get; set; }
     public required Manufacturer OEM { get; set; }
     public required string Model { get; set; }
-    public int? SR { get; set; }
+    public int? Ticket { get; set; }
     public string? AssetTag { get; set; }
     public string? NewUser { get; set; }
     public string? Notes { get; set; }

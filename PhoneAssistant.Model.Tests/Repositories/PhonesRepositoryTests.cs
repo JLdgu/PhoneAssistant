@@ -35,7 +35,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         OEM = Manufacturer.Nokia,
         PhoneNumber = PHONE_NUMBER,
         SimNumber = SIM_NUMBER,
-        SR = SR,
+        Ticket = SR,
         Status = STATUS
     };
 
@@ -174,7 +174,7 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         await Assert.That(actual.OEM).IsEqualTo(_phone.OEM);
         await Assert.That(actual.PhoneNumber).IsEqualTo(_phone.PhoneNumber);
         await Assert.That(actual.SimNumber).IsEqualTo(_phone.SimNumber);
-        await Assert.That(actual.SR).IsEqualTo(_phone.SR);
+        await Assert.That(actual.Ticket).IsEqualTo(_phone.Ticket);
         await Assert.That(actual.Status).IsEqualTo(_phone.Status);
     }
 }

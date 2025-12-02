@@ -45,7 +45,7 @@ internal sealed class PrintEnvelope : IPrintEnvelope
 
         PrintDocument pd = new()
         {
-            DocumentName = $"SR{_orderDetails.Phone.SR} {_orderDetails.Phone.NewUser} Envelope Insert"
+            DocumentName = $"SR{_orderDetails.Phone.Ticket} {_orderDetails.Phone.NewUser} Envelope Insert"
         };
         pd.DefaultPageSettings.Landscape = false;
         pd.DefaultPageSettings.Color = true;

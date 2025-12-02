@@ -25,7 +25,7 @@ public sealed partial class SimsMainViewModel : ObservableValidator, ISimsMainVi
         Condition = "norr",
         Notes = "note",
         OEM = Manufacturer.Apple,
-        SR = 262281
+        Ticket = 262281
     };
 
     public SimsMainViewModel(IBaseReportRepository baseReportRepository,
@@ -58,7 +58,7 @@ public sealed partial class SimsMainViewModel : ObservableValidator, ISimsMainVi
             NewUser = NewUser,
             Condition = "norr",
             OEM = Manufacturer.Apple,
-            SR = ticket
+            Ticket = ticket
         };
 
         OrderDetails orderDetails = new(phone);

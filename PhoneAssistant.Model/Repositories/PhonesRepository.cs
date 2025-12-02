@@ -78,7 +78,7 @@ public sealed class PhonesRepository : IPhonesRepository
         dbPhone.PhoneNumber = phone.PhoneNumber;
         dbPhone.SerialNumber = phone.SerialNumber;
         dbPhone.SimNumber = phone.SimNumber;
-        dbPhone.SR = phone.SR;
+        dbPhone.Ticket = phone.Ticket;
         dbPhone.Status = phone.Status;
         _dbContext.Phones.Update(dbPhone);
 

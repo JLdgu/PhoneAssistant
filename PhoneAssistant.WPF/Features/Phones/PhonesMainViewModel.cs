@@ -69,7 +69,7 @@ public sealed partial class PhonesMainViewModel :
                 PhoneNumber = item.PhoneNumber,
                 SimNumber = item.SimNumber,
                 Status = item.Status,
-                SR = item.SR == string.Empty || item.SR == "0" ? null : int.Parse(item.SR)
+                Ticket = item.SR == string.Empty || item.SR == "0" ? null : int.Parse(item.SR)
             };
             phones.Add(phone);
         }

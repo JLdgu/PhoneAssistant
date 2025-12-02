@@ -32,7 +32,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             Imei = value.Phone.Imei;
             PhoneNumber = value.Phone.PhoneNumber ?? string.Empty;
             AssetTag = value.Phone.AssetTag ?? string.Empty;
-            Ticket = value.Phone.SR.ToString();
+            Ticket = value.Phone.Ticket.ToString();
             OrderType = value.OrderType;
             SelectedLocation = null;            
             if (value.Phone.DespatchDetails is null)
@@ -118,7 +118,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
         string deliveryAddress = value.Address;
         deliveryAddress = deliveryAddress.Replace("{NewUser}", _orderDetails!.Phone.NewUser);
-        deliveryAddress = deliveryAddress.Replace("{SR}", _orderDetails!.Phone.SR.ToString());
+        deliveryAddress = deliveryAddress.Replace("{SR}", _orderDetails!.Phone.Ticket.ToString());
         deliveryAddress = deliveryAddress.Replace("{PhoneNumber}", PhoneNumber);
 
         DeliveryAddress = deliveryAddress;

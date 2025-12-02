@@ -192,7 +192,7 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
         int? sr = null;
         if (Ticket is not null)
             sr = int.Parse(Ticket);
-        Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, Notes = PhoneNotes, OEM = OEM, PhoneNumber = PhoneNumber, SimNumber = SimNumber, SR = sr, Status = Status };
+        Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, Notes = PhoneNotes, OEM = OEM, PhoneNumber = PhoneNumber, SimNumber = SimNumber, Ticket = sr, Status = Status };
         string conditionDesc = ApplicationConstants.ConditionRepurposed;
         if (Condition == ApplicationConstants.ConditionNew.Substring(0,1))
             conditionDesc = ApplicationConstants.ConditionNew;

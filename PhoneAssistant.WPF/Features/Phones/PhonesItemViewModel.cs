@@ -39,7 +39,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         PhoneNumber = phone.PhoneNumber ?? string.Empty;
         SerialNumber = phone.SerialNumber ?? string.Empty;
         SimNumber = phone.SimNumber ?? string.Empty;
-        SR = phone.SR.ToString() ?? string.Empty;
+        SR = phone.Ticket.ToString() ?? string.Empty;
         Status = phone.Status ?? string.Empty;
     }
 
@@ -242,22 +242,22 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     private string _sR;
     async partial void OnSRChanged(string value)
     {
-        if (value == _phone.SR.ToString()) return;
+        if (value == _phone.Ticket.ToString()) return;
 
         if (string.IsNullOrEmpty(value))
         {
-            if (_phone.SR is null)
+            if (_phone.Ticket is null)
             {
                 return;
             }
             else
             {
-                _phone.SR = null;
+                _phone.Ticket = null;
             }
         }
         else
         {
-            _phone.SR = int.Parse(value);
+            _phone.Ticket = int.Parse(value);
         }
 
         await UpdatePhone();

@@ -26,10 +26,10 @@ public sealed class OrderDetails
         OrderType = Phone.PhoneNumber is null ? OrderType.Replacement : OrderType.New;
 
         StringBuilder envelopeText = new();
-        if (Phone.SR > 999999)
-            envelopeText.AppendLine($"Issue:\t#{Phone.SR}");
+        if (Phone.Ticket > 999999)
+            envelopeText.AppendLine($"Issue:\t#{Phone.Ticket}");
         else
-            envelopeText.AppendLine($"Service Request:\t#{Phone.SR}");
+            envelopeText.AppendLine($"Service Request:\t#{Phone.Ticket}");
 
         envelopeText.AppendLine("");
         envelopeText.AppendLine($"Device User:\t{Phone.NewUser}");

@@ -2,12 +2,66 @@
 using CsvHelper.Configuration.Attributes;
 using NPOI.SS.UserModel;
 using Serilog;
+using System.CommandLine;
 using System.Globalization;
+using System.Text;
 
 namespace PhoneAssistant.Cli;
 
-public  static class Knox
-{
+internal static class Knox
+{    
+    internal static void Command(RootCommand rootCommand)
+    {
+        StringBuilder sb = new();
+        sb.AppendLine("Create a csv file containing decommissioned/disposed IMEIs that can be bulk imported to Samsung Knox.");
+        sb.AppendLine();
+        sb.AppendLine("The output file (knox_import.csv) will contain IMEIs that are marked as decommissioned and disposed on myScomis.");
+        sb.AppendLine("Input file name expected formats are:");
+        sb.AppendLine("CI List*.xlsx for myScomis import - most recent will be used");
+        sb.AppendLine("kme_devices.csv");
+        sb.AppendLine();
+        sb.AppendLine("All files should be placed in the folder specified. Defaults to users Downloads folder");
+
+        Command knoxCommand = new("knox", sb.ToString());
+        Option<DirectoryInfo> workFolderOption = new("--folder", "-f")
+        {
+            Description = "Path to the folder where the output csv file should be created",
+            Validators =
+            {
+                result =>
+                {
+                    var dir = result.GetValueOrDefault<DirectoryInfo>();
+                    if (dir == null || !dir.Exists)
+                    {
+                        result.AddError("The specified folder does not exist.");
+                    }
+                }
+            }
+        };
+        knoxCommand.Add(workFolderOption);
+
+        knoxCommand.SetAction(parseResult =>
+        {
+            try
+            {
+                var outputFolder = parseResult.GetValue(workFolderOption);
+                if (outputFolder is null)
+                    Log.Fatal("Output folder is required");
+                else
+                {
+                    Log.Information("Creating Knox import file");
+                    Knox.Execute(outputFolder);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(exception: ex, "Unhandled exception:");
+            }
+        });
+
+        rootCommand.Add(knoxCommand);
+    }
+
     public static void Execute(DirectoryInfo workFolder)
     {
         workFolder ??= new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads"));

@@ -1,14 +1,12 @@
 ﻿using FluentResults;
-
 using NPOI.SS.UserModel;
-
 using Serilog;
 
-namespace Reconcile;
+namespace PhoneAssistant.Cli;
 
-public record Disposal(string PrimaryKey, string? SecondaryKey, int Certificate);
+public record SccDisposal(string PrimaryKey, string? SecondaryKey, int Certificate);
 
-public sealed class ImportSCC(string importFile)
+public sealed class DisposalImportSCC(string importFile)
 {
     private const string SheetName = "Units";
     private const string A2 = "A2";
@@ -20,24 +18,24 @@ public sealed class ImportSCC(string importFile)
     public const int ProductType = 5;
     public const int Status = 8;
 
-    public Result<List<Disposal>> Execute()
+    public Result<List<SccDisposal>> Execute()
     {
         Log.Information("Importing {0}", importFile);
 
-        List<Disposal> disposals = [];
+        List<SccDisposal> disposals = [];
         try
         {
             using FileStream stream = new(importFile, FileMode.Open, FileAccess.Read);
             using IWorkbook workbook = WorkbookFactory.Create(stream);
 
-            Result<ISheet> resultSheet = Import.IsValidSheet(workbook, SheetName, CheckValue, A2);
+            Result<ISheet> resultSheet = DisposalImport.IsValidSheet(workbook, SheetName, CheckValue, A2);
             if (resultSheet.IsFailed) return Result.Fail(resultSheet.Errors);
             ISheet sheet = resultSheet.Value;
 
             for (int i = sheet.FirstRowNum; i <= sheet.LastRowNum; i++)
             {
                 IRow row = sheet.GetRow(i);
-                Result<Disposal> disposal = GetDisposal(row);
+                Result<SccDisposal> disposal = GetDisposal(row);
                 if (disposal.IsSuccess) 
                     disposals.Add(disposal.Value);
             }
@@ -51,7 +49,7 @@ public sealed class ImportSCC(string importFile)
         return Result.Ok(disposals);
     }
 
-    public static Result<Disposal> GetDisposal(IRow row)
+    public static Result<SccDisposal> GetDisposal(IRow row)
     {
         if (row is null) return Result.Fail("Ignore: Null row");
         if (row.GetCell(Account) is null) return Result.Fail("Ignore: Account not D1024CT");
@@ -84,6 +82,6 @@ public sealed class ImportSCC(string importFile)
 
         int certificate = (int)row.GetCell(TrackerId).NumericCellValue;
 
-        return Result.Ok(new Disposal(primary, secondary, certificate));
+        return Result.Ok(new SccDisposal(primary, secondary, certificate));
     }
 }

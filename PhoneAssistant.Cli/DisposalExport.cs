@@ -1,17 +1,15 @@
 ﻿using FluentResults;
-
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-
 using Serilog;
 
-namespace Reconcile;
+namespace PhoneAssistant.Cli;
 
 public record ExcelRow(string Name, int Certificate);
 
-public sealed class Export
+public sealed class DisposalExport
 {
-    private readonly List<Disposal> _disposals;
+    private readonly List<SccDisposal> _disposals;
     private readonly List<Device> _devices;
     private readonly IWorkbook _disposalsWorkbook;
     private readonly IWorkbook _notesWorkbook;
@@ -28,7 +26,7 @@ public sealed class Export
     public static (int, string) Notes { get => (1, "CI Notes"); }
     public int RowCount { get; private set; }
 
-    public Export(int sr, List<Disposal> disposals, List<Device> devices, DirectoryInfo exportDirectory)
+    public DisposalExport(int sr, List<SccDisposal> disposals, List<Device> devices, DirectoryInfo exportDirectory)
     {
         _disposals = disposals;
         _devices = devices;
@@ -42,7 +40,7 @@ public sealed class Export
 
     public Result Execute()
     {
-        foreach (Disposal disposal in _disposals)
+        foreach (SccDisposal disposal in _disposals)
         {
             Result<ExcelRow> result = GetDevice(disposal);
             if (result.IsSuccess) AddRow(result.Value);
@@ -63,7 +61,7 @@ public sealed class Export
         return Result.Ok();
     }
 
-    public Result<ExcelRow> GetDevice(Disposal disposal)
+    public Result<ExcelRow> GetDevice(SccDisposal disposal)
     {
         if (_devices.Any(d => d.Name == disposal.PrimaryKey && d.Status != "Disposed"))
             return Result.Ok(new ExcelRow(disposal.PrimaryKey, disposal.Certificate));

@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "PhoneAssistant": {
-      "commandName": "Project",
-      "commandLineArgs": "-sr 225316 -cr 174049 -f \"C:\\dev\\PA Test Data\" "
-    }
-  }
-}

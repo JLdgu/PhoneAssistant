@@ -1,50 +1,37 @@
-using FluentResults;
+﻿using FluentResults;
 using Serilog;
-using Serilog.Sinks.SystemConsole.Themes;
 using System.CommandLine;
 using System.Text;
 
-namespace Reconcile;
+namespace PhoneAssistant.Cli;
 
-public sealed class Program
+internal static class Disposal
 {
-    private static void Main(string[] args)
+    internal static void Command(RootCommand rootCommand)
     {
-        Log.Logger = new LoggerConfiguration()
-            .Enrich.FromLogContext()
-            .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen)
-#if DEBUG
-            .MinimumLevel.Debug()
-            .WriteTo.File(@"c:\dev\reconcile.log")
-#else
-            .MinimumLevel.Warning()
-            .WriteTo.File("reconcile.log", rollingInterval: RollingInterval.Day)
-#endif
-            .CreateLogger();
-
-        StringBuilder sb = new();
-        sb.AppendLine("Utility application to reconcile phone disposals");
-        sb.AppendLine("File name expected formats are:");
-        sb.AppendLine("CI List.xlsx for myScomis import");
-        sb.AppendLine("SR[sr] CR[cr] Units.xlsx for SCC import");
-        RootCommand rootCommand = new(sb.ToString());
+        StringBuilder description = new();
+        description.AppendLine("Reconcile phone disposals");
+        description.AppendLine("An export from myScomis 'All Telephony CIs");
+        description.AppendLine("CI Listccyy_mm_dd_hh_mm_ss.xlsx");
+        description.AppendLine("Units D1024CT ccyy-mm-dd.xls SCC export");
+        Command disposalCommand = new("disposal", description.ToString());
 
         Option<int> srOption = new("--serviceRequest", "-sr")
         {
             Description = "Service Request of disposals",
             Required = true
         };
-        rootCommand.Add(srOption);
+        disposalCommand.Add(srOption);
 
         Option<int> crOption = new("--collectionRequest", "-cr")
         {
             Description = "Collection Request of disposals",
             Required = true
         };
-        rootCommand.Add(crOption);
+        disposalCommand.Add(crOption);
 
         Option<DirectoryInfo> folderOption = new("--folder", "-f")
-        { 
+        {
             Description = "Path to the folder where import files exist",
             Required = true,
             Validators =
@@ -59,9 +46,9 @@ public sealed class Program
                 }
             }
         };
-        rootCommand.Add(folderOption);
+        disposalCommand.Add(folderOption);
 
-        rootCommand.SetAction(parseResult =>
+        disposalCommand.SetAction(parseResult =>
         {
             try
             {
@@ -76,14 +63,7 @@ public sealed class Program
             }
         });
 
-        try
-        {
-            rootCommand.Parse(args).Invoke();
-        }
-        finally
-        {
-            Log.CloseAndFlush();
-        }
+        rootCommand.Add(disposalCommand);
     }
 
     private static void Execute(int sr, int scc, DirectoryInfo? directory)
@@ -104,7 +84,7 @@ public sealed class Program
             return;
         }
 
-        ImportMS importMS = new(msImport);
+        DisposalImportMS importMS = new(msImport);
         Result<List<Device>> msResult = importMS.Execute();
         if (msResult.IsFailed)
         {
@@ -112,16 +92,16 @@ public sealed class Program
             return;
         }
 
-        ImportSCC importSCC = new(sccImport);
-        Result<List<Disposal>> sccResult = importSCC.Execute();
+        DisposalImportSCC importSCC = new(sccImport);
+        Result<List<SccDisposal>> sccResult = importSCC.Execute();
         if (sccResult.IsFailed)
         {
             Log.Error(sccResult.Errors.First().Message);
             return;
         }
 
-        Export export = new(sr: sr, disposals: sccResult.Value, devices: msResult.Value, exportDirectory: directory!);
-        Result exportResult = export.Execute();
+        DisposalExport export = new(sr: sr, disposals: sccResult.Value, devices: msResult.Value, exportDirectory: directory!);
+        FluentResults.Result exportResult = export.Execute();
         if (exportResult.IsFailed)
         {
             Log.Error(sccResult.Errors.First().Message);
@@ -130,4 +110,5 @@ public sealed class Program
 
         Log.Information("Reconcile finished");
     }
+
 }

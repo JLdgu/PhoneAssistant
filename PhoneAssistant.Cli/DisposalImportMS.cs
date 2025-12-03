@@ -2,11 +2,11 @@
 using NPOI.SS.UserModel;
 using Serilog;
 
-namespace Reconcile;
+namespace PhoneAssistant.Cli;
 
 public record Device(string Name, string AssetTag, string SerialNumber, string Status, int Certificate = 0);
 
-public sealed class ImportMS(string importFile)
+public sealed class DisposalImportMS(string importFile)
 {
     private const string SheetName = "Data";
     private const string A1 = "A1";
@@ -31,7 +31,7 @@ public sealed class ImportMS(string importFile)
             using FileStream stream = new(importFile, FileMode.Open, FileAccess.Read);
             using IWorkbook workbook = WorkbookFactory.Create(stream);
 
-            Result<ISheet> resultSheet = Import.IsValidSheet(workbook, SheetName, CheckValue, A1);
+            Result<ISheet> resultSheet = DisposalImport.IsValidSheet(workbook, SheetName, CheckValue, A1);
             if (resultSheet.IsFailed)
             {
                 return Result.Fail<List<Device>>(resultSheet.Errors);

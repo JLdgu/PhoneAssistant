@@ -1,10 +1,10 @@
 ﻿using FluentResults;
-
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 
-namespace Reconcile;
-public static class Import
+namespace PhoneAssistant.Cli;
+
+public static class DisposalImport
 {
     public static Result<ISheet> IsValidSheet(IWorkbook workbook, string sheetName, string cellValue, string cellReference)
     {

@@ -2,12 +2,51 @@
 using NPOI.SS.UserModel;
 using PhoneAssistant.Model;
 using Serilog;
+using System.CommandLine;
 
 namespace PhoneAssistant.Cli;
 
-public static class BaseImport
+internal static class Base
 {
-    public static async Task ExecuteAsync(FileInfo baseFile)
+    internal static void Command(RootCommand rootCommand)
+    {
+        Command baseCommand = new("base", "Import EE base report");
+        Option<FileInfo> baseFileOption = new("--file", "-f")
+        {
+            Description = "Full path to the EE base report file to import (*.xlsx)",
+            Required = true,
+            Validators =
+            {
+                result =>
+                {
+                    FileInfo? file = result.GetValueOrDefault<FileInfo>();
+                    if (file == null || !file.Exists)
+                    {
+                        result.AddError("The specified file does not exist.");
+                    }
+                }
+            }
+        };
+
+        baseCommand.Add(baseFileOption);
+        baseCommand.SetAction(async parseResult =>
+        {
+            try
+            {
+                FileInfo baseFile = parseResult.GetValue(baseFileOption) ?? throw new ArgumentNullException(nameof(baseFileOption));
+                Log.Information("Importing EE Base report");
+                await ExecuteAsync(baseFile);
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Unhandled exception:");
+            }
+        });
+
+        rootCommand.Add(baseCommand);
+    }
+
+    internal static async Task ExecuteAsync(FileInfo baseFile)
     {
         ApplicationSettingsRepository settingsRepository = new();
         Log.Information("Applying update to {0}", settingsRepository.ApplicationSettings.Database);

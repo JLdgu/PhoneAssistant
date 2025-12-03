@@ -29,8 +29,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             _orderDetails = value;
             EnvelopePrinted = false;
 
-            Imei = value.Phone.Imei;
-            PhoneNumber = value.Phone.PhoneNumber ?? string.Empty;
+            Imei = value.Imei;
+            PhoneNumber = value.PhoneNumber;
             AssetTag = value.Phone.AssetTag ?? string.Empty;
             Ticket = value.Phone.Ticket.ToString();
             OrderType = value.OrderType;

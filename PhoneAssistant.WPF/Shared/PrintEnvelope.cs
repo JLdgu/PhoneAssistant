@@ -105,7 +105,7 @@ internal sealed class PrintEnvelope : IPrintEnvelope
         float[] tabs = { 225 };
         stringFormat.SetTabStops(0, tabs);
 
-        graphics.DrawString(_orderDetails.EnvelopeText, _bodyFont, _blackBrush, bodyRectangle, stringFormat);
+        graphics.DrawString(_orderDetails.EnvelopeInsertText, _bodyFont, _blackBrush, bodyRectangle, stringFormat);
 
         _verticalPosition = A4_PAGE_HEIGHT - MARGIN_BOTTOM;
         DrawLine(graphics);

@@ -10,12 +10,23 @@ public sealed class OrderDetails
 {
     public Phone Phone { get; }
 
+    public string Imei { get; }
+
+    public string PhoneNumber { get; }
+
     public OrderDetails(Phone phone)
     {
         Phone = phone;
+        Imei = phone.Imei;
+        PhoneNumber = phone.PhoneNumber ?? string.Empty;
+
+        StringBuilder html = new("""
+            <span style="font-size:14px; font-family:Verdana;">
+            """);
+        EmailText = html.ToString();
 
         DeviceType = DeviceType.Phone;
-        if (Phone.Model != null)
+        if (Phone.Model is not null)
         {
             if (Phone.Model.Contains("ipad", StringComparison.InvariantCultureIgnoreCase))
                 DeviceType = DeviceType.Tablet;
@@ -51,7 +62,17 @@ public sealed class OrderDetails
             envelopeText.AppendLine("");
             envelopeText.AppendLine($"SIM:\t{Phone.SimNumber}");
         }
-        EnvelopeText = envelopeText.ToString();
+        EnvelopeInsertText = envelopeText.ToString();
+    }
+
+    public void Execute()
+    {
+        // No operation
+    }
+
+    public void Execute(Location location)
+    {
+        // No operation
     }
 
     public string DeviceSupplied
@@ -64,7 +85,9 @@ public sealed class OrderDetails
 
     public DeviceType DeviceType { get; }
 
-    public string EnvelopeText { get; init; }
+    public string EmailText { get; }
+
+    public string EnvelopeInsertText { get; }
 
     public string OrderedItem
     {

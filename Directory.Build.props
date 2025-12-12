@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
     <ImplicitUsings>enable</ImplicitUsings>
-    <LangVersion>13</LangVersion>
+    <LangVersion>14</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 </Project>

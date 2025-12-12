@@ -98,7 +98,7 @@ public sealed class PhonesMainViewModelTests
         vm.FilterEsim = filterValue;
 
         PhonesItemViewModel[] actual = view.OfType<PhonesItemViewModel>().ToArray();
-        await Assert.That(actual).HasCount(matchingCount);
+        await Assert.That(actual).Count().IsEqualTo(matchingCount);
     }
 
 

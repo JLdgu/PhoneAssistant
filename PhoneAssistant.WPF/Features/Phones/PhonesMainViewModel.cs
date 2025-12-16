@@ -29,7 +29,7 @@ public sealed partial class PhonesMainViewModel :
 
     public List<string> Conditions { get; } = ApplicationConstants.Conditions;
 
-    public IEnumerable<Manufacturer> OEMs => Enum.GetValues(typeof(Manufacturer)).Cast<Manufacturer>();
+    public static IEnumerable<Manufacturer> OEMs => Enum.GetValues(typeof(Manufacturer)).Cast<Manufacturer>();
 
     public List<string> Statuses { get; } = ApplicationConstants.Statuses;
 
@@ -38,6 +38,8 @@ public sealed partial class PhonesMainViewModel :
                                EmailViewModel emailViewModel,
                                IMessenger messenger)
     {
+        BindingOperations.EnableCollectionSynchronization(PhoneItems, new object());
+
         _phonesItemViewModelFactory = phonesItemViewModelFactory ?? throw new ArgumentNullException(nameof(phonesItemViewModelFactory));
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
         EmailViewModel = emailViewModel ?? throw new ArgumentNullException(nameof(emailViewModel));
@@ -321,7 +323,14 @@ public sealed partial class PhonesMainViewModel :
         }
 
         // Restore previous sort descriptions
-        _filterView.SortDescriptions.Clear();
+        if (_filterView.Dispatcher.CheckAccess())
+        {
+            _filterView.SortDescriptions.Clear();
+        }
+        else
+        {
+            await _filterView.Dispatcher.InvokeAsync(() => _filterView.SortDescriptions.Clear());
+        }
         foreach (var sort in currentSorts)
             _filterView.SortDescriptions.Add(sort);
 

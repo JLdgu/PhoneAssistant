@@ -8,8 +8,8 @@
         <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
 
         <!-- Assembly Information -->
-        <ApplicationIcon Condition="'$(Configuration)'=='Debug'">Resources\DebugPhone.ico</ApplicationIcon>
-        <ApplicationIcon Condition="'$(Configuration)'=='Release'">Resources\Phone.ico</ApplicationIcon>
+        <ApplicationIcon Condition="'$(Configuration)'=='Debug'">Resources\Debug.ico</ApplicationIcon>
+        <ApplicationIcon Condition="'$(Configuration)'=='Release'">Resources\Release.ico</ApplicationIcon>
         <AssemblyName>PhoneAssistant</AssemblyName>
         <Authors>Jonathan Linstead</Authors>
         <Company>Devon County Council</Company>
@@ -26,7 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Resources\DebugPhone.ico" />
+        <None Remove="Resources\Debug.ico" />
         <None Remove="Resources\EUC.png" />
         <None Remove="Resources\Keyboard.jpg" />
         <None Remove="Resources\MobilePhone.jpg" />
@@ -35,8 +35,8 @@
 
     <ItemGroup>
         <ApplicationDefinition Remove="App.xaml" />
-        <Content Include="Resources\DebugPhone.ico" />
-        <Content Include="Resources\Phone.ico" />
+        <Content Include="Resources\Debug.ico" />
+        <Content Include="Resources\Release.ico" />
         <Page Include="App.xaml" />
     </ItemGroup>
 

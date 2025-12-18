@@ -7,7 +7,7 @@ public sealed class DisposalExportTests()
     [Test]
     public async Task AddRow_ShouldAddHeaderAndDataRow_WhenFirstRowAddedAsync()
     {
-        var export = new DisposalExport(0, [], [], new DirectoryInfo("c:"));
+        var export = new DisposalExport([], [], new DirectoryInfo("c:"));
 
         export.AddRow(new("name", 5));
 
@@ -34,7 +34,7 @@ public sealed class DisposalExportTests()
     [Test]
     public async Task AddRow_ShouldOnlyAddDataRow_WhenSubsequentRowsAddedAsync()
     {
-        var export = new DisposalExport(0, [], [], new DirectoryInfo("c:"));
+        var export = new DisposalExport([], [], new DirectoryInfo("c:"));
         export.AddRow(new("name", 6));
         export.AddRow(new("name2", 7));
 
@@ -55,7 +55,7 @@ public sealed class DisposalExportTests()
     {
         var disposals = new List<SccDisposal>();
         var devices = new List<Device>() { new("name", "assetTag", "serialNumber", status) };
-        var export = new DisposalExport(0, disposals, devices, new DirectoryInfo("c:"));
+        var export = new DisposalExport(disposals, devices, new DirectoryInfo("c:"));
 
         Result<ExcelRow> result = export.GetDevice(disposal);
 
@@ -79,7 +79,7 @@ public sealed class DisposalExportTests()
     {
         var disposals = new List<SccDisposal>();
         var devices = new List<Device>() { new("name", "assetTag", "serialNumber", "status") };
-        var export = new DisposalExport(0, disposals, devices, new DirectoryInfo("c:"));
+        var export = new DisposalExport(disposals, devices, new DirectoryInfo("c:"));
 
         Result<ExcelRow> result = export.GetDevice(disposal);
 

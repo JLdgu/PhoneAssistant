@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using Serilog;
 
@@ -22,8 +23,6 @@ public sealed class DisposalImportMS(string importFile)
 
     public Result<List<Device>> Execute()
     {
-        Log.Information("Importing {0}", importFile);
-
         List<Device> devices = [];
 
         try
@@ -37,7 +36,8 @@ public sealed class DisposalImportMS(string importFile)
                 return Result.Fail<List<Device>>(resultSheet.Errors);
             }
             ISheet sheet = resultSheet.Value;
-            Log.Information("Processing {0} rows", sheet.LastRowNum - sheet.FirstRowNum);
+            Serilog.Log.Information("Processing {0} rows from myScomis", sheet.LastRowNum - sheet.FirstRowNum);
+            Progress progress = new();
 
             for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++)
             {
@@ -47,8 +47,14 @@ public sealed class DisposalImportMS(string importFile)
                 {
                     devices.Add(resultDevice.Value);
                 }
+
+                if (i % 10 == 0 || i == sheet.LastRowNum)
+                {
+                    progress.Draw(i, sheet.LastRowNum);
+                }
+
             }
-            Log.Information("{0} devices found", devices.Count);
+            Serilog.Log.Information("{0} devices found", devices.Count);
 
         }
         catch (IOException)

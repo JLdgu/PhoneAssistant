@@ -26,16 +26,16 @@ public sealed class DisposalExport
     public static (int, string) Notes { get => (1, "CI Notes"); }
     public int RowCount { get; private set; }
 
-    public DisposalExport(int sr, List<SccDisposal> disposals, List<Device> devices, DirectoryInfo exportDirectory)
+    public DisposalExport(List<SccDisposal> disposals, List<Device> devices, DirectoryInfo exportDirectory)
     {
         _disposals = disposals;
         _devices = devices;
         _disposalsWorkbook = new XSSFWorkbook();
         DisposalsSheet = _disposalsWorkbook.CreateSheet("Disposals");
-        _disposalFile = Path.Combine(exportDirectory.FullName, $"SR{sr}_Disposals_{DateTime.Now:yyMMdd_Hmmss}.xlsx");
+        _disposalFile = Path.Combine(exportDirectory.FullName, $"Disposal_{DateTime.Now:yyyyMMdd_Hmmss}.xlsx");
         _notesWorkbook = new XSSFWorkbook();
         NotesSheet = _notesWorkbook.CreateSheet("Notes");
-        _notesFile = Path.Combine(exportDirectory.FullName, $"SR{sr}_DisposalNotes_{DateTime.Now:yyMMdd_Hmmss}.xlsx");
+        _notesFile = Path.Combine(exportDirectory.FullName, $"DisposalNotes_{DateTime.Now:yyyyMMdd_Hmmss}.xlsx");
     }
 
     public Result Execute()

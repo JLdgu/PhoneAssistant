@@ -20,8 +20,6 @@ public sealed class DisposalImportSCC(string importFile)
 
     public Result<List<SccDisposal>> Execute()
     {
-        Log.Information("Importing {0}", importFile);
-
         List<SccDisposal> disposals = [];
         try
         {
@@ -31,7 +29,7 @@ public sealed class DisposalImportSCC(string importFile)
             Result<ISheet> resultSheet = DisposalImport.IsValidSheet(workbook, SheetName, CheckValue, A2);
             if (resultSheet.IsFailed) return Result.Fail(resultSheet.Errors);
             ISheet sheet = resultSheet.Value;
-
+            Log.Information("Processing {0} rows from SCC", sheet.LastRowNum - sheet.FirstRowNum);
             for (int i = sheet.FirstRowNum; i <= sheet.LastRowNum; i++)
             {
                 IRow row = sheet.GetRow(i);

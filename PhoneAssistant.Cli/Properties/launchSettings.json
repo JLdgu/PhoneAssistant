@@ -1,14 +1,14 @@
 {
   "profiles": {
-    "pac knox": {
+    "knox": {
       "commandName": "Project",
       "commandLineArgs": "knox"
     },
-    "pac disposal": {
+    "disposal": {
       "commandName": "Project",
-      "commandLineArgs": "disposal -sr 225316 -cr 174049  -f \"C:\\dev\\PA Test Data\\Disposals\" "
+      "commandLineArgs": "disposal -f \"C:\\dev\\testData\\disposals\" "
     },
-    "pac base": {
+    "base": {
       "commandName": "Project",
       "commandLineArgs": "base -f \"C:\\dev\\PA Test Data\\Devon Base Report August.xlsx\" "
     }

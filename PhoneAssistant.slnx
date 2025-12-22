@@ -2,8 +2,12 @@
   <Folder Name="/.github/">
     <File Path=".github/dependabot.yml" />
   </Folder>
+  <Folder Name="/.github/actions/" />
+  <Folder Name="/.github/actions/dotnet-ci/">
+    <File Path=".github/actions/dotnet-ci/action.yml" />
+  </Folder>
   <Folder Name="/.github/workflows/">
-    <File Path=".github/workflows/ci.yml" />
+    <File Path=".github/workflows/push_pull.yml" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />

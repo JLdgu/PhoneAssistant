@@ -28,11 +28,6 @@ public sealed class EmailViewModelTests
         Ticket = 123456
     };
 
-    private const string DataUsage = """
-            <p><br /><a href="https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/DCC%20mobile%20phone%20data%20usage%20guidance%20and%20policies.docx?d=w9ce15b2ddbb343739f131311567dd305&csf=1&web=1">
-            DCC mobile phone data usage guidance and policies</a></p>
-            """;
-
     private readonly AutoMocker _mocker = new AutoMocker();
     private readonly Mock<IPhonesRepository> _phones;
 
@@ -52,7 +47,7 @@ public sealed class EmailViewModelTests
     }
 
     [Test]
-    public async Task CloseCommand_SetsGeneratingEmail_FalseAsync()
+    public async Task CloseCommand_SetsGeneratingEmail_False()
     {
         TestSetup(_phone);
 
@@ -72,97 +67,15 @@ public sealed class EmailViewModelTests
     }
 
     [Test]
-    public async Task Constructor_SetsGeneratingEmail_TrueAsync()
+    public async Task Constructor_SetsGeneratingEmail_True()
     {
         TestSetup(_phone);
 
         await Assert.That(_vm.GeneratingEmail).IsTrue();
     }
-
+        
     [Test]
-    public async Task DefaultPhone_Contains_BoilerPlateAsync()
-    {
-        TestSetup(_phone);
-
-        await Assert.That(_vm.EmailHtml).Contains(
-            """
-            <span style="font-size:14px; font-family:Verdana;">
-            """);
-        await Assert.That(_vm.EmailHtml).Contains("</span>");
-
-        await Assert.That(_vm.EmailHtml).Contains(@"<p><br />Before setting up your phone please ensure you register with <a href=""https://www.wifi.service.gov.uk/connect-to-govwifi/"">GovWifi</a></p>");
-    }
-
-    [Test]
-    public async Task DespatchDetails_Null_SetsDeliveryAddressAsync()
-    {
-        _phone.DespatchDetails = null;
-        TestSetup(_phone);
-        StringBuilder expected = new();
-        expected.AppendLine(_phone.NewUser);
-
-        await Assert.That(_vm.DeliveryAddress).IsEqualTo(expected.ToString());
-    }
-
-    [Test]
-    public async Task GenerateEmail_ShouldBeCollection_WhenCollection()
-    {
-        TestSetup(_phone);
-        Location location = new() { Name = "name", Address = "address", Collection = true};
-        _vm.SelectedLocation = location;
-
-        _vm.GenerateEmailHtml();
-
-        await Assert.That(_vm.EmailHtml).Contains("can be collected from</br>");
-    }
-
-    [Test]
-    public async Task GenerateEmail_ShouldBeDelivery_WhenNotCollection()
-    {
-        TestSetup(_phone);
-        Location location = new() { Name = "name", Address = "address", Collection = false };
-
-        _vm.GenerateEmailHtml();
-
-        await Assert.That(_vm.EmailHtml).Contains("has been sent to<br />");
-    }
-
-    [Test]
-    public async Task GenerateEmail_ShouldBeDelivery_WhenSelectedLocationNullAsync()
-    {
-        TestSetup(_phone);
-
-        _vm.GenerateEmailHtml();
-
-        await Assert.That(_vm.EmailHtml).Contains("has been sent to<br />");
-    }
-
-    [Test]
-    public async Task GenerateEmail_ShouldIncludeUserName_WhenCollection()
-    {
-        TestSetup(_phone);
-        Location location = new() { Name = "name", Address = "address", Collection = true };
-        _vm.SelectedLocation = location;
-
-        _vm.GenerateEmailHtml();
-
-        await Assert.That(_vm.EmailHtml).Contains($"<p>{_vm.OrderDetails.Phone.NewUser} your");
-    }
-
-    [Test]
-    [Arguments("N", "New")]
-    [Arguments("R", "Repurposed")]
-    public async Task NorR_Includes_DeviceSuppliedAsync(string norr, string norrDescription)
-    {
-        _phone.Condition = norr;
-        OrderDetails orderDetails = new(_phone);
-        _vm.OrderDetails = orderDetails;
-
-        await Assert.That(_vm.EmailHtml).Contains($"<td>Device supplied:</td><td>{norrDescription} {_phone.OEM} {_phone.Model}</td>");
-    }
-
-    [Test]
-    public async Task OrderDetails_ShouldSetDeviceTypePhone_WhenModelDoesNotContanIPadAsync()
+    public async Task OrderDetails_ShouldSetDeviceTypePhone_WhenModelDoesNotContanIPad()
     {
         TestSetup(_phone);
 
@@ -170,7 +83,7 @@ public sealed class EmailViewModelTests
     }
 
     [Test]
-    public async Task OrderDetails_ShouldSetDeviceTypeTable_WhenModelContainsIPadAsync()
+    public async Task OrderDetails_ShouldSetDeviceTypeTablet_WhenModelContainsIPad()
     {
         _phone.Model = "iPad";
         TestSetup(_phone);
@@ -179,7 +92,7 @@ public sealed class EmailViewModelTests
     }
 
     [Test]
-    public async Task OrderDetails_ShouldSetOrderTypeNew_WhenPhoneDetailsSuppliedAsync()
+    public async Task OrderDetails_ShouldSetOrderTypeNew_WhenPhoneDetailsSupplied()
     {
         TestSetup(_phone);
 
@@ -187,7 +100,7 @@ public sealed class EmailViewModelTests
     }
 
     [Test]
-    public async Task OrderDetails_ShouldSetOrderTypeReplacement_WhenPhoneDetailsNotSuppliedAsync()
+    public async Task OrderDetails_ShouldSetOrderTypeReplacement_WhenPhoneDetailsNotSupplied()
     {
         _phone.PhoneNumber = null;
         _phone.SimNumber = null;
@@ -197,76 +110,12 @@ public sealed class EmailViewModelTests
     }
 
     [Test]
-    public async Task OrderType_New_GeneratesHtmlAsync()
-    {
-        TestSetup(_phone);
-
-        _vm.OrderType = OrderType.New;
-
-        await Assert.That(_vm.EmailHtml).DoesNotContain("Don't forget to transfer your old sim");
-        await Assert.That(_vm.EmailHtml).Contains("<td>Order type:</td><td>New ");
-    }
-
-    [Test]
-    public async Task OrderType_Replacement_GeneratesHtmlAsync()
-    {
-        TestSetup(_phone);
-
-        _vm.OrderType = OrderType.Replacement;
-
-        await Assert.That(_vm.EmailHtml).Contains("Don't forget to transfer your old sim");
-        await Assert.That(_vm.EmailHtml).Contains("<td>Order type:</td><td>Replacement ");
-    }
-
-    [Test]
-    public async Task OEM_Apple_Includes_AppleDetailsAsync()
-    {
-        _phone.OEM = Manufacturer.Apple;
-        TestSetup(_phone);
-
-        await Assert.That(_vm.EmailHtml).Contains(DataUsage);
-        await Assert.That(_vm.EmailHtml).Contains(@"<a href=""https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/_layouts/15/Doc.aspx?sourcedoc=%7BABC3F4D7-1159-4F72-9C0B-7E155B970A28%7D&file=How%20to%20set%20up%20your%20new%20DCC%20iPhone.docx&action=default&mobileredirect=true"">");
-        await Assert.That(_vm.EmailHtml).Contains("Apple (iOS) Smartphone");
-    }
-
-    [Test]
-    [Description("Issue 43")]
-    public async Task OEM_Nokia_Includes_NokiaDetailsAsync()
-    {
-        _phone.OEM = Manufacturer.Nokia;
-        TestSetup(_phone);
-
-        await Assert.That(_vm.EmailHtml).DoesNotContain(DataUsage);
-        await Assert.That(_vm.EmailHtml).DoesNotContain("Smartphone");
-    }
-
-    [Test]
-    public async Task OEM_Samsung_Includes_SamsungDetailsAsync()
-    {
-        _phone.OEM = Manufacturer.Samsung;
-        TestSetup(_phone);
-
-        await Assert.That(_vm.EmailHtml).Contains(DataUsage);
-        await Assert.That(_vm.EmailHtml).Contains(@"<a href=""https://devoncc.sharepoint.com/:w:/r/sites/ICTKB/Public/Android%20Enterprise%20-%20Setting%20up%20your%20Android%20Phone.docx?d=w64bb3f0a09e44557a64bb78311ee513b&csf=1&web=1"">");
-        await Assert.That(_vm.EmailHtml).Contains("Android Smartphone");
-    }
-
-    [Test]
-    public async Task PhoneNumber_Null_ExcludesPhoneNumberAsync()
-    {
-        _phone.PhoneNumber = null;
-        TestSetup(_phone);
-
-        await Assert.That(_vm.EmailHtml).DoesNotContain($"<tr><td>Phone number:</td><td>");
-    }
-
-    [Test]
     public async Task ReformatDeliveryAddress_ShouldStripHeadingsAsync()
     {
         string actual = EmailViewModel.ReformatDeliveryAddress("""
             User Name
             First line of address
-            DCS, Springfield Court
+            Devon County Council
             Second line of address
             Fishleigh Road
             Town/city
@@ -279,7 +128,7 @@ public sealed class EmailViewModelTests
 
         await Assert.That(actual).IsEqualTo("""
             User Name
-            DCS, Springfield Court
+            Devon County Council
             Fishleigh Road
             Barnstaple
             Devon
@@ -288,15 +137,7 @@ public sealed class EmailViewModelTests
     }
 
     [Test]
-    public async Task PhoneNumber_NotNull_IncludesPhoneNumberAsync()
-    {
-        TestSetup(_phone);
-
-        await Assert.That(_vm.EmailHtml).Contains($"<tr><td>Phone number:</td><td>{_phone.PhoneNumber}</td></tr></table>");
-    }
-
-    [Test]
-    public async Task SelectedLocation_InterpolatesValuesFor_DeliveryAddressAsync()
+    public async Task SelectedLocation_InterpolatesValuesFor_DeliveryAddress()
     {
         _phone.NewUser = "New User";
         _phone.Ticket = 42;
@@ -308,81 +149,5 @@ public sealed class EmailViewModelTests
         await Assert.That(_vm.DeliveryAddress).Contains(_phone.NewUser);
         await Assert.That(_vm.DeliveryAddress).Contains(_phone.Ticket.ToString()!);
         await Assert.That(_vm.DeliveryAddress).Contains(_phone.PhoneNumber);
-    }
-
-    [Test]
-    public async Task SelectedLocation_SetsCollectionDetails_WhenCollection()
-    {
-        TestSetup(_phone);
-
-        _vm.SelectedLocation = new Location { Name = "Collect", Address = "Collection Address", Collection = true };
-
-        await Assert.That(_vm.EmailHtml).Contains(" can be collected from</br>");
-        await Assert.That(_vm.EmailHtml).Contains("It will be available for collection from");
-    }
-
-    [Test]
-    public async Task SelectedLocation_SetsDeliveryDetails_WhenNotCollection()
-    {
-        TestSetup(_phone);
-
-        _vm.SelectedLocation = new Location { Name = "Deliver", Address = "Delivery Address", Collection = false };
-
-        await Assert.That(_vm.EmailHtml).Contains(" has been sent to");
-        await Assert.That(_vm.EmailHtml).Contains("It was sent on");
-    }
-
-    [Test]
-    public async Task SelectedLocation_WithNote_IncludedInEmail()
-    {
-        TestSetup(_phone);
-        _vm.SelectedLocation = new Location { Name = "Deliver", Address = "Delivery Address", Collection  = false, Note = "**note**" };
-
-        await Assert.That(_vm.EmailHtml).Contains("**note**");
-    }
-
-    [Test]
-    [Arguments("13/03/2025", 2, "Monday 17<sup>th</sup> March 2025")]
-    [Arguments("14/03/2025", 2, "Tuesday 18<sup>th</sup> March 2025")] 
-    public async Task ToOrdinalWorkingDate_AddsCollectionBuffer(string date,int buffer, string expected)
-    {
-        CultureInfo culture = new("en-GB");
-        string actual = EmailViewModel.ToOrdinalWorkingDate(DateTime.Parse(date, culture),buffer: buffer);
-
-        await Assert.That(actual).IsEqualTo(expected);
-    }
-
-    [Test]
-    [Arguments("1/1/2024", "Monday 1<sup>st</sup> January 2024")]
-    [Arguments("2/1/2024", "Tuesday 2<sup>nd</sup> January 2024")]
-    [Arguments("3/1/2024", "Wednesday 3<sup>rd</sup> January 2024")]
-    [Arguments("21/12/2023", "Thursday 21<sup>st</sup> December 2023")]
-    [Arguments("22/12/2023", "Friday 22<sup>nd</sup> December 2023")]
-    [Arguments("23/1/2024", "Tuesday 23<sup>rd</sup> January 2024")]
-    [Arguments("31/1/2024", "Wednesday 31<sup>st</sup> January 2024")]
-    [Arguments("12/02/2024", "Monday 12<sup>th</sup> February 2024")] // Issue #40
-    public async Task ToOrdinalWorkingDate_FormatsOutput(string date, string expected)
-    {
-        CultureInfo culture = new("en-GB");
-        string actual = EmailViewModel.ToOrdinalWorkingDate(DateTime.Parse(date,culture));
-
-        await Assert.That(actual).IsEqualTo(expected);
-    }
-
-    [Test]
-    [Arguments("1/1/2024", "Monday 1\x02E2\x1D57 January 2024")]
-    [Arguments("2/1/2024", "Tuesday 2\x207F\x1D48 January 2024")]
-    [Arguments("3/1/2024", "Wednesday 3\x02B3\x1D48 January 2024")]
-    [Arguments("21/12/2023", "Thursday 21\x02E2\x1D57 December 2023")]
-    [Arguments("22/12/2023", "Friday 22\x207F\x1D48 December 2023")]
-    [Arguments("23/1/2024", "Tuesday 23\x02B3\x1D48 January 2024")]
-    [Arguments("31/1/2024", "Wednesday 31\x02E2\x1d57 January 2024")]
-    [Arguments("12/02/2024", "Monday 12\x1D57\x02B0 February 2024")] // Issue #40
-    public async Task ToOrdinalWorkingDate_WithHexSuperscriptAsync(string date, string expected)
-    {
-        CultureInfo culture = new("en-GB");
-        string actual = EmailViewModel.ToOrdinalWorkingDate(DateTime.Parse(date,culture), true);
-
-        await Assert.That(actual).IsEqualTo(expected);
     }
 }

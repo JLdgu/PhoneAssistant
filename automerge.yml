@@ -1,0 +1,16 @@
+name: Automerge dependabot PRs
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+      contents: write
+
+    steps:
+      - uses: fastify/github-action-merge-dependabot@v3

@@ -89,7 +89,7 @@ if ($Pack)
         -v $Version `
         -p .\publish `
         -e PhoneAssistant.exe `
-        -i PhoneAssistant.WPF\Resources\Phone.ico `
+        -i PhoneAssistant.WPF\Resources\Release.ico `
         --packAuthors "Devon County Council" `
         --noPortable 
 

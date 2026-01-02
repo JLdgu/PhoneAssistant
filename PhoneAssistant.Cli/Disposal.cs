@@ -1,7 +1,11 @@
-﻿using FluentResults;
-using Serilog;
-using System.CommandLine;
+﻿using System.CommandLine;
 using System.Text;
+
+using FluentResults;
+
+using PhoneAssistant.Model;
+
+using Serilog;
 
 namespace PhoneAssistant.Cli;
 
@@ -10,25 +14,16 @@ internal static class Disposal
     internal static void Command(RootCommand rootCommand)
     {
         StringBuilder description = new();
-        description.AppendLine("Reconcile phone disposals");
-        description.AppendLine("An export from myScomis 'All Telephony CIs");
-        description.AppendLine("CI Listccyy_mm_dd_hh_mm_ss.xlsx");
-        description.AppendLine("Units D1024CT ccyy-mm-dd.xls SCC export");
+        description.AppendLine("Reconcile phone/tablet disposals");
+        description.AppendLine();
+        description.AppendLine("Inputs");
+        description.AppendLine("CI Listccyy_mm_dd_hh_mm_ss.xlsx - an export from myScomis 'All Telephony CIs'");
+        description.AppendLine("Units D1024CT ccyy-mm-dd.xls - an export from SCC for a collection request");
+        description.AppendLine();
+        description.AppendLine("Outputs");
+        description.AppendLine("Disposal_ccyymmdd_hhmmss.xlsx - a file to be imported to myScomis to update CI status");
+        description.AppendLine("DisposalNotes_ccyymmdd_hhmmss.xlsx - a file to be imported to myScomis to update CI notes");
         Command disposalCommand = new("disposal", description.ToString());
-
-        Option<int> srOption = new("--serviceRequest", "-sr")
-        {
-            Description = "Service Request of disposals",
-            Required = true
-        };
-        disposalCommand.Add(srOption);
-
-        Option<int> crOption = new("--collectionRequest", "-cr")
-        {
-            Description = "Collection Request of disposals",
-            Required = true
-        };
-        disposalCommand.Add(crOption);
 
         Option<DirectoryInfo> folderOption = new("--folder", "-f")
         {
@@ -42,6 +37,7 @@ internal static class Disposal
                     if (dir == null || !dir.Exists)
                     {
                         result.AddError( "The specified folder does not exist.");
+                        return;
                     }
                 }
             }
@@ -52,10 +48,8 @@ internal static class Disposal
         {
             try
             {
-                var sr = parseResult.GetValue(srOption);
-                var cr = parseResult.GetValue(crOption);
-                var folder = parseResult.GetValue(folderOption);
-                Execute(sr: sr, scc: cr, directory: folder);
+                DirectoryInfo? folder = parseResult.GetValue(folderOption);
+                Execute(directory: folder);
             }
             catch (Exception ex)
             {
@@ -66,49 +60,56 @@ internal static class Disposal
         rootCommand.Add(disposalCommand);
     }
 
-    private static void Execute(int sr, int scc, DirectoryInfo? directory)
+    private static void Execute(DirectoryInfo? directory)
     {
-        Log.Information("Reconcile starting");
+        Log.Information("Disposal reconciliation starting");
+        Log.Information("Looking for import files in folder: {Folder}", directory?.FullName);
 
-        string msImport = Path.Combine(directory!.FullName, "CI List.xlsx");
-        if (!File.Exists(msImport))
+        FileInfo? msImport = directory?.GetFiles("CI List*.xlsx")
+                    .OrderByDescending(f => f.Name)
+                    .FirstOrDefault();
+        if (msImport is null)
         {
-            Log.Error("Unable to find {0}", msImport);
+            Log.Error("No 'CI List*.xlsx' file was found in the specified folder.");
             return;
         }
+        Log.Information("Using myScomis file: {FileName}", msImport.Name);
 
-        string sccImport = Path.Combine(directory!.FullName, $"SR{sr} CR{scc} Units.xls");
-        if (!File.Exists(sccImport))
+        FileInfo? sccImport = directory?.GetFiles("Units D1024CT *.xls")
+                    .OrderByDescending(f => f.Name)
+                    .FirstOrDefault();
+        if (sccImport is null)
         {
-            Log.Error("Unable to find {0}", sccImport);
+            Log.Error("No 'Units D1024CT *.xlsx' file was found in the specified folder.");
             return;
         }
+        Log.Information("Using SCC file: {FileName}", sccImport.Name);
 
-        DisposalImportMS importMS = new(msImport);
+        DisposalImportMS importMS = new(msImport.FullName);
         Result<List<Device>> msResult = importMS.Execute();
         if (msResult.IsFailed)
         {
-            Log.Error(msResult.Errors.First().Message);
+            Log.Error(msResult.Errors[0].Message);
             return;
         }
 
-        DisposalImportSCC importSCC = new(sccImport);
+        DisposalImportSCC importSCC = new(sccImport.FullName);
         Result<List<SccDisposal>> sccResult = importSCC.Execute();
         if (sccResult.IsFailed)
         {
-            Log.Error(sccResult.Errors.First().Message);
+            Log.Error(sccResult.Errors[0].Message);
             return;
         }
 
-        DisposalExport export = new(sr: sr, disposals: sccResult.Value, devices: msResult.Value, exportDirectory: directory!);
+        DisposalExport export = new(disposals: sccResult.Value, devices: msResult.Value, exportDirectory: directory!);
         FluentResults.Result exportResult = export.Execute();
         if (exportResult.IsFailed)
         {
-            Log.Error(sccResult.Errors.First().Message);
+            Log.Error(sccResult.Errors[0].Message);
             return;
         }
 
-        Log.Information("Reconcile finished");
+        Log.Information("Disposal reconciliation finished");
     }
 
 }

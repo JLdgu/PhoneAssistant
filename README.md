@@ -1,4 +1,4 @@
 # PhoneAssistant
-Application for organising reuse and disposal of mobile phones
+Application for organising the issue, reuse and disposal of mobile phones and tablets.
 
-![Continuous Intergration](https://github.com/JLdgu/PhoneAssistant/actions/workflows/ci.yml/badge.svg)
+[![Push and Pull Requests](https://github.com/JLdgu/PhoneAssistant/actions/workflows/push_pull.yml/badge.svg)](https://github.com/JLdgu/PhoneAssistant/actions/workflows/push_pull.yml)

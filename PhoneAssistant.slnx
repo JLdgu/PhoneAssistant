@@ -8,7 +8,6 @@
   </Folder>
   <Folder Name="/.github/workflows/">
     <File Path=".github/workflows/push_pull.yml" />
-    <File Path="automerge.yml" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />

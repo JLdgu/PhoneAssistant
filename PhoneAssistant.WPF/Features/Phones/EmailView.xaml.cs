@@ -10,8 +10,13 @@ public partial class EmailView : UserControl
     public EmailView()
     {
         InitializeComponent();
+        InitializeAsync();
     }
+    async void InitializeAsync()
+    {
 
+        await WebView2.EnsureCoreWebView2Async(null);
+    }
     private void DeliveryAddress_TextChanged(object sender, TextChangedEventArgs e)
     {
         string newValue = EmailViewModel.ReformatDeliveryAddress(DeliveryAddress.Text);

@@ -52,6 +52,7 @@
         <PackageReference Include="CsvHelper" />
         <PackageReference Include="MaterialDesignThemes" />
         <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" />
+        <PackageReference Include="Microsoft.Web.WebView2" />
         <PackageReference Include="NPOI">
           <TreatAsUsed>true</TreatAsUsed>
         </PackageReference>

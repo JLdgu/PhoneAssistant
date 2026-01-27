@@ -6,8 +6,9 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
+             xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
              d:DataContext="{d:DesignInstance Type=local:EmailViewModel,
-                                              IsDesignTimeCreatable=False}"
+                                     IsDesignTimeCreatable=False}"
              d:DesignHeight="700"
              d:DesignWidth="1500"
              mc:Ignorable="d">
@@ -88,7 +89,8 @@
                                    Text="{Binding AssetTag}" />
                     </StackPanel>
 
-                    <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
+                    <StackPanel VerticalAlignment="Top"
+                                Orientation="Horizontal">
                         <TextBlock VerticalAlignment="Center"
                                    Style="{StaticResource MaterialDesignBody2TextBlock}"
                                    Text="Order Type" />
@@ -105,7 +107,7 @@
                         <Button Margin="20,0,0,0"
                                 Padding="0"
                                 d:Content="{materialDesign:PackIcon Kind=EmailOpenOutline,
-                                                                    Size=35}"
+                                                                Size=35}"
                                 Command="{Binding PrintEnvelopeCommand}"
                                 Style="{StaticResource MaterialDesignFlatLightButton}"
                                 ToolTip="Print Envelope Insert">
@@ -124,7 +126,8 @@
 
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Vertical">
+                <StackPanel Grid.Column="1"
+                            Orientation="Vertical">
                     <ComboBox Width="300"
                               Margin="10,0,0,5"
                               HorizontalAlignment="Left"
@@ -153,17 +156,17 @@
                         Padding="0"
                         Command="{Binding PrintDymoLabelCommand}"
                         Content="{materialDesign:PackIcon Kind=LabelOutline,
-                                                          Size=35}"
+                                                      Size=35}"
                         Style="{StaticResource MaterialDesignFlatLightButton}"
                         ToolTip="Print Dymo Label" />
 
-                <WebBrowser Grid.Row="0"
-                            Grid.Column="3"
-                            Grid.ColumnSpan="4"
-                            Height="375"
-                            d:Visibility="Visible"
-                            local:WebBrowserHelper.NavigateTo="{Binding EmailHtml}"
-                            Visibility="{Binding GeneratingEmail, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <wv2:WebView2 Name="WebView2"
+                              Grid.Row="0"
+                              Grid.Column="3"
+                              Grid.ColumnSpan="4"
+                              Height="375"
+                              local:WebBrowserHelper.NavigateTo="{Binding EmailHtml}"
+                              ZoomFactor="0.8" />
             </Grid>
         </StackPanel>
     </GroupBox>

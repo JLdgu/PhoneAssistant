@@ -165,7 +165,9 @@
                               Grid.Column="3"
                               Grid.ColumnSpan="4"
                               Height="375"
+                              d:Visibility="Visible"
                               local:WebBrowserHelper.NavigateTo="{Binding EmailHtml}"
+                              Visibility="{Binding GeneratingEmail, Converter={StaticResource BooleanToVisibilityConverter}}"
                               ZoomFactor="0.8" />
             </Grid>
         </StackPanel>

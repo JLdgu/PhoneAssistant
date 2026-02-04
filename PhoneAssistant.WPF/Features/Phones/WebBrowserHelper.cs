@@ -33,7 +33,7 @@ public static class WebBrowserHelper
                 {
                     webview.CoreWebView2InitializationCompleted += (s, args) =>
                     {
-                        if (args.IsSuccess)
+                        if (args.IsSuccess && webview.CoreWebView2 is not null)
                             webview.CoreWebView2.NavigateToString(html);
                     };
                 }

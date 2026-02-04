@@ -11,7 +11,12 @@ using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.AddItem;
-public partial class AddItemViewModel : ObservableValidator, IViewModel
+
+public interface IAddItemViewModel : IViewModel
+{
+}
+
+public partial class AddItemViewModel : ViewModelValidatorBase
 {
     private readonly IApplicationSettingsRepository _appSettings;
     private readonly IBaseReportRepository _baseReportRepository;
@@ -249,9 +254,4 @@ public partial class AddItemViewModel : ObservableValidator, IViewModel
 
     [GeneratedRegex(@"8944\d{15}", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-GB")]
     private static partial Regex ImeiFormat();
-
-    public Task LoadAsync()
-    {
-        return Task.CompletedTask;
-    }
 }

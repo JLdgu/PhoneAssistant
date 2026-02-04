@@ -1,16 +1,14 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Win32;
-using NPOI.SS.UserModel;
 using PhoneAssistant.Model;
-using System.IO;
+using PhoneAssistant.WPF.Shared;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Data;
 
 namespace PhoneAssistant.WPF.Features.BaseReport;
 
-public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMainViewModel
+public partial class BaseReportMainViewModel : ViewModelBase, IBaseReportMainViewModel
 {
     private readonly IBaseReportRepository _repository;
     private readonly IImportHistoryRepository _import;
@@ -147,7 +145,7 @@ public partial class BaseReportMainViewModel : ObservableObject, IBaseReportMain
     }
     #endregion
 
-    public async Task LoadAsync()
+    public override async Task LoadAsync()
     {
         if (_loaded) return;
 

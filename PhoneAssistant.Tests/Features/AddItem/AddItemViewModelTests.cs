@@ -10,7 +10,7 @@ using System.ComponentModel;
 namespace PhoneAssistant.Tests.Features.AddItem;
 public partial class AddItemViewModelTests
 {
-    private readonly AutoMocker _mocker = new AutoMocker();
+    private readonly AutoMocker _mocker = new();
     private readonly AddItemViewModel _sut;
 
     public AddItemViewModelTests()
@@ -91,8 +91,8 @@ public partial class AddItemViewModelTests
     [Test]
     public async Task GetErrors_ShouldContainAssetTagError_WhenAssetTagNotUniqueAsync()
     {
-        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
-        _repository.Setup(r => r.AssetTagUniqueAsync("MP99999")).ReturnsAsync(false);
+        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.AssetTagUniqueAsync("MP99999")).ReturnsAsync(false);
 
         _sut.AssetTag = "MP99999";
 
@@ -122,7 +122,7 @@ public partial class AddItemViewModelTests
     [Arguments("1A345")]
     public async Task GetErrors_ShouldContainTicketError_WhenTicketInvalidAsync(string ticket)
     {
-        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
+        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
 
         _sut.Ticket = ticket;
 
@@ -145,8 +145,8 @@ public partial class AddItemViewModelTests
     [Arguments("MP00002")]
     public async Task GetErrors_ShouldBeEmpty_WhenAssetTagFormatValidAsync(string assetTag)
     {
-        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
-        _repository.Setup(r => r.AssetTagUniqueAsync(assetTag)).ReturnsAsync(true);
+        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.AssetTagUniqueAsync(assetTag)).ReturnsAsync(true);
 
         _sut.AssetTag = assetTag;
 
@@ -158,8 +158,8 @@ public partial class AddItemViewModelTests
     [Test]
     public async Task GetErrors_ShouldBeEmpty_WhenAssetTagUniqueAsync()
     {
-        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
-        _repository.Setup(r => r.AssetTagUniqueAsync("MP99999")).ReturnsAsync(true);
+        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.AssetTagUniqueAsync("MP99999")).ReturnsAsync(true);
 
         _sut.AssetTag = "MP99999";
 
@@ -195,8 +195,8 @@ public partial class AddItemViewModelTests
     [Arguments(ApplicationConstants.StatusInRepair, "PC00002")]
     public async Task GetErrors_ShouldBeEmpty_WhenValidStatusAssetTagCombinationAsync(string status, string? assetTag)
     {
-        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
-        _repository.Setup(r => r.AssetTagUniqueAsync(assetTag)).ReturnsAsync(true);
+        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.AssetTagUniqueAsync(assetTag)).ReturnsAsync(true);
 
         _sut.AssetTag = assetTag;
         _sut.Status = status;
@@ -243,10 +243,16 @@ public partial class AddItemViewModelTests
     }
 
     [Test]
+    public async Task LoadAsync_ShouldReturn_TaskCompleted()
+    {         
+        await _sut.LoadAsync();
+    }
+
+    [Test]
     public async Task OnPhoneNumberChanged_ShouldSetSimNumber_WhenSimExistsAsync()
     {
-        Mock<IBaseReportRepository> _repository = _mocker.GetMock<IBaseReportRepository>();
-        _repository.Setup(r => r.GetSimNumberAsync("07123456789")).ReturnsAsync("sim number");
+        Mock<IBaseReportRepository> repository = _mocker.GetMock<IBaseReportRepository>();
+        repository.Setup(r => r.GetSimNumberAsync("07123456789")).ReturnsAsync("sim number");
 
         _sut.PhoneNumber = "07123456789";
 
@@ -320,9 +326,9 @@ public partial class AddItemViewModelTests
             OEM = Manufacturer.Apple,
             Status = "status"
         };
-        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
-        _repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
-        _repository.Setup(r => r.CreateAsync(It.IsAny<Phone>())).Callback<Phone>((p) => actual = p);
+        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
+        repository.Setup(r => r.CreateAsync(It.IsAny<Phone>())).Callback<Phone>((p) => actual = p);
 
         _sut.AssetTag = expectedAssetTag;
         _sut.Imei = expectedImei;
@@ -354,9 +360,9 @@ public partial class AddItemViewModelTests
             OEM = Manufacturer.Apple,
             Status = "status"
         };
-        Mock<IPhonesRepository> _repository = _mocker.GetMock<IPhonesRepository>();
-        _repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
-        _repository.Setup(r => r.CreateAsync(It.IsAny<Phone>())).Callback<Phone>((p) => actual = p);
+        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
+        repository.Setup(r => r.CreateAsync(It.IsAny<Phone>())).Callback<Phone>((p) => actual = p);
 
         _sut.AssetTag = expectedAssetTag;
         _sut.Imei = expectedImei;
@@ -434,13 +440,13 @@ public partial class AddItemViewModelTests
     public async Task ValidateImei_ShouldReturnError_WhenIMEINotUniqueAsync()
     {
         ValidationContext ctx = new(_sut, null, null);
-        Mock<IPhonesRepository> _repository = new Mock<IPhonesRepository>();
-        _repository = _mocker.GetMock<IPhonesRepository>();
-        _repository.Setup(p => p.ExistsAsync("353427866717729")).ReturnsAsync(true);
+        Mock<IPhonesRepository> repository = new Mock<IPhonesRepository>();
+        repository = _mocker.GetMock<IPhonesRepository>();
+        repository.Setup(p => p.ExistsAsync("353427866717729")).ReturnsAsync(true);
 
         ValidationResult? actual = AddItemViewModel.ValidateImeiAsync("353427866717729", ctx);
 
-        _repository.VerifyAll();
+        repository.VerifyAll();
         await Assert.That(actual).IsNotNull();
         await Assert.That(actual!.ErrorMessage).IsEqualTo("IMEI must be unique");
     }
@@ -470,13 +476,13 @@ public partial class AddItemViewModelTests
     public async Task ValidatePhoneNumber_ShouldReturnError_WhenPhoneNumberNotUniqueAsync()
     {
         ValidationContext ctx = new(_sut, null, null);
-        Mock<IPhonesRepository> _repository = new Mock<IPhonesRepository>();
-        _repository = _mocker.GetMock<IPhonesRepository>();
-        _repository.Setup(p => p.PhoneNumberExistsAsync("07123456789")).ReturnsAsync(true);
+        Mock<IPhonesRepository> repository = new Mock<IPhonesRepository>();
+        repository = _mocker.GetMock<IPhonesRepository>();
+        repository.Setup(p => p.PhoneNumberExistsAsync("07123456789")).ReturnsAsync(true);
 
         ValidationResult? actual = AddItemViewModel.ValidatePhoneNumber("07123456789", ctx);
 
-        _repository.VerifyAll();
+        repository.VerifyAll();
         await Assert.That(actual).IsNotNull();
         await Assert.That(actual!.ErrorMessage).IsEqualTo("Phone Number already linked to phone");
     }
@@ -485,13 +491,13 @@ public partial class AddItemViewModelTests
     public async Task ValidatePhoneNumber_ShouldReturnValidResult_WhenPhoneNumberUniqueAsync()
     {
         ValidationContext ctx = new(_sut, null, null);
-        Mock<IPhonesRepository> _repository = new Mock<IPhonesRepository>();
-        _repository = _mocker.GetMock<IPhonesRepository>();
-        _repository.Setup(p => p.PhoneNumberExistsAsync("07123456789")).ReturnsAsync(false);
+        Mock<IPhonesRepository> repository = new Mock<IPhonesRepository>();
+        repository = _mocker.GetMock<IPhonesRepository>();
+        repository.Setup(p => p.PhoneNumberExistsAsync("07123456789")).ReturnsAsync(false);
 
         ValidationResult? actual = AddItemViewModel.ValidatePhoneNumber("07123456789", ctx);
 
-        _repository.VerifyAll();
+        repository.VerifyAll();
         await Assert.That(actual).IsEqualTo(ValidationResult.Success);
     }
 

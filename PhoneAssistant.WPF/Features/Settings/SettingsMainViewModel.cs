@@ -2,6 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using PhoneAssistant.Model;
+using PhoneAssistant.WPF.Shared;
+
 using Serilog;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
@@ -10,7 +12,7 @@ using Velopack;
 
 namespace PhoneAssistant.WPF.Features.Settings;
 
-public sealed partial class SettingsMainViewModel : ObservableValidator, ISettingsMainViewModel
+public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISettingsMainViewModel
 {
     private readonly IApplicationSettingsRepository _appSettings;
     private readonly IThemeWrapper _themeWrapper;
@@ -41,7 +43,6 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
         Printer = _appSettings.ApplicationSettings.Printer;
         PrintFile = _appSettings.ApplicationSettings.PrintFile;
 
-        Log.Verbose("SettingsMainViewModel constructor called");
         CurrentVersion = AssemblyVersion()?.ToString();
     }
 
@@ -243,7 +244,7 @@ public sealed partial class SettingsMainViewModel : ObservableValidator, ISettin
     }
     #endregion
 
-    public async Task LoadAsync()
+    public override async Task LoadAsync()
     {
         if (UpdateState == ApplicationUpdateState.Default)
             await CheckForUpdate();

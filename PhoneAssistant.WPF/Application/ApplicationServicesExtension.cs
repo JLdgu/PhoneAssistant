@@ -62,7 +62,7 @@ public static class ApplicationServicesExtensions
             services.AddTransient<IPrintDymoLabel, PrintDymoLabel>();
             services.AddTransient<IPhonesMainViewModel, PhonesMainViewModel>();
 
-            services.AddSingleton<ISettingsMainViewModel, SettingsMainViewModel>();
+            services.AddSingleton<ISettingsMainViewModel,SettingsMainViewModel>();
             services.AddTransient<IThemeWrapper, ThemeWrapper>();
 
             services.AddTransient<IUsersMainViewModel, UsersMainViewModel>();

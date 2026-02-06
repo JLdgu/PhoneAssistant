@@ -1,10 +1,7 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace PhoneAssistant.WPF.Features.Phones;
-/// <summary>
-/// Interaction logic for emal.xaml
-/// </summary>
+
 public partial class EmailView : UserControl
 {    
     public EmailView()
@@ -15,7 +12,9 @@ public partial class EmailView : UserControl
     async void InitializeAsync()
     {
 
-        await WebView2.EnsureCoreWebView2Async(null);
+        await WebView2.EnsureCoreWebView2Async(null);        
+        //WebView2.CoreWebView2.Profile.PreferredColorScheme = Microsoft.Web.WebView2.Core.CoreWebView2PreferredColorScheme.Light;
+        WebView2.DefaultBackgroundColor = System.Drawing.Color.LightGray;
     }
     private void DeliveryAddress_TextChanged(object sender, TextChangedEventArgs e)
     {

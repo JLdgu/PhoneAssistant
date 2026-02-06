@@ -19,13 +19,14 @@ public sealed class Program
 
         RootCommand rootCommand = new("Utility application to apply schema update scripts to a database");
 
+        Command liveCommand = new("live", "Apply updates to LIVE database");
         Argument<string> liveArg = new("liveDb")
         {
             Description = "The path to the live PhoneAssistant database",
             DefaultValueFactory = _ => @"\\countyhall.ds2.devon.gov.uk\docs\Exeter, County Hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\phoneassistant.db"
         };
+        liveCommand.Add(liveArg);
 
-        Command liveCommand = new("live", "Apply updates to LIVE database");
         liveCommand.SetAction(parseResult =>
         {
             try
@@ -43,18 +44,19 @@ public sealed class Program
             }
         });
 
+        Command testCommand = new("test", "Apply updates to TEST database");
         Argument<string> testArg = new("testDb")
         {
             Description = "The path to the test PhoneAssistant database",
             DefaultValueFactory = _ => @"c:\dev\paTest.db"
         };
+        testCommand.Add(testArg);
 
-        Command testCommand = new("test", "Apply updates to TEST database");
         testCommand.SetAction(parseResult =>
         {
             try
             {
-                var test = parseResult.GetValue(liveArg);
+                var test = parseResult.GetValue(testArg);
                 Log.Information("Applying update to TEST database {0}", test);
                 if (string.IsNullOrEmpty(test))
                 {

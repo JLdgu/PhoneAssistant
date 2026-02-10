@@ -49,6 +49,7 @@
 
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.Mvvm" />
+        <PackageReference Include="FluentValidation" />
         <PackageReference Include="CsvHelper" />
         <PackageReference Include="MaterialDesignThemes" />
         <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" />

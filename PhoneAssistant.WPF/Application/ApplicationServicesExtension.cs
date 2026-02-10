@@ -1,7 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+
+using FluentValidation;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Features.AddItem;
 using PhoneAssistant.WPF.Features.BaseReport;
 using PhoneAssistant.WPF.Features.Dashboard;
@@ -13,7 +18,7 @@ using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Features.Sims;
 using PhoneAssistant.WPF.Features.Users;
 using PhoneAssistant.WPF.Shared;
-using PhoneAssistant.Model;
+
 using Velopack;
 
 namespace PhoneAssistant.WPF.Application;
@@ -69,7 +74,13 @@ public static class ApplicationServicesExtensions
             services.AddTransient<IUsersItemViewModelFactory, UsersItemViewModelFactory>();
             
             services.AddSingleton<ISimsMainViewModel, SimsMainViewModel>();
-            
+            //services.AddSingleton<ISimsMainViewModel>(provider => provider.GetRequiredService<SimsMainViewModel>());
+            //services.AddSingleton<SimsMainViewModel>(provider => new SimsMainViewModel(
+            //        provider.GetRequiredService<IBaseReportRepository>(),
+            //        provider.GetRequiredService<IPrintEnvelope>(),
+            //        provider));
+            services.AddSingleton<IValidator<SimsMainViewModel>, SimValidator>();
+
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<MainWindow>();
         });

@@ -1,47 +1,42 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Shared;
-using System.ComponentModel.DataAnnotations;
 
 namespace PhoneAssistant.WPF.Features.Sims;
 
-public sealed partial class SimsMainViewModel : ObservableValidator, ISimsMainViewModel
+public sealed partial class SimsMainViewModel(IBaseReportRepository baseReportRepository,
+                         IPrintEnvelope printEnvelope,
+                         IServiceProvider serviceProvider) : ValidatableViewModel<SimsMainViewModel>(serviceProvider), ISimsMainViewModel
 {
-    private readonly IBaseReportRepository _baseReportRepository;
-    private readonly IPrintEnvelope _printEnvelope;
+    private readonly IBaseReportRepository _baseReportRepository = baseReportRepository ?? throw new ArgumentNullException(nameof(baseReportRepository));
+    private readonly IPrintEnvelope _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
 
-    private readonly Phone _phone = new()
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
+    private string? _newUser;
+    async partial void OnNewUserChanged(string? value) => await ValidatePropertyAsync(nameof(NewUser));
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
+    private string? _phoneNumber;
+    async partial void OnPhoneNumberChanged(string? value)
     {
-        PhoneNumber = "07814209742",
-        SimNumber = "8944122605563572205",
-        Status = "status",
-        AssetTag = "at",
-        DespatchDetails = "dd",
-        FormerUser = "fu",
-        Imei = "imei",
-        Model = "SIM Card",
-        NewUser = "Rosie Lane",
-        Condition = "norr",
-        Notes = "note",
-        OEM = Manufacturer.Apple,
-        Ticket = 262281
-    };
+        await ValidatePropertyAsync(nameof(PhoneNumber));        
 
-    public SimsMainViewModel(IBaseReportRepository baseReportRepository,
-                             IPrintEnvelope printEnvelope)
-    {
-        _baseReportRepository = baseReportRepository ?? throw new ArgumentNullException(nameof(baseReportRepository));
-        _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
-
-        ValidateAllProperties();
+        SimNumber = await _baseReportRepository.GetSimNumberAsync(PhoneNumber!);
     }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
-    [NotifyDataErrorInfo]
-    [Required]
-    private string? _newUser;
+    private string? _simNumber;
+    async partial void OnSimNumberChanged(string? value) => await ValidatePropertyAsync(nameof(SimNumber));
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
+    private string? _ticket;
+    async partial void OnTicketChanged(string? value) => await ValidatePropertyAsync(nameof(Ticket));
 
     [RelayCommand(CanExecute = nameof(CanPrintEnvelope))]
     private async Task PrintEnvelope()
@@ -66,18 +61,4 @@ public sealed partial class SimsMainViewModel : ObservableValidator, ISimsMainVi
         await Task.Run(() => _printEnvelope.Execute(orderDetails));
     }
     private bool CanPrintEnvelope() => HasErrors == false;
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
-    [NotifyDataErrorInfo]
-    [CustomValidation(typeof(Validation), nameof(Validation.ValidateTicket))]
-    private string? _ticket;
-
-    public Task LoadAsync()
-    {
-        return Task.CompletedTask;
-    }
-
-    
-
 }

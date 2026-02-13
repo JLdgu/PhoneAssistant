@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace PhoneAssistant.Model.Tests;
 
 public sealed class PhonesRepositoryTests : DbTestHelper
@@ -18,8 +16,8 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     const string NOTES = "notes";
     const string PHONE_NUMBER = "phone number";
     const string SIM_NUMBER = "sim number";
-    const int SR = 12345;
     const string STATUS = "Production";
+    const int TICKET = 12345;
 
     readonly Phone _phone = new()
     {
@@ -29,14 +27,15 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Esim = true,
         FormerUser = FORMER_USER,
         Imei = IMEI,
+        IncludeOnTrackingSheet = true,
         Model = MODEL,
         NewUser = NEW_USER,
         Notes = NOTES,
         OEM = Manufacturer.Nokia,
         PhoneNumber = PHONE_NUMBER,
         SimNumber = SIM_NUMBER,
-        Ticket = SR,
-        Status = STATUS
+        Status = STATUS,
+        Ticket = TICKET
     };
 
     public PhonesRepositoryTests()
@@ -91,6 +90,132 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     }
 
     [Test]
+    public async Task UpdateAsync_WithNullPhone_ThrowsException()
+    {
+#pragma warning disable CS8600, CS8604 // Converting null literal or possible null value to non-nullable type.
+        Phone phone = null;
+        await Assert.ThrowsAsync<NullReferenceException>(() => _repository.UpdateAsync(phone));
+#pragma warning restore CS8600, CS8604 // Possible null reference argument.
+    }
+
+    [Test]
+    [Arguments(nameof(Phone.AssetTag))]
+    [Arguments(nameof(Phone.Condition))]
+    [Arguments(nameof(Phone.DespatchDetails))]
+    [Arguments(nameof(Phone.Esim))]
+    [Arguments(nameof(Phone.FormerUser))]
+    [Arguments(nameof(Phone.IncludeOnTrackingSheet))]
+    [Arguments(nameof(Phone.Model))]
+    [Arguments(nameof(Phone.NewUser))]
+    [Arguments(nameof(Phone.Notes))]
+    [Arguments(nameof(Phone.OEM))]
+    [Arguments(nameof(Phone.PhoneNumber))]
+    [Arguments(nameof(Phone.SimNumber))]
+    [Arguments(nameof(Phone.Status))]
+    [Arguments(nameof(Phone.Ticket))]
+    public async Task UpdateAsync_with_found_Phone_and_changed_property_should_return_Updated(string propertyName)
+    {
+        Phone updated = new()
+        {
+            Imei = IMEI,
+            AssetTag = ASSET_TAG,
+            Condition = CONDITION_R,
+            DespatchDetails = DESPATCH_DETAILS,
+            Esim = true,
+            FormerUser = FORMER_USER,
+            IncludeOnTrackingSheet = true,
+            Model = MODEL,
+            NewUser = NEW_USER,
+            Notes = NOTES,
+            OEM = Manufacturer.Nokia,
+            PhoneNumber = PHONE_NUMBER,
+            SimNumber = SIM_NUMBER,
+            Status = STATUS,
+            Ticket = TICKET
+        };
+        switch (propertyName)
+        {
+            case nameof(Phone.AssetTag):
+                updated.AssetTag = "U" + ASSET_TAG;
+                break;
+            case nameof(Phone.Condition):
+                updated.Condition = CONDITION_N;
+                break;
+            case nameof(Phone.DespatchDetails):
+                updated.DespatchDetails = "U" + DESPATCH_DETAILS;
+                break;
+            case nameof(Phone.Esim):
+                updated.Esim = false;
+                break;
+            case nameof(Phone.FormerUser):
+                updated.FormerUser = "U" + FORMER_USER;
+                break;
+            case nameof(Phone.IncludeOnTrackingSheet):
+                updated.IncludeOnTrackingSheet = false;
+                break;
+            case nameof(Phone.Model):
+                updated.Model = "U" + MODEL;
+                break;
+            case nameof(Phone.NewUser):
+                updated.NewUser = "U" + NEW_USER;
+                break;
+            case nameof(Phone.Notes):
+                updated.Notes = "U" + NOTES;
+                break;
+            case nameof(Phone.OEM):
+                updated.OEM = Manufacturer.Other;
+                break;
+            case nameof(Phone.PhoneNumber):
+                updated.PhoneNumber = "U" + PHONE_NUMBER;
+                break;
+            case nameof(Phone.SimNumber):
+                updated.SimNumber = "U" + SIM_NUMBER;
+                break;
+            case nameof(Phone.Status):
+                updated.Status = "U" + STATUS;
+                break;
+            case nameof(Phone.Ticket):
+                updated.Ticket = TICKET + 1;
+                break;
+            default:
+                Assert.Fail($"Unknown property: {propertyName}");
+                break;
+        }
+        await _helper.DbContext.Phones.AddAsync(_phone);
+        await _helper.DbContext.SaveChangesAsync();
+
+        Result result = await _repository.UpdateAsync(updated);
+
+        await Assert.That(result).IsEqualTo(Result.Updated);
+        Phone? actual = await _helper.DbContext.Phones.FindAsync([_phone.Imei]);
+        await Assert.That(actual).IsNotNull();
+
+    }
+
+    [Test]
+    public async Task UpdateAsync_with_unchanged_properties_does_not_update_database()
+    {
+        await _helper.DbContext.Phones.AddAsync(_phone);
+        await _helper.DbContext.SaveChangesAsync();
+        Phone? original = await _helper.DbContext.Phones.FindAsync([_phone.Imei]);
+
+        Result result = await _repository.UpdateAsync(_phone);
+
+        await Assert.That(original).IsNotNull();
+        await Assert.That(result).IsEqualTo(Result.Unchanged);
+        Phone? actual = await _helper.DbContext.Phones.FindAsync([_phone.Imei]);
+        await Assert.That(actual).IsNotNull();
+        await Assert.That(actual.LastUpdate).IsEqualTo(original.LastUpdate);
+    }
+
+    [Test]
+    public async Task UpdateAsync_WithPhoneNotFound_ThrowsException()
+    {
+        await Assert.ThrowsAsync<ArgumentException>(() => _repository.UpdateAsync(_phone));
+    }
+
+
+    [Test]
     public async Task UpdateStatusAsync_WithNullImei_ThrowsException()
     {
 #pragma warning disable CS8604 // Converting null literal or possible null value to non-nullable type.
@@ -126,55 +251,5 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Phone? actual = await _helper.DbContext.Phones.FindAsync(_phone.Imei);
         await Assert.That(actual).IsNotNull();
         await Assert.That(actual!.Status).IsEqualTo(ApplicationConstants.StatusDisposed);
-    }
-
-    [Test]
-    public async Task UpdateAsync_WithNullPhone_ThrowsException()
-    {
-#pragma warning disable CS8600, CS8604 // Converting null literal or possible null value to non-nullable type.
-        Phone phone = null;
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.UpdateAsync(phone));
-#pragma warning restore CS8600, CS8604 // Possible null reference argument.
-    }
-
-    [Test]
-    public async Task UpdateAsync_WithPhoneNotFound_ThrowsException()
-    {
-        await Assert.ThrowsAsync<ArgumentException>(() => _repository.UpdateAsync(_phone));
-    }
-
-    [Test]
-    public async Task UpdateAsync_WithPhoneFound_Succeeds()
-    {
-        Phone original = new()
-        {
-            Imei = _phone.Imei,
-            Condition = CONDITION_N,
-            Esim = null,
-            Model = "old model",
-            OEM = Manufacturer.Apple,
-            Status = ApplicationConstants.Statuses[1]
-        };
-        await _helper.DbContext.Phones.AddAsync(original);
-        await _helper.DbContext.SaveChangesAsync();
-
-        await _repository.UpdateAsync(_phone);
-
-        Phone? actual = await _helper.DbContext.Phones.FindAsync(new object?[] { _phone.Imei });
-        await Assert.That(actual).IsNotNull();
-        await Assert.That(actual!.AssetTag).IsEqualTo(_phone.AssetTag);
-        await Assert.That(actual.Condition).IsEqualTo(_phone.Condition);
-        await Assert.That(actual.DespatchDetails).IsEqualTo(_phone.DespatchDetails);
-        await Assert.That(actual.Esim).IsTrue();
-        await Assert.That(actual.FormerUser).IsEqualTo(_phone.FormerUser);
-        await Assert.That(actual.Imei).IsEqualTo(_phone.Imei);
-        await Assert.That(actual.Model).IsEqualTo(_phone.Model);
-        await Assert.That(actual.NewUser).IsEqualTo(_phone.NewUser);
-        await Assert.That(actual.Notes).IsEqualTo(_phone.Notes);
-        await Assert.That(actual.OEM).IsEqualTo(_phone.OEM);
-        await Assert.That(actual.PhoneNumber).IsEqualTo(_phone.PhoneNumber);
-        await Assert.That(actual.SimNumber).IsEqualTo(_phone.SimNumber);
-        await Assert.That(actual.Ticket).IsEqualTo(_phone.Ticket);
-        await Assert.That(actual.Status).IsEqualTo(_phone.Status);
     }
 }

@@ -50,7 +50,7 @@ public static class ApplicationServicesExtensions
             services.AddSingleton<IPhonesRepository, PhonesRepository>();
 
             // Features
-            services.AddSingleton<AddItemViewModel>();
+            services.AddSingleton<IAddItemViewModel, AddItemViewModel>();
 
             services.AddSingleton<IBaseReportMainViewModel, BaseReportMainViewModel>();
 

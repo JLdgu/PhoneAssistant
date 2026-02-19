@@ -33,7 +33,7 @@ public enum ViewModelType
 
 public sealed partial class MainWindowViewModel : ObservableObject
 {
-    private readonly AddItemViewModel _addItemViewModel;
+    private readonly IAddItemViewModel _addItemViewModel;
     private readonly IApplicationSettingsRepository _appSettings;
     private readonly IBaseReportMainViewModel _baseReportMainViewModel;
     private readonly IDashboardMainViewModel _dashboardMainViewModel;
@@ -44,7 +44,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private readonly ISettingsMainViewModel _settingsMainViewModel;
     private readonly IUsersMainViewModel _usersMainViewModel;
 
-    public MainWindowViewModel(AddItemViewModel addItemViewModel,
+    public MainWindowViewModel(IAddItemViewModel addItemViewModel,
                                IApplicationSettingsRepository appSettings,
                                IBaseReportMainViewModel baseReportMainViewModel,
                                IDashboardMainViewModel dashboardMainViewModel,

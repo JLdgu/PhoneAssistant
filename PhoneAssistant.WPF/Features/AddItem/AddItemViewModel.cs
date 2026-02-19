@@ -16,7 +16,7 @@ public interface IAddItemViewModel : IViewModel
 {
 }
 
-public partial class AddItemViewModel : ViewModelValidatorBase
+public partial class AddItemViewModel : ViewModelValidatorBase, IAddItemViewModel
 {
     private readonly IApplicationSettingsRepository _appSettings;
     private readonly IBaseReportRepository _baseReportRepository;

@@ -51,6 +51,7 @@ public static class ApplicationServicesExtensions
 
             // Features
             services.AddSingleton<IAddItemViewModel, AddItemViewModel>();
+            services.AddSingleton<IValidator<AddItemViewModel>, AddItemValidator>();
 
             services.AddSingleton<IBaseReportMainViewModel, BaseReportMainViewModel>();
 

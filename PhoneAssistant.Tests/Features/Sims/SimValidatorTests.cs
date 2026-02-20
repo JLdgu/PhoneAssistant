@@ -6,32 +6,36 @@ namespace PhoneAssistant.Tests.Features.Sims;
 
 public class SimValidatorTests
 {
+    private readonly AutoMocker _mocker;
+    private readonly SimValidator _validator;
+    private readonly SimsMainViewModel _vm;
+
+    public SimValidatorTests()
+    {
+        _mocker = new AutoMocker();
+        _validator = _mocker.CreateInstance<SimValidator>();
+        _vm = _mocker.CreateInstance<SimsMainViewModel>();
+    }
     [Test]
     [Arguments(null)]
     [Arguments("")]
     public async Task NewUser_should_have_Error_when_NullOrEmpty(string? newUser)
     {
-        AutoMocker mocker = new();
-        var validator = mocker.CreateInstance<SimValidator>();
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
-        vm.NewUser = newUser;
+        _vm.NewUser = newUser;
 
-        var result = await validator.TestValidateAsync(vm);       
+        var result = await _validator.TestValidateAsync(_vm);       
 
-        await Assert.That(result.Errors.Any(e => e.PropertyName == nameof(vm.NewUser) && e.ErrorMessage == "New User required")).IsTrue();
+        await Assert.That(result.Errors.Any(e => e.PropertyName == nameof(_vm.NewUser) && e.ErrorMessage == "New User required")).IsTrue();
     }
 
     [Test]
     public async Task NewUser_should_not_have_Error_when_Present()
     {
-        AutoMocker mocker = new();
-        var validator = mocker.CreateInstance<SimValidator>();
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
-        vm.NewUser = "Alice";
+        _vm.NewUser = "Alice";
 
-        var result = await validator.TestValidateAsync(vm);
+        var result = await _validator.TestValidateAsync(_vm);
 
-        await Assert.That(result.Errors.All(e => e.PropertyName != nameof(vm.NewUser))).IsTrue();
+        await Assert.That(result.Errors.All(e => e.PropertyName != nameof(_vm.NewUser))).IsTrue();
     }
 
     [Test]
@@ -40,14 +44,11 @@ public class SimValidatorTests
     [Arguments("100000000000")]
     public async Task PhoneNumber_should_have_Error_when_invalid_format_or_out_of_range(string phoneNumber)
     {
-        AutoMocker mocker = new();
-        var validator = mocker.CreateInstance<SimValidator>();
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
-        vm.PhoneNumber = phoneNumber;
+        _vm.PhoneNumber = phoneNumber;
 
-        var result = await validator.TestValidateAsync(vm);
+        var result = await _validator.TestValidateAsync(_vm);
 
-        await Assert.That(result.Errors.Any(e => e.PropertyName == nameof(vm.PhoneNumber) && e.ErrorMessage == "Phone Number must be 10 or 11 digits")).IsTrue();
+        await Assert.That(result.Errors.Any(e => e.PropertyName == nameof(_vm.PhoneNumber) && e.ErrorMessage == "Phone Number must be 10 or 11 digits")).IsTrue();
     }
 
     [Test]
@@ -55,14 +56,11 @@ public class SimValidatorTests
     [Arguments("")]
     public async Task PhoneNumber_should_have_Error_when_NullOrEmpty(string? phoneNumber)
     {
-        AutoMocker mocker = new();
-        var validator = mocker.CreateInstance<SimValidator>();
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
-        vm.PhoneNumber = phoneNumber;
+        _vm.PhoneNumber = phoneNumber;
 
-        var result = await validator.TestValidateAsync(vm);
+        var result = await _validator.TestValidateAsync(_vm);
 
-        await Assert.That(result.Errors.Any(e => e.PropertyName == nameof(vm.PhoneNumber) && e.ErrorMessage == "Phone Number required")).IsTrue();
+        await Assert.That(result.Errors.Any(e => e.PropertyName == nameof(_vm.PhoneNumber) && e.ErrorMessage == "Phone Number required")).IsTrue();
     }
 
     [Test]
@@ -74,14 +72,11 @@ public class SimValidatorTests
     [Arguments("4753344946372222222")]
     public async Task SimNumber_should_have_Error_when_invalid_format_or_out_of_range(string simNumber)
     {
-        AutoMocker mocker = new();
-        var validator = mocker.CreateInstance<SimValidator>();
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
-        vm.SimNumber = simNumber;
+        _vm.SimNumber = simNumber;
 
-        var result = await validator.TestValidateAsync(vm);
+        var result = await _validator.TestValidateAsync(_vm);
 
-        await Assert.That(result.Errors.Any(e => e.PropertyName == nameof(vm.SimNumber) && e.ErrorMessage == "SIM Number must be 12 or 19 digits")).IsTrue();
+        await Assert.That(result.Errors.Any(e => e.PropertyName == nameof(_vm.SimNumber) && e.ErrorMessage == "SIM Number must be 12 or 19 digits")).IsTrue();
     }
 
     [Test]
@@ -89,14 +84,11 @@ public class SimValidatorTests
     [Arguments("")]
     public async Task SimNumber_should_have_Error_when_NullOrEmpty(string? simNumber)
     {
-        AutoMocker mocker = new();
-        var validator = mocker.CreateInstance<SimValidator>();
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
-        vm.SimNumber = simNumber;
+        _vm.SimNumber = simNumber;
 
-        var result = await validator.TestValidateAsync(vm);
+        var result = await _validator.TestValidateAsync(_vm);
 
-        await Assert.That(result.Errors.Any(e => e.PropertyName == nameof(vm.SimNumber) && e.ErrorMessage == "SIM Number required")).IsTrue();
+        await Assert.That(result.Errors.Any(e => e.PropertyName == nameof(_vm.SimNumber) && e.ErrorMessage == "SIM Number required")).IsTrue();
     }
 
     [Test]
@@ -105,30 +97,25 @@ public class SimValidatorTests
     [Arguments("8944125605569171710")]
     public async Task SimNumber_should_not_have_Error_valid(string simNumber)
     {
-        AutoMocker mocker = new();
-        var validator = mocker.CreateInstance<SimValidator>();
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
-        vm.SimNumber = simNumber;
+        _vm.SimNumber = simNumber;
 
-        var result = await validator.TestValidateAsync(vm);
+        var result = await _validator.TestValidateAsync(_vm);
 
-        await Assert.That(result.Errors.All(e => e.PropertyName != nameof(vm.SimNumber))).IsTrue();
+        await Assert.That(result.Errors.All(e => e.PropertyName != nameof(_vm.SimNumber))).IsTrue();
     }
 
     [Test]
     [Arguments("abc")]
     [Arguments("12345")]
+    [Arguments("1A345")]
     [Arguments("10000000")]
     public async Task Ticket_should_have_Error_when_invalid_format_or_out_of_range(string ticket)
     {
-        AutoMocker mocker = new();
-        var validator = mocker.CreateInstance<SimValidator>();
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
-        vm.Ticket = ticket;
+        _vm.Ticket = ticket;
 
-        var result = await validator.TestValidateAsync(vm);
+        var result = await _validator.TestValidateAsync(_vm);
 
-        await Assert.That(result.Errors.Any(e => e.PropertyName == nameof(vm.Ticket) && e.ErrorMessage == "Ticket must 6 or 7 digits")).IsTrue();
+        await Assert.That(result.Errors.Any(e => e.PropertyName == nameof(_vm.Ticket) && e.ErrorMessage == "Ticket must 6 or 7 digits")).IsTrue();
     }
 
 
@@ -137,14 +124,11 @@ public class SimValidatorTests
     [Arguments("")]
     public async Task Ticket_should_have_Error_when_NullOrEmpty(string? ticket)
     {
-        AutoMocker mocker = new();
-        var validator = mocker.CreateInstance<SimValidator>();
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
-        vm.Ticket = ticket;
+        _vm.Ticket = ticket;
 
-        var result = await validator.TestValidateAsync(vm);
+        var result = await _validator.TestValidateAsync(_vm);
 
-        await Assert.That(result.Errors.Any(e => e.PropertyName == nameof(vm.Ticket) && e.ErrorMessage == "Ticket required")).IsTrue();
+        await Assert.That(result.Errors.Any(e => e.PropertyName == nameof(_vm.Ticket) && e.ErrorMessage == "Ticket required")).IsTrue();
     }
 
     [Test]
@@ -152,13 +136,10 @@ public class SimValidatorTests
     [Arguments("1234567")]
     public async Task Ticket_Should_not_have_Error_when_valid(string ticket)
     {
-        AutoMocker mocker = new();
-        var validator = mocker.CreateInstance<SimValidator>();
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
-        vm.Ticket = ticket;
+        _vm.Ticket = ticket;
 
-        var result = await validator.TestValidateAsync(vm);
+        var result = await _validator.TestValidateAsync(_vm);
 
-        await Assert.That(result.Errors.All(e => e.PropertyName != nameof(vm.Ticket))).IsTrue();
+        await Assert.That(result.Errors.All(e => e.PropertyName != nameof(_vm.Ticket))).IsTrue();
     }
 }

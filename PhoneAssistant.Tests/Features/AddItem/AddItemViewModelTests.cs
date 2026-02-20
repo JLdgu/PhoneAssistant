@@ -1,28 +1,29 @@
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
 using CommunityToolkit.Mvvm.Messaging;
+
+using FluentValidation;
+
 using Moq;
 using Moq.AutoMock;
+
 using PhoneAssistant.Model;
 using PhoneAssistant.Tests.Shared;
 using PhoneAssistant.WPF.Features.AddItem;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
 
 namespace PhoneAssistant.Tests.Features.AddItem;
 public partial class AddItemViewModelTests
 {
     private readonly AutoMocker _mocker = new();
-    private readonly AddItemViewModel _sut;
-
-    public AddItemViewModelTests()
-    {
-        _sut = _mocker.CreateInstance<AddItemViewModel>();
-    }
 
     [Test]
     public async Task AddItemViewModel_DefaultOEMAndModelAsync()
     {
-        await Assert.That((Manufacturer)_sut.OEM).IsEqualTo(Manufacturer.Apple);
-        await Assert.That(_sut.Model).IsEqualTo("iPhone SE 2022");
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
+
+        await Assert.That((Manufacturer)sut.OEM).IsEqualTo(Manufacturer.Apple);
+        await Assert.That(sut.Model).IsEqualTo("iPhone SE 2022");
     }
 
     [Test]
@@ -32,9 +33,11 @@ public partial class AddItemViewModelTests
     [Arguments(Manufacturer.Samsung, "A32")]
     public async Task OnOEMChanged_ShouldChangeModelAsync(Manufacturer oem, string model)
     {
-        _sut.OEM = oem;
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        await Assert.That(_sut.Model).IsEqualTo(model);
+        sut.OEM = oem;
+
+        await Assert.That(sut.Model).IsEqualTo(model);
     }
 
     [Test]
@@ -44,61 +47,54 @@ public partial class AddItemViewModelTests
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
         sims.Setup(r => r.GetSimNumberAsync("07123456789")).ReturnsAsync((string)null);
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        _sut.Condition = "condition";
-        _sut.Imei = "355808981147090";
-        _sut.Model = "model";
-        _sut.PhoneNumber = "07123456789";
-        _sut.Status = "status";
+        sut.Condition = "condition";
+        sut.Imei = "355808981147090";
+        sut.Model = "model";
+        sut.PhoneNumber = "07123456789";
+        sut.Status = "status";
 
-        IEnumerable<ValidationResult> errors = _sut.GetErrors();
-        await Assert.That(errors).IsEmpty();
-        await Assert.That(_sut.CanSavePhone()).IsTrue();
+        await Assert.That(sut.HasErrors).IsFalse();
+        await Assert.That(sut.CanSavePhone()).IsTrue();
         _mocker.VerifyAll();
     }
 
     [Test]
     public async Task CanSavePhone_ShouldBeEnabled_WhenNoErrors_WithPhoneInStockAsync()
     {
-        Mock<IPhonesRepository> _phones = _mocker.GetMock<IPhonesRepository>();
-        _phones.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
-        Mock<IBaseReportRepository> sims = _mocker.GetMock<IBaseReportRepository>();
-        _sut.AssetTag = "MP00001";
-        _sut.Condition = "condition";
-        _sut.Imei = "355808981147090";
-        _sut.Model = "model";
-        _sut.Status = ApplicationConstants.StatusInStock;
+        Mock<IPhonesRepository> phones = _mocker.GetMock<IPhonesRepository>();
+        phones.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
+        var validator = new AddItemValidator(phones.Object);
+        var serviceProviderMock = _mocker.GetMock<IServiceProvider>();
+        serviceProviderMock
+            .Setup(sp => sp.GetService(typeof(IValidator<AddItemViewModel>)))
+            .Returns(validator);
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        IEnumerable<ValidationResult> errors = _sut.GetErrors();
-        await Assert.That(errors).IsEmpty();
-        await Assert.That(_sut.CanSavePhone()).IsTrue();
+        sut.AssetTag = "MP00001";
+        sut.Condition = "condition";
+        sut.Imei = "355808981147090";
+        sut.Model = "model";
+        sut.Status = ApplicationConstants.StatusInStock;
+
+        await Assert.That(sut.HasErrors).IsFalse();
+        await Assert.That(sut.CanSavePhone()).IsTrue();
         _mocker.VerifyAll();
     }
 
     [Test]
     public async Task CanSavePhone_ShouldBeEnabled_WhenNoErrors_WithPhoneOnlyAsync()
     {
-        _sut.Condition = "condition";
-        _sut.Imei = "355808981147090";
-        _sut.Model = "model";
-        _sut.Status = "status";
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        IEnumerable<ValidationResult> errors = _sut.GetErrors();
-        await Assert.That(errors).IsEmpty();
-        await Assert.That(_sut.CanSavePhone()).IsTrue();
-    }
+        sut.Condition = "condition";
+        sut.Imei = "355808981147090";
+        sut.Model = "model";
+        sut.Status = "status";
 
-    [Test]
-    public async Task GetErrors_ShouldContainAssetTagError_WhenAssetTagNotUniqueAsync()
-    {
-        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.AssetTagUniqueAsync("MP99999")).ReturnsAsync(false);
-
-        _sut.AssetTag = "MP99999";
-
-        _mocker.VerifyAll();
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.AssetTag));
-        await Assert.That(errors.First().ToString()).IsEqualTo("Asset Tag must be unique");
+        await Assert.That(sut.HasErrors).IsFalse();
+        await Assert.That(sut.CanSavePhone()).IsTrue();
     }
 
     [Test]
@@ -108,144 +104,109 @@ public partial class AddItemViewModelTests
     {
         Mock<IApplicationSettingsRepository> settings = _mocker.GetMock<IApplicationSettingsRepository>();
         settings.Setup(s => s.ApplicationSettings).Returns(new ApplicationSettings());
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        _sut.Status = status;
+        sut.Status = status;
 
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Ticket));
-        await Assert.That(errors).IsEmpty();
+        await Assert.That(sut.GetErrors(nameof(sut.Ticket))).IsEmpty();
     }
 
     [Test]
-    [Arguments(" ")]
     [Arguments("12345")]
     [Arguments("12345678")]
     [Arguments("1A345")]
-    public async Task GetErrors_ShouldContainTicketError_WhenTicketInvalidAsync(string ticket)
+    public async Task Ticket_should_have_Error_when_invalid_format(string ticket)
     {
-        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
+        Mock<IPhonesRepository> phones = _mocker.GetMock<IPhonesRepository>();
+        var validator = new AddItemValidator(phones.Object);
+        var serviceProviderMock = _mocker.GetMock<IServiceProvider>();
+        serviceProviderMock
+            .Setup(sp => sp.GetService(typeof(IValidator<AddItemViewModel>)))
+            .Returns(validator);
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        _sut.Ticket = ticket;
+        sut.Ticket = ticket;
 
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Ticket));
-        await Assert.That(errors.First().ToString()).IsEqualTo("Ticket must 6 or 7 digits");
+        await Assert.That(sut.HasErrors).IsTrue();
+        await Assert.That(sut.GetErrors(nameof(sut.Ticket))).IsNotEmpty();
     }
 
     [Test]
-    public async Task GetErrors_ShouldContainStatueError_WhenInvalidStatusAssetTagCombinationAsync()
+    [Arguments(null)]
+    [Arguments("")]
+    public async Task Ticket_should_not_have_Error_when_Null_or_empty(string? actual)
     {
-        _sut.AssetTag = null;
-        _sut.Status = ApplicationConstants.StatusInStock;
+        Mock<IPhonesRepository> phones = _mocker.GetMock<IPhonesRepository>();
+        var validator = new AddItemValidator(phones.Object);
+        var serviceProviderMock = _mocker.GetMock<IServiceProvider>();
+        serviceProviderMock
+            .Setup(sp => sp.GetService(typeof(IValidator<AddItemViewModel>)))
+            .Returns(validator);
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Status));
-        await Assert.That(errors.First().ToString()).IsEqualTo("Asset Tag required");
+        sut.Ticket = actual;
+
+        await Assert.That(sut.GetErrors(nameof(sut.Ticket))).IsEmpty();
+    }
+    
+    [Test]
+    public async Task Imei_should_not_have_Error_when_present()
+    {
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
+
+        sut.Imei = "355808981147090";
+
+        await Assert.That(sut.GetErrors(nameof(sut.Imei))).IsEmpty();
     }
 
     [Test]
-    [Arguments("PC00001")]
-    [Arguments("MP00002")]
-    public async Task GetErrors_ShouldBeEmpty_WhenAssetTagFormatValidAsync(string assetTag)
+    [Arguments(null)]
+    [Arguments("")]
+    public async Task PhoneNumber_should_not_have_Error_when_Null_or_empty(string? actual)
     {
-        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.AssetTagUniqueAsync(assetTag)).ReturnsAsync(true);
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        _sut.AssetTag = assetTag;
+        sut.PhoneNumber = actual;
 
-        _mocker.VerifyAll();
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.AssetTag));
-        await Assert.That(errors).IsEmpty();
+        await Assert.That(sut.GetErrors(nameof(sut.PhoneNumber))).IsEmpty();
     }
 
     [Test]
-    public async Task GetErrors_ShouldBeEmpty_WhenAssetTagUniqueAsync()
+    public async Task PhoneNumber_should_not_have_Error_when_present()
     {
-        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.AssetTagUniqueAsync("MP99999")).ReturnsAsync(true);
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        _sut.AssetTag = "MP99999";
+        sut.PhoneNumber = "07123456789";
 
-        _mocker.VerifyAll();
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.AssetTag));
-        await Assert.That(errors).IsEmpty();
-    }
-
-    [Test]
-    public async Task GetErrors_ShouldBeEmpty_WhenIMEISetAsync()
-    {
-        _sut.Imei = "355808981147090";
-
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Imei));
-        await Assert.That(errors).IsEmpty();
-    }
-
-    [Test]
-    public async Task GetErrors_ShouldBeEmpty_WhenModelSetAsync()
-    {
-        _sut.Model = "model";
-
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Model));
-        await Assert.That(errors).IsEmpty();
-    }
-
-
-    [Test]
-    [Arguments(ApplicationConstants.StatusInStock, "MP00001")]
-    [Arguments(ApplicationConstants.StatusProduction, null)]
-    [Arguments(ApplicationConstants.StatusProduction, "PC00001")]
-    [Arguments(ApplicationConstants.StatusInRepair, null)]
-    [Arguments(ApplicationConstants.StatusInRepair, "PC00002")]
-    public async Task GetErrors_ShouldBeEmpty_WhenValidStatusAssetTagCombinationAsync(string status, string? assetTag)
-    {
-        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.AssetTagUniqueAsync(assetTag)).ReturnsAsync(true);
-
-        _sut.AssetTag = assetTag;
-        _sut.Status = status;
-
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.Status));
-        await Assert.That(errors).IsEmpty();
-
-    }
-
-    [Test]
-    public async Task GetErrors_ShouldBeEmpty_WhenPhoneNumberNullAsync()
-    {
-        _sut.PhoneNumber = "07123456789";
-
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.PhoneNumber));
-        await Assert.That(errors).IsEmpty();
-    }
-
-    [Test]
-    public async Task GetErrors_ShouldBeEmpty_WhenPhoneNumberSetAsync()
-    {
-        _sut.PhoneNumber = "07123456789";
-
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.PhoneNumber));
-        await Assert.That(errors).IsEmpty();
+        await Assert.That(sut.GetErrors(nameof(sut.PhoneNumber))).IsEmpty();
     }
 
     [Test]
     public async Task GetErrors_ShouldBeEmpty_WhenSimNumberNullAsync()
     {
-        _sut.SimNumber = null;
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.SimNumber));
-        await Assert.That(errors).IsEmpty();
+        sut.SimNumber = null;
+
+        await Assert.That(sut.GetErrors(nameof(sut.SimNumber))).IsEmpty();
     }
 
     [Test]
     public async Task GetErrors_ShouldBeEmpty_WhenSimNumberSetAsync()
     {
-        _sut.SimNumber = "8944122605566849402";
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        IEnumerable<ValidationResult> errors = _sut.GetErrors(nameof(_sut.SimNumber));
-        await Assert.That(errors).IsEmpty();
+        sut.SimNumber = "8944122605566849402";
+
+        await Assert.That(sut.GetErrors(nameof(sut.SimNumber))).IsEmpty();
     }
 
     [Test]
     public async Task LoadAsync_ShouldReturn_TaskCompleted()
-    {         
-        await _sut.LoadAsync();
+    {
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
+
+        await sut.LoadAsync();
     }
 
     [Test]
@@ -253,44 +214,51 @@ public partial class AddItemViewModelTests
     {
         Mock<IBaseReportRepository> repository = _mocker.GetMock<IBaseReportRepository>();
         repository.Setup(r => r.GetSimNumberAsync("07123456789")).ReturnsAsync("sim number");
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        _sut.PhoneNumber = "07123456789";
+        sut.PhoneNumber = "07123456789";
 
         _mocker.VerifyAll();
-        await Assert.That(_sut.SimNumber).IsEqualTo("sim number");
+        await Assert.That(sut.SimNumber).IsEqualTo("sim number");
     }
 
     [Test]
     public async Task PhoneClearCommand_ShouldDisablePhoneSaveAsync()
     {
-        _sut.PhoneClearCommand.Execute(null);
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        await Assert.That(_sut.CanSavePhone()).IsFalse();
+        sut.PhoneClearCommand.Execute(null);
+
+        await Assert.That(sut.CanSavePhone()).IsFalse();
     }
 
     [Test]
     public async Task PhoneClearCommand_ShouldResetAllPropertiesAsync()
     {
-        ArrangeSetAllPhoneProperties();
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        _sut.PhoneClearCommand.Execute(null);
+        ArrangeSetAllPhoneProperties(sut);
 
-        await AssertResetAllPhonePropertiesAsync();
+        sut.PhoneClearCommand.Execute(null);
+
+        await AssertResetAllPhonePropertiesAsync(sut);
     }
 
     [Test]
     [Description("Issue #65")]
     public async Task PhoneSaveCommand_WithConditionN_ShouldLogNewAsync()
     {
-        _sut.Condition = ApplicationConstants.Conditions[0].Substring(0, 1);
-        _sut.Imei = "355808981147090";
-        _sut.Model = "model";
-        _sut.OEM = Manufacturer.Apple;
-        _sut.Status = "status";
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        _sut.PhoneSaveCommand.Execute(null);
+        sut.Condition = ApplicationConstants.Conditions[0][..1];
+        sut.Imei = "355808981147090";
+        sut.Model = "model";
+        sut.OEM = Manufacturer.Apple;
+        sut.Status = "status";
 
-        var actual = _sut.LogItems.First();
+        sut.PhoneSaveCommand.Execute(null);
+
+        var actual = sut.LogItems.First();
         await Assert.That(actual).Contains("New");
     }
 
@@ -298,15 +266,17 @@ public partial class AddItemViewModelTests
     [Description("Issue #65")]
     public async Task PhoneSaveCommand_WithConditionR_ShouldLogRepurposedAsync()
     {
-        _sut.Condition = ApplicationConstants.Conditions[1].Substring(0, 1);
-        _sut.Imei = "355808981147090";
-        _sut.Model = "model";
-        _sut.OEM = Manufacturer.Apple;
-        _sut.Status = "status";
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        _sut.PhoneSaveCommand.Execute(null);
+        sut.Condition = ApplicationConstants.Conditions[1].Substring(0, 1);
+        sut.Imei = "355808981147090";
+        sut.Model = "model";
+        sut.OEM = Manufacturer.Apple;
+        sut.Status = "status";
 
-        var actual = _sut.LogItems.First();
+        sut.PhoneSaveCommand.Execute(null);
+
+        var actual = sut.LogItems.First();
         await Assert.That(actual).Contains("Repurposed");
     }
 
@@ -329,14 +299,15 @@ public partial class AddItemViewModelTests
         Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
         repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
         repository.Setup(r => r.CreateAsync(It.IsAny<Phone>())).Callback<Phone>((p) => actual = p);
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        _sut.AssetTag = expectedAssetTag;
-        _sut.Imei = expectedImei;
-        _sut.Model = expectedModel;
-        _sut.PhoneNumber = expectedPhoneNumber;
-        _sut.SimNumber = expectedSimNumber;
+        sut.AssetTag = expectedAssetTag;
+        sut.Imei = expectedImei;
+        sut.Model = expectedModel;
+        sut.PhoneNumber = expectedPhoneNumber;
+        sut.SimNumber = expectedSimNumber;
 
-        _sut.PhoneSaveCommand.Execute(null);
+        sut.PhoneSaveCommand.Execute(null);
 
         await Assert.That(actual.AssetTag).IsEqualTo(expectedAssetTag);
         await Assert.That(actual.Imei).IsEqualTo(expectedImei);
@@ -363,12 +334,18 @@ public partial class AddItemViewModelTests
         Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
         repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
         repository.Setup(r => r.CreateAsync(It.IsAny<Phone>())).Callback<Phone>((p) => actual = p);
+        var validator = new AddItemValidator(repository.Object);
+        var serviceProviderMock = _mocker.GetMock<IServiceProvider>();
+        serviceProviderMock
+            .Setup(sp => sp.GetService(typeof(IValidator<AddItemViewModel>)))
+            .Returns(validator);
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        _sut.AssetTag = expectedAssetTag;
-        _sut.Imei = expectedImei;
-        _sut.Model = expectedModel;
+        sut.AssetTag = expectedAssetTag;
+        sut.Imei = expectedImei;
+        sut.Model = expectedModel;
 
-        _sut.PhoneSaveCommand.Execute(null);
+        sut.PhoneSaveCommand.Execute(null);
 
         await Assert.That(actual.AssetTag).IsEqualTo(expectedAssetTag);
         await Assert.That(actual.Imei).IsEqualTo(expectedImei);
@@ -381,19 +358,22 @@ public partial class AddItemViewModelTests
     [Test]
     public async Task PhoneSaveCommand_ShouldDisablePhoneSaveAsync()
     {
-        _sut.PhoneSaveCommand.Execute(null);
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        await Assert.That(_sut.CanSavePhone()).IsFalse();
+        sut.PhoneSaveCommand.Execute(null);
+
+        await Assert.That(sut.CanSavePhone()).IsFalse();
     }
 
     [Test]
     public async Task PhoneSaveCommand_ShouldResetAllPhonePropertiesAsync()
     {
-        ArrangeSetAllPhoneProperties();
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
+        ArrangeSetAllPhoneProperties(sut);
 
-        _sut.PhoneSaveCommand.Execute(null);
+        sut.PhoneSaveCommand.Execute(null);
 
-        await AssertResetAllPhonePropertiesAsync();
+        await AssertResetAllPhonePropertiesAsync(sut);
     }
 
     [Test]
@@ -401,133 +381,43 @@ public partial class AddItemViewModelTests
     {
         Mock<IMessenger> message = _mocker.GetMock<IMessenger>();
         message.Setup(m => m.Send(It.IsAny<Phone>(), It.IsAny<IsAnyToken>()));
+        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        _sut.AssetTag = "MP00001";
-        _sut.Imei = "355808981147090";
-        _sut.Model = "model";
+        sut.AssetTag = "MP00001";
+        sut.Imei = "355808981147090";
+        sut.Model = "model";
 
-        _sut.PhoneSaveCommand.Execute(null);
+        sut.PhoneSaveCommand.Execute(null);
 
         message.Verify(x => x.Send(It.IsAny<Phone>(), It.IsAny<IsAnyToken>()), Times.Once);
     }
 
-    [Test]
-    public async Task ValidateImei_ShouldReturnError_WhenIMEIEmptyOrWhiteSpaceAsync()
+    private void ArrangeSetAllPhoneProperties(AddItemViewModel sut)
     {
-        ValidationContext ctx = new(_sut, null, null);
-
-        ValidationResult? actual1 = AddItemViewModel.ValidateImeiAsync("", ctx);
-        ValidationResult? actual2 = AddItemViewModel.ValidateImeiAsync("  ", ctx);
-
-        await Assert.That(actual1).IsNotNull();
-        await Assert.That(actual1!.ErrorMessage).IsEqualTo("IMEI is required");
-        await Assert.That(actual2).IsNotNull();
-        await Assert.That(actual2!.ErrorMessage).IsEqualTo("IMEI is required");
+        sut.AssetTag = "MP00000";
+        sut.Condition = "condition";
+        sut.FormerUser = "former user";
+        sut.Imei = "imei";
+        sut.PhoneNotes = "notes";
+        sut.PhoneNumber = "07123456789";        
+        sut.SimNumber = "8944125605540324743";
+        sut.Status = "status";
+        sut.Ticket = 7654321.ToString();
     }
 
-    [Test]
-    public async Task ValidateImei_ShouldReturnError_WhenIMEINotNumericAsync()
+    private async Task AssertResetAllPhonePropertiesAsync(AddItemViewModel sut)
     {
-        ValidationContext ctx = new(_sut, null, null);
-
-        ValidationResult? actual = AddItemViewModel.ValidateImeiAsync("abc", ctx);
-
-        await Assert.That(actual).IsNotNull();
-        await Assert.That(actual!.ErrorMessage).IsEqualTo("IMEI check digit incorrect");
-    }
-
-    [Test]
-    public async Task ValidateImei_ShouldReturnError_WhenIMEINotUniqueAsync()
-    {
-        ValidationContext ctx = new(_sut, null, null);
-        Mock<IPhonesRepository> repository = new Mock<IPhonesRepository>();
-        repository = _mocker.GetMock<IPhonesRepository>();
-        repository.Setup(p => p.ExistsAsync("353427866717729")).ReturnsAsync(true);
-
-        ValidationResult? actual = AddItemViewModel.ValidateImeiAsync("353427866717729", ctx);
-
-        repository.VerifyAll();
-        await Assert.That(actual).IsNotNull();
-        await Assert.That(actual!.ErrorMessage).IsEqualTo("IMEI must be unique");
-    }
-
-    [Test]
-    public async Task ValidateIMEI_ShouldReturnError_WhenIMEIInvalidAsync()
-    {
-        ValidationContext ctx = new(_sut, null, null);
-
-        ValidationResult? actual = AddItemViewModel.ValidateImeiAsync("355808981132899", ctx); // An invalid 15-digit IMEI
-
-        await Assert.That(actual).IsNotNull();
-        await Assert.That(actual!.ErrorMessage).IsEqualTo("IMEI check digit incorrect");
-    }
-
-    [Test]
-    public async Task ValidateIMEI_ShouldReturnValidResult_WhenIMEIValidAsync()
-    {
-        ValidationContext ctx = new(_sut, null, null);
-
-        ValidationResult? actual = AddItemViewModel.ValidateImeiAsync("355808981132845", ctx); // A valid 15-digit IMEI
-
-        await Assert.That(actual).IsEqualTo(ValidationResult.Success);
-    }
-
-    [Test]
-    public async Task ValidatePhoneNumber_ShouldReturnError_WhenPhoneNumberNotUniqueAsync()
-    {
-        ValidationContext ctx = new(_sut, null, null);
-        Mock<IPhonesRepository> repository = new Mock<IPhonesRepository>();
-        repository = _mocker.GetMock<IPhonesRepository>();
-        repository.Setup(p => p.PhoneNumberExistsAsync("07123456789")).ReturnsAsync(true);
-
-        ValidationResult? actual = AddItemViewModel.ValidatePhoneNumber("07123456789", ctx);
-
-        repository.VerifyAll();
-        await Assert.That(actual).IsNotNull();
-        await Assert.That(actual!.ErrorMessage).IsEqualTo("Phone Number already linked to phone");
-    }
-
-    [Test]
-    public async Task ValidatePhoneNumber_ShouldReturnValidResult_WhenPhoneNumberUniqueAsync()
-    {
-        ValidationContext ctx = new(_sut, null, null);
-        Mock<IPhonesRepository> repository = new Mock<IPhonesRepository>();
-        repository = _mocker.GetMock<IPhonesRepository>();
-        repository.Setup(p => p.PhoneNumberExistsAsync("07123456789")).ReturnsAsync(false);
-
-        ValidationResult? actual = AddItemViewModel.ValidatePhoneNumber("07123456789", ctx);
-
-        repository.VerifyAll();
-        await Assert.That(actual).IsEqualTo(ValidationResult.Success);
-    }
-
-    private void ArrangeSetAllPhoneProperties()
-    {
-        _sut.AssetTag = "MP00000";
-        _sut.Condition = "condition";
-        _sut.FormerUser = "former user";
-        _sut.Imei = "imei";
-        //_sut.Model = "model";
-        _sut.PhoneNotes = "notes";
-        _sut.PhoneNumber = "07123456789";        
-        _sut.SimNumber = "8944125605540324743";
-        _sut.Status = "status";
-        _sut.Ticket = 7654321.ToString();
-    }
-
-    private async Task AssertResetAllPhonePropertiesAsync()
-    {
-        await Assert.That(_sut.AssetTag).IsNull();
-        await Assert.That(_sut.Condition).IsEqualTo(ApplicationConstants.Conditions[1].Substring(0, 1));
-        await Assert.That(_sut.FormerUser).IsNull();
-        await Assert.That(_sut.Imei).IsEqualTo(string.Empty);
-        await Assert.That(_sut.Model).IsEqualTo("iPhone SE 2022");
-        await Assert.That(_sut.PhoneNotes).IsNull();
-        await Assert.That(_sut.PhoneNumber).IsNull();
-        await Assert.That((Manufacturer)_sut.OEM).IsEqualTo(Manufacturer.Apple);
-        await Assert.That(_sut.Status).IsEqualTo(ApplicationConstants.Statuses[1]);
-        await Assert.That(_sut.SimNumber).IsNull();
-        await Assert.That(_sut.Ticket).IsNull();
+        await Assert.That(sut.AssetTag).IsNull();
+        await Assert.That(sut.Condition).IsEqualTo(ApplicationConstants.Conditions[1].Substring(0, 1));
+        await Assert.That(sut.FormerUser).IsNull();
+        await Assert.That(sut.Imei).IsEqualTo(string.Empty);
+        await Assert.That(sut.Model).IsEqualTo("iPhone SE 2022");
+        await Assert.That(sut.PhoneNotes).IsNull();
+        await Assert.That(sut.PhoneNumber).IsNull();
+        await Assert.That((Manufacturer)sut.OEM).IsEqualTo(Manufacturer.Apple);
+        await Assert.That(sut.Status).IsEqualTo(ApplicationConstants.Statuses[1]);
+        await Assert.That(sut.SimNumber).IsNull();
+        await Assert.That(sut.Ticket).IsNull();
     }
 }
 

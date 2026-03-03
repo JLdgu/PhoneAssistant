@@ -58,20 +58,21 @@
                 </Grid.RowDefinitions>
                 <StackPanel Margin="0,0,0,25" Orientation="Horizontal">
                     <ComboBox MinWidth="120"
+                              Margin="10,5,0,0"
                               materialDesign:HintAssist.Hint="Condition"
                               ItemsSource="{Binding Conditions}"
                               SelectedItem="{Binding Condition, Converter={StaticResource ConditionConverter}, UpdateSourceTrigger=LostFocus}"
                               Style="{StaticResource MaterialDesignOutlinedComboBox}" />
 
                     <ComboBox MinWidth="150"
-                              Margin="10,0,0,0"
+                              Margin="10,5,0,0"
                               materialDesign:HintAssist.Hint="Status"
                               ItemsSource="{Binding Statuses}"
                               SelectedItem="{Binding Status, UpdateSourceTrigger=LostFocus}"
                               Style="{StaticResource MaterialDesignOutlinedComboBox}" />
 
                     <TextBox MinWidth="85"
-                             Margin="10,0,0,0"
+                             Margin="10,5,0,0"
                              materialDesign:HintAssist.Hint="Ticket #"
                              materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                              MaxLength="7"
@@ -79,7 +80,7 @@
                              Text="{Binding Ticket}" />
 
                     <TextBox MinWidth="150"
-                             Margin="10,0,0,0"
+                             Margin="10,5,0,0"
                              materialDesign:HintAssist.Hint="IMEI"
                              materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                              MaxLength="15"
@@ -87,7 +88,7 @@
                              Text="{Binding Imei}" />
 
                     <TextBox MinWidth="125  "
-                             Margin="10,0,0,0"
+                             Margin="10,5,0,0"
                              materialDesign:HintAssist.Hint="Phone Number"
                              materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                              MaxLength="11"
@@ -95,7 +96,7 @@
                              Text="{Binding PhoneNumber}" />
 
                     <TextBox MinWidth="160"
-                             Margin="10,0,0,0"
+                             Margin="10,5,0,0"
                              materialDesign:HintAssist.Hint="SIM Number"
                              materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                              MaxLength="19"
@@ -103,34 +104,34 @@
                              Text="{Binding SimNumber}" />
 
                     <TextBox MinWidth="95"
-                             Margin="10,0,0,0"
+                             Margin="10,5,0,0"
                              materialDesign:HintAssist.Hint="Asset Tag"
                              materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding AssetTag}" />
 
                     <ComboBox MinWidth="110"
-                              Margin="10,0,0,0"
+                              Margin="10,5,0,0"
                               ItemsSource="{Binding OEMs}"
                               SelectedValue="{Binding OEM}"
                               Style="{StaticResource MaterialDesignOutlinedComboBox}" />
 
                     <TextBox MinWidth="75"
-                             Margin="10,0,0,0"
+                             Margin="10,5,0,0"
                              materialDesign:HintAssist.Hint="Model"
                              materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding Model}" />
 
                     <TextBox MinWidth="150"
-                             Margin="10,0,0,0"
+                             Margin="10,5,0,0"
                              materialDesign:HintAssist.Hint="Former User"
                              materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding FormerUser}" />
 
                     <TextBox MinWidth="200"
-                             Margin="10,0,0,0"
+                             Margin="10,5,0,0"
                              materialDesign:HintAssist.Hint="Notes"
                              materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"

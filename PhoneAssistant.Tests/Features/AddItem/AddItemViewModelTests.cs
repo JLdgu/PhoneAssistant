@@ -98,20 +98,6 @@ public partial class AddItemViewModelTests
     }
 
     [Test]
-    [Arguments(ApplicationConstants.StatusDecommissioned)]
-    [Arguments(ApplicationConstants.StatusDisposed)]
-    public async Task GetErrors_ShouldNotContainError_WhenDisposalWithDefaultTicketAsync(string status)
-    {
-        Mock<IApplicationSettingsRepository> settings = _mocker.GetMock<IApplicationSettingsRepository>();
-        settings.Setup(s => s.ApplicationSettings).Returns(new ApplicationSettings());
-        AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
-
-        sut.Status = status;
-
-        await Assert.That(sut.GetErrors(nameof(sut.Ticket))).IsEmpty();
-    }
-
-    [Test]
     [Arguments("12345")]
     [Arguments("12345678")]
     [Arguments("1A345")]
@@ -206,7 +192,9 @@ public partial class AddItemViewModelTests
     {
         AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        await sut.LoadAsync();
+        Task result =  sut.LoadAsync();
+
+        await Assert.That(result).IsCompleted();
     }
 
     [Test]
@@ -225,6 +213,12 @@ public partial class AddItemViewModelTests
     [Test]
     public async Task PhoneClearCommand_ShouldDisablePhoneSaveAsync()
     {
+        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
+        var validator = new AddItemValidator(repository.Object);
+        var serviceProviderMock = _mocker.GetMock<IServiceProvider>();
+        serviceProviderMock
+            .Setup(sp => sp.GetService(typeof(IValidator<AddItemViewModel>)))
+            .Returns(validator);
         AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
         sut.PhoneClearCommand.Execute(null);
@@ -299,6 +293,11 @@ public partial class AddItemViewModelTests
         Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
         repository.Setup(r => r.AssetTagUniqueAsync("MP00001")).ReturnsAsync(true);
         repository.Setup(r => r.CreateAsync(It.IsAny<Phone>())).Callback<Phone>((p) => actual = p);
+        var validator = new AddItemValidator(repository.Object);
+        var serviceProviderMock = _mocker.GetMock<IServiceProvider>();
+        serviceProviderMock
+            .Setup(sp => sp.GetService(typeof(IValidator<AddItemViewModel>)))
+            .Returns(validator);
         AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
         sut.AssetTag = expectedAssetTag;
@@ -358,6 +357,13 @@ public partial class AddItemViewModelTests
     [Test]
     public async Task PhoneSaveCommand_ShouldDisablePhoneSaveAsync()
     {
+        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
+        var validator = new AddItemValidator(repository.Object);
+        var serviceProviderMock = _mocker.GetMock<IServiceProvider>();
+        serviceProviderMock
+            .Setup(sp => sp.GetService(typeof(IValidator<AddItemViewModel>)))
+            .Returns(validator);
+
         AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
         sut.PhoneSaveCommand.Execute(null);

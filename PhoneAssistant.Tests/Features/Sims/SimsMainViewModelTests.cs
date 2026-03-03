@@ -27,12 +27,10 @@ public sealed class SimsMainViewModelTests
         vm.NewUser = "Alice";
         vm.PhoneNumber = "01234567890";
         vm.Ticket = "654321";
-
         
         mocker.VerifyAll();
         await Assert.That(vm.SimNumber).IsEqualTo("sim number");
     }
-
 
     [Test]
     public async Task PrintEnvelope_should_be_disabled_when_Errors()

@@ -59,7 +59,7 @@ public sealed class AddItemValidatorTests
         _mocker.VerifyAll();
         result.ShouldHaveValidationErrorFor(model => model.AssetTag).WithErrorMessage("Asset Tag must be unique");
     }
-    
+
     [Test]
     [Arguments("PC00001")]
     [Arguments("MP00002")]
@@ -173,5 +173,26 @@ public sealed class AddItemValidatorTests
         var result = await _validator.TestValidateAsync(_sut);
 
         result.ShouldNotHaveValidationErrorFor(model => model.Model);
+    }
+
+    // Phone number validation is tested in ValidationRules_PhoneNumberTests
+    // Sim number validation is tested in ValidationRules_SimNumberTests
+
+    [Test]
+    [Arguments(ApplicationConstants.StatusDecommissioned)]
+    [Arguments(ApplicationConstants.StatusDisposed)]
+    public async Task Ticket_should_have_Error_when_empty_and_Decommissioned_or_Disposal(string status)
+    {
+        Mock<IApplicationSettingsRepository> settings = _mocker.GetMock<IApplicationSettingsRepository>();
+        settings.Setup(s => s.ApplicationSettings).Returns(new ApplicationSettings());
+        //Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
+        //repository.Setup(p => p.ExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+        _sut.Imei = "353427866717729";
+        _sut.Status = status;
+        _sut.Ticket = "";
+
+        var result = await _validator.TestValidateAsync(_sut);
+
+        result.ShouldHaveValidationErrorFor(model => model.Ticket).WithErrorMessage("Ticket required");
     }
 }

@@ -52,6 +52,10 @@ public class AddItemValidator : AbstractValidator<AddItemViewModel>
             .When(model => !string.IsNullOrEmpty(model.SimNumber));
 
         RuleFor(model => model.Ticket)
+            .NotEmpty().WithMessage("Ticket required")
+            .When(model => model.Status == "Decommissioned" || model.Status == "Disposed");
+
+        RuleFor(model => model.Ticket)
             .TicketRules()
             .When(model => !string.IsNullOrEmpty(model.Ticket));
     }

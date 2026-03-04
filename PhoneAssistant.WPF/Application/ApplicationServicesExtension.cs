@@ -18,6 +18,7 @@ using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Features.Sims;
 using PhoneAssistant.WPF.Features.Users;
 using PhoneAssistant.WPF.Shared;
+using Serilog;
 
 using Velopack;
 
@@ -30,6 +31,8 @@ public static class ApplicationServicesExtensions
         host.ConfigureServices((context, services) =>
         {
             // Application
+            services.AddSingleton(Log.Logger);
+
             services.AddSingleton<IApplicationSettingsRepository, ApplicationSettingsRepository>();
             ApplicationSettingsRepository repo = new();
             string connectionString = $@"DataSource={repo.ApplicationSettings.Database};";
@@ -48,6 +51,7 @@ public static class ApplicationServicesExtensions
             services.AddSingleton<IImportHistoryRepository, ImportHistoryRepository>();
             services.AddSingleton<ILocationsRepository, LocationsRepository>();
             services.AddSingleton<IPhonesRepository, PhonesRepository>();
+
 
             // Features
             services.AddSingleton<IAddItemViewModel, AddItemViewModel>();
@@ -75,11 +79,6 @@ public static class ApplicationServicesExtensions
             services.AddTransient<IUsersItemViewModelFactory, UsersItemViewModelFactory>();
             
             services.AddSingleton<ISimsMainViewModel, SimsMainViewModel>();
-            //services.AddSingleton<ISimsMainViewModel>(provider => provider.GetRequiredService<SimsMainViewModel>());
-            //services.AddSingleton<SimsMainViewModel>(provider => new SimsMainViewModel(
-            //        provider.GetRequiredService<IBaseReportRepository>(),
-            //        provider.GetRequiredService<IPrintEnvelope>(),
-            //        provider));
             services.AddSingleton<IValidator<SimsMainViewModel>, SimValidator>();
 
             services.AddSingleton<MainWindowViewModel>();

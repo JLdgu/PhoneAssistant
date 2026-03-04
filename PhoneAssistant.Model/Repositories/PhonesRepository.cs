@@ -10,6 +10,18 @@ public sealed class PhonesRepository(PhoneAssistantDbContext dbContext) : IPhone
         return found == null;
     }
 
+    public async Task<bool> ConcurrentChange(string imei, string lastUpdate)
+    {
+        await using var connection = dbContext.Database.GetDbConnection();
+        await connection.OpenAsync();
+
+        await using var command = connection.CreateCommand();
+        command.CommandText = $"SELECT Count(*) FROM Phones WHERE Imei = '{imei}' AND LastUpdate = '{lastUpdate}';";
+        var result = await command.ExecuteScalarAsync();
+        int rows = Convert.ToInt32(result);
+
+        return rows == 0;
+    }
     public async Task CreateAsync(Phone phone)
     {
         dbContext.Phones.Add(phone);

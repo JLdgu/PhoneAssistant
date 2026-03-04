@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace PhoneAssistant.Model.Tests.Repositories;
+namespace PhoneAssistant.Model.Tests;
 
 public sealed class ApplicationSettingsRepositoryTests
 {

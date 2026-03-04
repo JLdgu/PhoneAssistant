@@ -71,6 +71,32 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     }
 
     [Test]
+    public async Task ConcurrentChange_should_return_false_when_no_concurrent_change()
+    {
+        _helper.DbContext.Phones.Add(_phone);        
+        await _helper.DbContext.SaveChangesAsync();
+        
+        bool concurrentChange = await _repository.ConcurrentChange(_phone.Imei, _phone.LastUpdate);
+        await Assert.That(concurrentChange).IsFalse();
+    }
+
+    [Test]
+    public async Task ConcurrentChange_should_return_true_when_concurrent_change()
+    {
+        await _repository.CreateAsync(_phone);
+        //_helper.DbContext.Phones.Add(_phone);
+        //await _helper.DbContext.SaveChangesAsync();
+        string originalLastUpdate = _phone.LastUpdate;
+        await Task.Delay(1100); // Ensure LastUpdate will be different
+        _phone.Notes = "Changed note";
+        await _repository.UpdateAsync(_phone);
+
+        bool concurrentChange = await _repository.ConcurrentChange(_phone.Imei, originalLastUpdate);
+        
+        await Assert.That(concurrentChange).IsTrue();
+    }
+
+    [Test]
     public async Task Exists_ShouldReturnFalse_WhenPhoneDoesNotExist()
     {
         bool actual = await _repository.ExistsAsync("DoesNotExist");

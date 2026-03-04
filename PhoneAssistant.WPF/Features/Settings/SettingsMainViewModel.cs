@@ -17,13 +17,18 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
     private readonly IApplicationSettingsRepository _appSettings;
     private readonly IThemeWrapper _themeWrapper;
     private readonly UpdateManager _updateManager;
+    private readonly ILogger _logger;
     private UpdateInfo? _updateInfo;
 
-    public SettingsMainViewModel(IApplicationSettingsRepository appSettings, IThemeWrapper themeWrapper, UpdateManager updateManager)
+    public SettingsMainViewModel(IApplicationSettingsRepository appSettings, 
+                                 IThemeWrapper themeWrapper, 
+                                 UpdateManager updateManager,
+                                 Serilog.ILogger logger)
     {
         _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         _themeWrapper = themeWrapper ?? throw new ArgumentNullException(nameof(themeWrapper));
         _updateManager = updateManager ?? throw new ArgumentNullException(nameof(updateManager));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         ColourThemeDark = _appSettings.ApplicationSettings.DarkMode;
         ColourThemeLight = !_appSettings.ApplicationSettings.DarkMode;
@@ -197,7 +202,7 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
 
     private async Task CheckForUpdate()
     {
-        Log.Information("CheckForUpdate Started");
+        _logger.Debug("CheckForUpdate Started");
 
         if (_updateManager is null)
             return;
@@ -210,7 +215,7 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
         }
 
         _updateInfo = await _updateManager.CheckForUpdatesAsync().ConfigureAwait(true);
-        Log.Information("UpdateCommand CheckForUpdatesAsync() called");
+        _logger.Debug("UpdateCommand CheckForUpdatesAsync() called");
 
         if (_updateInfo is null)
         {
@@ -233,14 +238,14 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
         if (_updateManager is null || _updateInfo is null)
             return;
 
-        Log.Information("UpdateAndRestart Started");
+        _logger.Debug("UpdateAndRestart Started");
         
         await _updateManager.DownloadUpdatesAsync(_updateInfo).ConfigureAwait(true);
-        Log.Information("DownloadUpdate DownloadUpdatesAsync() called");
+        _logger.Debug("DownloadUpdate DownloadUpdatesAsync() called");
         UpdateState = ApplicationUpdateState.UpdateDownloaded;
 
         _updateManager.ApplyUpdatesAndRestart(_updateInfo);
-        Log.Information("UpdateAndRestart Completed");
+        _logger.Debug("UpdateAndRestart Completed");
     }
     #endregion
 

@@ -21,7 +21,11 @@ public partial class App : System.Windows.Application
         Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen)
+#if DEBUG
             .MinimumLevel.Verbose()
+#else
+            .MinimumLevel.Information()
+#endif
             .WriteTo.File("PhoneAssistant.log")
             .CreateLogger();
         Log.Information("Starting Phone Assistant");

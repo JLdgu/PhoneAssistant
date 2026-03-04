@@ -3,6 +3,7 @@
 public interface IPhonesRepository
 {
     Task<bool> AssetTagUniqueAsync(string? assetTag);
+    Task<bool> ConcurrentChange(string imei, string lastUpdate);
     Task CreateAsync(Phone phone);
     Task<bool> ExistsAsync(string imei);
     Task<IEnumerable<Phone>> GetActivePhonesAsync();

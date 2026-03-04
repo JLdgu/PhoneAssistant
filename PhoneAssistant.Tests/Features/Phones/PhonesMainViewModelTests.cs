@@ -1,66 +1,19 @@
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Data;
+
 using CommunityToolkit.Mvvm.Messaging;
+
 using Moq;
 using Moq.AutoMock;
+
 using PhoneAssistant.Model;
-using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.Phones;
-using PhoneAssistant.WPF.Shared;
-
-using Serilog.Filters;
-
-using System.ComponentModel;
-using System.Windows.Data;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
 public sealed class PhonesMainViewModelTests
-{    
-    [Test]
-    public async Task Receive_ShouldAddPhoneAsync()
-    {
-        AutoMocker mocker = new();
-        PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
-
-        vm.Receive(new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""});
-
-        await Assert.That(vm.PhoneItems.Any()).IsTrue();
-    }
-
-    [Test]
-    public async Task RefreshPhonesCommand_AfterCRUDChanges_UpdatesViewAsync()
-    {
-        List<Phone> phones = [
-            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "In Stock"},
-            new Phone() { Imei = "2" , AssetTag = "Tag B2", Model = "", Condition = "", OEM = Manufacturer.Samsung, Status = "In Repair"},
-            new Phone() { Imei = "3" , AssetTag = "Tag C3", Model = "", Condition = "", OEM = Manufacturer.Nokia, Status = "Production"},
-        ];
-
-        PhonesMainViewModel vm = ViewModelMockSetup(phones, false);
-        await vm.LoadAsync();
-
-        vm.IncludeDisposals = false;
-
-        Mock.VerifyAll();
-    }
-
-    [Test]
-    public async Task IncludeDisposals_ShouldGetAllPhones_WhenTrue()
-    {
-        List<Phone> phones = [
-            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "In Stock"},
-            new Phone() { Imei = "2" , AssetTag = "Tag B2", Model = "", Condition = "", OEM = Manufacturer.Samsung, Status = "In Repair"},
-            new Phone() { Imei = "3" , AssetTag = "Tag C3", Model = "", Condition = "", OEM = Manufacturer.Nokia, Status = "Production"},
-            new Phone() { Imei = "4" , AssetTag = "Tag D4", Model = "", Condition = "", OEM = Manufacturer.Other, Status = "Decommissioned"},
-            new Phone() { Imei = "5" , AssetTag = "Tag E5", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "Disposed"},
-        ];
-        PhonesMainViewModel vm = ViewModelMockSetup(phones);
-        await vm.LoadAsync();
-
-        vm.IncludeDisposals = true;
-
-        Mock.VerifyAll();
-    }
-
+{
     [Test]
     public async Task ChangingFilterAssetTag_ChangesFilterViewAsync()
     {
@@ -97,10 +50,9 @@ public sealed class PhonesMainViewModelTests
 
         vm.FilterEsim = filterValue;
 
-        PhonesItemViewModel[] actual = view.OfType<PhonesItemViewModel>().ToArray();
+        PhonesItemViewModel[] actual = [.. view.OfType<PhonesItemViewModel>()];
         await Assert.That(actual).Count().IsEqualTo(matchingCount);
     }
-
 
     [Test]
     public async Task ChangingFilterFormerUser_ChangesFilterViewAsync()
@@ -276,12 +228,12 @@ public sealed class PhonesMainViewModelTests
     [Test]
     public async Task ChangingFilterSR_ChangesFilterViewAsync()
     {
-        List<Phone> phones = new List<Phone>() {
-            new Phone() { Imei = "1", Ticket=111, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
-            new Phone() { Imei = "2", Ticket=222, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
-            new Phone() {Imei = "3", Ticket = 333, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
-            new Phone() {Imei = "4", Ticket = 112233, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
-        };
+        List<Phone> phones = [
+            new() { Imei = "1", Ticket=111, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new() { Imei = "2", Ticket=222, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new() {Imei = "3", Ticket = 333, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
+            new() {Imei = "4", Ticket = 112233, Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
+        ];
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
@@ -289,7 +241,7 @@ public sealed class PhonesMainViewModelTests
         vm.FilterSR = "22";
 
         var actual = view.OfType<PhonesItemViewModel>().ToArray();
-        await Assert.That(actual.Count()).IsEqualTo(2);
+        await Assert.That(actual.Length).IsEqualTo(2);
         await Assert.That(actual[0].SR).IsEqualTo(phones[1].Ticket.ToString());
         await Assert.That(actual[1].SR).IsEqualTo(phones[3].Ticket.ToString());
     }
@@ -313,23 +265,131 @@ public sealed class PhonesMainViewModelTests
         await Assert.That(actual[0].Status).IsEqualTo(phones[1].Status);
     }
 
-    private PhonesMainViewModel ViewModelMockSetup(List<Phone> phones, bool getActive = true)
+    [Test]
+    public async Task LoadAsync_should_call_GetActivePhones_when_IncludeDisposals_false()
     {
+        List<Phone> phones = [
+            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "In Stock"},
+            new Phone() { Imei = "2" , AssetTag = "Tag B2", Model = "", Condition = "", OEM = Manufacturer.Samsung, Status = "In Repair"},
+            new Phone() { Imei = "3" , AssetTag = "Tag C3", Model = "", Condition = "", OEM = Manufacturer.Nokia, Status = "Production"},
+        ];
         int index = 0;
         AutoMocker mocker = new();
-
         Mock<IApplicationSettingsRepository> settings = mocker.GetMock<IApplicationSettingsRepository>();
         settings.Setup(s => s.ApplicationSettings).Returns(new ApplicationSettings());
         Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
-        if (getActive ) 
-            repository.Setup(r => r.GetActivePhonesAsync()).ReturnsAsync(phones);
-        else
-            repository.Setup(r => r.GetAllPhonesAsync()).ReturnsAsync(phones);
+        repository.Setup(r => r.GetActivePhonesAsync()).ReturnsAsync(() => { return phones; });
+        repository.Setup(r => r.GetAllPhonesAsync()).ReturnsAsync(() => { return phones; });
+        Mock<IBaseReportRepository> baseReport = mocker.GetMock<IBaseReportRepository>();
+        Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
+        Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
+        factory.Setup(r => r.Create(It.IsAny<Phone>()))
+                            .Returns(() => new PhonesItemViewModel(settings.Object, baseReport.Object, repository.Object, messenger.Object, phones[index]))
+                            .Callback(() => index++);
+        PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
+
+        vm.IncludeDisposals = false;
+        await vm.LoadAsync();
+
+        repository.Verify(r => r.GetActivePhonesAsync(), Times.Once());
+        repository.Verify(r => r.GetAllPhonesAsync(), Times.Never());
+    }
+
+    [Test]
+    public async Task LoadAsync_should_call_GetAllPhones_when_IncludeDisposals_true()
+    {
+        List<Phone> phones = [
+            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "In Stock"},
+            new Phone() { Imei = "2" , AssetTag = "Tag B2", Model = "", Condition = "", OEM = Manufacturer.Samsung, Status = "In Repair"},
+            new Phone() { Imei = "3" , AssetTag = "Tag C3", Model = "", Condition = "", OEM = Manufacturer.Nokia, Status = "Production"},
+            new Phone() { Imei = "4" , AssetTag = "Tag D4", Model = "", Condition = "", OEM = Manufacturer.Other, Status = "Decommissioned"},
+            new Phone() { Imei = "5" , AssetTag = "Tag E5", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "Disposed"},
+        ];
+        int index = 0;
+        AutoMocker mocker = new();
+        Mock<IApplicationSettingsRepository> settings = mocker.GetMock<IApplicationSettingsRepository>();
+        settings.Setup(s => s.ApplicationSettings).Returns(new ApplicationSettings());
+        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.GetActivePhonesAsync()).ReturnsAsync(() => { return phones; });
+        repository.Setup(r => r.GetAllPhonesAsync()).ReturnsAsync(() => { return phones; });
         Mock<IBaseReportRepository> sims = mocker.GetMock<IBaseReportRepository>();
         Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
         Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
         factory.Setup(r => r.Create(It.IsAny<Phone>()))
                             .Returns(() => new PhonesItemViewModel(settings.Object, sims.Object, repository.Object, messenger.Object, phones[index]))
+                            .Callback(() => index++);
+        PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
+
+        vm.IncludeDisposals = true;
+        await vm.LoadAsync();
+
+        repository.Verify(r => r.GetAllPhonesAsync(), Times.Once());
+        repository.Verify(r => r.GetActivePhonesAsync(), Times.Never());
+    }
+
+    [Test]
+    public async Task Receive_ShouldAddPhoneAsync()
+    {
+        AutoMocker mocker = new();
+        PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
+
+        vm.Receive(new Phone() { Imei = "1", AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "" });
+
+        await Assert.That(vm.PhoneItems.Any()).IsTrue();
+    }
+
+    [Test]
+    public async Task SelectedPhone_should_leave_ConcurrentUpdateWarning_as_collapsed_when_ConcurrentChange_false()
+    {
+        AutoMocker mocker = new();
+        Mock<IApplicationSettingsRepository> settings = mocker.GetMock<IApplicationSettingsRepository>();
+        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.ConcurrentChange("1", "lastupdate")).ReturnsAsync(false);
+        Mock<IBaseReportRepository> baseReport = mocker.GetMock<IBaseReportRepository>();
+        Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
+        PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
+
+        await Assert.That(vm.ConcurrentUpdateWarning).IsEqualTo(Visibility.Collapsed);
+        vm.SelectedPhone = new PhonesItemViewModel(settings.Object, baseReport.Object, repository.Object, messenger.Object,
+            new Phone() { Imei = "1", AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "In Stock", LastUpdate = "lastupdate" });
+
+        repository.Verify(r => r.ConcurrentChange("1", "lastupdate"), Times.Once());
+        await Assert.That(vm.ConcurrentUpdateWarning).IsEqualTo(Visibility.Collapsed);
+    }
+
+    [Test]
+    public async Task SelectedPhone_should_set_ConcurrentUpdateWarning_visible_when_ConcurrentChange_true()
+    {
+        AutoMocker mocker = new();
+        Mock<IApplicationSettingsRepository> settings = mocker.GetMock<IApplicationSettingsRepository>();
+        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.ConcurrentChange("1", "lastupdate")).ReturnsAsync(true);
+        Mock<IBaseReportRepository> baseReport = mocker.GetMock<IBaseReportRepository>();
+        Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
+        PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
+
+        await Assert.That(vm.ConcurrentUpdateWarning).IsEqualTo(Visibility.Collapsed);
+        vm.SelectedPhone = new PhonesItemViewModel(settings.Object, baseReport.Object, repository.Object, messenger.Object,
+            new Phone() { Imei = "1", AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "In Stock", LastUpdate="lastupdate" });
+
+        repository.Verify(r => r.ConcurrentChange("1", "lastupdate"), Times.Once());
+        await Assert.That(vm.ConcurrentUpdateWarning).IsEqualTo(Visibility.Visible);
+    }
+
+    private static PhonesMainViewModel ViewModelMockSetup(List<Phone> phones)
+    {
+        int index = 0;
+        AutoMocker mocker = new();
+
+        Mock<IApplicationSettingsRepository> settings = mocker.GetMock<IApplicationSettingsRepository>();
+        Mock<IPhonesRepository> repository = mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.GetActivePhonesAsync()).ReturnsAsync(phones);
+        repository.Setup(r => r.GetAllPhonesAsync()).ReturnsAsync(phones);
+        Mock<IBaseReportRepository> baseReport = mocker.GetMock<IBaseReportRepository>();
+        Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
+        Mock<IPhonesItemViewModelFactory> factory = mocker.GetMock<IPhonesItemViewModelFactory>();
+        factory.Setup(r => r.Create(It.IsAny<Phone>()))
+                            .Returns(() => new PhonesItemViewModel(settings.Object, baseReport.Object, repository.Object, messenger.Object, phones[index]))
                             .Callback(() => index++);
 
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();

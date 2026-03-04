@@ -3,12 +3,13 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CsvHelper;
 using PhoneAssistant.Model;
+using Serilog;
 using PhoneAssistant.WPF.Shared;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Windows.Data;
+using System.Windows;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
@@ -20,8 +21,26 @@ public sealed partial class PhonesMainViewModel :
 {
     private readonly IPhonesItemViewModelFactory _phonesItemViewModelFactory;
     private readonly IPhonesRepository _phonesRepository;
+    private readonly ILogger _logger;
 
     public ObservableCollection<PhonesItemViewModel> PhoneItems { get; } = new();
+
+    public PhonesItemViewModel? SelectedPhone
+    { 
+        get; 
+        set 
+        {
+            field = value;
+            if (value is null) return;
+
+            bool changed = Task.Run(() => _phonesRepository.ConcurrentChange(value.Imei, value.LastUpdate)).GetAwaiter().GetResult();
+            if (changed)
+                ConcurrentUpdateWarning = Visibility.Visible;
+        } 
+    }
+
+    [ObservableProperty]
+    private Visibility _concurrentUpdateWarning = Visibility.Collapsed;
 
     public EmailViewModel EmailViewModel { get; }
 
@@ -36,17 +55,20 @@ public sealed partial class PhonesMainViewModel :
     public PhonesMainViewModel(IPhonesItemViewModelFactory phonesItemViewModelFactory,
                                IPhonesRepository phonesRepository,
                                EmailViewModel emailViewModel,
-                               IMessenger messenger)
+                               IMessenger messenger,
+                               Serilog.ILogger logger)
     {
         BindingOperations.EnableCollectionSynchronization(PhoneItems, new object());
 
         _phonesItemViewModelFactory = phonesItemViewModelFactory ?? throw new ArgumentNullException(nameof(phonesItemViewModelFactory));
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         EmailViewModel = emailViewModel ?? throw new ArgumentNullException(nameof(emailViewModel));
         _filterView = (ListCollectionView)CollectionViewSource.GetDefaultView(PhoneItems);
         _filterView.Filter = new Predicate<object>(FilterView);
 
         messenger.RegisterAll(this);
+        _logger.Debug("PhonesMainViewModel constructed");
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
@@ -307,6 +329,7 @@ public sealed partial class PhonesMainViewModel :
 
     public async Task LoadAsync()
     {
+        ConcurrentUpdateWarning = Visibility.Collapsed;
         await EmailViewModel.LoadAsync();
 
         var currentSorts = _filterView.SortDescriptions.ToList();

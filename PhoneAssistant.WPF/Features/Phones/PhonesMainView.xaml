@@ -21,10 +21,21 @@
         <Grid DockPanel.Dock="Top">
             <Grid.RowDefinitions>
                 <RowDefinition />
+                <RowDefinition />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <shared:HeaderMainView HeaderIcon="CellphoneScreenshot" HeaderText="Phones" />
-            <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <shared:HeaderMainView HeaderIcon="CellphoneScreenshot"
+                                   HeaderText="Phones" />
+            <materialDesign:ColorZone Mode="SecondaryLight" Grid.Row="1">
+                <TextBlock Margin="10,10,10,10"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center" 
+                           Style="{StaticResource MaterialDesignBody1TextBlock}"
+                           Text="Concurrent update delected, refresh before updating record"
+                           Visibility="{Binding ConcurrentUpdateWarning}"/>
+            </materialDesign:ColorZone>
+            <StackPanel Grid.Row="0"
+                        Orientation="Horizontal">
                 <Button Margin="5,5"
                         Command="{Binding RefreshPhonesCommand}"
                         Content="{materialDesign:PackIcon Kind=Refresh,
@@ -63,7 +74,8 @@
                       CanUserAddRows="False"
                       CanUserDeleteRows="False"
                       HeadersVisibility="Column"
-                      ItemsSource="{Binding PhoneItems}">
+                      ItemsSource="{Binding PhoneItems}"
+                      SelectedItem="{Binding SelectedPhone, Mode=TwoWay}">
                 <DataGrid.Resources>
                     <shared:ConditionConverter x:Key="ConditionConverter" />
                 </DataGrid.Resources>
@@ -74,7 +86,8 @@
                         <DataGridComboBoxColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="80"
                                              materialDesign:HintAssist.Hint="Filter"
                                              materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
@@ -92,7 +105,8 @@
                         <DataGridComboBoxColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="80"
                                              materialDesign:HintAssist.Hint="Filter"
                                              materialDesign:TextFieldAssist.HasClearButton="True"
@@ -122,7 +136,8 @@
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="55"
                                              materialDesign:HintAssist.Hint="Filter"
                                              materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
@@ -133,16 +148,20 @@
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
                         <DataGridTextColumn.Binding>
-                            <Binding Path="SR" UpdateSourceTrigger="LostFocus">
+                            <Binding Path="SR"
+                                     UpdateSourceTrigger="LostFocus">
                                 <Binding.ValidationRules>
                                     <shared:EmptyOrNumericValidationRule />
                                 </Binding.ValidationRules>
                             </Binding>
                         </DataGridTextColumn.Binding>
                         <DataGridTextColumn.EditingElementStyle>
-                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
-                                <Setter Property="materialDesign:TextFieldAssist.CharacterCounterVisibility" Value="Hidden" />
-                                <Setter Property="MaxLength" Value="7" />
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}"
+                                   TargetType="TextBox">
+                                <Setter Property="materialDesign:TextFieldAssist.CharacterCounterVisibility"
+                                        Value="Hidden" />
+                                <Setter Property="MaxLength"
+                                        Value="7" />
                             </Style>
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
@@ -151,7 +170,8 @@
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="110"
                                              materialDesign:HintAssist.Hint="Filter"
                                              materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
@@ -162,25 +182,31 @@
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
                         <DataGridTextColumn.Binding>
-                            <Binding Path="Imei" UpdateSourceTrigger="LostFocus">
+                            <Binding Path="Imei"
+                                     UpdateSourceTrigger="LostFocus">
                                 <Binding.ValidationRules>
                                     <shared:EmptyOrNumericValidationRule />
                                 </Binding.ValidationRules>
                             </Binding>
                         </DataGridTextColumn.Binding>
                         <DataGridTextColumn.EditingElementStyle>
-                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
-                                <Setter Property="materialDesign:TextFieldAssist.CharacterCounterVisibility" Value="Hidden" />
-                                <Setter Property="MaxLength" Value="15" />
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}"
+                                   TargetType="TextBox">
+                                <Setter Property="materialDesign:TextFieldAssist.CharacterCounterVisibility"
+                                        Value="Hidden" />
+                                <Setter Property="MaxLength"
+                                        Value="15" />
                             </Style>
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Binding="{Binding SerialNumber, UpdateSourceTrigger=LostFocus}" Header="Serial Number">
+                    <DataGridTextColumn Binding="{Binding SerialNumber, UpdateSourceTrigger=LostFocus}"
+                                        Header="Serial Number">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="100"
                                              materialDesign:HintAssist.Hint="Filter"
                                              materialDesign:TextFieldAssist.HasClearButton="True"
@@ -189,7 +215,8 @@
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
                         <DataGridTextColumn.EditingElementStyle>
-                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox" />
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}"
+                                   TargetType="TextBox" />
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
 
@@ -197,7 +224,8 @@
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="110"
                                              materialDesign:HintAssist.Hint="Filter"
                                              materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
@@ -208,21 +236,26 @@
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
                         <DataGridTextColumn.Binding>
-                            <Binding Path="PhoneNumber" UpdateSourceTrigger="LostFocus">
+                            <Binding Path="PhoneNumber"
+                                     UpdateSourceTrigger="LostFocus">
                                 <Binding.ValidationRules>
                                     <shared:EmptyOrNumericValidationRule />
                                 </Binding.ValidationRules>
                             </Binding>
                         </DataGridTextColumn.Binding>
                         <DataGridTextColumn.EditingElementStyle>
-                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
-                                <Setter Property="materialDesign:TextFieldAssist.CharacterCounterVisibility" Value="Hidden" />
-                                <Setter Property="MaxLength" Value="11" />
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}"
+                                   TargetType="TextBox">
+                                <Setter Property="materialDesign:TextFieldAssist.CharacterCounterVisibility"
+                                        Value="Hidden" />
+                                <Setter Property="MaxLength"
+                                        Value="11" />
                             </Style>
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridCheckBoxColumn Binding="{Binding Esim, UpdateSourceTrigger=PropertyChanged}" Header="eSIM">
+                    <DataGridCheckBoxColumn Binding="{Binding Esim, UpdateSourceTrigger=PropertyChanged}"
+                                            Header="eSIM">
                         <DataGridCheckBoxColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel>
@@ -231,7 +264,8 @@
                                                              HorizontalAlignment="Center"
                                                              Kind="SimAlertOutline"
                                                              ToolTip="eSIM" />
-                                    <CheckBox IsChecked="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterEsim, UpdateSourceTrigger=PropertyChanged}" IsThreeState="True" />
+                                    <CheckBox IsChecked="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterEsim, UpdateSourceTrigger=PropertyChanged}"
+                                              IsThreeState="True" />
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridCheckBoxColumn.HeaderTemplate>
@@ -256,7 +290,8 @@
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="140"
                                              materialDesign:HintAssist.Hint="Filter"
                                              materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
@@ -267,25 +302,31 @@
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
                         <DataGridTextColumn.Binding>
-                            <Binding Path="SimNumber" UpdateSourceTrigger="LostFocus">
+                            <Binding Path="SimNumber"
+                                     UpdateSourceTrigger="LostFocus">
                                 <Binding.ValidationRules>
                                     <shared:EmptyOrNumericValidationRule />
                                 </Binding.ValidationRules>
                             </Binding>
                         </DataGridTextColumn.Binding>
                         <DataGridTextColumn.EditingElementStyle>
-                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
-                                <Setter Property="materialDesign:TextFieldAssist.CharacterCounterVisibility" Value="Hidden" />
-                                <Setter Property="MaxLength" Value="19" />
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}"
+                                   TargetType="TextBox">
+                                <Setter Property="materialDesign:TextFieldAssist.CharacterCounterVisibility"
+                                        Value="Hidden" />
+                                <Setter Property="MaxLength"
+                                        Value="19" />
                             </Style>
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Binding="{Binding NewUser, UpdateSourceTrigger=LostFocus}" Header="New User">
+                    <DataGridTextColumn Binding="{Binding NewUser, UpdateSourceTrigger=LostFocus}"
+                                        Header="New User">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="130"
                                              materialDesign:HintAssist.Hint="Filter"
                                              materialDesign:TextFieldAssist.HasClearButton="True"
@@ -294,15 +335,18 @@
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
                         <DataGridTextColumn.EditingElementStyle>
-                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox" />
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}"
+                                   TargetType="TextBox" />
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Binding="{Binding AssetTag, UpdateSourceTrigger=LostFocus}" Header="Asset Tag">
+                    <DataGridTextColumn Binding="{Binding AssetTag, UpdateSourceTrigger=LostFocus}"
+                                        Header="Asset Tag">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="90"
                                              materialDesign:HintAssist.Hint="Filter"
                                              materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
@@ -313,9 +357,12 @@
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
                         <DataGridTextColumn.EditingElementStyle>
-                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
-                                <Setter Property="materialDesign:TextFieldAssist.CharacterCounterVisibility" Value="Hidden" />
-                                <Setter Property="MaxLength" Value="7" />
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}"
+                                   TargetType="TextBox">
+                                <Setter Property="materialDesign:TextFieldAssist.CharacterCounterVisibility"
+                                        Value="Hidden" />
+                                <Setter Property="MaxLength"
+                                        Value="7" />
                             </Style>
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
@@ -337,11 +384,13 @@
                         </DataGridComboBoxColumn.HeaderTemplate>
                     </materialDesign:DataGridComboBoxColumn>
 
-                    <DataGridTextColumn Binding="{Binding Model, UpdateSourceTrigger=LostFocus}" Header="Model">
+                    <DataGridTextColumn Binding="{Binding Model, UpdateSourceTrigger=LostFocus}"
+                                        Header="Model">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="60"
                                              materialDesign:HintAssist.Hint="Filter"
                                              materialDesign:TextFieldAssist.HasClearButton="True"
@@ -350,15 +399,18 @@
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
                         <DataGridTextColumn.EditingElementStyle>
-                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox" />
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}"
+                                   TargetType="TextBox" />
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Binding="{Binding FormerUser, UpdateSourceTrigger=LostFocus}" Header="Former User">
+                    <DataGridTextColumn Binding="{Binding FormerUser, UpdateSourceTrigger=LostFocus}"
+                                        Header="Former User">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="130"
                                              materialDesign:HintAssist.Hint="Filter"
                                              materialDesign:TextFieldAssist.HasClearButton="True"
@@ -367,7 +419,8 @@
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
                         <DataGridTextColumn.EditingElementStyle>
-                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox" />
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}"
+                                   TargetType="TextBox" />
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
 
@@ -377,7 +430,8 @@
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="130"
                                              MaxWidth="400"
                                              materialDesign:HintAssist.Hint="Filter"
@@ -387,7 +441,8 @@
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
                         <DataGridTextColumn.EditingElementStyle>
-                            <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox" />
+                            <Style BasedOn="{StaticResource MaterialDesignTextBox}"
+                                   TargetType="TextBox" />
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
 
@@ -397,7 +452,8 @@
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <TextBox MinWidth="120"
                                              materialDesign:HintAssist.Hint="Filter"
                                              materialDesign:TextFieldAssist.HasClearButton="True"

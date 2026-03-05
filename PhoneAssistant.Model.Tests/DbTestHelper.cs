@@ -11,7 +11,9 @@ public class DbTestHelper : IDisposable
 
     public DbContextOptions<PhoneAssistantDbContext>? Options;
     private bool _disposedValue;
-    public DbTestHelper(string datasource = "DataSource=:memory:;")
+    //public DbTestHelper(string datasource = "DataSource=:memory:;")
+    public DbTestHelper(string datasource = "DataSource=c:\\temp\\test.db;")
+
     {
         _connection = CreateConnection(datasource);
         DbContext = new(Options!);

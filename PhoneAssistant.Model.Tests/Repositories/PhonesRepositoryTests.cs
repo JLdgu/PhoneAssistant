@@ -73,9 +73,9 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     [Test]
     public async Task ConcurrentChange_should_return_false_when_no_concurrent_change()
     {
-        _helper.DbContext.Phones.Add(_phone);        
+        _helper.DbContext.Phones.Add(_phone);
         await _helper.DbContext.SaveChangesAsync();
-        
+
         bool concurrentChange = await _repository.ConcurrentChange(_phone.Imei, _phone.LastUpdate);
         await Assert.That(concurrentChange).IsFalse();
     }
@@ -84,15 +84,13 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     public async Task ConcurrentChange_should_return_true_when_concurrent_change()
     {
         await _repository.CreateAsync(_phone);
-        //_helper.DbContext.Phones.Add(_phone);
-        //await _helper.DbContext.SaveChangesAsync();
         string originalLastUpdate = _phone.LastUpdate;
-        await Task.Delay(1100); // Ensure LastUpdate will be different
+        await Task.Delay(1100); // Ensure LastUpdate will be different on updated record
         _phone.Notes = "Changed note";
         await _repository.UpdateAsync(_phone);
 
         bool concurrentChange = await _repository.ConcurrentChange(_phone.Imei, originalLastUpdate);
-        
+
         await Assert.That(concurrentChange).IsTrue();
     }
 
@@ -113,6 +111,28 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         bool actual = await _repository.ExistsAsync(_phone.Imei);
 
         await Assert.That(actual).IsTrue();
+    }
+
+    [Test]
+    public async Task GetPhonebyUser_should_only_return_lastest_In_Stock_phone()
+    {
+        Phone[] phones = [
+            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "N", OEM = Manufacturer.Nokia, Status = "In Repair", NewUser = "new user"},
+            new Phone() { Imei = "2" , AssetTag = "Tag B2", Model = "", Condition = "N", OEM = Manufacturer.Samsung, Status = "Production", NewUser = "new user"},
+            new Phone() { Imei = "3" , AssetTag = "Tag C3", Model = "", Condition = "N", OEM = Manufacturer.Nokia, Status = "Production", NewUser = "new user"},
+            new Phone() { Imei = "4" , AssetTag = "Tag D4", Model = "", Condition = "N", OEM = Manufacturer.Other, Status = "Decommissioned", NewUser = "new user"},
+            new Phone() { Imei = "5" , AssetTag = "Tag E5", Model = "", Condition = "N", OEM = Manufacturer.Apple, Status = "Disposed", NewUser = "new user"}
+            ];
+        for (int i = 0; i < phones.Length; i++)
+        {
+            await _repository.CreateAsync(phones[i]);
+            await Task.Delay(1100); // Ensure LastUpdate will be different on updated record
+        }
+
+        var actual = await _repository.GetPhonebyUser("new user");
+
+        await Assert.That(actual).IsNotNull();
+        await Assert.That(actual.Imei).IsEqualTo("3");
     }
 
     [Test]

@@ -1,4 +1,5 @@
-﻿param(
+﻿# ./publish -Pack $False
+param(
     [string]$Configuration = "Release",
     [bool]$Build = $true,
     [bool]$Pack = $true
@@ -48,20 +49,7 @@ if ($build)
     } else {
         Write-Host "✗ pac build failed" -ForegroundColor Red
         exit 1
-    }
-
-    dotnet publish Reconcile/Reconcile.csproj `
-        -c Release `
-        -o publish `
-        -r win-x64 `
-        --self-contained false 
-
-     if ($LASTEXITCODE -eq 0) {
-        Write-Host "✓ Reconcile build complete" -ForegroundColor Green
-    } else {
-        Write-Host "✗ Reconcile build failed" -ForegroundColor Red
-        exit 1
-    }
+    }      
 
     # Summary
     Write-Host ""

@@ -3,9 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Shared;
-
 using Serilog;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using Velopack;
@@ -56,6 +56,34 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
         Assembly assembly = typeof(App).Assembly;
         AssemblyName assemblyName = assembly.GetName();
         return assemblyName.Version;
+    }
+
+    private static int DotNetDesktopVersion()
+    {
+        var p = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "dotnet",
+                Arguments = "--list-runtimes",
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            }
+        };
+
+        p.Start();
+        string output = p.StandardOutput.ReadToEnd();
+        p.WaitForExit();
+
+        var dotNetDesktop = output.Split(Environment.NewLine)
+            .Select(line => line.Trim())
+            .OrderBy(line => line)  // 10.0.0 comes before 8.0.0, so order alphabetically to ensure correct version is picked 
+            .FirstOrDefault(line => line.StartsWith("Microsoft.WindowsDesktop.App"));
+
+        var dotNetDesktopVersion = dotNetDesktop?.Split(' ')[1].Split('.')[0]; // Get the major version number
+
+        return int.TryParse(dotNetDesktopVersion, out int majorVersion) ? majorVersion : 8;
     }
 
     #region Database Settings
@@ -227,10 +255,16 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
         UpdateState = ApplicationUpdateState.UpdateAvailable;
     }
 
+    private readonly int _desktopVersion = DotNetDesktopVersion();
+    private const int MinimumDesktopVersion = 10;
+
+    [ObservableProperty]
+    private Visibility _dotNetDesktopVersionWarning = Visibility.Collapsed;
+
     [ObservableProperty]
     private string? _newVersion = "No updates outstanding";
 
-    private bool CanUpdate() => UpdateState == ApplicationUpdateState.UpdateAvailable;
+    private bool CanUpdate() => UpdateState == ApplicationUpdateState.UpdateAvailable && _desktopVersion == MinimumDesktopVersion;
 
     [RelayCommand(CanExecute = nameof(CanUpdate))]
     private async Task UpdateAndRestart()
@@ -251,6 +285,9 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
 
     public override async Task LoadAsync()
     {
+        if (_desktopVersion < MinimumDesktopVersion)
+            DotNetDesktopVersionWarning = Visibility.Visible;
+
         if (UpdateState == ApplicationUpdateState.Default)
             await CheckForUpdate();
     }

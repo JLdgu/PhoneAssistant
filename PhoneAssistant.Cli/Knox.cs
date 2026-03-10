@@ -147,7 +147,7 @@ public class ActiveKnoxSIM
     [Name("IMEI/MEID")]
     public required string IMEI_MEID { get; set; }
     public string? IMEI2 { get; set; }
-    [Name("Serial Number")]
+    [Name("Serial number")]
     public string? SerialNumber { get; set; }
     [Name("Wi-Fi: Device MAC Address")]
     public string? WifiDeviceMacAddress { get; set; }
@@ -160,12 +160,12 @@ public class ActiveKnoxSIM
     public string? UserID { get; set; }
     public string? Tags { get; set; }
     public string? Submitted { get; set; }
-    [Name("Enrollment Profile")]
+    [Name("Enrollment profile")]
     public string? EnrollmentProfile { get; set; }
     public string? Status { get; set; }
     [Name("Reseller ID")]
     public string? ResellerID { get; set; }
-    [Name("Reseller Name")]
+    [Name("Reseller name")]
     public string? ResellerName { get; set; }
     [Name("Last Modified Time")]
     public string? LastModifiedTime { get; set; }

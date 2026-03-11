@@ -26,14 +26,7 @@
             </Grid.RowDefinitions>
             <shared:HeaderMainView HeaderIcon="CellphoneScreenshot"
                                    HeaderText="Phones" />
-            <materialDesign:ColorZone Mode="SecondaryLight" Grid.Row="1">
-                <TextBlock Margin="10,10,10,10"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center" 
-                           Style="{StaticResource MaterialDesignBody1TextBlock}"
-                           Text="Concurrent update delected, refresh before updating record"
-                           Visibility="{Binding ConcurrentUpdateWarning}"/>
-            </materialDesign:ColorZone>
+
             <StackPanel Grid.Row="0"
                         Orientation="Horizontal">
                 <Button Margin="5,5"
@@ -55,10 +48,42 @@
                         ToolTip="Export phones to csv" />
 
             </StackPanel>
+            
+            <materialDesign:ColorZone Mode="SecondaryLight"
+                                      Grid.Row="1">
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+                    <TextBlock Margin="0,10,0,10"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Style="{StaticResource MaterialDesignBody1TextBlock}"
+                               Text="Concurrent update delected, refresh before updating record"
+                               d:Visibility="Visible"
+                               Visibility="{Binding ConcurrentUpdateWarning}" />
+                    <TextBlock Margin="0,10,0,10"
+                               Padding="20 0"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Style="{StaticResource MaterialDesignBody1TextBlock}"
+                               Text="User has one or more phones in production"
+                               d:Visibility="Visible"
+                               Visibility="{Binding ProductionPhoneWarning}" />
+                    <Button Margin="5,5"
+                            Command="{Binding CloseWarningCommand}"
+                            Content="{materialDesign:PackIcon Kind=CloseBoxOutline,
+                                                          Size=25}"
+                            Style="{StaticResource MaterialDesignFlatDarkButton}"
+                            ToolTip="Close Warning"
+                            d:Visibility="Visible"
+                            Visibility="{Binding ProductionPhoneWarning}" />
+
+                </StackPanel>
+            </materialDesign:ColorZone>
         </Grid>
 
         <materialDesign:DrawerHost IsTopDrawerOpen="{Binding EmailViewModel.GeneratingEmail, Mode=OneWay}"
                                    Opacity="1"
+                                   Grid.Row="2"
                                    OpenMode="Modal">
             <materialDesign:DrawerHost.TopDrawerContent>
                 <viewmodel:EmailView DataContext="{Binding EmailViewModel}" />

@@ -9,6 +9,7 @@ public interface IPhonesRepository
     Task<IEnumerable<Phone>> GetActivePhonesAsync();
     Task<IEnumerable<Phone>> GetAllPhonesAsync();
     Task<Phone?> GetPhoneAsync(string imei);
+    Task<bool> UserHasProductionPhone(string user);
     Task<bool> PhoneNumberExistsAsync(string phoneNumber);
     Task<Result> UpdateAsync(Phone phone);
     Task UpdateStatusAsync(string imei, string status);

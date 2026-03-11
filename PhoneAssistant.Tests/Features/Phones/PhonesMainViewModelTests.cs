@@ -17,11 +17,11 @@ public sealed class PhonesMainViewModelTests
     [Test]
     public async Task ChangingFilterAssetTag_ChangesFilterViewAsync()
     {
-        List<Phone> phones = new List<Phone>() {
+        List<Phone> phones = [
             new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
             new Phone() { Imei = "2" , AssetTag = "Tag Bb2", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""},
             new Phone() {Imei = "3", AssetTag = "Tag Ccc3", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = ""}
-        };
+        ];
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
         ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
@@ -328,7 +328,7 @@ public sealed class PhonesMainViewModelTests
     }
 
     [Test]
-    public async Task Receive_ShouldAddPhoneAsync()
+    public async Task Receive_Phone_should_add_phone_to_PhoneItems()
     {
         AutoMocker mocker = new();
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
@@ -336,6 +336,17 @@ public sealed class PhonesMainViewModelTests
         vm.Receive(new Phone() { Imei = "1", AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "" });
 
         await Assert.That(vm.PhoneItems.Any()).IsTrue();
+    }
+
+    [Test]
+    public async Task Receive_ProductionPhoneWarning_should_make_warning_visible()
+    {
+        AutoMocker mocker = new();
+        PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
+
+        vm.Receive(new ProductionPhoneWarning("message"));
+
+        await Assert.That(vm.ProductionPhoneWarning).IsEqualTo(Visibility.Visible);
     }
 
     [Test]

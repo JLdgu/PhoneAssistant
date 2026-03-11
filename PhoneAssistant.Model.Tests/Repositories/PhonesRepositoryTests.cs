@@ -114,28 +114,6 @@ public sealed class PhonesRepositoryTests : DbTestHelper
     }
 
     [Test]
-    public async Task GetPhonebyUser_should_only_return_lastest_In_Stock_phone()
-    {
-        Phone[] phones = [
-            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "N", OEM = Manufacturer.Nokia, Status = "In Repair", NewUser = "new user"},
-            new Phone() { Imei = "2" , AssetTag = "Tag B2", Model = "", Condition = "N", OEM = Manufacturer.Samsung, Status = "Production", NewUser = "new user"},
-            new Phone() { Imei = "3" , AssetTag = "Tag C3", Model = "", Condition = "N", OEM = Manufacturer.Nokia, Status = "Production", NewUser = "new user"},
-            new Phone() { Imei = "4" , AssetTag = "Tag D4", Model = "", Condition = "N", OEM = Manufacturer.Other, Status = "Decommissioned", NewUser = "new user"},
-            new Phone() { Imei = "5" , AssetTag = "Tag E5", Model = "", Condition = "N", OEM = Manufacturer.Apple, Status = "Disposed", NewUser = "new user"}
-            ];
-        for (int i = 0; i < phones.Length; i++)
-        {
-            await _repository.CreateAsync(phones[i]);
-            await Task.Delay(1100); // Ensure LastUpdate will be different on updated record
-        }
-
-        var actual = await _repository.GetPhonebyUser("new user");
-
-        await Assert.That(actual).IsNotNull();
-        await Assert.That(actual.Imei).IsEqualTo("3");
-    }
-
-    [Test]
     public async Task UpdateAsync_WithNullPhone_ThrowsException()
     {
 #pragma warning disable CS8600, CS8604 // Converting null literal or possible null value to non-nullable type.
@@ -297,5 +275,57 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         Phone? actual = await _helper.DbContext.Phones.FindAsync(_phone.Imei);
         await Assert.That(actual).IsNotNull();
         await Assert.That(actual!.Status).IsEqualTo(ApplicationConstants.StatusDisposed);
+    }
+
+    [Test]
+    public async Task UserHasProductionPhone_should_return_false_when_no_Production_phone_found()
+    {
+        Phone[] phones = [
+            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "N", OEM = Manufacturer.Nokia, Status = "In Repair", NewUser = "new user"},
+            new Phone() { Imei = "2" , AssetTag = "Tag B2", Model = "", Condition = "N", OEM = Manufacturer.Samsung, Status = "Decommissioned", NewUser = "new user"},
+            new Phone() { Imei = "3" , AssetTag = "Tag C3", Model = "", Condition = "N", OEM = Manufacturer.Nokia, Status = "Disposed", NewUser = "new user"},
+            new Phone() { Imei = "4" , AssetTag = "Tag D4", Model = "", Condition = "N", OEM = Manufacturer.Other, Status = "Decommissioned", NewUser = "new user"},
+            new Phone() { Imei = "5" , AssetTag = "Tag E5", Model = "", Condition = "N", OEM = Manufacturer.Apple, Status = "Disposed", NewUser = "new user"}
+            ];
+        _helper.DbContext.Phones.AddRange(phones);
+        _helper.DbContext.SaveChanges();
+
+        bool actual = await _repository.UserHasProductionPhone("new user");
+
+        await Assert.That(actual).IsFalse();
+    }
+
+    [Test]
+    public async Task UserHasProductionPhone_should_return_true_when_Production_phone_found()
+    {
+        Phone[] phones = [
+            new Phone() { Imei = "1" , AssetTag = "Tag A1", Model = "", Condition = "N", OEM = Manufacturer.Nokia, Status = "In Repair", NewUser = "new user"},
+            new Phone() { Imei = "2" , AssetTag = "Tag B2", Model = "", Condition = "N", OEM = Manufacturer.Samsung, Status = "Production", NewUser = "new user"},
+            new Phone() { Imei = "3" , AssetTag = "Tag C3", Model = "", Condition = "N", OEM = Manufacturer.Nokia, Status = "Production", NewUser = "new user"},
+            new Phone() { Imei = "4" , AssetTag = "Tag D4", Model = "", Condition = "N", OEM = Manufacturer.Other, Status = "Decommissioned", NewUser = "new user"},
+            new Phone() { Imei = "5" , AssetTag = "Tag E5", Model = "", Condition = "N", OEM = Manufacturer.Apple, Status = "Disposed", NewUser = "new user"}
+            ];
+        _helper.DbContext.Phones.AddRange(phones);
+        _helper.DbContext.SaveChanges();
+
+        bool actual = await _repository.UserHasProductionPhone("new user");
+
+        await Assert.That(actual).IsTrue();
+    }
+
+    [Test]
+    [Arguments("new user")]
+    [Arguments("New user")]
+    [Arguments("New User")]
+    [Arguments("NEW USER")]
+    public async Task UserHasProductionPhone_is_case_insensitive(string newUser)
+    {
+        Phone phone = new() { Imei = "1", AssetTag = "Tag A1", Model = "", Condition = "N", OEM = Manufacturer.Samsung, Status = "Production", NewUser = "NEW USER" };
+        await _helper.DbContext.Phones.AddAsync(phone);
+        _helper.DbContext.SaveChanges();
+
+        bool actual = await _repository.UserHasProductionPhone(newUser);
+
+        await Assert.That(actual).IsTrue();
     }
 }

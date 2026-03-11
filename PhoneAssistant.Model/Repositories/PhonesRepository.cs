@@ -58,12 +58,9 @@ public sealed class PhonesRepository(PhoneAssistantDbContext dbContext) : IPhone
         return await dbContext.Phones.FindAsync(imei);
     }
 
-    public async Task<Phone?> GetPhonebyUser(string user)
+    public async Task<bool> UserHasProductionPhone(string user)
     {
-        return await dbContext.Phones.Where(p => p.NewUser == user)
-            .Where(p => p.Status == "Production")
-            .OrderByDescending(p => p.LastUpdate)
-            .FirstOrDefaultAsync();        
+        return await dbContext.Phones.AnyAsync(p => EF.Functions.Collate(p.NewUser, "NOCASE") == user && p.Status == "Production");
     }
 
     public async Task<bool> PhoneNumberExistsAsync(string phoneNumber)

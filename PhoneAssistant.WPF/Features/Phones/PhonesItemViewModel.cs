@@ -1,6 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Windows;
+
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Shared;
 
@@ -121,17 +124,16 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         if (string.IsNullOrEmpty(value))
         {
             if (_phone.NewUser is null)
-            {
                 return;
-            }
             else
-            {
                 _phone.NewUser = null;
-            }
         }
         else
         {
             _phone.NewUser = value;
+
+            if (await _repository.UserHasProductionPhone(value))
+                _messenger.Send(new ProductionPhoneWarning("User has phone in production"));
         }
 
         await UpdatePhone();
@@ -290,6 +292,9 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         _multiUpdate = false;
 
         _phone.Status = value;
+
+        //if (await _repository.UserHasProductionPhone(value))
+        //    _messenger.Send(new ProductionPhoneWarning("User has phone in production"));
 
         await UpdatePhone();
     }

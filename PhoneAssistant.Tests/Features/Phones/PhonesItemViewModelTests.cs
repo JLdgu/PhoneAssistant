@@ -1,8 +1,9 @@
-﻿using Moq;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Moq;
 using Moq.AutoMock;
-
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Features.Phones;
+using PhoneAssistant.Tests.Shared;
 
 namespace PhoneAssistant.Tests.Features.Phones;
 
@@ -27,7 +28,7 @@ public sealed class PhonesItemViewModelTests
         SerialNumber = "sn",
     };
 
-    private readonly AutoMocker _mocker = new AutoMocker();
+    private readonly AutoMocker _mocker = new();
     private readonly PhonesItemViewModel _vm;
     private readonly Mock<IPhonesRepository> _repository;
 
@@ -41,38 +42,22 @@ public sealed class PhonesItemViewModelTests
     }
 
     [Test]
-    [Arguments("phone number", "sim number", "In Stock")]
-    [Arguments(null, "sim number", "In Stock")]
-    [Arguments("phone number", null, "In Stock")]
-    [Arguments(null, null, "In Stock")]
-    [Arguments("phone number", "sim number", "Production")]
-    [Arguments(null, "sim number", "Production")]
-    [Arguments("phone number", null, "Production")]
-    [Arguments(null, null, "Production")]
-    public async Task PhonePropertySet_SetsBoundProperties(string? phoneNumber, string? simNumber, string status)
+    [Arguments("In Stock", null, null, false)]
+    [Arguments("In Repair", null, null, false)]
+    [Arguments("Production", null, null, false)]
+    [Arguments("Production", 123, null, false)]
+    [Arguments("Production", null, "new user", false)]
+    [Arguments("Production", 123, "new user", true)]
+    public async Task CreateEmailCommand_CanExecuteAsync(string status, int? sr, string? newUser, bool canExecute)
     {
-        _phone.PhoneNumber = phoneNumber;
-        _phone.SimNumber = simNumber;
         _phone.Status = status;
+        _phone.Ticket = sr;
+        _phone.NewUser = newUser;
         var vm = _mocker.CreateInstance<PhonesItemViewModel>();
 
-        await Assert.That(vm.AssetTag).IsEqualTo(_phone.AssetTag);
-        await Assert.That(vm.Esim).IsEqualTo(_phone.Esim ?? false);
-        await Assert.That(vm.FormerUser).IsEqualTo(_phone.FormerUser);
-        await Assert.That(vm.Imei).IsEqualTo(_phone.Imei);
-        await Assert.That(vm.Model).IsEqualTo(_phone.Model);
-        await Assert.That(vm.NewUser).IsEqualTo(_phone.NewUser);
-        await Assert.That(vm.NorR).IsEqualTo(_phone.Condition);
-        await Assert.That(vm.Notes).IsEqualTo(_phone.Notes);
-        await Assert.That(vm.OEM).IsEqualTo(_phone.OEM);
-        await Assert.That(vm.PhoneNumber).IsEqualTo(_phone.PhoneNumber ?? string.Empty);
-        await Assert.That(vm.SerialNumber).IsEqualTo(_phone.SerialNumber ?? string.Empty);
-        await Assert.That(vm.SimNumber).IsEqualTo(_phone.SimNumber ?? string.Empty);
-        await Assert.That(vm.SR).IsEqualTo(_phone.Ticket.ToString());
-        await Assert.That(vm.Status).IsEqualTo(_phone.Status);
+        await Assert.That(vm.CreateEmailCommand.CanExecute(null)).IsEqualTo(canExecute);
     }
 
-    #region Update
     [Test]
     public async Task OnAssetTagChanged_CallsUpdateAsync_WithChangedValueAsync()
     {
@@ -125,8 +110,30 @@ public sealed class PhonesItemViewModelTests
         _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
         await Assert.That(_phone.NewUser).IsEqualTo(expected);
         await Assert.That(_vm.LastUpdate).IsEqualTo(_phone.LastUpdate);
-
     }
+
+    [Test]
+    public async Task OnNewUserChanged_should_not_send_ProductionPhoneWarning_when_NewUser_has_no_Production_phone()
+    {
+        _repository.Setup(r => r.UserHasProductionPhone("phoneuser")).ReturnsAsync(false);
+        var messenger = _mocker.GetMock<IMessenger>();
+
+        _vm.NewUser = "phoneuser";
+
+        messenger.Verify(m => m.Send(It.IsAny<ProductionPhoneWarning>(), It.IsAny<IsAnyToken>()), Times.Never);
+    }
+
+    [Test]
+    public async Task OnNewUserChanged_should_send_ProductionPhoneWarning_when_NewUser_has_no_Production_phone()
+    {
+        _repository.Setup(r => r.UserHasProductionPhone("phoneuser")).ReturnsAsync(true);
+        var messenger = _mocker.GetMock<IMessenger>();
+
+        _vm.NewUser = "phoneuser";
+
+        messenger.Verify(m => m.Send(It.IsAny<ProductionPhoneWarning>(), It.IsAny<IsAnyToken>()), Times.Once);
+    }
+
 
     [Test]
     public async Task OnNorRChanged_CallsUpdateAsync_WithChangedValueAsync()
@@ -298,9 +305,39 @@ public sealed class PhonesItemViewModelTests
 
         await Assert.That(_vm.SR).IsEqualTo("987654");
     }
-    #endregion
+    
+    [Test]
+    [Arguments("phone number", "sim number", "In Stock")]
+    [Arguments(null, "sim number", "In Stock")]
+    [Arguments("phone number", null, "In Stock")]
+    [Arguments(null, null, "In Stock")]
+    [Arguments("phone number", "sim number", "Production")]
+    [Arguments(null, "sim number", "Production")]
+    [Arguments("phone number", null, "Production")]
+    [Arguments(null, null, "Production")]
+    public async Task PhonePropertySet_SetsBoundProperties(string? phoneNumber, string? simNumber, string status)
+    {
+        _phone.PhoneNumber = phoneNumber;
+        _phone.SimNumber = simNumber;
+        _phone.Status = status;
+        var vm = _mocker.CreateInstance<PhonesItemViewModel>();
 
-    #region RemoveSim
+        await Assert.That(vm.AssetTag).IsEqualTo(_phone.AssetTag);
+        await Assert.That(vm.Esim).IsEqualTo(_phone.Esim ?? false);
+        await Assert.That(vm.FormerUser).IsEqualTo(_phone.FormerUser);
+        await Assert.That(vm.Imei).IsEqualTo(_phone.Imei);
+        await Assert.That(vm.Model).IsEqualTo(_phone.Model);
+        await Assert.That(vm.NewUser).IsEqualTo(_phone.NewUser);
+        await Assert.That(vm.NorR).IsEqualTo(_phone.Condition);
+        await Assert.That(vm.Notes).IsEqualTo(_phone.Notes);
+        await Assert.That(vm.OEM).IsEqualTo(_phone.OEM);
+        await Assert.That(vm.PhoneNumber).IsEqualTo(_phone.PhoneNumber ?? string.Empty);
+        await Assert.That(vm.SerialNumber).IsEqualTo(_phone.SerialNumber ?? string.Empty);
+        await Assert.That(vm.SimNumber).IsEqualTo(_phone.SimNumber ?? string.Empty);
+        await Assert.That(vm.SR).IsEqualTo(_phone.Ticket.ToString());
+        await Assert.That(vm.Status).IsEqualTo(_phone.Status);
+    }
+
     [Test]
     public async Task RemoveSim_SetsBoundPropertiesAsync()
     {
@@ -333,23 +370,5 @@ public sealed class PhonesItemViewModelTests
         _vm.RemoveSimCommand.Execute(null);
 
         await Assert.That(_vm.RemoveSimCommand.CanExecute(null)).IsFalse();
-    }
-    #endregion
-
-    [Test]
-    [Arguments("In Stock", null, null, false)]
-    [Arguments("In Repair", null, null, false)]
-    [Arguments("Production", null, null, false)]
-    [Arguments("Production", 123, null, false)]
-    [Arguments("Production", null, "new user", false)]
-    [Arguments("Production", 123, "new user", true)]
-    public async Task CreateEmailCommand_CanExecuteAsync(string status, int? sr, string? newUser, bool canExecute)
-    {
-        _phone.Status = status;
-        _phone.Ticket = sr;
-        _phone.NewUser = newUser;
-        var vm = _mocker.CreateInstance<PhonesItemViewModel>();
-
-        await Assert.That(vm.CreateEmailCommand.CanExecute(null)).IsEqualTo(canExecute);
     }
 }

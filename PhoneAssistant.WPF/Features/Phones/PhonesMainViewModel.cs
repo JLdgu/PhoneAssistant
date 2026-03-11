@@ -17,13 +17,27 @@ public sealed partial class PhonesMainViewModel :
     ObservableValidator,
     IRecipient<Order>,
     IRecipient<Phone>,
+    IRecipient<ProductionPhoneWarning>,
     IPhonesMainViewModel
 {
+    private readonly ListCollectionView _filterView;
+    private readonly ILogger _logger;
     private readonly IPhonesItemViewModelFactory _phonesItemViewModelFactory;
     private readonly IPhonesRepository _phonesRepository;
-    private readonly ILogger _logger;
 
-    public ObservableCollection<PhonesItemViewModel> PhoneItems { get; } = new();
+    public ObservableCollection<PhonesItemViewModel> PhoneItems { get; } = [];
+
+    public List<string> Conditions { get; } = ApplicationConstants.Conditions;
+
+    [ObservableProperty]
+    private Visibility _concurrentUpdateWarning = Visibility.Collapsed;
+
+    public EmailViewModel EmailViewModel { get; }
+
+    public static IEnumerable<Manufacturer> OEMs => Enum.GetValues(typeof(Manufacturer)).Cast<Manufacturer>();
+
+    [ObservableProperty]
+    private Visibility _ProductionPhoneWarning = Visibility.Collapsed;
 
     public PhonesItemViewModel? SelectedPhone
     { 
@@ -35,20 +49,9 @@ public sealed partial class PhonesMainViewModel :
 
             bool changed = Task.Run(() => _phonesRepository.ConcurrentChange(value.Imei, value.LastUpdate)).GetAwaiter().GetResult();
             if (changed)
-                ConcurrentUpdateWarning = Visibility.Visible;
+                ConcurrentUpdateWarning = Visibility.Visible;            
         } 
     }
-
-    [ObservableProperty]
-    private Visibility _concurrentUpdateWarning = Visibility.Collapsed;
-
-    public EmailViewModel EmailViewModel { get; }
-
-    private readonly ListCollectionView _filterView;
-
-    public List<string> Conditions { get; } = ApplicationConstants.Conditions;
-
-    public static IEnumerable<Manufacturer> OEMs => Enum.GetValues(typeof(Manufacturer)).Cast<Manufacturer>();
 
     public List<string> Statuses { get; } = ApplicationConstants.Statuses;
 
@@ -69,6 +72,12 @@ public sealed partial class PhonesMainViewModel :
 
         messenger.RegisterAll(this);
         _logger.Debug("PhonesMainViewModel constructed");
+    }
+
+    [RelayCommand]
+    private void CloseWarning()
+    {
+        ProductionPhoneWarning = Visibility.Collapsed;
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
@@ -125,7 +134,6 @@ public sealed partial class PhonesMainViewModel :
         _filterView.Refresh();
         ExportFilteredCommand.NotifyCanExecuteChanged();
     }
-
 
     [ObservableProperty]
     private bool _includeDisposals;
@@ -370,5 +378,10 @@ public sealed partial class PhonesMainViewModel :
     public void Receive(Phone message)
     {
         PhoneItems.Add(_phonesItemViewModelFactory.Create(message));
+    }
+
+    public void Receive(ProductionPhoneWarning message)
+    {
+        ProductionPhoneWarning = Visibility.Visible;
     }
 }

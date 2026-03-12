@@ -208,9 +208,9 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         await _helper.DbContext.Phones.AddAsync(_phone);
         await _helper.DbContext.SaveChangesAsync();
 
-        Result result = await _repository.UpdateAsync(updated);
+        UpdateStatus result = await _repository.UpdateAsync(updated);
 
-        await Assert.That(result).IsEqualTo(Result.Updated);
+        await Assert.That(result).IsEqualTo(UpdateStatus.Updated);
         Phone? actual = await _helper.DbContext.Phones.FindAsync([_phone.Imei]);
         await Assert.That(actual).IsNotNull();
 
@@ -223,10 +223,10 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         await _helper.DbContext.SaveChangesAsync();
         Phone? original = await _helper.DbContext.Phones.FindAsync([_phone.Imei]);
 
-        Result result = await _repository.UpdateAsync(_phone);
+        UpdateStatus result = await _repository.UpdateAsync(_phone);
 
         await Assert.That(original).IsNotNull();
-        await Assert.That(result).IsEqualTo(Result.Unchanged);
+        await Assert.That(result).IsEqualTo(UpdateStatus.Unchanged);
         Phone? actual = await _helper.DbContext.Phones.FindAsync([_phone.Imei]);
         await Assert.That(actual).IsNotNull();
         await Assert.That(actual.LastUpdate).IsEqualTo(original.LastUpdate);

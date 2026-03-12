@@ -1,6 +1,6 @@
 ﻿namespace PhoneAssistant.Model;
 
-public enum Result
+public enum UpdateStatus
 {
     Added,
     Deleted,

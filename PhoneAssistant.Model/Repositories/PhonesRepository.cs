@@ -70,85 +70,85 @@ public sealed class PhonesRepository(PhoneAssistantDbContext dbContext) : IPhone
         return phone is not null;
     }
 
-    public async Task<Result> UpdateAsync(Phone phone)
+    public async Task<UpdateStatus> UpdateAsync(Phone phone)
     {
         Phone? dbPhone = await dbContext.Phones.FindAsync(phone.Imei) ?? throw new ArgumentException($"IMEI {phone.Imei} not found.");
-        Result result = Result.Unchanged;
+        UpdateStatus result = UpdateStatus.Unchanged;
 
         if (dbPhone.AssetTag != phone.AssetTag)
         {
             dbPhone.AssetTag = phone.AssetTag;
-            result = Result.Updated;
+            result = UpdateStatus.Updated;
         }
         if (dbPhone.Condition != phone.Condition)
         {
             dbPhone.Condition = phone.Condition;
-            result = Result.Updated;
+            result = UpdateStatus.Updated;
         }
         if (dbPhone.DespatchDetails != phone.DespatchDetails)
         {
             dbPhone.DespatchDetails = phone.DespatchDetails;
-            result = Result.Updated;
+            result = UpdateStatus.Updated;
         }
         if (dbPhone.Esim != phone.Esim)
         {
             dbPhone.Esim = phone.Esim;
-            result = Result.Updated;
+            result = UpdateStatus.Updated;
         }
         if (dbPhone.FormerUser != phone.FormerUser)
         {
             dbPhone.FormerUser = phone.FormerUser;
-            result = Result.Updated;
+            result = UpdateStatus.Updated;
         }
         if (dbPhone.IncludeOnTrackingSheet != phone.IncludeOnTrackingSheet)
         {
             dbPhone.IncludeOnTrackingSheet = phone.IncludeOnTrackingSheet;
-            result = Result.Updated;
+            result = UpdateStatus.Updated;
         }
         if (dbPhone.Model != phone.Model)
         {
             dbPhone.Model = phone.Model;
-            result = Result.Updated;
+            result = UpdateStatus.Updated;
         }
         if (dbPhone.NewUser != phone.NewUser)
         {
             dbPhone.NewUser = phone.NewUser;
-            result = Result.Updated;
+            result = UpdateStatus.Updated;
         }
         if (dbPhone.Notes != phone.Notes)
         {
             dbPhone.Notes = phone.Notes;
-            result = Result.Updated;
+            result = UpdateStatus.Updated;
         }
         if (dbPhone.OEM != phone.OEM)
         {
             dbPhone.OEM = phone.OEM;
-            result = Result.Updated;
+            result = UpdateStatus.Updated;
         }
         if (dbPhone.PhoneNumber != phone.PhoneNumber)
         {
             dbPhone.PhoneNumber = phone.PhoneNumber;
-            result = Result.Updated;
+            result = UpdateStatus.Updated;
         }
         if (dbPhone.SerialNumber != phone.SerialNumber)
         {
             dbPhone.SerialNumber = phone.SerialNumber;
-            result = Result.Updated;
+            result = UpdateStatus.Updated;
         }
         if (dbPhone.SimNumber != phone.SimNumber)
         {
             dbPhone.SimNumber = phone.SimNumber;
-            result = Result.Updated;
+            result = UpdateStatus.Updated;
         }
         if (dbPhone.Status != phone.Status)
         {
             dbPhone.Status = phone.Status;
-            result = Result.Updated;
+            result = UpdateStatus.Updated;
         }
         if (dbPhone.Ticket != phone.Ticket)
         {
             dbPhone.Ticket = phone.Ticket;
-            result = Result.Updated;
+            result = UpdateStatus.Updated;
         }
 
         dbContext.Phones.Update(dbPhone);

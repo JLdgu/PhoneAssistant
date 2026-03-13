@@ -4,10 +4,10 @@ updates:
     directory: "/" 
     schedule:
       interval: "weekly"
-    ignore:
-      - dependency-name: "Microsoft.EntityFrameworkCore.Sqlite"
-        versions:
-          - "10.*"
+    #ignore:
+    #  - dependency-name: "Microsoft.EntityFrameworkCore.Sqlite"
+    #    versions:
+    #      - "10.*"
 
   - package-ecosystem: "github-actions" # update GitHub Actions workflows
     directory: "/" 

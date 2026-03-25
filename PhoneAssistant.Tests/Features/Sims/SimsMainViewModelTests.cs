@@ -14,18 +14,24 @@ namespace PhoneAssistant.Tests.Features.Sims;
 
 public sealed class SimsMainViewModelTests
 {
-    [Test]
-    public async Task HasErrors_should_be_false_when_required_fields_supplied()
-    {
-        AutoMocker mocker = new();
-        var phonesRepository = mocker.GetMock<IPhonesRepository>();
+    private readonly AutoMocker _mocker = new();
+
+    private void MockValidator()
+    {     
+        var phonesRepository = _mocker.GetMock<IPhonesRepository>();
         var validator = new SimValidator(phonesRepository.Object);
-        mocker.Use<IValidator<SimsMainViewModel>>(validator);
-        var serviceProviderMock = mocker.GetMock<IServiceProvider>();
+        _mocker.Use<IValidator<SimsMainViewModel>>(validator);
+        var serviceProviderMock = _mocker.GetMock<IServiceProvider>();
         serviceProviderMock
             .Setup(sp => sp.GetService(typeof(IValidator<SimsMainViewModel>)))
             .Returns(validator);
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
+    }
+
+    [Test]
+    public async Task HasErrors_should_be_false_when_required_fields_supplied()
+    {
+        MockValidator();
+        var vm = _mocker.CreateInstance<SimsMainViewModel>();
 
         vm.NewUser = "Rosie Lane";
         vm.PhoneNumber = "07814209742";
@@ -37,16 +43,8 @@ public sealed class SimsMainViewModelTests
     [Test]
     public async Task HasErrors_should_be_true_when_required_fields_missing()
     {
-        AutoMocker mocker = new();
-        var phonesRepository = mocker.GetMock<IPhonesRepository>();
-        var validator = new SimValidator(phonesRepository.Object);
-        mocker.Use<IValidator<SimsMainViewModel>>(validator);
-        var serviceProviderMock = mocker.GetMock<IServiceProvider>();
-        serviceProviderMock
-            .Setup(sp => sp.GetService(typeof(IValidator<SimsMainViewModel>)))
-            .Returns(validator);
-
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
+        MockValidator();
+        var vm = _mocker.CreateInstance<SimsMainViewModel>();
 
         await Assert.That(vm.HasErrors).IsTrue();
 
@@ -63,38 +61,24 @@ public sealed class SimsMainViewModelTests
     [Test]
     public async Task PhoneNumber_changed_should_set_SimNumber_when_SIM_exists()
     {
-        AutoMocker mocker = new();
-        Mock<IBaseReportRepository> baseRepository = mocker.GetMock<IBaseReportRepository>();
+        MockValidator();
+        Mock<IBaseReportRepository> baseRepository = _mocker.GetMock<IBaseReportRepository>();
         baseRepository.Setup(r => r.GetSimNumberAsync("01234567890")).ReturnsAsync("sim number");
-        var phonesRepository = mocker.GetMock<IPhonesRepository>();
-        var validator = new SimValidator(phonesRepository.Object);
-        var serviceProviderMock = mocker.GetMock<IServiceProvider>();
-        serviceProviderMock
-            .Setup(sp => sp.GetService(typeof(IValidator<SimsMainViewModel>)))
-            .Returns(validator);
+        var vm = _mocker.CreateInstance<SimsMainViewModel>();
 
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
         vm.NewUser = "Alice";
         vm.PhoneNumber = "01234567890";
         vm.Ticket = "654321";
         
-        mocker.VerifyAll();
+        _mocker.VerifyAll();
         await Assert.That(vm.SimNumber).IsEqualTo("sim number");
     }
 
     [Test]
     public async Task PrintEnvelopeCommand_should_be_disabled_when_Errors()
     {
-        AutoMocker mocker = new();
-        var phonesRepository = mocker.GetMock<IPhonesRepository>();
-        var validator = new SimValidator(phonesRepository.Object);
-        mocker.Use<IValidator<SimsMainViewModel>>(validator);
-        var serviceProviderMock = mocker.GetMock<IServiceProvider>();
-        serviceProviderMock
-            .Setup(sp => sp.GetService(typeof(IValidator<SimsMainViewModel>)))
-            .Returns(validator);
-
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
+        MockValidator();
+        var vm = _mocker.CreateInstance<SimsMainViewModel>();
 
         await Assert.That(vm.HasErrors).IsTrue();
         await Assert.That(vm.PrintEnvelopeCommand.CanExecute(null)).IsFalse();
@@ -103,14 +87,8 @@ public sealed class SimsMainViewModelTests
     [Test]
     public async Task PrintEnvelopeCommand_should_be_enabled_when_all_properties_supplied()
     {
-        AutoMocker mocker = new();
-        var phonesRepository = mocker.GetMock<IPhonesRepository>();
-        var validator = new SimValidator(phonesRepository.Object);
-        var serviceProviderMock = mocker.GetMock<IServiceProvider>();
-        serviceProviderMock
-            .Setup(sp => sp.GetService(typeof(IValidator<SimsMainViewModel>)))
-            .Returns(validator);
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
+        MockValidator();
+        var vm = _mocker.CreateInstance<SimsMainViewModel>();
 
         vm.NewUser = "Alice";
         vm.PhoneNumber = "01234567890";
@@ -124,17 +102,17 @@ public sealed class SimsMainViewModelTests
     [Test]
     public async Task PrintEnvelopeCommand_should_call_PrintEnvelope_Execute_with_OrderDetails()
     {
-        AutoMocker mocker = new();
+        MockValidator();
+        var vm = _mocker.CreateInstance<SimsMainViewModel>();
         OrderDetails? actual = null;
-        var vm = mocker.CreateInstance<SimsMainViewModel>();
+        var printEnvelope = _mocker.GetMock<IPrintEnvelope>();
+        printEnvelope
+            .Setup(p => p.Execute(It.IsAny<OrderDetails>()))
+            .Callback<OrderDetails>(o => actual = o);
         vm.NewUser = "Rosie Lane";
         vm.PhoneNumber = "07814209742";
         vm.SimNumber = "8944122605563572205";
         vm.Ticket = "262281";
-        var printEnvelope = mocker.GetMock<IPrintEnvelope>();
-        printEnvelope
-            .Setup(p => p.Execute(It.IsAny<OrderDetails>()))
-            .Callback<OrderDetails>(o => actual = o);
 
         await vm.PrintEnvelopeCommand.ExecuteAsync(null);
 

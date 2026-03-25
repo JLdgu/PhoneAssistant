@@ -9,10 +9,7 @@ public sealed partial class UsersItemViewModel
 
     public UsersItemViewModel(User user)
     {
-        if (user is null)
-        {
-            throw new ArgumentNullException(nameof(user));
-        }
+        ArgumentNullException.ThrowIfNull(user);
         User = user;
     }
 
@@ -25,7 +22,7 @@ public sealed partial class UsersItemViewModel
     [RelayCommand(CanExecute =nameof(CanCopyEmailToClipbaord))]
     public void CopyEmailToClipboard()
     {
-        Clipboard.SetText(User.Email);
+        Clipboard.SetText(User.Email!);
     }
 
     private bool CanCopyEmailToClipbaord() => !string.IsNullOrEmpty(User.Email);

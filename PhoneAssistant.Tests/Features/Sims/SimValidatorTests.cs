@@ -1,5 +1,7 @@
-﻿using FluentValidation.TestHelper;
+﻿using FluentValidation;
+using FluentValidation.TestHelper;
 using Moq.AutoMock;
+using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Features.Sims;
 
 namespace PhoneAssistant.Tests.Features.Sims;
@@ -13,9 +15,15 @@ internal sealed  class SimValidatorTests
     public SimValidatorTests()
     {
         _mocker = new AutoMocker();
-        _validator = _mocker.CreateInstance<SimValidator>();
+        var phones = _mocker.GetMock<IPhonesRepository>();
+        _validator = new SimValidator(phones.Object);
+        _mocker.Use<IValidator<SimsMainViewModel>>(_validator);
+        var serviceProviderMock = _mocker.GetMock<IServiceProvider>();
+        serviceProviderMock
+            .Setup(sp => sp.GetService(typeof(IValidator<SimsMainViewModel>)));
         _vm = _mocker.CreateInstance<SimsMainViewModel>();
     }
+
     [Test]
     [Arguments(null)]
     [Arguments("")]
@@ -41,6 +49,7 @@ internal sealed  class SimValidatorTests
     // Phone number validation is tested in ValidationRules_PhoneNumberTests
     // Sim number validation is tested in ValidationRules_SimNumberTests
     // Ticket validation is tested in ValidationRules_TicketTests - except for the case when ticket is required
+    
     [Test]
     [Arguments(null)]
     [Arguments("")]

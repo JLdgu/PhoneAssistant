@@ -1,4 +1,5 @@
-﻿using FluentValidation.TestHelper;
+﻿using FluentValidation;
+using FluentValidation.TestHelper;
 
 using Moq;
 using Moq.AutoMock;
@@ -17,6 +18,12 @@ public sealed class AddItemValidatorTests
     public AddItemValidatorTests()
     {
         _mocker = new AutoMocker();
+        Mock<IPhonesRepository> phones = _mocker.GetMock<IPhonesRepository>();
+        var validator = new AddItemValidator(phones.Object);
+        var serviceProviderMock = _mocker.GetMock<IServiceProvider>();
+        serviceProviderMock
+            .Setup(sp => sp.GetService(typeof(IValidator<AddItemViewModel>)))
+            .Returns(validator);
         _validator = _mocker.CreateInstance<AddItemValidator>();
         _sut = _mocker.CreateInstance<AddItemViewModel>();
     }

@@ -1,8 +1,6 @@
-﻿using System.Windows;
-
+﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Features.AddItem;
 using PhoneAssistant.WPF.Features.BaseReport;
@@ -14,6 +12,7 @@ using PhoneAssistant.WPF.Features.Settings;
 using PhoneAssistant.WPF.Features.Sims;
 using PhoneAssistant.WPF.Features.Users;
 using PhoneAssistant.WPF.Shared;
+using System.Windows;
 
 namespace PhoneAssistant.WPF.Features.MainWindow;
 
@@ -88,11 +87,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task UpdateViewAsync(ViewModelType selectedViewModelType)
     {
-        ArgumentNullException.ThrowIfNull(selectedViewModelType);
-
         SelectedViewModel = selectedViewModelType switch
         {
-            ViewModelType.None => _dashboardMainViewModel,
+            ViewModelType.None => _settingsMainViewModel,
             ViewModelType.AddItem => _addItemViewModel,
             ViewModelType.BaseReport => _baseReportMainViewModel,
             ViewModelType.Dashboard => _dashboardMainViewModel,

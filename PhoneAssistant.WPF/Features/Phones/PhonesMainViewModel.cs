@@ -131,7 +131,11 @@ public sealed partial class PhonesMainViewModel :
     {
         if (_filterView.IsEditingItem)
             _filterView.CommitEdit();
-        _filterView.Refresh();
+        if (_filterView.Dispatcher.CheckAccess())
+        {
+            _filterView.Refresh();
+        }
+
         ExportFilteredCommand.NotifyCanExecuteChanged();
     }
 
@@ -340,12 +344,20 @@ public sealed partial class PhonesMainViewModel :
         ConcurrentUpdateWarning = Visibility.Collapsed;
         await EmailViewModel.LoadAsync();
 
-        var currentSorts = _filterView.SortDescriptions.ToList();
+        //var currentSorts = _filterView.SortDescriptions.ToList();
 
         if (!CanRefreshPhones)
         {
             PhoneItems.Clear();
-            IEnumerable<Phone> phones = IncludeDisposals ? await _phonesRepository.GetAllPhonesAsync() : await _phonesRepository.GetActivePhonesAsync();
+            IEnumerable<Phone> phones;
+            if (IncludeDisposals)
+            {
+                phones = await _phonesRepository.GetAllPhonesAsync();
+            }
+            else
+            {
+                phones = await _phonesRepository.GetActivePhonesAsync();
+            }
 
             foreach (Phone phone in phones)
             {
@@ -353,17 +365,17 @@ public sealed partial class PhonesMainViewModel :
             }
         }
 
-        // Restore previous sort descriptions
-        if (_filterView.Dispatcher.CheckAccess())
-        {
-            _filterView.SortDescriptions.Clear();
-        }
-        else
-        {
-            await _filterView.Dispatcher.InvokeAsync(() => _filterView.SortDescriptions.Clear());
-        }
-        foreach (var sort in currentSorts)
-            _filterView.SortDescriptions.Add(sort);
+        //// Restore previous sort descriptions
+        //if (_filterView.Dispatcher.CheckAccess())
+        //{
+        //    _filterView.SortDescriptions.Clear();
+        //}
+        //else
+        //{
+        //    await _filterView.Dispatcher.InvokeAsync(() => _filterView.SortDescriptions.Clear());
+        //}
+        //foreach (var sort in currentSorts)
+        //    _filterView.SortDescriptions.Add(sort);
 
         RefreshFilterView();
 

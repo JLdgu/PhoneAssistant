@@ -285,9 +285,9 @@ public sealed class PhonesMainViewModelTests
         factory.Setup(r => r.Create(It.IsAny<Phone>()))
                             .Returns((Phone p) => new PhonesItemViewModel(settings.Object, baseReport.Object, repository.Object, messenger.Object, p));
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
-
-        vm.IncludeDisposals = false;
-        await vm.LoadAsync();
+        //vm.IncludeDisposals = false;
+        
+        await vm.LoadAsync(); //When IncludeDisposals is false, LoadAsync is not called by OnPropertyChanged, so we need to call it manually here to test the correct repository method is called.
 
         repository.Verify(r => r.GetActivePhonesAsync(), Times.Once());
         repository.Verify(r => r.GetAllPhonesAsync(), Times.Never());
@@ -317,8 +317,8 @@ public sealed class PhonesMainViewModelTests
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
 
         vm.IncludeDisposals = true;
-        await vm.LoadAsync();
 
+        await Task.Delay(1000); //Wait for the async LoadAsync to complete before verifying, as it is called by OnPropertyChanged when IncludeDisposals is set to true.
         repository.Verify(r => r.GetAllPhonesAsync(), Times.Once);
         repository.Verify(r => r.GetActivePhonesAsync(), Times.Never());
     }

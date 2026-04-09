@@ -47,6 +47,7 @@ internal sealed class PrintEnvelope : IPrintEnvelope
         {
             DocumentName = $"SR{_orderDetails.Phone.Ticket} {_orderDetails.Phone.NewUser} Envelope Insert"
         };
+        pd.PrinterSettings.Copies = 1;
         pd.DefaultPageSettings.Landscape = false;
         pd.DefaultPageSettings.Color = true;
         if (_appSettings.ApplicationSettings.PrintToFile)

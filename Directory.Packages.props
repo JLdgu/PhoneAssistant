@@ -46,6 +46,6 @@
     <PackageVersion Include="System.Drawing.Common" Version="10.0.4" />
     <PackageVersion Include="TUnit" Version="1.29.0" />
     <PackageVersion Include="Velopack" Version="0.0.1298" />
-    <PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.3856.49" />
+    <PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.3912.50" />
   </ItemGroup>
 </Project>

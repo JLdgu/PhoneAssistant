@@ -5,6 +5,14 @@ param(
     [bool]$Pack = $true
 )
 
+$signToolPath = "C:\Program Files (x86)\Microsoft SDKs\ClickOnce\SignTool"
+$signTool = Join-Path $signToolPath "signtool.exe"
+if (-not (Test-Path $signTool)) {
+    Write-Error "SignTool.exe not found at $signToolPath. Please verify the path."
+    exit 1
+}
+$env:Path += ";$signToolPath"
+
 [xml]$projectFile = Get-Content "PhoneAssistant.WPF\PhoneAssistant.WPF.csproj"
 Write-Host $projectFile
 
@@ -52,16 +60,15 @@ if ($build)
     }      
 
     # Summary
-    Write-Host ""
-    Write-Host "Build Complete!" -ForegroundColor Cyan
-    Write-Host "==================" -ForegroundColor Cyan
     Get-ChildItem ".\publish\*.exe" | ForEach-Object {
         $size = [math]::Round($_.Length / 1MB, 2)
         Write-Host "$($_.Name) - $size MB" -ForegroundColor White
     }
-    Write-Host ""
     Write-Host "Output directory: .\publish\" -ForegroundColor Yellow
 }
+
+#signtool.exe sign /fd sha256 /f C:\dev\EUCCodeSign.pfx /p ???? /t http://time.certum.pl/ /v C:\dev\PhoneAssistant\publish\PhoneAssistant.exe
+#signtool.exe verify /pa "C:\dev\PhoneAssistant\publish\PhoneAssistant.exe
 
 if ($Pack)
 {
@@ -71,6 +78,14 @@ if ($Pack)
     }
     New-Item -ItemType Directory -Path ".\Releases" | Out-Null
 
+    $certPath = "C:\dev\EUCCodeSign.pfx"
+    $password = Read-Host "Enter password for code signing certificate (C:\dev\EUCCodeSign.pfx)" 
+    if ($null -eq $password -or $password.Length -eq 0)
+    {
+        Write-Host "No password entered. Skipping Pack" -ForegroundColor Yellow
+        exit 1
+    }
+
     vpk download local --path "\\countyhall.ds2.devon.gov.uk\docs\exeter, county hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application"
 
     vpk pack -u PhoneAssistant `
@@ -79,7 +94,8 @@ if ($Pack)
         -e PhoneAssistant.exe `
         -i PhoneAssistant.WPF\Resources\Release.ico `
         --packAuthors "Devon County Council" `
-        --noPortable 
+        --noPortable `
+        --signParams "/fd sha256 /f $certPath /p $password /t http://time.certum.pl/"
 
     vpk upload local --keepMaxReleases 6 --path "\\countyhall.ds2.devon.gov.uk\docs\exeter, county hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\Application"
 }

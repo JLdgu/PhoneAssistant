@@ -1,21 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>WinExe</OutputType>
-        <TargetFramework>net10.0-windows</TargetFramework>
-        <UseWPF>true</UseWPF>
-        <StartupObject>PhoneAssistant.WPF.App</StartupObject>
-        <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
-
-        <!-- Assembly Information -->
         <ApplicationIcon Condition="'$(Configuration)'=='Debug'">Resources\Debug.ico</ApplicationIcon>
         <ApplicationIcon Condition="'$(Configuration)'=='Release'">Resources\Release.ico</ApplicationIcon>
         <AssemblyName>PhoneAssistant</AssemblyName>
         <Authors>Jonathan Linstead</Authors>
         <Company>Devon County Council</Company>
-        <Copyright>Copyright © 2024 Devon County Council</Copyright>
+        <Copyright>Copyright © 2026 Devon County Council</Copyright>
+        <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+        <OutputType>WinExe</OutputType>
         <Product>Phone Assistant</Product>
-        <Version>1.604.15</Version>        
+        <StartupObject>PhoneAssistant.WPF.App</StartupObject>
+        <TargetFramework>net10.0-windows</TargetFramework>
+        <UseWPF>true</UseWPF>
+        <Version>1.604.20</Version>        
     </PropertyGroup>
 
     <ItemGroup>

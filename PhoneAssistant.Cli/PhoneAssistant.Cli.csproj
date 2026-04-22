@@ -1,10 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <ApplicationIcon>PropertyIcon.ico</ApplicationIcon>
     <AssemblyName>pac</AssemblyName>
+    <Authors>Jonathan Linstead</Authors>
+    <Company>Devon County Council</Company>
+    <Copyright>Copyright © 2026 Devon County Council</Copyright>
     <OutputType>Exe</OutputType>
+    <Product>Database Utility</Product>
     <TargetFramework>net10.0</TargetFramework>
-  </PropertyGroup>
+    <Version>1.0.0</Version>
+</PropertyGroup>
 
   <ItemGroup>
       <PackageReference Include="CsvHelper" />

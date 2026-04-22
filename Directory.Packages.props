@@ -11,6 +11,7 @@
   <!-- This property enables the Central Package Management feature -->
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <!--
   This defines the set of centrally managed packages.
@@ -32,7 +33,7 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
     <PackageVersion Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.7" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.7" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageVersion Include="Moq" Version="4.20.72" />
     <PackageVersion Include="Moq.AutoMock" Version="4.0.2" />

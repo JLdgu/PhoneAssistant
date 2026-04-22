@@ -48,14 +48,22 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
         Printer = _appSettings.ApplicationSettings.Printer;
         PrintFile = _appSettings.ApplicationSettings.PrintFile;
 
-        CurrentVersion = AssemblyVersion()?.ToString();
+        CurrentVersion = AssemblyVersion();
     }
 
-    private static Version? AssemblyVersion()
+    private static string AssemblyVersion()
     {
-        Assembly assembly = typeof(App).Assembly;
+        Assembly assembly = Assembly.GetExecutingAssembly();
+        string? infoVersion = assembly
+                    .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+                    .InformationalVersion;
+
+        if (!string.IsNullOrEmpty(infoVersion))
+            return infoVersion;
+
+        assembly = typeof(App).Assembly;
         AssemblyName assemblyName = assembly.GetName();
-        return assemblyName.Version;
+        return assemblyName.Version?.ToString() ?? "Unknown";
     }
 
     private static int DotNetDesktopVersion()

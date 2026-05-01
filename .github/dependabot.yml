@@ -7,7 +7,7 @@ updates:
     ignore:
       - dependency-name: "NPOI"
         versions:
-          - "*"
+          - "> 2.7.6"
 
   - package-ecosystem: "github-actions" # update GitHub Actions workflows
     directory: "/" 

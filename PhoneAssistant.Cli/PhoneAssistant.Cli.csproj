@@ -17,8 +17,7 @@
       <PackageReference Include="FluentResults" />
       <PackageReference Include="NPOI" />
       <PackageReference Include="Serilog.Sinks.Console" />
-      <PackageReference Include="Serilog.Sinks.File" />
-      <PackageReference Include="SixLabors.ImageSharp" />
+      <PackageReference Include="Serilog.Sinks.File" />      
       <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 

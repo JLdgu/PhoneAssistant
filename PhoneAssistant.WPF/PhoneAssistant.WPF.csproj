@@ -56,8 +56,7 @@
           <TreatAsUsed>true</TreatAsUsed>
         </PackageReference>
         <PackageReference Include="Serilog.Sinks.Console" />
-        <PackageReference Include="Serilog.Sinks.File" />
-        <PackageReference Include="SixLabors.ImageSharp" />
+        <PackageReference Include="Serilog.Sinks.File" />        
         <PackageReference Include="Velopack" />
     </ItemGroup>
 

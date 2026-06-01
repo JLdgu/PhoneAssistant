@@ -16,13 +16,17 @@ public sealed class Program
             .Enrich.FromLogContext()
             .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen)
             .MinimumLevel.Debug()
+#if !DEBUG
             .WriteTo.File("pac.log")
+#endif 
             .CreateLogger();
         try
         {
             RootCommand rootCommand = new("Phone Assistant Command Line Interface");
 
             Base.Command(rootCommand);
+
+            EE.Command(rootCommand);
 
             Disposal.Command(rootCommand);
                        

@@ -89,10 +89,7 @@ public partial class PhoneAssistantDbContext : DbContext
         });
 
         modelBuilder.Entity<Sim>()
-            .HasIndex(s => s.PhoneNumber).IsUnique();
-
-        modelBuilder.Entity<SimHistory>()
-            .HasIndex(h => new { h.SimId, h.Period }).IsUnique();
+            .HasKey(s => new { s.PhoneNumber, s.BillingPeriod});               
 
         OnModelCreatingPartial(modelBuilder);
     }

@@ -12,7 +12,8 @@ public class SqlScripts
         Scripts = [
             new Script("Drop table SchemaVersions", "DROP TABLE SchemaVersions;"),
             new Script("Restructure Locations",RestructureLocations),
-            new Script("Add 3 columns to Phones", Add3ColumnsToPhones)
+            new Script("Add 3 columns to Phones", Add3ColumnsToPhones),
+            new Script("Create SIMs Table", CreateSIMsTable1)
         ];
     }
 
@@ -31,7 +32,29 @@ public class SqlScripts
 
             return sb.ToString();
         }
-    }  
+    }
+
+    private const string CreateSIMsTable1 = """
+        CREATE TABLE Sims (
+            PhoneNumber TEXT NOT NULL,
+           	BillingPeriod TEXT NOT NULL,
+        	PRIMARY KEY (PhoneNumber, BillingPeriod)        
+        );
+        """;
+
+    private static string CreateSIMsTable
+    {
+        get
+        {
+            StringBuilder sb = new();
+            sb.AppendLine("CREATE TABLE Sims (");
+            sb.AppendLine("    Id INTEGER NOT NULL CONSTRAINT PK_Sims PRIMARY KEY AUTOINCREMENT,");
+            sb.AppendLine("    PhoneNumber TEXT NOT NULL");
+            sb.AppendLine(");");
+
+            return sb.ToString();
+        }
+    }
 
     private static string RestructureLocations
     {

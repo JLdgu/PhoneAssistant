@@ -2,9 +2,18 @@
 $live = "\\countyhall.ds2.devon.gov.uk\docs\exeter, county hall\FITProject\ICTS\Mobile Phones\PhoneAssistant\PhoneAssistant.db"
 $test =  "c:/dev/paTest.db" 
 
-If (Test-Path -Path $test) {
-  Remove-Item $test
-  Write-Host "Deleted $test"
+If (Test-Path -Path $test)
+{
+    try 
+    {    
+        Remove-Item $test -ErrorAction Stop
+    } 
+    catch
+    {
+        Write-Error $_.Exception.Message
+        Exit
+    }
+    Write-Host "Deleted $test"
 }
 
 Copy-Item $live $test

@@ -152,7 +152,7 @@ public partial class BaseReportMainViewModel : ViewModelBase, IBaseReportMainVie
         _loaded = true;
 
         ImportHistory? importHistory = await _import.GetLatestImportAsync(ImportType.BaseReport);
-        LatestImport = importHistory is null ? $"Latest Import: None" : $"Latest Import: {importHistory.File} ({importHistory.ImportDate})";
+        LatestImport = importHistory is null ? $"Latest Import: None" : $"Latest Import: {importHistory.Run} ({importHistory.ImportDate})";
 
         IEnumerable<Model.BaseReport> report = await _repository.GetBaseReportAsync();
 

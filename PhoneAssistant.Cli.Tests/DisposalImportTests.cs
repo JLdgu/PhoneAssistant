@@ -110,7 +110,8 @@ public sealed class DisposalImportTests
             else
             {
                 // Accept failure as this is a compatibility issue with test-generated files
-                await Assert.That(true).IsTrue();
+                bool isExpectedFailure = true;
+                await Assert.That(isExpectedFailure).IsTrue();
             }
         }
         finally

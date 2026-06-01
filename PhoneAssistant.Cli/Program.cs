@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using PhoneAssistant.Cli.EECommand;
+using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using System.CommandLine;
 using System.Text;

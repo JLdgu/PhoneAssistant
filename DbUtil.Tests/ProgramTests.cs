@@ -46,6 +46,25 @@ public class ProgramTests()
     }
 
     [Test]
+    public async Task ApplyScript_ShouldRollbackSchemaVersion_WhenScriptFails()
+    {
+        using SqliteConnection connection = CreateAndOpenSqliteConnection();
+        CreateSchemaVersionsTable(connection);
+        var script = new Script("script1", "CREATE TABLE (Name TEXT);");
+
+        Result<bool> scriptApplied = Program.ApplyScript(connection, script);
+
+        await Assert.That(scriptApplied.IsFailed).IsTrue();
+
+        var command = connection.CreateCommand();
+        command.CommandText = $"SELECT count(*) FROM SchemaVersion WHERE ScriptName = '{script.Name}';";
+        using var reader = command.ExecuteReader();
+        reader.Read();
+        var count = reader.GetInt32(0);
+        await Assert.That(count).IsEqualTo(0);
+    }
+
+    [Test]
     public async Task CheckSchemaVersionsExists_ShouldCreateSchemaVersionTable_WhenTableDoesNotExist()
     {
         using SqliteConnection connection = CreateAndOpenSqliteConnection();

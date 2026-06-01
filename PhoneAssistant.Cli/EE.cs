@@ -121,9 +121,25 @@ internal static class EE
                 }
                 var sim = new Sim
                 {
+                    /*
+                     * TODO: Monthly recurring charges
+                     * Other costs
+                     * Number of voice calls
+                     * Number of text messages
+                     * Quantity of GPRS data (bytes)
+                    */
+
                     PhoneNumber = csvSim.Value.PhoneNumber,
-                    BillingPeriod = billingPeriod
+                    BillingPeriod = billingPeriod,
+
+                    MonthlyRecurringCharge = "£0.00",
+                    OtherCosts = "£0.00",
+                    VoiceCalls = 0,
+                    TextMessages = 0,
+                    BroadbandData = 0,
+                    UserName = csvSim.Value.UserName
                 };
+
                 dbContext.Sims.Add(sim);
             }
             dbContext.SaveChanges();
@@ -146,11 +162,78 @@ internal static class EE
     }
 }
 
-internal class CsvSim(string phoneNumber, decimal recurringCharge, long dataVolume)
+internal class CsvSim(string phoneNumber, string userName, decimal recurringCharge, long dataVolume)
 {
     internal string PhoneNumber { get; init; } = phoneNumber ?? throw new ArgumentNullException(nameof(phoneNumber));
-    internal decimal RecurringCharge { get; init; } = recurringCharge;
     internal long DataVolume { get; init; } = dataVolume;
+    internal decimal RecurringCharge { get; init; } = recurringCharge;
+    internal string UserName { get; init; } = userName;
+
+    private static readonly string[] ExpectedHeader =
+    [
+        "Cost centre name",
+        "Cost centre code",
+        "Phone number",
+        "User name",
+        "Monthly recurring charges",
+        "Other costs",
+        "Call costs (airtime)",
+        "Credits",
+        "Total costs (excluding VAT)",
+        "Cost of Voice",
+        "Cost of SMS",
+        "Cost of MMS",
+        "Cost of Data",
+        "Cost of GPRS",
+        "Cost of Fax",
+        "Cost of Email",
+        "Number of voice calls",
+        "Duration of voice calls",
+        "Number of SMS",
+        "Number of MMS (photo and video)",
+        "Duration of data calls (CSD/HSCSD)",
+        "Quantity of data (bytes)",
+        "Quantity of GPRS data (bytes)",
+        "Number of faxes",
+        "Number of emails",
+        "Duration of landline",
+        "Duration of answerphone",
+        "Number of text messages",
+        "Duration of calls to EE mobiles (EE to EE)",
+        "Duration of calls to other mobiles (other mobile network)",
+        "Duration of calls to other",
+        "Duration of calls to roaming",
+        "Duration of calls to international",
+        "Duration of calls to premium rate numbers",
+        "Duration of calls to mobile voice VPN",
+        "Invoice number",
+        "Account/Group",
+        "VAT exempt call costs (airtime)"
+    ];
+
+    internal static Result<string> ValidateHeader(string headerLine)
+    {
+        using var parser = new TextFieldParser(new StringReader(headerLine));
+        parser.HasFieldsEnclosedInQuotes = true;
+        parser.SetDelimiters(",");
+
+        string[]? fields = parser.ReadFields();
+
+        if (fields is null || fields.Length != ExpectedHeader.Length)
+        {
+            return Result.Fail<string>($"Header line has {fields?.Length ?? 0} columns, expected {ExpectedHeader.Length}");
+        }
+
+        for (int i = 0; i < ExpectedHeader.Length; i++)
+        {
+            if (fields[i].Trim('"') != ExpectedHeader[i])
+            {
+                return Result.Fail<string>($"Column {i} header mismatch. Expected '{ExpectedHeader[i]}', but got '{fields[i].Trim('"')}'");
+            }
+        }
+
+        return Result.Ok(headerLine);
+    }
 
     internal static Result<CsvSim> Parse(string csvLine)
     {
@@ -164,6 +247,7 @@ internal class CsvSim(string phoneNumber, decimal recurringCharge, long dataVolu
             throw new FormatException("CSV line does not contain enough columns.");
 
         string phoneNumber = fields[2];
+        string userName = fields[3];
 
         string recurringChargeText = fields[4].Trim('"');
         if (!decimal.TryParse(recurringChargeText, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-GB"), out var recurringChargeValue))
@@ -177,6 +261,6 @@ internal class CsvSim(string phoneNumber, decimal recurringCharge, long dataVolu
             return Result.Fail<CsvSim>("Unable to parse data volume value");
         }
 
-        return new CsvSim(phoneNumber, recurringChargeValue, dataVolumeValue);
+        return new CsvSim(phoneNumber, userName, recurringChargeValue, dataVolumeValue);
     }
 }

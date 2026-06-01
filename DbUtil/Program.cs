@@ -124,17 +124,21 @@ public sealed class Program
         reader.Close();
         if (count > 0) return Result.Ok(false);
 
-        command.CommandText = $"INSERT INTO SchemaVersion (ScriptName) VALUES ('{script.Name}');";
-        _ = command.ExecuteNonQuery();
-
-        command.CommandText = script.Sql;
+        using var transaction = connection.BeginTransaction();
         try
         {
+            command.Transaction = transaction;
+            command.CommandText = $"INSERT INTO SchemaVersion (ScriptName) VALUES ('{script.Name}');";
             _ = command.ExecuteNonQuery();
+
+            command.CommandText = script.Sql;
+            _ = command.ExecuteNonQuery();
+
+            transaction.Commit();
         }
         catch (Exception ex)
         {
-
+            transaction.Rollback();
             return Result.Fail(ex.Message);
         }
 

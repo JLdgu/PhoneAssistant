@@ -13,7 +13,8 @@ public class SqlScripts
             new Script("Drop table SchemaVersions", "DROP TABLE SchemaVersions;"),
             new Script("Restructure Locations",RestructureLocations),
             new Script("Add 3 columns to Phones", Add3ColumnsToPhones),
-            new Script("Create SIMs Table", CreateSIMsTable)
+            new Script("Create SIMs Table", CreateSIMsTable),
+            new Script("Replace ImportHistory Table", ReplaceImportHistoryTable)
         ];
     }
 
@@ -39,13 +40,21 @@ public class SqlScripts
             PhoneNumber             TEXT NOT NULL,
            	BillingPeriod           TEXT NOT NULL,
             UserName                TEXT NOT NULL,
-            MonthlyRecurringCharge  TEXT NOT NULL,
-            OtherCosts              TEXT NOT NULL,
             VoiceCalls              INTEGER NOT NULL,
             TextMessages            INTEGER NOT NULL,
-            Data4G5G                INTEGER NOT NULL,
+            BroadbandData           INTEGER NOT NULL,
         	PRIMARY KEY (PhoneNumber, BillingPeriod)        
         );
+        """;
+
+    private const string ReplaceImportHistoryTable = """
+        DROP TABLE  ImportHistory;
+        CREATE TABLE ImportHistory (
+        	Name	        TEXT NOT NULL,
+        	Run     	    TEXT NOT NULL,
+            ImportDate      TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+            PRIMARY KEY (Name, Run)        
+        )
         """;
 
     private static string RestructureLocations

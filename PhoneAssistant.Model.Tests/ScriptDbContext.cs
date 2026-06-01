@@ -4,9 +4,10 @@ namespace PhoneAssistant.Model.Tests;
 
 public class ScriptDBContext
 {
-    //dotnet run --project PhoneAssistant.Model.Tests -- --treenode-filter /*/*/*/GenerateSqlScript
+    //dotnet run --project PhoneAssistant.Model.Tests -- --treenode-filter /*/*/*/*[Category=Schema]
     [Test]
-    [Skip("Manual run only")]
+    [Explicit]
+    [Category("Schema")]
     public void GenerateSQLScript()
     {
         

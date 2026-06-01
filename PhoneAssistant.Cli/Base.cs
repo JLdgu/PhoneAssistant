@@ -48,8 +48,6 @@ internal static class Base
 
     internal static async Task ExecuteAsync(FileInfo baseFile)
     {
-        ApplicationSettingsRepository settingsRepository = new();
-        Log.Information("Applying update to {0}", settingsRepository.ApplicationSettings.Database);
         Log.Information("Importing EE Base report from {0}", baseFile.FullName);
 
         using FileStream? stream = new(baseFile.FullName, FileMode.Open, FileAccess.Read);
@@ -85,14 +83,10 @@ internal static class Base
             return;
         }
 
-        string connectionString = $@"DataSource={settingsRepository.ApplicationSettings.Database};";
-        var options = new DbContextOptionsBuilder<PhoneAssistantDbContext>()
-            .UseSqlite(connectionString)
-            .Options;
-        PhoneAssistantDbContext dbContext = new(options);
-        BaseReportRepository _repository = new(dbContext);
+        PhoneAssistantDbContext dbContext = ModelContext.Create();
+        BaseReportRepository repository = new(dbContext);
 
-        await _repository.TruncateAsync();
+        await repository.TruncateAsync();
 
         int added = 0;
         Progress progress = new();
@@ -123,7 +117,7 @@ internal static class Base
                 LastUsedIMEI = lastUsedIMEI
             };
 
-            await _repository.CreateAsync(item);
+            await repository.CreateAsync(item);
 
             progress.Draw(i, sheet.Rows.Count - 1);
             added++;
@@ -134,6 +128,5 @@ internal static class Base
 
         Log.Information("Added {0} SIMs", added);
         Log.Information("Base Report imported successfully.");
-    }
-
+    }    
 }

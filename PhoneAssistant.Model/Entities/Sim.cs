@@ -2,6 +2,7 @@
 
 public sealed class Sim
 {
-    public int Id { get; set; }
     public required string PhoneNumber { get; set; }
+
+    public required string BillingPeriod { get; set; }
 }

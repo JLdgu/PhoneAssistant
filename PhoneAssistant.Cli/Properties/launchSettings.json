@@ -1,5 +1,9 @@
 {
   "profiles": {
+    "ee": {
+      "commandName": "Project",
+      "commandLineArgs": "ee -f c:\\dev\\testdata "
+    },
     "knox": {
       "commandName": "Project",
       "commandLineArgs": "knox"

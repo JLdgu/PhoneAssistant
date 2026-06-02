@@ -17,7 +17,7 @@ public sealed partial class PhonesMainViewModel :
     ObservableValidator,
     IRecipient<Order>,
     IRecipient<Phone>,
-    IRecipient<ProductionPhoneWarning>,
+    IRecipient<PhoneUpdateWarning>,
     IPhonesMainViewModel
 {
     private readonly ListCollectionView _filterView;
@@ -29,15 +29,9 @@ public sealed partial class PhonesMainViewModel :
 
     public List<string> Conditions { get; } = ApplicationConstants.Conditions;
 
-    [ObservableProperty]
-    private Visibility _concurrentUpdateWarning = Visibility.Collapsed;
-
     public EmailViewModel EmailViewModel { get; }
 
     public static IEnumerable<Manufacturer> OEMs => Enum.GetValues(typeof(Manufacturer)).Cast<Manufacturer>();
-
-    [ObservableProperty]
-    private Visibility _ProductionPhoneWarning = Visibility.Collapsed;
 
     public PhonesItemViewModel? SelectedPhone
     { 
@@ -49,7 +43,9 @@ public sealed partial class PhonesMainViewModel :
 
             bool changed = Task.Run(() => _phonesRepository.ConcurrentChange(value.Imei, value.LastUpdate)).GetAwaiter().GetResult();
             if (changed)
-                ConcurrentUpdateWarning = Visibility.Visible;            
+            {
+                UpdateWarningMessage = "Concurrent update detected, refresh before updating record";                
+            }
         } 
     }
 
@@ -71,13 +67,13 @@ public sealed partial class PhonesMainViewModel :
         _filterView.Filter = new Predicate<object>(FilterView);
 
         messenger.RegisterAll(this);
-        _logger.Debug("PhonesMainViewModel constructed");
+        UpdateWarningMessageVisibility = Visibility.Collapsed;
     }
 
     [RelayCommand]
     private void CloseWarning()
     {
-        ProductionPhoneWarning = Visibility.Collapsed;
+        UpdateWarningMessage = null;
     }
 
     [RelayCommand(CanExecute = nameof(CanExport))]
@@ -145,6 +141,17 @@ public sealed partial class PhonesMainViewModel :
     {
         RefreshPhonesCommand.Execute(null);
     }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(UpdateWarningMessageVisibility))]
+    public partial string? UpdateWarningMessage { get; set; }
+    partial void OnUpdateWarningMessageChanged(string? value)
+    {
+        UpdateWarningMessageVisibility = string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    [ObservableProperty]
+    public partial Visibility UpdateWarningMessageVisibility { get; set; }
 
     #region Filtering View
     public bool FilterView(object item)
@@ -341,10 +348,8 @@ public sealed partial class PhonesMainViewModel :
 
     public async Task LoadAsync()
     {
-        ConcurrentUpdateWarning = Visibility.Collapsed;
+        UpdateWarningMessageVisibility = Visibility.Collapsed;
         await EmailViewModel.LoadAsync();
-
-        //var currentSorts = _filterView.SortDescriptions.ToList();
 
         if (!CanRefreshPhones)
         {
@@ -365,18 +370,6 @@ public sealed partial class PhonesMainViewModel :
             }
         }
 
-        //// Restore previous sort descriptions
-        //if (_filterView.Dispatcher.CheckAccess())
-        //{
-        //    _filterView.SortDescriptions.Clear();
-        //}
-        //else
-        //{
-        //    await _filterView.Dispatcher.InvokeAsync(() => _filterView.SortDescriptions.Clear());
-        //}
-        //foreach (var sort in currentSorts)
-        //    _filterView.SortDescriptions.Add(sort);
-
         RefreshFilterView();
 
         CanRefreshPhones = true;
@@ -392,8 +385,8 @@ public sealed partial class PhonesMainViewModel :
         PhoneItems.Add(_phonesItemViewModelFactory.Create(message));
     }
 
-    public void Receive(ProductionPhoneWarning message)
+    public void Receive(PhoneUpdateWarning message)
     {
-        ProductionPhoneWarning = Visibility.Visible;
+        UpdateWarningMessage = message.Warning;
     }
 }

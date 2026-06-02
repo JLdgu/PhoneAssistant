@@ -335,14 +335,14 @@ public sealed class PhonesMainViewModelTests
     }
 
     [Test]
-    public async Task Receive_ProductionPhoneWarning_should_make_warning_visible()
+    public async Task Receive_ProductionPhoneWarning_should_set_warning()
     {
         AutoMocker mocker = new();
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
 
-        vm.Receive(new ProductionPhoneWarning("message"));
+        vm.Receive(new PhoneUpdateWarning("message"));
 
-        await Assert.That(vm.ProductionPhoneWarning).IsEqualTo(Visibility.Visible);
+        await Assert.That(vm.UpdateWarningMessage).IsEqualTo("message");
     }
 
     [Test]
@@ -356,12 +356,12 @@ public sealed class PhonesMainViewModelTests
         Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
 
-        await Assert.That(vm.ConcurrentUpdateWarning).IsEqualTo(Visibility.Collapsed);
+        await Assert.That(vm.UpdateWarningMessage).IsNull();
         vm.SelectedPhone = new PhonesItemViewModel(settings.Object, baseReport.Object, repository.Object, messenger.Object,
             new Phone() { Imei = "1", AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "In Stock", LastUpdate = "lastupdate" });
 
         repository.Verify(r => r.ConcurrentChange("1", "lastupdate"), Times.Once());
-        await Assert.That(vm.ConcurrentUpdateWarning).IsEqualTo(Visibility.Collapsed);
+        await Assert.That(vm.UpdateWarningMessage).IsNull();
     }
 
     [Test]
@@ -375,12 +375,12 @@ public sealed class PhonesMainViewModelTests
         Mock<IMessenger> messenger = mocker.GetMock<IMessenger>();
         PhonesMainViewModel vm = mocker.CreateInstance<PhonesMainViewModel>();
 
-        await Assert.That(vm.ConcurrentUpdateWarning).IsEqualTo(Visibility.Collapsed);
+        await Assert.That(vm.UpdateWarningMessage).IsNull();
         vm.SelectedPhone = new PhonesItemViewModel(settings.Object, baseReport.Object, repository.Object, messenger.Object,
             new Phone() { Imei = "1", AssetTag = "Tag A1", Model = "", Condition = "", OEM = Manufacturer.Apple, Status = "In Stock", LastUpdate="lastupdate" });
 
         repository.Verify(r => r.ConcurrentChange("1", "lastupdate"), Times.Once());
-        await Assert.That(vm.ConcurrentUpdateWarning).IsEqualTo(Visibility.Visible);
+        await Assert.That(vm.UpdateWarningMessage).IsEqualTo("Concurrent update detected, refresh before updating record");
     }
 
     private static PhonesMainViewModel ViewModelMockSetup(List<Phone> phones)

@@ -39,6 +39,9 @@ public sealed class PhonesItemViewModelTests
         _repository = _mocker.GetMock<IPhonesRepository>();
         _repository.Setup(r => r.UpdateAsync(It.IsAny<Phone>()))
             .Callback<Phone>((p) => _phone = p);
+        // Default mock setup: all asset tags are unique unless specified otherwise
+        _repository.Setup(r => r.AssetTagUniqueAsync(It.IsAny<string>()))
+            .ReturnsAsync(true);
     }
 
     [Test]
@@ -120,7 +123,7 @@ public sealed class PhonesItemViewModelTests
 
         _vm.NewUser = "phoneuser";
 
-        messenger.Verify(m => m.Send(It.IsAny<ProductionPhoneWarning>(), It.IsAny<IsAnyToken>()), Times.Never);
+        messenger.Verify(m => m.Send(It.IsAny<PhoneUpdateWarning>(), It.IsAny<IsAnyToken>()), Times.Never);
     }
 
     [Test]
@@ -131,7 +134,7 @@ public sealed class PhonesItemViewModelTests
 
         _vm.NewUser = "phoneuser";
 
-        messenger.Verify(m => m.Send(It.IsAny<ProductionPhoneWarning>(), It.IsAny<IsAnyToken>()), Times.Once);
+        messenger.Verify(m => m.Send(It.IsAny<PhoneUpdateWarning>(), It.IsAny<IsAnyToken>()), Times.Once);
     }
 
 
@@ -371,4 +374,36 @@ public sealed class PhonesItemViewModelTests
 
         await Assert.That(_vm.RemoveSimCommand.CanExecute(null)).IsFalse();
     }
+
+    [Test]
+    public async Task OnAssetTagChanged_DuplicateAssetTag_DoesNotUpdateAndReverts()
+    {
+        string? originalAssetTag = _phone.AssetTag;
+        string duplicateAssetTag = "duplicate-at";
+        _repository.Setup(r => r.AssetTagUniqueAsync(duplicateAssetTag))
+            .ReturnsAsync(false);
+        var messenger = _mocker.GetMock<IMessenger>();
+
+        _vm.AssetTag = duplicateAssetTag;
+
+        _repository.Verify(r => r.UpdateAsync(It.IsAny<Phone>()), Times.Never);
+        messenger.Verify(m => m.Send(It.IsAny<PhoneUpdateWarning>(), It.IsAny<IsAnyToken>()), Times.Once);
+        await Assert.That(_vm.AssetTag).IsEqualTo(originalAssetTag);
+        await Assert.That(_phone.AssetTag).IsEqualTo(originalAssetTag);
+    }
+
+    [Test]
+    public async Task OnAssetTagChanged_UniqueAssetTag_UpdatesPhoneAsync()
+    {
+        string newAssetTag = "new-unique-at";
+        _repository.Setup(r => r.AssetTagUniqueAsync(newAssetTag))
+            .ReturnsAsync(true);
+
+        _vm.AssetTag = newAssetTag;
+
+        _repository.Verify(r => r.UpdateAsync(_phone), Times.Once);
+        await Assert.That(_phone.AssetTag).IsEqualTo(newAssetTag);
+        await Assert.That(_vm.AssetTag).IsEqualTo(newAssetTag);
+    }
 }
+

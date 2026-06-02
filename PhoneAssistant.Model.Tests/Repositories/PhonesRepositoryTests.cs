@@ -238,6 +238,56 @@ public sealed class PhonesRepositoryTests : DbTestHelper
         await Assert.ThrowsAsync<ArgumentException>(() => _repository.UpdateAsync(_phone));
     }
 
+    [Test]
+    public async Task UpdateAsync_WithDuplicateAssetTag_ReturnsIgnored()
+    {
+        Phone phoneToUpdate = new()
+        {
+            Imei = "111111111111111",
+            AssetTag = "MP00001",
+            Condition = CONDITION_R,
+            DespatchDetails = DESPATCH_DETAILS,
+            Esim = true,
+            FormerUser = FORMER_USER,
+            IncludeOnTrackingSheet = true,
+            Model = MODEL,
+            NewUser = NEW_USER,
+            Notes = NOTES,
+            OEM = Manufacturer.Nokia,
+            PhoneNumber = PHONE_NUMBER,
+            SimNumber = SIM_NUMBER,
+            Status = STATUS,
+            Ticket = TICKET
+        };
+        await _helper.DbContext.Phones.AddAsync(_phone);
+        await _helper.DbContext.Phones.AddAsync(phoneToUpdate);
+        await _helper.DbContext.SaveChangesAsync();
+
+        Phone phoneWithUpdate = new()
+        {
+            Imei = "111111111111111",
+            AssetTag = _phone.AssetTag,
+            Condition = CONDITION_R,
+            DespatchDetails = DESPATCH_DETAILS,
+            Esim = true,
+            FormerUser = FORMER_USER,
+            IncludeOnTrackingSheet = true,
+            Model = MODEL,
+            NewUser = NEW_USER,
+            Notes = NOTES,
+            OEM = Manufacturer.Nokia,
+            PhoneNumber = PHONE_NUMBER,
+            SimNumber = SIM_NUMBER,
+            Status = STATUS,
+            Ticket = TICKET
+        };
+        UpdateStatus result = await _repository.UpdateAsync(phoneWithUpdate);
+
+        await Assert.That(result).IsEqualTo(UpdateStatus.Ignored);        
+        Phone? updatedPhone = await _helper.DbContext.Phones.FindAsync(phoneWithUpdate.Imei);
+        await Assert.That(updatedPhone).IsNotNull();
+        await Assert.That(updatedPhone!.AssetTag).IsEqualTo("MP00001");
+    }
 
     [Test]
     public async Task UpdateStatusAsync_WithNullImei_ThrowsException()

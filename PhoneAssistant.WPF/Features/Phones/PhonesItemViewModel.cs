@@ -46,14 +46,25 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         Status = phone.Status ?? string.Empty;
     }
 
-    #region ObServableProperties
+    #region ObservableProperties
     [ObservableProperty]
-    private string _assetTag;
+    public partial string AssetTag { get; set; }    
     async partial void OnAssetTagChanged(string value)
     {
         if (value == _phone.AssetTag) return;
 
         if (string.IsNullOrEmpty(value) && _phone.AssetTag is null) return;
+
+        // Validate asset tag uniqueness before updating
+        bool isUnique = await _repository.AssetTagUniqueAsync(value);
+        if (!isUnique)
+        {
+            _messenger.Send(new PhoneUpdateWarning("Asset Tag must be unique."));
+            // Restore the original asset tag in the UI
+            AssetTag = _phone.AssetTag ?? string.Empty;
+            return;
+        }
+
         if (string.IsNullOrEmpty(value))
             _phone.AssetTag = null;
         else
@@ -61,6 +72,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 
         await UpdatePhone();
     }
+
 
     [ObservableProperty]
     private bool _esim;
@@ -133,7 +145,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
             _phone.NewUser = value;
 
             if (await _repository.UserHasProductionPhone(value))
-                _messenger.Send(new ProductionPhoneWarning("User has phone in production"));
+                _messenger.Send(new PhoneUpdateWarning("User has phone in production"));
         }
 
         await UpdatePhone();
@@ -293,9 +305,6 @@ public sealed partial class PhonesItemViewModel : ObservableObject
 
         _phone.Status = value;
 
-        //if (await _repository.UserHasProductionPhone(value))
-        //    _messenger.Send(new ProductionPhoneWarning("User has phone in production"));
-
         await UpdatePhone();
     }
 
@@ -304,8 +313,16 @@ public sealed partial class PhonesItemViewModel : ObservableObject
     {
         if (_multiUpdate) return;
 
-        await _repository.UpdateAsync(_phone);
+        UpdateStatus result = await _repository.UpdateAsync(_phone);
         LastUpdate = _phone.LastUpdate;
+
+        // Handle duplicate asset tag case
+        if (result == UpdateStatus.Ignored)
+        {
+            _messenger.Send(new PhoneUpdateWarning("Asset Tag must be unique."));
+            // Restore the original asset tag in the UI
+            AssetTag = _phone.AssetTag ?? string.Empty;            
+        }
     }
     #endregion
 

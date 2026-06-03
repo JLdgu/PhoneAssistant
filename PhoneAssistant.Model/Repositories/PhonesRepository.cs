@@ -6,8 +6,11 @@ public sealed class PhonesRepository(PhoneAssistantDbContext dbContext) : IPhone
 {
     public async Task<bool> AssetTagUniqueAsync(string? assetTag)
     {
-        Phone? found = await dbContext.Phones.Where(p => p.AssetTag == assetTag).FirstOrDefaultAsync();
-        return found == null;
+        if (string.IsNullOrEmpty(assetTag))
+            return true;
+
+        Phone? found = await dbContext.Phones.FirstOrDefaultAsync(p => p.AssetTag == assetTag);
+        return found is null;        
     }
 
     public async Task<bool> ConcurrentChange(string imei, string lastUpdate)
@@ -77,6 +80,12 @@ public sealed class PhonesRepository(PhoneAssistantDbContext dbContext) : IPhone
 
         if (dbPhone.AssetTag != phone.AssetTag)
         {
+            bool assetTagUnique = await AssetTagUniqueAsync(phone.AssetTag);
+            if (!assetTagUnique)
+            {                
+                return UpdateStatus.Ignored; // Asset tag already exists on another phone, return Ignored status to indicate no update
+            }
+
             dbPhone.AssetTag = phone.AssetTag;
             result = UpdateStatus.Updated;
         }

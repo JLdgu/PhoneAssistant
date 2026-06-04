@@ -45,7 +45,7 @@
     <PackageVersion Include="System.Drawing.Common" Version="10.0.4" />
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="10.0.6" />
     <PackageVersion Include="TUnit" Version="1.49.0" />
-    <PackageVersion Include="Velopack" Version="1.0.1" />
+    <PackageVersion Include="Velopack" Version="1.2.0" />
     <PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.3967.48" />
   </ItemGroup>
 </Project>

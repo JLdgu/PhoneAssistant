@@ -1,11 +1,7 @@
-﻿using System.CommandLine;
-using System.Text;
-
-using FluentResults;
-
-using PhoneAssistant.Model;
-
+﻿using FluentResults;
 using Serilog;
+using System.CommandLine;
+using System.Text;
 
 namespace PhoneAssistant.Cli;
 

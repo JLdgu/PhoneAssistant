@@ -12,23 +12,36 @@ public sealed class DisposalExportTests()
         export.AddRow(new("name", 5));
 
         await Assert.That(export.RowCount).IsEqualTo(1);
-        var header = export.DisposalsSheet.GetRow(0);
-        await Assert.That(header.GetCell(DisposalExport.Name.Item1).StringCellValue).IsEqualTo(DisposalExport.Name.Item2);
-        await Assert.That(header.GetCell(DisposalExport.Name.Item1).StringCellValue).IsEqualTo(DisposalExport.Name.Item2);
-        await Assert.That(header.GetCell(DisposalExport.Owner.Item1).StringCellValue).IsEqualTo(DisposalExport.Owner.Item2);
-        await Assert.That(header.GetCell(DisposalExport.Status.Item1).StringCellValue).IsEqualTo(DisposalExport.Status.Item2);
-        await Assert.That(header.GetCell(DisposalExport.SubLocation.Item1).StringCellValue).IsEqualTo(DisposalExport.SubLocation.Item2);
-        var actualRow = export.DisposalsSheet.GetRow(1);
-        await Assert.That(actualRow.GetCell(DisposalExport.Name.Item1).StringCellValue).IsEqualTo("name");
-        await Assert.That(actualRow.GetCell(DisposalExport.Owner.Item1).StringCellValue).IsEqualTo("");
-        await Assert.That(actualRow.GetCell(DisposalExport.Status.Item1).StringCellValue).IsEqualTo("Disposed");
-        await Assert.That(actualRow.GetCell(DisposalExport.SubLocation.Item1).StringCellValue).IsEqualTo("");
-        var notesHeader = export.NotesSheet.GetRow(0);
-        await Assert.That(notesHeader.GetCell(DisposalExport.Name.Item1).StringCellValue).IsEqualTo(DisposalExport.Name.Item2);
-        await Assert.That(notesHeader.GetCell(DisposalExport.Notes.Item1).StringCellValue).IsEqualTo(DisposalExport.Notes.Item2);
-        var notesRow = export.NotesSheet.GetRow(1);
-        await Assert.That(notesRow.GetCell(DisposalExport.Name.Item1).StringCellValue).IsEqualTo("name");
-        await Assert.That(notesRow.GetCell(DisposalExport.Notes.Item1).StringCellValue).IsEqualTo("SCC Certificate # 5");
+        var headerCell = export.DisposalsSheet.Cell(1, DisposalExport.Name.Item1 + 1).Value;
+        await Assert.That(headerCell.ToString()).IsEqualTo(DisposalExport.Name.Item2);
+        var ownerCell = export.DisposalsSheet.Cell(1, DisposalExport.Owner.Item1 + 1).Value;
+        await Assert.That(ownerCell.ToString()).IsEqualTo(DisposalExport.Owner.Item2);
+        var statusCell = export.DisposalsSheet.Cell(1, DisposalExport.Status.Item1 + 1).Value;
+        await Assert.That(statusCell.ToString()).IsEqualTo(DisposalExport.Status.Item2);
+        var subLocCell = export.DisposalsSheet.Cell(1, DisposalExport.SubLocation.Item1 + 1).Value;
+        await Assert.That(subLocCell.ToString()).IsEqualTo(DisposalExport.SubLocation.Item2);
+
+        var actualRow = export.DisposalsSheet.Row(2);
+        var nameCell = actualRow.Cell(DisposalExport.Name.Item1 + 1).Value;
+        await Assert.That(nameCell.ToString()).IsEqualTo("name");
+        var ownerDataCell = actualRow.Cell(DisposalExport.Owner.Item1 + 1).Value;
+        await Assert.That(ownerDataCell.ToString()).IsEqualTo("");
+        var statusDataCell = actualRow.Cell(DisposalExport.Status.Item1 + 1).Value;
+        await Assert.That(statusDataCell.ToString()).IsEqualTo("Disposed");
+        var subLocDataCell = actualRow.Cell(DisposalExport.SubLocation.Item1 + 1).Value;
+        await Assert.That(subLocDataCell.ToString()).IsEqualTo("");
+
+        var notesHeader = export.NotesSheet.Row(1);
+        var notesNameCell = notesHeader.Cell(DisposalExport.Name.Item1 + 1).Value;
+        await Assert.That(notesNameCell.ToString()).IsEqualTo(DisposalExport.Name.Item2);
+        var notesCell = notesHeader.Cell(DisposalExport.Notes.Item1 + 1).Value;
+        await Assert.That(notesCell.ToString()).IsEqualTo(DisposalExport.Notes.Item2);
+
+        var notesRow = export.NotesSheet.Row(2);
+        var notesRowName = notesRow.Cell(DisposalExport.Name.Item1 + 1).Value;
+        await Assert.That(notesRowName.ToString()).IsEqualTo("name");
+        var notesRowValue = notesRow.Cell(DisposalExport.Notes.Item1 + 1).Value;
+        await Assert.That(notesRowValue.ToString()).IsEqualTo("SCC Certificate # 5");
     }
 
     [Test]
@@ -39,14 +52,21 @@ public sealed class DisposalExportTests()
         export.AddRow(new("name2", 7));
 
         await Assert.That(export.RowCount).IsEqualTo(2);
-        var actualRow = export.DisposalsSheet.GetRow(2);
-        await Assert.That(actualRow.GetCell(DisposalExport.Name.Item1).StringCellValue).IsEqualTo("name2");
-        await Assert.That(actualRow.GetCell(DisposalExport.Owner.Item1).StringCellValue).IsEqualTo("");
-        await Assert.That(actualRow.GetCell(DisposalExport.Status.Item1).StringCellValue).IsEqualTo("Disposed");
-        await Assert.That(actualRow.GetCell(DisposalExport.SubLocation.Item1).StringCellValue).IsEqualTo("");
-        var notesRow = export.NotesSheet.GetRow(2);
-        await Assert.That(notesRow.GetCell(DisposalExport.Name.Item1).StringCellValue).IsEqualTo("name2");
-        await Assert.That(notesRow.GetCell(DisposalExport.Notes.Item1).StringCellValue).IsEqualTo($"SCC Certificate # 7");
+        var actualRow = export.DisposalsSheet.Row(3);
+        var nameCell = actualRow.Cell(DisposalExport.Name.Item1 + 1).Value;
+        await Assert.That(nameCell.ToString()).IsEqualTo("name2");
+        var ownerCell = actualRow.Cell(DisposalExport.Owner.Item1 + 1).Value;
+        await Assert.That(ownerCell.ToString()).IsEqualTo("");
+        var statusCell = actualRow.Cell(DisposalExport.Status.Item1 + 1).Value;
+        await Assert.That(statusCell.ToString()).IsEqualTo("Disposed");
+        var subLocCell = actualRow.Cell(DisposalExport.SubLocation.Item1 + 1).Value;
+        await Assert.That(subLocCell.ToString()).IsEqualTo("");
+
+        var notesRow = export.NotesSheet.Row(3);
+        var notesNameCell = notesRow.Cell(DisposalExport.Name.Item1 + 1).Value;
+        await Assert.That(notesNameCell.ToString()).IsEqualTo("name2");
+        var notesValue = notesRow.Cell(DisposalExport.Notes.Item1 + 1).Value;
+        await Assert.That(notesValue.ToString()).IsEqualTo($"SCC Certificate # 7");
     }
 
     [Test]

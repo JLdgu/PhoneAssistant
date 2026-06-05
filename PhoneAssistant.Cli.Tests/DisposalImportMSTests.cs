@@ -1,15 +1,33 @@
 using FluentResults;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
+using System.Data;
 
 namespace PhoneAssistant.Cli.Tests;
 
 public sealed class DisposalImportMSTests
 {
+    private static System.Data.DataRow SetupRow(string itemType, string name, string assetTag, string status, string oem, string model, string serialNumber)
+    {
+        var table = new DataTable();
+        for (int i = 0; i < 11; i++)
+        {
+            table.Columns.Add($"Col{i}", typeof(object));
+        }
+        var row = table.NewRow();
+        row[DisposalImportMS.ItemType] = itemType;
+        row[DisposalImportMS.Name] = name;
+        row[DisposalImportMS.AssetTag] = assetTag;
+        row[DisposalImportMS.Status] = status;
+        row[DisposalImportMS.OEM] = oem;
+        row[DisposalImportMS.Model] = model;
+        row[DisposalImportMS.SerialNumber] = serialNumber;
+        table.Rows.Add(row);
+        return row;
+    }
+
     [Test]
     public async Task GetDevice_ShouldFail_WhenItemTypeToBeIgnoredAsync()
     {
-        IRow row = SetupRow("Item Type", "", "", "", "", "", "");
+        var row = SetupRow("Item Type", "", "", "", "", "", "");
 
         Result<Device> actual = DisposalImportMS.GetDevice(row);
 
@@ -20,7 +38,7 @@ public sealed class DisposalImportMSTests
     [Test]
     public async Task GetDevice_ShouldFail_WhenItemTypePhoneAndModelToBeIgnoredAsync()
     {
-        IRow row = SetupRow("Phone", "", "", "", "oem", "SIM Card", "");
+        var row = SetupRow("Phone", "", "", "", "oem", "SIM Card", "");
 
         Result<Device> actual = DisposalImportMS.GetDevice(row);
 
@@ -31,7 +49,7 @@ public sealed class DisposalImportMSTests
     [Test]
     public async Task GetDevice_ShouldFail_WhenItemTypeComputerAndOEMInvalidAsync()
     {
-        IRow row = SetupRow("Computer", "", "", "", "oem", "", "");
+        var row = SetupRow("Computer", "", "", "", "oem", "", "");
 
         Result<Device> actual = DisposalImportMS.GetDevice(row);
 
@@ -46,7 +64,7 @@ public sealed class DisposalImportMSTests
     [Arguments("Phone", "phone", "", "", "oem", "model", "")]
     public async Task GetDevice_ShouldSucceed_WhenValidDeviceAsync(string itemType, string name, string assetTag, string status, string oem, string model, string serialNumber)
     {
-        IRow row = SetupRow(itemType, name, assetTag, status, oem, model, serialNumber);
+        var row = SetupRow(itemType, name, assetTag, status, oem, model, serialNumber);
 
         Result<Device> result = DisposalImportMS.GetDevice(row);
         Device device = result.Value;
@@ -54,20 +72,5 @@ public sealed class DisposalImportMSTests
         await Assert.That(result.IsSuccess).IsTrue();
         await Assert.That(device.Name).IsEqualTo(name);
         await Assert.That(device.AssetTag).IsEqualTo(assetTag);
-    }
-
-    private static IRow SetupRow(string itemType, string name, string assetTag, string status, string oem, string model, string serialNumber)
-    {
-        using XSSFWorkbook workbook = new();
-        ISheet sheet = workbook.CreateSheet("Data");
-        IRow row = sheet.CreateRow(0);
-        row.CreateCell(DisposalImportMS.ItemType).SetCellValue(itemType);
-        row.CreateCell(DisposalImportMS.Name).SetCellValue(name);
-        row.CreateCell(DisposalImportMS.AssetTag).SetCellValue(assetTag);
-        row.CreateCell(DisposalImportMS.Status).SetCellValue(status);
-        row.CreateCell(DisposalImportMS.OEM).SetCellValue(oem);
-        row.CreateCell(DisposalImportMS.Model).SetCellValue(model);
-        row.CreateCell(DisposalImportMS.SerialNumber).SetCellValue(serialNumber);
-        return row;
     }
 }

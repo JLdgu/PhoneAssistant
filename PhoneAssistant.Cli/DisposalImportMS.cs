@@ -1,7 +1,7 @@
-﻿using FluentResults;
-using NPOI.SS.Formula.Functions;
-using NPOI.SS.UserModel;
+﻿using ExcelDataReader;
+using FluentResults;
 using Serilog;
+using System.Data;
 
 namespace PhoneAssistant.Cli;
 
@@ -28,34 +28,61 @@ public sealed class DisposalImportMS(string importFile)
         try
         {
             using FileStream stream = new(importFile, FileMode.Open, FileAccess.Read);
-            using IWorkbook workbook = WorkbookFactory.Create(stream);
+            using var reader = ExcelReaderFactory.CreateReader(stream);
 
-            Result<ISheet> resultSheet = DisposalImport.IsValidSheet(workbook, SheetName, CheckValue, A1);
-            if (resultSheet.IsFailed)
+            // Find the Data sheet
+            DataTable? sheet = null;
+            do
             {
-                return Result.Fail<List<Device>>(resultSheet.Errors);
-            }
-            ISheet sheet = resultSheet.Value;
-            Serilog.Log.Information("Processing {0} rows from myScomis", sheet.LastRowNum - sheet.FirstRowNum);
+                if (reader.Name == SheetName)
+                {
+                    sheet = new System.Data.DataTable(SheetName);
+                    var fieldCount = reader.FieldCount;
+
+                    for (int i = 0; i < fieldCount; i++)
+                    {
+                        sheet.Columns.Add($"Col{i}", typeof(object));
+                    }
+
+                    while (reader.Read())
+                    {
+                        var values = new object[fieldCount];
+                        reader.GetValues(values);
+                        sheet.Rows.Add(values);
+                    }
+                    break;
+                }
+            } while (reader.NextResult());
+
+            if (sheet is null)
+                return Result.Fail<List<Device>>($"Sheet '{SheetName}' not found");
+
+            // Validate header
+            if (sheet.Rows.Count == 0 || sheet.Columns.Count <= Category)
+                return Result.Fail<List<Device>>("No rows found in sheet Data");
+
+            var headerCell = sheet.Rows[0][Category]?.ToString()?.Trim();
+            if (headerCell != CheckValue)
+                return Result.Fail<List<Device>>($"Unable to find '{CheckValue}' in cell {A1}");
+
+            Log.Information("Processing {0} rows from myScomis", sheet.Rows.Count - 1);
             Progress progress = new();
 
-            for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++)
+            for (int i = 1; i < sheet.Rows.Count; i++)
             {
-                IRow row = sheet.GetRow(i);
+                var row = sheet.Rows[i];
                 Result<Device> resultDevice = GetDevice(row);
                 if (resultDevice.IsSuccess)
                 {
                     devices.Add(resultDevice.Value);
                 }
 
-                if (i % 10 == 0 || i == sheet.LastRowNum)
+                if (i % 10 == 0 || i == sheet.Rows.Count - 1)
                 {
-                    progress.Draw(i, sheet.LastRowNum);
+                    progress.Draw(i, sheet.Rows.Count - 1);
                 }
-
             }
-            Serilog.Log.Information("{0} devices found", devices.Count);
-
+            Log.Information("{0} devices found", devices.Count);
         }
         catch (IOException)
         {
@@ -65,33 +92,40 @@ public sealed class DisposalImportMS(string importFile)
         return Result.Ok<List<Device>>(devices);
     }
 
-    public static Result<Device> GetDevice(IRow row)
+    public static Result<Device> GetDevice(System.Data.DataRow row)
     {
-        if (row.GetCell(ItemType).StringCellValue != "Computer" && row.GetCell(ItemType).StringCellValue != "Phone") return Result.Fail<Device>("Ignore: Item Type");
-
-        switch (row.GetCell(ItemType).StringCellValue)
+        try
         {
-            case "Computer":
-                if (row.GetCell(OEM).StringCellValue != "Apple")
-                    return Result.Fail<Device>("Ignore: Manufacturer");
-                break;
-            case "Phone":
-                if (row.GetCell(Model).StringCellValue == "SIM Card")
-                    return Result.Fail<Device>("Ignore: Model");
-                break;
+            var itemType = row[ItemType]?.ToString()?.Trim();
+            if (itemType != "Computer" && itemType != "Phone")
+                return Result.Fail<Device>("Ignore: Item Type");
+
+            switch (itemType)
+            {
+                case "Computer":
+                    var oem = row[OEM]?.ToString()?.Trim();
+                    if (oem != "Apple")
+                        return Result.Fail<Device>("Ignore: Manufacturer");
+                    break;
+                case "Phone":
+                    var model = row[Model]?.ToString()?.Trim();
+                    if (model == "SIM Card")
+                        return Result.Fail<Device>("Ignore: Model");
+                    break;
+            }
+
+            Device device = new(
+                    Name: row[Name]?.ToString()?.Trim() ?? "",
+                    AssetTag: row[AssetTag]?.ToString()?.Trim() ?? "",
+                    SerialNumber: row[SerialNumber]?.ToString()?.Trim() ?? "",
+                    Status: row[Status]?.ToString()?.Trim() ?? ""
+                    );
+
+            return Result.Ok<Device>(device);
         }
-
-        Device device = new(
-                Name: row.GetCell(Name).StringCellValue,
-                AssetTag: row.GetCell(AssetTag).StringCellValue,
-                SerialNumber: row.GetCell(SerialNumber).StringCellValue,
-                Status: row.GetCell(Status).StringCellValue
-                );
-        
-        //Log.Debug("Item Type: {0} | OEM: {1} | Model: {2} | Name: {3} | Asset Tag: {4} | Serial Number: {5} | Status: {6}",
-        //    row.GetCell(ItemType).StringCellValue, row.GetCell(OEM).StringCellValue, row.GetCell(Model).StringCellValue, 
-        //    device.Name, device.AssetTag, device.SerialNumber, device.Status);
-
-        return Result.Ok<Device>(device);
+        catch (Exception)
+        {
+            return Result.Fail<Device>("Error reading row");
+        }
     }
 }

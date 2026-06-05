@@ -1,18 +1,30 @@
 ﻿using FluentResults;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
+using System.Data;
 
 namespace PhoneAssistant.Cli.Tests;
 
 public sealed class DisposalImportSCCTests()
 {
+    private static System.Data.DataRow CreateTestRow(params object?[] values)
+    {
+        var table = new DataTable();
+        for (int i = 0; i < 10; i++)
+        {
+            table.Columns.Add($"Col{i}", typeof(object));
+        }
+        var row = table.NewRow();
+        for (int i = 0; i < values.Length && i < table.Columns.Count; i++)
+        {
+            row[i] = values[i] ?? DBNull.Value;
+        }
+        table.Rows.Add(row);
+        return row;
+    }
+
     [Test]
     public async Task GetDisposal_ShouldFail_WhenAccountCellNotD1024CTAsync()
     {
-        using XSSFWorkbook workbook = new();
-        ISheet sheet = workbook.CreateSheet("Data");
-        IRow row = sheet.CreateRow(0);
-        row.CreateCell(DisposalImportSCC.Account).SetCellValue("not expected value");
+        var row = CreateTestRow("not expected value");
 
         Result<SccDisposal> result = DisposalImportSCC.GetDisposal(row);
 
@@ -23,10 +35,7 @@ public sealed class DisposalImportSCCTests()
     [Test]
     public async Task GetDisposal_ShouldFail_WhenAccountCellNullAsync()
     {
-        using XSSFWorkbook workbook = new();
-        ISheet sheet = workbook.CreateSheet("Data");
-        IRow row = sheet.CreateRow(0);
-        row.CreateCell(DisposalImportSCC.Account + 1).SetCellValue("ignore");
+        var row = CreateTestRow(null, null, "ignore");
 
         Result<SccDisposal> result = DisposalImportSCC.GetDisposal(row);
 
@@ -37,31 +46,31 @@ public sealed class DisposalImportSCCTests()
     [Test]
     public async Task GetDisposal_ShouldFail_WhenAccountCellTypeInvalidAsync()
     {
-        using XSSFWorkbook workbook = new();
-        ISheet sheet = workbook.CreateSheet("Data");
-        IRow row0 = sheet.CreateRow(0);
-        row0.CreateCell(DisposalImportSCC.Account).SetCellFormula("IF(TRUE,15,20)");
-        IRow row1 = sheet.CreateRow(1);
-        row1.CreateCell(DisposalImportSCC.Account).SetCellValue(3.14);
+        var row1 = CreateTestRow(3.14);
+        var row2 = CreateTestRow("3.14");
 
-        Result<SccDisposal> formula = DisposalImportSCC.GetDisposal(row0);
         Result<SccDisposal> number = DisposalImportSCC.GetDisposal(row1);
+        Result<SccDisposal> formula = DisposalImportSCC.GetDisposal(row2);
 
-        await Assert.That(formula.IsFailed).IsTrue();
-        await Assert.That(formula.Errors.First().Message).IsEqualTo("Ignore: Account not D1024CT");
         await Assert.That(number.IsFailed).IsTrue();
         await Assert.That(number.Errors.First().Message).IsEqualTo("Ignore: Account not D1024CT");
+        await Assert.That(formula.IsFailed).IsTrue();
+        await Assert.That(formula.Errors.First().Message).IsEqualTo("Ignore: Account not D1024CT");
     }
 
     [Test]
     public async Task GetDisposal_ShouldFail_WhenProductTypeToBeIgnoredAsync()
     {
-        using XSSFWorkbook workbook = new();
-        ISheet sheet = workbook.CreateSheet("Data");
-        IRow row = sheet.CreateRow(0);
-        row.CreateCell(DisposalImportSCC.Account).SetCellValue("D1024CT");
-        row.CreateCell(DisposalImportSCC.ProductType).SetCellValue("MONITORS");
-        row.CreateCell(DisposalImportSCC.SerialNumber).SetCellValue("serialNumber");
+        var row = CreateTestRow(
+            "D1024CT",                          // Account = 0
+            null,                               // pad = 1
+            null,                               // TrackerId = 2
+            "serialNumber",                     // SerialNumber = 3
+            null,                               // AssetNumber = 4
+            "MONITORS",                         // ProductType = 5
+            null,                               // pad = 6
+            null,                               // pad = 7
+            "Despatched - Recycled");           // Status = 8
 
         Result<SccDisposal> result = DisposalImportSCC.GetDisposal(row);
 
@@ -72,11 +81,7 @@ public sealed class DisposalImportSCCTests()
     [Test]
     public async Task GetDisposal_ShouldFail_WhenRowNullAsync()
     {
-        using XSSFWorkbook workbook = new();
-        ISheet sheet = workbook.CreateSheet("Data");
-        IRow row = sheet.GetRow(0);
-
-        Result<SccDisposal> result = DisposalImportSCC.GetDisposal(row);
+        Result<SccDisposal> result = DisposalImportSCC.GetDisposal(null!);
 
         await Assert.That(result.IsFailed).IsTrue();
         await Assert.That(result.Errors[0].Message).IsEqualTo("Ignore: Null row");
@@ -87,11 +92,16 @@ public sealed class DisposalImportSCCTests()
     [Arguments("UNREADABLE")]
     public async Task GetDisposal_ShouldFail_WhenSerialNumberToBeIgnoredAsync(string serialNumber)
     {
-        using XSSFWorkbook workbook = new();
-        ISheet sheet = workbook.CreateSheet("Data");
-        IRow row = sheet.CreateRow(0);
-        row.CreateCell(DisposalImportSCC.Account).SetCellValue("D1024CT");
-        row.CreateCell(DisposalImportSCC.SerialNumber).SetCellValue(serialNumber);
+        var row = CreateTestRow(
+            "D1024CT",                          // Account = 0
+            null,                               // pad = 1
+            null,                               // TrackerId = 2
+            serialNumber,                       // SerialNumber = 3
+            null,                               // AssetNumber = 4
+            null,                               // ProductType = 5
+            null,                               // pad = 6
+            null,                               // pad = 7
+            "Despatched - Recycled");           // Status = 8
 
         Result<SccDisposal> result = DisposalImportSCC.GetDisposal(row);
 
@@ -104,15 +114,16 @@ public sealed class DisposalImportSCCTests()
     [Arguments("On Hold")]
     public async Task GetDisposal_ShouldFail_WhenStatusNotDespatched(string status)
     {
-        using XSSFWorkbook workbook = new();
-        ISheet sheet = workbook.CreateSheet("Data");
-        IRow row = sheet.CreateRow(0);
-        row.CreateCell(DisposalImportSCC.Account).SetCellValue("D1024CT");
-        row.CreateCell(DisposalImportSCC.AssetNumber).SetCellValue("NONE");
-        row.CreateCell(DisposalImportSCC.SerialNumber).SetCellValue(123456789012345);
-        row.CreateCell(DisposalImportSCC.ProductType).SetCellValue("productType");
-        row.CreateCell(DisposalImportSCC.TrackerId).SetCellValue(42);
-        row.CreateCell(DisposalImportSCC.Status).SetCellValue(status);
+        var row = CreateTestRow(
+            "D1024CT",                          // Account = 0
+            null,                               // pad = 1
+            42,                                 // TrackerId = 2
+            "123456789012345",                  // SerialNumber = 3
+            "NONE",                             // AssetNumber = 4
+            "productType",                      // ProductType = 5
+            null,                               // pad = 6
+            null,                               // pad = 7
+            status);                            // Status = 8
 
         Result<SccDisposal> result = DisposalImportSCC.GetDisposal(row);
 
@@ -120,21 +131,21 @@ public sealed class DisposalImportSCCTests()
         await Assert.That(result.Errors[0].Message).IsEqualTo("Ignore: Status not despatched");
     }
 
-
     [Test]
     [Arguments("123456789012345", "NONE", null, 15, "Despatched - Recycled / Disposed")]
     [Arguments("123456789054321", "PC12345", "PC12345", 16, "Despatched - Sold")]
     public async Task GetDisposal_ShouldSucceed(string serialNumber, string? assetNumber, string? expectedAssetNumber, int certificate, string status)
     {
-        using XSSFWorkbook workbook = new();
-        ISheet sheet = workbook.CreateSheet("Data");
-        IRow row = sheet.CreateRow(0);
-        row.CreateCell(DisposalImportSCC.Account).SetCellValue("D1024CT");
-        row.CreateCell(DisposalImportSCC.AssetNumber).SetCellValue(assetNumber);
-        row.CreateCell(DisposalImportSCC.ProductType).SetCellValue("productType");
-        row.CreateCell(DisposalImportSCC.SerialNumber).SetCellValue(serialNumber);
-        row.CreateCell(DisposalImportSCC.TrackerId).SetCellValue(certificate);
-        row.CreateCell(DisposalImportSCC.Status).SetCellValue(status);
+        var row = CreateTestRow(
+            "D1024CT",                          // Account = 0
+            null,                               // pad = 1
+            certificate,                        // TrackerId = 2
+            serialNumber,                       // SerialNumber = 3
+            assetNumber,                        // AssetNumber = 4
+            "productType",                      // ProductType = 5
+            null,                               // pad = 6
+            null,                               // pad = 7
+            status);                            // Status = 8
 
         Result<SccDisposal> result = DisposalImportSCC.GetDisposal(row);
 

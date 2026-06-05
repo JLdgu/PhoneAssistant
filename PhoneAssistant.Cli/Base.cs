@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NPOI.SS.UserModel;
+using ExcelDataReader;
 using PhoneAssistant.Model;
 using Serilog;
 using System.CommandLine;
@@ -53,11 +53,33 @@ internal static class Base
         Log.Information("Importing EE Base report from {0}", baseFile.FullName);
 
         using FileStream? stream = new(baseFile.FullName, FileMode.Open, FileAccess.Read);
-        using IWorkbook workbook = WorkbookFactory.Create(stream);
-        ISheet sheet = workbook.GetSheetAt(0);
-        IRow header = sheet.GetRow(0);
-        ICell cell = header.GetCell(0);
-        if (cell is null || cell.StringCellValue != "Group")
+        using var reader = ExcelReaderFactory.CreateReader(stream);
+
+        // Convert the first sheet to DataTable
+        var sheet = new System.Data.DataTable();
+        var fieldCount = reader.FieldCount;
+
+        for (int i = 0; i < fieldCount; i++)
+        {
+            sheet.Columns.Add($"Col{i}", typeof(object));
+        }
+
+        while (reader.Read())
+        {
+            var values = new object[fieldCount];
+            reader.GetValues(values);
+            sheet.Rows.Add(values);
+        }
+
+        if (sheet.Rows.Count == 0)
+        {
+            Log.Error("The Excel sheet is empty.");
+            return;
+        }
+
+        var headerRow = sheet.Rows[0];
+        var cell = headerRow[0]?.ToString()?.Trim();
+        if (string.IsNullOrEmpty(cell) || cell != "Group")
         {
             Log.Error("Unable to find Group in cell A1, check you are importing the correct file.");
             return;
@@ -75,45 +97,42 @@ internal static class Base
         int added = 0;
         Progress progress = new();
 
-        for (int i = (sheet.FirstRowNum + 1); i <= sheet.LastRowNum; i++)
+        for (int i = 1; i < sheet.Rows.Count; i++)
         {
-            IRow row = sheet.GetRow(i);
+            var row = sheet.Rows[i];
             if (row == null) continue;
-            if (row.Cells.Count == 4) break;
+            if (row.ItemArray.Length == 4) break;
 
-            _ = row.GetCell(11).DateCellValue.ToString() ?? string.Empty;
-
-            var phoneNumber = row.GetCell(11).StringCellValue;
-            var userName = row.GetCell(10).StringCellValue;
-            var contractEndDate = row.GetCell(15).DateCellValue.ToString() ?? string.Empty;
-            var talkPlan = row.GetCell(6).StringCellValue.ToString();
-            var handset = row.GetCell(21).StringCellValue;
-            var simNumber = row.GetCell(17).StringCellValue;
-            var connectedIMEI = string.Empty;
-            var lastUsedIMEI = row.GetCell(18).StringCellValue;
+            var phoneNumber = row[11]?.ToString()?.Trim() ?? "";
+            var userName = row[10]?.ToString()?.Trim() ?? "";
+            var contractEndDate = row[15]?.ToString()?.Trim() ?? "";
+            var talkPlan = row[6]?.ToString()?.Trim() ?? "";
+            var handset = row[21]?.ToString()?.Trim() ?? "";
+            var simNumber = row[17]?.ToString()?.Trim() ?? "";
+            var lastUsedIMEI = row[18]?.ToString()?.Trim() ?? "";
 
             BaseReport item = new()
             {
-                PhoneNumber = row.GetCell(11).StringCellValue,
-                UserName = row.GetCell(10).StringCellValue,
-                ContractEndDate = row.GetCell(15).DateCellValue.ToString() ?? string.Empty,
-                TalkPlan = talkPlan = row.GetCell(6).StringCellValue.ToString(),
-                Handset = row.GetCell(21).StringCellValue,
-                SimNumber = row.GetCell(17).StringCellValue,
+                PhoneNumber = phoneNumber,
+                UserName = userName,
+                ContractEndDate = contractEndDate,
+                TalkPlan = talkPlan,
+                Handset = handset,
+                SimNumber = simNumber,
                 ConnectedIMEI = string.Empty,
-                LastUsedIMEI = row.GetCell(18).StringCellValue
+                LastUsedIMEI = lastUsedIMEI
             };
 
             await _repository.CreateAsync(item);
 
-            progress.Draw(i, sheet.LastRowNum);
+            progress.Draw(i, sheet.Rows.Count - 1);
             added++;
         }
 
         ImportHistoryRepository history = new(dbContext);
         _ = await history.CreateAsync(ImportType.BaseReport, baseFile.Name);
 
-        Log.Information("Added {0} SIMs",added);
+        Log.Information("Added {0} SIMs", added);
         Log.Information("Base Report imported successfully.");
     }
 

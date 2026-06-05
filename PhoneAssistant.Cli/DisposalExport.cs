@@ -1,6 +1,5 @@
-﻿using FluentResults;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
+﻿using ClosedXML.Excel;
+using FluentResults;
 using Serilog;
 
 namespace PhoneAssistant.Cli;
@@ -11,13 +10,13 @@ public sealed class DisposalExport
 {
     private readonly List<SccDisposal> _disposals;
     private readonly List<Device> _devices;
-    private readonly IWorkbook _disposalsWorkbook;
-    private readonly IWorkbook _notesWorkbook;
+    private readonly XLWorkbook _disposalsWorkbook;
+    private readonly XLWorkbook _notesWorkbook;
     private readonly string _disposalFile;
     private readonly string _notesFile;
 
-    public ISheet DisposalsSheet { get; private set; }
-    public ISheet NotesSheet { get; private set; }
+    public IXLWorksheet DisposalsSheet { get; private set; }
+    public IXLWorksheet NotesSheet { get; private set; }
 
     public static (int, string) Name { get => (0, "Name"); }
     public static (int, string) Owner { get => (1, "Owner"); }
@@ -30,11 +29,11 @@ public sealed class DisposalExport
     {
         _disposals = disposals;
         _devices = devices;
-        _disposalsWorkbook = new XSSFWorkbook();
-        DisposalsSheet = _disposalsWorkbook.CreateSheet("Disposals");
+        _disposalsWorkbook = new XLWorkbook();
+        DisposalsSheet = _disposalsWorkbook.Worksheets.Add("Disposals");
         _disposalFile = Path.Combine(exportDirectory.FullName, $"Disposal_{DateTime.Now:yyyyMMdd_Hmmss}.xlsx");
-        _notesWorkbook = new XSSFWorkbook();
-        NotesSheet = _notesWorkbook.CreateSheet("Notes");
+        _notesWorkbook = new XLWorkbook();
+        NotesSheet = _notesWorkbook.Worksheets.Add("Notes");
         _notesFile = Path.Combine(exportDirectory.FullName, $"DisposalNotes_{DateTime.Now:yyyyMMdd_Hmmss}.xlsx");
     }
 
@@ -50,11 +49,9 @@ public sealed class DisposalExport
 
         if (RowCount > 0)
         {
-            using var fs = new FileStream(_disposalFile, FileMode.Create, FileAccess.Write);
-            _disposalsWorkbook.Write(fs);
+            _disposalsWorkbook.SaveAs(_disposalFile);
             Log.Information("{0} created", _disposalFile);
-            using var fs2 = new FileStream(_notesFile, FileMode.Create, FileAccess.Write);
-            _notesWorkbook.Write(fs2);
+            _notesWorkbook.SaveAs(_notesFile);
             Log.Information("{0} created", _notesFile);
         }
 
@@ -84,26 +81,26 @@ public sealed class DisposalExport
     {
         if (RowCount == 0)
         {
-            IRow header = DisposalsSheet.CreateRow(0);
-            header.CreateCell(Name.Item1).SetCellValue(Name.Item2);
-            header.CreateCell(Owner.Item1).SetCellValue(Owner.Item2);
-            header.CreateCell(Status.Item1).SetCellValue(Status.Item2);
-            header.CreateCell(SubLocation.Item1).SetCellValue(SubLocation.Item2);
+            var disposalHeader = DisposalsSheet.Row(1);
+            disposalHeader.Cell(Name.Item1 + 1).Value = Name.Item2;
+            disposalHeader.Cell(Owner.Item1 + 1).Value = Owner.Item2;
+            disposalHeader.Cell(Status.Item1 + 1).Value = Status.Item2;
+            disposalHeader.Cell(SubLocation.Item1 + 1).Value = SubLocation.Item2;
 
-            IRow notesHeader = NotesSheet.CreateRow(0);
-            notesHeader.CreateCell(Name.Item1).SetCellValue(Name.Item2);
-            notesHeader.CreateCell(Notes.Item1).SetCellValue(Notes.Item2);
+            var notesHeader = NotesSheet.Row(1);
+            notesHeader.Cell(Name.Item1 + 1).Value = Name.Item2;
+            notesHeader.Cell(Notes.Item1 + 1).Value = Notes.Item2;
         }
 
         RowCount++;
-        IRow row = DisposalsSheet.CreateRow(RowCount);
-        row.CreateCell(Name.Item1).SetCellValue(disposal.Name);
-        row.CreateCell(Owner.Item1).SetCellValue("");
-        row.CreateCell(Status.Item1).SetCellValue("Disposed");
-        row.CreateCell(SubLocation.Item1).SetCellValue("");
+        var disposalRow = DisposalsSheet.Row(RowCount + 1);
+        disposalRow.Cell(Name.Item1 + 1).Value = disposal.Name;
+        disposalRow.Cell(Owner.Item1 + 1).Value = "";
+        disposalRow.Cell(Status.Item1 + 1).Value = "Disposed";
+        disposalRow.Cell(SubLocation.Item1 + 1).Value = "";
 
-        IRow notesRow = NotesSheet.CreateRow(RowCount);
-        notesRow.CreateCell(Name.Item1).SetCellValue(disposal.Name);
-        notesRow.CreateCell(Notes.Item1).SetCellValue($"SCC Certificate # {disposal.Certificate}");
+        var notesRow = NotesSheet.Row(RowCount + 1);
+        notesRow.Cell(Name.Item1 + 1).Value = disposal.Name;
+        notesRow.Cell(Notes.Item1 + 1).Value = $"SCC Certificate # {disposal.Certificate}";
     }
 }

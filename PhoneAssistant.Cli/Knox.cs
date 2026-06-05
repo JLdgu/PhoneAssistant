@@ -1,8 +1,9 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration.Attributes;
-using NPOI.SS.UserModel;
+using ExcelDataReader;
 using Serilog;
 using System.CommandLine;
+using System.Data;
 using System.Globalization;
 using System.Text;
 
@@ -95,33 +96,53 @@ internal static class Knox
         HashSet<string> imeiSet = [.. activeSIMs.Select(sim => sim.IMEI_MEID)];
 
         using FileStream stream = new(ciFile.FullName, FileMode.Open, FileAccess.Read);
-        using IWorkbook workbook = WorkbookFactory.Create(stream);
-        ISheet ciSheet = workbook.GetSheetAt(0);
+        using var excelReader = ExcelReaderFactory.CreateReader(stream);
 
-        IRow headerRow = ciSheet.GetRow(ciSheet.FirstRowNum);
-        string? cellValue = headerRow.GetCell(3)?.ToString()?.Trim();
+        // Convert the first sheet to DataTable
+        var ciSheet = new System.Data.DataTable();
+        var fieldCount = excelReader.FieldCount;
+
+        for (int i = 0; i < fieldCount; i++)
+        {
+            ciSheet.Columns.Add($"Col{i}", typeof(object));
+        }
+
+        while (excelReader.Read())
+        {
+            var values = new object[fieldCount];
+            excelReader.GetValues(values);
+            ciSheet.Rows.Add(values);
+        }
+
+        if (ciSheet.Rows.Count == 0 || ciSheet.Columns.Count <= 3)
+        {
+            Log.Error("Expected 'Name' in cell D1, found empty sheet.");
+            return;
+        }
+
+        string? cellValue = ciSheet.Rows[0][3]?.ToString()?.Trim();
         if (cellValue != "Name")
         {
             Log.Error("Expected 'Name' in cell D1, found '{0}'.", cellValue);
             return;
         }
 
-        int rows = ciSheet.LastRowNum - ciSheet.FirstRowNum;
-        Log.Information("Processing {0} rows from the Excel file.",rows);
+        int rows = ciSheet.Rows.Count - 1;
+        Log.Information("Processing {0} rows from the Excel file.", rows);
         Progress progress = new();
 
         List<SIM> matchedIMEIs = [];
-        for (int i = (ciSheet.FirstRowNum + 1); i <= ciSheet.LastRowNum; i++)
+        for (int i = 1; i < ciSheet.Rows.Count; i++)
         {
             if (i % 10 == 0 || i == rows)
             {
                 progress.Draw(i, rows);                
             }
 
-            IRow row = ciSheet.GetRow(i);
+            var row = ciSheet.Rows[i];
             if (row == null) continue;
-            string? imei = row.GetCell(3).ToString()?.Trim();
-            string? status = row.GetCell(7).ToString()?.Trim();
+            string? imei = row[3]?.ToString()?.Trim();
+            string? status = row[7]?.ToString()?.Trim();
 
             if (string.IsNullOrEmpty(imei)) continue;
             if (string.IsNullOrEmpty(status)) continue;

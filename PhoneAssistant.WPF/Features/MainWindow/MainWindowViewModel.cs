@@ -72,7 +72,6 @@ public sealed partial class MainWindowViewModel : ObservableObject
             ShowUpdateBadge = Visibility.Visible;
 
         SelectedView = (ViewModelType)appSettings.ApplicationSettings.CurrentView;
-        _ = UpdateViewAsync(SelectedView);
     }
 
     [ObservableProperty]
@@ -105,6 +104,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
         _appSettings.Save();
 
         await SelectedViewModel.LoadAsync();
+    }
+
+    public async Task InitializeViewAsync()
+    {
+        await UpdateViewAsync(SelectedView);
     }
 
     [ObservableProperty]

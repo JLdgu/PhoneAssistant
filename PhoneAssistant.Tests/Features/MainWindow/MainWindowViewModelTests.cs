@@ -60,7 +60,7 @@ public sealed class MainWindowViewModelTests
         {
             case ViewModelType.None:
                 dashboard.Verify(vm => vm.LoadAsync(), Times.Never);
-                settings.Verify(vm => vm.LoadAsync(), Times.Exactly(2));
+                settings.Verify(vm => vm.LoadAsync(), Times.Once);
                 break;
             case ViewModelType.Dashboard:
                 dashboard.Verify(vm => vm.LoadAsync(), Times.Once);
@@ -72,7 +72,7 @@ public sealed class MainWindowViewModelTests
                 sims.Verify(vm => vm.LoadAsync(), Times.Once);
                 break;
             case ViewModelType.Settings:
-                settings.Verify(vm => vm.LoadAsync(), Times.Exactly(2));
+                settings.Verify(vm => vm.LoadAsync(), Times.Once);
                 break;
             case ViewModelType.Users:
                 users.Verify(vm => vm.LoadAsync(), Times.Once);

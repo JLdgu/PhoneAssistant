@@ -15,19 +15,6 @@
 
     <UserControl.Resources>
         <viewmodel:NotNullConverter x:Key="NotNullConverter" />
-        <Style x:Key="VerticalCenteredStyle"
-               TargetType="{x:Type DataGridCell}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type DataGridCell}">
-                        <Grid Background="{TemplateBinding Background}">
-                            <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-        </Style>
     </UserControl.Resources>
 
     <DockPanel>
@@ -99,7 +86,6 @@
                       materialDesign:DataGridAssist.ColumnHeaderPadding="4 5 2 7"
                       AlternatingRowBackground="{DynamicResource MaterialDesignChipBackground}"
                       AutoGenerateColumns="False"
-                      CellStyle="{StaticResource VerticalCenteredStyle}"
                       CanUserAddRows="False" 
                       CanUserDeleteRows="False"
                       HeadersVisibility="Column"
@@ -127,6 +113,12 @@
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridComboBoxColumn.HeaderTemplate>
+                        <DataGridComboBoxColumn.ElementStyle>
+                            <Style TargetType="FrameworkElement">
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </DataGridComboBoxColumn.ElementStyle>
                     </materialDesign:DataGridComboBoxColumn>
 
                     <materialDesign:DataGridComboBoxColumn Header="Status"
@@ -144,6 +136,12 @@
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridComboBoxColumn.HeaderTemplate>
+                        <DataGridComboBoxColumn.ElementStyle>
+                            <Style TargetType="FrameworkElement">
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </DataGridComboBoxColumn.ElementStyle>
                     </materialDesign:DataGridComboBoxColumn>
 
                     <DataGridTemplateColumn CanUserSort="False">
@@ -185,6 +183,11 @@
                                 </Binding.ValidationRules>
                             </Binding>
                         </DataGridTextColumn.Binding>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}"
                                    TargetType="TextBox">
@@ -219,6 +222,12 @@
                                 </Binding.ValidationRules>
                             </Binding>
                         </DataGridTextColumn.Binding>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}"
                                    TargetType="TextBox">
@@ -244,6 +253,12 @@
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}"
                                    TargetType="TextBox" />
@@ -273,6 +288,12 @@
                                 </Binding.ValidationRules>
                             </Binding>
                         </DataGridTextColumn.Binding>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}"
                                    TargetType="TextBox">
@@ -339,6 +360,12 @@
                                 </Binding.ValidationRules>
                             </Binding>
                         </DataGridTextColumn.Binding>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}"
                                    TargetType="TextBox">
@@ -364,6 +391,12 @@
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}"
                                    TargetType="TextBox" />
@@ -386,6 +419,12 @@
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}"
                                    TargetType="TextBox">
@@ -412,6 +451,12 @@
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridComboBoxColumn.HeaderTemplate>
+                        <DataGridComboBoxColumn.ElementStyle>
+                            <Style TargetType="FrameworkElement">
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </DataGridComboBoxColumn.ElementStyle>
                     </materialDesign:DataGridComboBoxColumn>
 
                     <DataGridTextColumn Binding="{Binding Model, UpdateSourceTrigger=LostFocus}"
@@ -428,6 +473,12 @@
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}"
                                    TargetType="TextBox" />
@@ -448,6 +499,12 @@
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}"
                                    TargetType="TextBox" />
@@ -470,6 +527,12 @@
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
                         <DataGridTextColumn.EditingElementStyle>
                             <Style BasedOn="{StaticResource MaterialDesignTextBox}"
                                    TargetType="TextBox" />
@@ -491,6 +554,12 @@
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
                 </DataGrid.Columns>

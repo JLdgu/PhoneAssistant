@@ -19,12 +19,12 @@
         </p>
         <h3>Command Structure</h3>
         <p>
-            CLI command structure consists of the cli application ("pac"), the commands ("base", "knox"), and possibly command arguments and options.
+            CLI command structure consists of the cli application ("pac"), the commands ("base", "disposal"), and possibly command arguments and options.
         </p>
 
         <code class="cli-code-box">
             <span class="cli-root">.\pac</span> <span class="cli-command">base</span>
-            <span class="cli-root">.\pac</span> <span class="cli-keyword">knox</span><span class="cli-option"> --folder</span> c:\temp
+            <span class="cli-root">.\pac</span> <span class="cli-keyword">disposal</span><span class="cli-option"> --folder</span> c:\temp
         </code>
 
         <h3>base Command</h3>
@@ -39,34 +39,7 @@
         </code>
         <p>
             **Required.** Full path to the EE base report file to import (must be an `.xlsx` file).
-        </p>
-        <h3>knox Command</h3>
-        <p>Compares a list of myScomis CIs with one from Samsung Knox and creates a list of decommissioned or disposed devices, suitable for bulk import into Samsung Knox.</p>
-        <h4>Usage</h4>
-        <code class="cli-code-no-header">
-            <span>
-                <span class="cli-root">.\pac</span> <span class="cli-command">knox</span> <span class="cli-option">[--folder|-f]</span> <span class="cli-argument">&lt;WORKING_FOLDER&gt;</span>
-            </span>
-        </code>
-        <h4>Options</h4>
-        <code>
-            --folder or -f
-        </code>
-        <p>
-            Path to the folder where the input files can be found and the output CSV file should be created.<br />
-            If not specified, defaults to the user's Downloads folder.
-        </p>
-        <h4>Input Files</h4>
-        <p>
-            The working folder should contain:<br />
-            - An export from myScomis containing CIs, the most recently modified `CI List*.xlsx` file in the working folder is used.<br />
-            - An export from Samsung Knox containing the complete list of enrolled devices `kme_devices.csv`
-        </p>
-        <h4>Output File</h4>
-        <p>
-            The working folder should contain:<br />
-            - A CSV file suitable for bulk device delete in Samsung Knox `knox_bulk_delete.csv`
-        </p>
+        </p>        
     </main>
 </body>
 

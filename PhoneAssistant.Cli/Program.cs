@@ -25,9 +25,7 @@ public sealed class Program
             Base.Command(rootCommand);
 
             Disposal.Command(rootCommand);
-
-            Knox.Command(rootCommand);
-
+                       
             return rootCommand.Parse(args).InvokeAsync();
         }
         finally

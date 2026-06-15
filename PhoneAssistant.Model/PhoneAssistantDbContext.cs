@@ -11,8 +11,6 @@ public partial class PhoneAssistantDbContext : DbContext
 
     public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
 
-    public DbSet<BaseReport> BaseReport => Set<BaseReport>();
-
     public DbSet<ImportHistory> Imports => Set<ImportHistory>();
 
     public DbSet<Location> Locations => Set<Location>();
@@ -44,9 +42,6 @@ public partial class PhoneAssistantDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<BaseReport>()            
-            .HasKey(e => e.PhoneNumber);
-
         modelBuilder.Entity<ImportHistory>()
             .ToTable("ImportHistory")
             .HasKey(e => new { e.Name, e.Run });

@@ -25,8 +25,6 @@ public sealed class Program
         {
             RootCommand rootCommand = new("Phone Assistant Command Line Interface");
 
-            Base.Command(rootCommand);
-
             EE.Command(rootCommand);
 
             Disposal.Command(rootCommand);

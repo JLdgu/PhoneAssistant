@@ -1,11 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-
 using FluentValidation;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Features.AddItem;
 using PhoneAssistant.WPF.Features.BaseReport;
@@ -47,11 +44,10 @@ public static class ApplicationServicesExtensions
                             new UpdateOptions() { AllowVersionDowngrade = true }));
 
             // Repositories
-            services.AddSingleton<IBaseReportRepository, BaseReportRepository>();
             services.AddSingleton<IImportHistoryRepository, ImportHistoryRepository>();
             services.AddSingleton<ILocationsRepository, LocationsRepository>();
             services.AddSingleton<IPhonesRepository, PhonesRepository>();
-
+            services.AddSingleton<ISimRepository, SimRepository>();
 
             // Features
             services.AddSingleton<IAddItemViewModel, AddItemViewModel>();

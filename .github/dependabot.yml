@@ -3,16 +3,12 @@ updates:
   - package-ecosystem: "nuget" 
     directory: "/" 
     schedule:
-      interval: "weekly"
-    ignore:
-      - dependency-name: "NPOI"
-        versions:
-          - "> 2.7.6"
+      interval: "monthly"
 
   - package-ecosystem: "github-actions" # update GitHub Actions workflows
     directory: "/" 
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
       github-actions:
         patterns:

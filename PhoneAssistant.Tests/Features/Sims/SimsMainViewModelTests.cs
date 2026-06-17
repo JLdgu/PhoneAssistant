@@ -62,7 +62,7 @@ public sealed class SimsMainViewModelTests
     public async Task PhoneNumber_changed_should_set_SimNumber_when_SIM_exists()
     {
         MockValidator();
-        Mock<IBaseReportRepository> baseRepository = _mocker.GetMock<IBaseReportRepository>();
+        Mock<ISimRepository> baseRepository = _mocker.GetMock<ISimRepository>();
         baseRepository.Setup(r => r.GetSimNumberAsync("01234567890")).ReturnsAsync("sim number");
         var vm = _mocker.CreateInstance<SimsMainViewModel>();
 

@@ -19,49 +19,62 @@
             <RowDefinition Height="*" />
 
         </Grid.RowDefinitions>
-        <shared:HeaderMainView HeaderIcon="SimOutline" HeaderText="SIM Cards" />
-        <StackPanel Grid.Row="1"
-                    Margin="0,10,0,25"
-                    Orientation="Horizontal">
-            <TextBox MinWidth="85"
-                     Margin="10,0,0,0"
-                     materialDesign:HintAssist.Hint="Ticket #"
-                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                     MaxLength="7"
-                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                     Text="{Binding Ticket}" />
+        <shared:HeaderMainView HeaderIcon="SimOutline"
+                               HeaderText="SIMs"
+                               Margin="0,0,5,0" />
+        <GroupBox Margin="2,10,5,0"
+                  Grid.Row="1"
+                  materialDesign:ColorZoneAssist.Mode="SecondaryMid"
+                  Header="New SIM orders"
+                  Style="{StaticResource MaterialDesignGroupBox}">
+            <StackPanel Margin="0,0,0,25"
+                        Orientation="Horizontal">
+                <TextBox MinWidth="85"
+                         Margin="0,0,0,0"
+                         materialDesign:HintAssist.Hint="Ticket #"
+                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                         MaxLength="7"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding Ticket}" />
 
-            <TextBox MinWidth="150"
-                     Margin="10,0,0,0"
-                     materialDesign:HintAssist.Hint="New User"
-                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                     Text="{Binding NewUser}" />
+                <TextBox MinWidth="150"
+                         Margin="10,0,0,0"
+                         materialDesign:HintAssist.Hint="New User"
+                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding NewUser}" />
 
-            <TextBox MinWidth="125  "
-                     Margin="10,0,0,0"
-                     materialDesign:HintAssist.Hint="Phone Number"
-                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                     MaxLength="11"
-                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                     Text="{Binding PhoneNumber}" />
+                <TextBox MinWidth="125  "
+                         Margin="10,0,0,0"
+                         materialDesign:HintAssist.Hint="Phone Number"
+                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                         MaxLength="11"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding PhoneNumber}" />
 
-            <TextBox MinWidth="160"
-                     Margin="10,0,0,0"
-                     materialDesign:HintAssist.Hint="SIM Number"
-                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                     MaxLength="19"
-                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                     Text="{Binding SimNumber}" />
+                <TextBox MinWidth="160"
+                         Margin="10,0,0,0"
+                         materialDesign:HintAssist.Hint="SIM Number"
+                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                         MaxLength="19"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding SimNumber}" />
 
-            <Button Margin="20,0,0,0"
-                    Padding="0"
-                    Command="{Binding PrintEnvelopeCommand}"
-                    Content="{materialDesign:PackIcon Kind=EmailOutline,
+                <Button Margin="20,0,0,0"
+                        Padding="0"
+                        Command="{Binding PrintEnvelopeCommand}"
+                        Content="{materialDesign:PackIcon Kind=EmailOutline,
                                                       Size=35}"
-                    Style="{StaticResource MaterialDesignFlatLightButton}"
-                    ToolTip="Print Envelope" />
+                        Style="{StaticResource MaterialDesignFlatLightButton}"
+                        ToolTip="Print Envelope" />
 
-        </StackPanel>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Margin="2,10,5,0"
+                  Grid.Row="2"
+                  materialDesign:ColorZoneAssist.Mode="SecondaryLight"
+                  Header="SIM history"
+                  Style="{StaticResource MaterialDesignGroupBox}">
+        </GroupBox>
     </Grid>
 </UserControl>

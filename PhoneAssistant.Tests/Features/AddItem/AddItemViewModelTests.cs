@@ -36,7 +36,7 @@ public partial class AddItemViewModelTests
     [Test]
     public async Task CanSavePhone_ShouldBeEnabled_WhenNoErrors_WithPhoneHasSim()
     {
-        Mock<IBaseReportRepository> sims = _mocker.GetMock<IBaseReportRepository>();
+        Mock<ISimRepository> sims = _mocker.GetMock<ISimRepository>();
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
         sims.Setup(r => r.GetSimNumberAsync("07123456789")).ReturnsAsync((string)null);
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
@@ -87,58 +87,6 @@ public partial class AddItemViewModelTests
         await Assert.That(sut.CanSavePhone()).IsTrue();
     }
 
-    //[Test]
-    //public async Task Imei_should_not_have_Error_when_present()
-    //{
-    //    AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
-
-    //    sut.Imei = "355808981147090";
-
-    //    await Assert.That(sut.GetErrors(nameof(sut.Imei))).IsEmpty();
-    //}
-
-    //[Test]
-    //[Arguments(null)]
-    //[Arguments("")]
-    //public async Task PhoneNumber_should_not_have_Error_when_Null_or_empty(string? actual)
-    //{
-    //    AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
-
-    //    sut.PhoneNumber = actual;
-
-    //    await Assert.That(sut.GetErrors(nameof(sut.PhoneNumber))).IsEmpty();
-    //}
-
-    //[Test]
-    //public async Task PhoneNumber_should_not_have_Error_when_present()
-    //{
-    //    AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
-
-    //    sut.PhoneNumber = "07123456789";
-
-    //    await Assert.That(sut.GetErrors(nameof(sut.PhoneNumber))).IsEmpty();
-    //}
-
-    //[Test]
-    //public async Task GetErrors_ShouldBeEmpty_WhenSimNumberNullAsync()
-    //{
-    //    AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
-
-    //    sut.SimNumber = null;
-
-    //    await Assert.That(sut.GetErrors(nameof(sut.SimNumber))).IsEmpty();
-    //}
-
-    //[Test]
-    //public async Task GetErrors_ShouldBeEmpty_WhenSimNumberSetAsync()
-    //{
-    //    AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
-
-    //    sut.SimNumber = "8944122605566849402";
-
-    //    await Assert.That(sut.GetErrors(nameof(sut.SimNumber))).IsEmpty();
-    //}
-
     [Test]
     public async Task LoadAsync_ShouldReturn_TaskCompleted()
     {
@@ -168,7 +116,7 @@ public partial class AddItemViewModelTests
     [Test]
     public async Task OnPhoneNumberChanged_ShouldSetSimNumber_WhenSimExistsAsync()
     {
-        Mock<IBaseReportRepository> repository = _mocker.GetMock<IBaseReportRepository>();
+        Mock<ISimRepository> repository = _mocker.GetMock<ISimRepository>();
         repository.Setup(r => r.GetSimNumberAsync("07123456789")).ReturnsAsync("sim number");
         _ = MockValidator();
         AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();

@@ -11,8 +11,6 @@ public partial class PhoneAssistantDbContext : DbContext
 
     public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
 
-    public DbSet<BaseReport> BaseReport => Set<BaseReport>();
-
     public DbSet<ImportHistory> Imports => Set<ImportHistory>();
 
     public DbSet<Location> Locations => Set<Location>();
@@ -44,17 +42,13 @@ public partial class PhoneAssistantDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<BaseReport>()
-            .HasKey(e => e.PhoneNumber);        
-
-        modelBuilder.Entity<ImportHistory>(entity =>
-        {
-            entity.ToTable("ImportHistory");
-
-            //entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.Name).HasConversion(n => n.ToString(), n => (ImportType)Enum.Parse(typeof(ImportType), n));
-            entity.Property(e => e.ImportDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
-        });
+        modelBuilder.Entity<ImportHistory>()
+            .ToTable("ImportHistory")
+            .HasKey(e => new { e.Name, e.Run });
+        modelBuilder.Entity<ImportHistory>()
+            .Property(e => e.Name).HasConversion(n => n.ToString(), n => Enum.Parse<ImportType>(n));
+        modelBuilder.Entity<ImportHistory>()
+            .Property(e => e.ImportDate).HasDefaultValueSql("CURRENT_TIMESTAMP");   
 
         modelBuilder.Entity<Location>(l =>
         {
@@ -89,10 +83,7 @@ public partial class PhoneAssistantDbContext : DbContext
         });
 
         modelBuilder.Entity<Sim>()
-            .HasIndex(s => s.PhoneNumber).IsUnique();
-
-        modelBuilder.Entity<SimHistory>()
-            .HasIndex(h => new { h.SimId, h.Period }).IsUnique();
+            .HasKey(s => new { s.PhoneNumber, s.BillingPeriod});               
 
         OnModelCreatingPartial(modelBuilder);
     }

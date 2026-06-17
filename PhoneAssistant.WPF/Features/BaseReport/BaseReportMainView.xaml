@@ -28,13 +28,6 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button Margin="5,5"
-                    HorizontalAlignment="Left"
-                    Command="{Binding RefreshCommand}"
-                    Content="{materialDesign:PackIcon Kind=Refresh,
-                                                      Size=25}"
-                    Style="{StaticResource MaterialDesignOutlinedLightButton}"
-                    ToolTip="Refresh" />
 
             <TextBlock Grid.Column="2"
                        Margin="0,0,10,0"
@@ -45,6 +38,19 @@
                        Text="{Binding LatestImport}"
                        TextAlignment="Right" />
         </Grid>
+        <TextBox x:Name="Search"
+                 Grid.Row="1"
+                 Width="250"
+                 Margin="0,5,0,5"
+                 HorizontalAlignment="Left"
+                 materialDesign:HintAssist.Hint="Phone Number"
+                 materialDesign:TextFieldAssist.HasClearButton="True"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 Text="{Binding SearchPhoneNumber, UpdateSourceTrigger=PropertyChanged}">
+            <TextBox.InputBindings>
+                <KeyBinding Key="Enter" Command="{Binding EnterKeyCommand}" />
+            </TextBox.InputBindings>
+        </TextBox>
 
         <DataGrid x:Name="BaseReportDataGrid"
                   Grid.Row="2"
@@ -57,122 +63,35 @@
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
                   HeadersVisibility="Column"
-                  ItemsSource="{Binding BaseReport}"
-                  Visibility="{Binding ReportViewVisibility}">
+                  ItemsSource="{Binding BaseReportSims}">
             <DataGrid.Columns>
-
-                <DataGridTextColumn Binding="{Binding PhoneNumber}" Header="Phone Number">
-                    <DataGridTextColumn.HeaderTemplate>
+                <DataGridTextColumn Width="120"
+                                    Binding="{Binding PhoneNumber}"
+                                    Header="Phone Number" />
+                <DataGridTextColumn Binding="{Binding BillingPeriod}" Header="Billing Period" />
+                <DataGridTextColumn Binding="{Binding SIMNumber}" Header="SIM Number" />
+                <DataGridTextColumn Binding="{Binding UserName}" Header="User Name" />
+                <DataGridTemplateColumn Header="Broadband Data">
+                    <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                <TextBox MinWidth="120"
-                                         materialDesign:HintAssist.Hint="Filter"
-                                         materialDesign:TextFieldAssist.HasClearButton="True"
-                                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterPhoneNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                            </StackPanel>
+                            <Grid Width="205" Height="20">
+                                <Rectangle Width="{Binding BarWidth}"
+                                           Height="20"
+                                           HorizontalAlignment="Left"
+                                           Fill="LightGreen"
+                                           RadiusX="3"
+                                           RadiusY="3"
+                                           Stroke="Green"
+                                           StrokeThickness="1" />
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Text="{Binding BroadbandDataText}" />
+                            </Grid>
                         </DataTemplate>
-                    </DataGridTextColumn.HeaderTemplate>
-                </DataGridTextColumn>
-
-                <DataGridTextColumn Binding="{Binding SimNumber}" Header="SIM Number">
-                    <DataGridTextColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                <TextBox MinWidth="140"
-                                         materialDesign:HintAssist.Hint="Filter"
-                                         materialDesign:TextFieldAssist.HasClearButton="True"
-                                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterSimNumber, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTextColumn.HeaderTemplate>
-                </DataGridTextColumn>
-
-                <DataGridTextColumn Binding="{Binding UserName}" Header="User Name">
-                    <DataGridTextColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                <TextBox MinWidth="130"
-                                         materialDesign:HintAssist.Hint="Filter"
-                                         materialDesign:TextFieldAssist.HasClearButton="True"
-                                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterUserName, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTextColumn.HeaderTemplate>
-                </DataGridTextColumn>
-
-                <DataGridTextColumn Binding="{Binding LastUsedIMEI}" Header="LastUsedIMEI">
-                    <DataGridTextColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                <TextBox MinWidth="120"
-                                         materialDesign:HintAssist.Hint="Filter"
-                                         materialDesign:TextFieldAssist.HasClearButton="True"
-                                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterLastUsedIMEI, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTextColumn.HeaderTemplate>
-                </DataGridTextColumn>
-
-                <DataGridTextColumn Binding="{Binding ContractEndDate}" Header="Contract End Date">
-                    <DataGridTextColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                <TextBox MinWidth="120"
-                                         materialDesign:HintAssist.Hint="Filter"
-                                         materialDesign:TextFieldAssist.HasClearButton="True"
-                                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterContractEndDate, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTextColumn.HeaderTemplate>
-                </DataGridTextColumn>
-
-                <DataGridTextColumn Binding="{Binding Handset}" Header="Handset">
-                    <DataGridTextColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                <TextBox MinWidth="120"
-                                         materialDesign:HintAssist.Hint="Filter"
-                                         materialDesign:TextFieldAssist.HasClearButton="True"
-                                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterHandset, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTextColumn.HeaderTemplate>
-                </DataGridTextColumn>
-
-                <DataGridTextColumn Binding="{Binding TalkPlan}" Header="Talk Plan">
-                    <DataGridTextColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                <TextBox MinWidth="120"
-                                         materialDesign:HintAssist.Hint="Filter"
-                                         materialDesign:TextFieldAssist.HasClearButton="True"
-                                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterTalkPlan, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTextColumn.HeaderTemplate>
-                </DataGridTextColumn>
-
-                <DataGridTextColumn Binding="{Binding ConnectedIMEI}" Header="Connected IMEI">
-                    <DataGridTextColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                <TextBox MinWidth="140"
-                                         materialDesign:HintAssist.Hint="Filter"
-                                         materialDesign:TextFieldAssist.HasClearButton="True"
-                                         Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.FilterConnectedIMEI, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTextColumn.HeaderTemplate>
-                </DataGridTextColumn>
-
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Binding="{Binding TextMessages}" Header="Text Messages" />
+                <DataGridTextColumn Binding="{Binding VoiceCalls}" Header="Voice Calls" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

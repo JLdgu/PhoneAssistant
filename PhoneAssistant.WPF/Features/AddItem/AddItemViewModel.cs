@@ -1,13 +1,9 @@
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
-
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Shared;
+using System.Collections.ObjectModel;
 
 namespace PhoneAssistant.WPF.Features.AddItem;
 
@@ -18,20 +14,20 @@ public interface IAddItemViewModel : IViewModel
 public sealed partial class AddItemViewModel : ValidatableViewModel<AddItemViewModel>, IAddItemViewModel
 {
     private readonly IApplicationSettingsRepository _appSettings;
-    private readonly IBaseReportRepository _baseReportRepository;
     private readonly IMessenger _messenger;
     private readonly IPhonesRepository _phonesRepository;
+    private readonly ISimRepository _simRepository;
 
     public ObservableCollection<string> LogItems { get; } = [];
 
     public AddItemViewModel(IPhonesRepository phonesRepository,
-                            IBaseReportRepository baseReportRepository,
                             IApplicationSettingsRepository appSettings,
+                            ISimRepository simRepository,
                             IMessenger messenger,
                             IServiceProvider serviceProvider) : base(serviceProvider)
     {
         _phonesRepository = phonesRepository ?? throw new ArgumentNullException(nameof(phonesRepository));
-        _baseReportRepository = baseReportRepository ?? throw new ArgumentNullException(nameof(baseReportRepository));
+        _simRepository = simRepository ?? throw new ArgumentNullException(nameof(simRepository));
         _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         OEM = Manufacturer.Apple;
@@ -168,7 +164,7 @@ public sealed partial class AddItemViewModel : ValidatableViewModel<AddItemViewM
         
         await ValidatePropertyAsync(nameof(PhoneNumber));
 
-        string? simNumber = await _baseReportRepository.GetSimNumberAsync(value);
+        string? simNumber = await _simRepository.GetSimNumberAsync(value);
 
         if (simNumber is null) return;
 

@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using PhoneAssistant.Cli.EECommand;
+using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using System.CommandLine;
 using System.Text;
@@ -16,13 +17,15 @@ public sealed class Program
             .Enrich.FromLogContext()
             .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen)
             .MinimumLevel.Debug()
+#if !DEBUG
             .WriteTo.File("pac.log")
+#endif 
             .CreateLogger();
         try
         {
             RootCommand rootCommand = new("Phone Assistant Command Line Interface");
 
-            Base.Command(rootCommand);
+            EE.Command(rootCommand);
 
             Disposal.Command(rootCommand);
                        

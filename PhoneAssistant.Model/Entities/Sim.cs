@@ -1,7 +1,12 @@
 ﻿namespace PhoneAssistant.Model;
 
-public sealed class Sim
+public class Sim
 {
-    public int Id { get; set; }
     public required string PhoneNumber { get; set; }
+    public required string SIMNumber { get; set; }
+    public required string BillingPeriod { get; set; }
+    public required string UserName { get; set; }
+    public required ulong BroadbandData { get; set; }
+    public required uint TextMessages { get; set; }
+    public required uint VoiceCalls { get; set; }
 }

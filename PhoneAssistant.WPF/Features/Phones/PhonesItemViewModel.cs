@@ -12,21 +12,21 @@ namespace PhoneAssistant.WPF.Features.Phones;
 public sealed partial class PhonesItemViewModel : ObservableObject
 {
     private readonly IApplicationSettingsRepository _appSettings;
-    private readonly IBaseReportRepository _baseReportRepository;
     private readonly IPhonesRepository _repository;
     private readonly IMessenger _messenger;
+    private readonly ISimRepository _simRepository;
     private readonly Phone _phone;
 
     public PhonesItemViewModel(IApplicationSettingsRepository appSettings,
-                               IBaseReportRepository baseReportRepository,
                                IPhonesRepository repository,
+                               ISimRepository simRepository,
                                IMessenger messenger,
                                Phone phone)
     {
         _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _baseReportRepository = baseReportRepository ?? throw new ArgumentNullException(nameof(baseReportRepository));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
+        _simRepository = simRepository ?? throw new ArgumentNullException(nameof(simRepository));
         _phone = phone ?? throw new ArgumentNullException(nameof(phone));
 
         AssetTag = phone.AssetTag ?? string.Empty;
@@ -211,7 +211,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         else
         {
             _phone.PhoneNumber = value;
-            string? simNumber = await _baseReportRepository.GetSimNumberAsync(value);
+            string? simNumber = await _simRepository.GetSimNumberAsync(value);
             if (simNumber is not null)
             {
                 _phone.SimNumber = simNumber;

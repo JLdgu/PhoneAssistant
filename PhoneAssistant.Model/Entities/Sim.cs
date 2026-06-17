@@ -1,8 +1,6 @@
-﻿using static System.Net.Mime.MediaTypeNames;
+﻿namespace PhoneAssistant.Model;
 
-namespace PhoneAssistant.Model;
-
-public sealed class Sim
+public class Sim
 {
     public required string PhoneNumber { get; set; }
     public required string SIMNumber { get; set; }

@@ -15,25 +15,30 @@ public partial class BaseReportMainViewModel(IImportHistoryRepository importHist
     private readonly IImportHistoryRepository _import = importHistory ?? throw new ArgumentNullException(nameof(importHistory));
     private readonly ISimRepository _repository = repository ?? throw new ArgumentNullException(nameof(repository));
 
-    public ObservableCollection<Sim> Sims { get; } = [];
+    public ObservableCollection<BaseReportSim> BaseReportSims { get; } = [];
 
     [ObservableProperty]
     public partial string LatestImport {  get; set; } = string.Empty;
 
     [ObservableProperty]
-    public partial string PhoneNumber { get; set; } = string.Empty;
+    public partial string SearchPhoneNumber { get; set; } = string.Empty;
 
     [RelayCommand]
     private async Task EnterKey()
     {
-        if (string.IsNullOrEmpty(PhoneNumber)) return;
+        if (string.IsNullOrEmpty(SearchPhoneNumber)) return;
 
-        Sims.Clear();
+        BaseReportSims.Clear();
 
-        var sims = await _repository.GetSim(PhoneNumber);
+        IEnumerable<Sim> sims = await _repository.GetSim(SearchPhoneNumber);
+        if (!sims.Any())
+            return;
+
+        ulong maxBoadbandData = sims.Max(s => s.BroadbandData);
         foreach (var sim in sims)
-        { 
-            Sims.Add(sim);
+        {
+            BaseReportSim baseReportSim = new(sim, maxBoadbandData);
+            BaseReportSims.Add(baseReportSim);
         }
         
     }
@@ -42,5 +47,60 @@ public partial class BaseReportMainViewModel(IImportHistoryRepository importHist
     {
         ImportHistory? importHistory = await _import.GetLatestImportAsync(ImportType.BaseReport);
         LatestImport = importHistory is null ? $"Latest Import: None" : $"Latest Import: {importHistory.Run} ({importHistory.ImportDate})";
+    }
+}
+
+public sealed class BaseReportSim : Sim
+{
+    private const int MaxBarWidth = 200;
+    public string BroadbandDataText { get; init; }
+    public int BarWidth { get; init; }
+    public int FillWidth { get; init; }
+
+    [System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute]
+    public BaseReportSim(Sim sim, ulong maxBroadbandData)
+    {
+        PhoneNumber = sim.PhoneNumber;
+        SIMNumber = sim.SIMNumber;
+        BillingPeriod = sim.BillingPeriod;
+        UserName = sim.UserName;
+        BroadbandData = sim.BroadbandData;
+        TextMessages = sim.TextMessages;
+        VoiceCalls = sim.VoiceCalls;
+        
+        BroadbandDataText = FormatBytes(sim.BroadbandData);
+        if (BroadbandData == 0)
+        {
+            BarWidth = 0;
+            FillWidth = MaxBarWidth;
+            return;
+        }
+        if (BroadbandData == maxBroadbandData)
+        {
+            BarWidth = MaxBarWidth;
+            FillWidth = 0;
+            return;
+        }
+        BarWidth = (int)(MaxBarWidth * sim.BroadbandData / maxBroadbandData);
+        FillWidth = MaxBarWidth - BarWidth;
+    }
+
+    private static string FormatBytes(ulong bytes)
+    {
+        string[] suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB"];
+
+        if (bytes == 0)
+            return "0 B";
+
+        int order = 0;
+        double remainder = bytes;
+
+        while (remainder >= 1000 && order < suffixes.Length - 1)
+        {
+            order++;
+            remainder /= 1000;
+        }
+
+        return $"{remainder:0.##} {suffixes[order]}";
     }
 }

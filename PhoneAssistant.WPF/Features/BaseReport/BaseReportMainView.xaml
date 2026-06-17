@@ -46,10 +46,9 @@
                  materialDesign:HintAssist.Hint="Phone Number"
                  materialDesign:TextFieldAssist.HasClearButton="True"
                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                 Text="{Binding PhoneNumber, UpdateSourceTrigger=PropertyChanged}">
+                 Text="{Binding SearchPhoneNumber, UpdateSourceTrigger=PropertyChanged}">
             <TextBox.InputBindings>
-                <KeyBinding Key="Enter"
-                            Command="{Binding EnterKeyCommand}" />
+                <KeyBinding Key="Enter" Command="{Binding EnterKeyCommand}" />
             </TextBox.InputBindings>
         </TextBox>
 
@@ -64,12 +63,35 @@
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
                   HeadersVisibility="Column"
-                  ItemsSource="{Binding Sims}">
+                  ItemsSource="{Binding BaseReportSims}">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding PhoneNumber}" Header="Phone Number" />
+                <DataGridTextColumn Width="120"
+                                    Binding="{Binding PhoneNumber}"
+                                    Header="Phone Number" />
                 <DataGridTextColumn Binding="{Binding BillingPeriod}" Header="Billing Period" />
                 <DataGridTextColumn Binding="{Binding SIMNumber}" Header="SIM Number" />
                 <DataGridTextColumn Binding="{Binding UserName}" Header="User Name" />
+                <DataGridTemplateColumn Header="Broadband Data">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid Width="205" Height="20">
+                                <Rectangle Width="{Binding BarWidth}"
+                                           Height="20"
+                                           HorizontalAlignment="Left"
+                                           Fill="LightGreen"
+                                           RadiusX="3"
+                                           RadiusY="3"
+                                           Stroke="Green"
+                                           StrokeThickness="1" />
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Text="{Binding BroadbandDataText}" />
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Binding="{Binding TextMessages}" Header="Text Messages" />
+                <DataGridTextColumn Binding="{Binding VoiceCalls}" Header="Voice Calls" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

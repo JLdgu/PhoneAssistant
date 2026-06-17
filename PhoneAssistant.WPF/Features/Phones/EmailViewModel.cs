@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Shared;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 
@@ -41,29 +40,30 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             GenerateEmailHtml();
         }
     }
-    [ObservableProperty]
-    private bool _envelopePrinted = false;
 
     [ObservableProperty]
-    private string _imei = string.Empty;
+    public partial string AssetTag { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string _phoneNumber = string.Empty;
+    public partial bool EnvelopePrinted { get; set; } = false;
 
     [ObservableProperty]
-    private string _assetTag = string.Empty;
-
-    [ObservableProperty]
-    private string? _ticket;
+    public partial string Imei { get; set; } = string.Empty;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
-    private OrderType _orderType;
+    public partial OrderType OrderType { get; set; }
     partial void OnOrderTypeChanged(OrderType value)
     {
         OrderDetails.OrderType = OrderType;
         GenerateEmailHtml();
     }
+
+    [ObservableProperty]
+    public partial string PhoneNumber { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string? Ticket { get; set; }
 
     [RelayCommand]
     private async Task CloseAsync()
@@ -71,7 +71,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         await _phonesRepository.UpdateAsync(_orderDetails!.Phone);
         GeneratingEmail = false;
     }
-    
+
     private bool CanPrintEnvelope() => OrderType != OrderType.None;
     [RelayCommand(CanExecute = nameof(CanPrintEnvelope))]
     private async Task PrintEnvelope()
@@ -104,14 +104,14 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     public ObservableCollection<Location> Locations { get; set; } = [];
 
     [ObservableProperty]
-    private Location? _selectedLocation;
+    public partial Location? SelectedLocation { get; set; }
     partial void OnSelectedLocationChanged(Location? value)
     {
         if (value is null) return;
 
         string deliveryAddress = value.Address;
         deliveryAddress = deliveryAddress.Replace("{NewUser}", _orderDetails!.Phone.NewUser);
-        deliveryAddress = deliveryAddress.Replace("{SR}", Ticket);
+        deliveryAddress = deliveryAddress.Replace("{SR}", Ticket + " " + _orderDetails.OrderType + " " + _orderDetails.DeviceType);
         deliveryAddress = deliveryAddress.Replace("{PhoneNumber}", PhoneNumber);
 
         DeliveryAddress = deliveryAddress;
@@ -120,8 +120,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(EmailHtml))]
-    private string _deliveryAddress = string.Empty;
-
+    public partial string DeliveryAddress { get; set; } = string.Empty;
     partial void OnDeliveryAddressChanged(string value)
     {
         if (_orderDetails is null) return;
@@ -135,7 +134,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     {
         Regex regex = AddressReformat();
 
-        string reformatted = regex.Replace(address,string.Empty);
+        string reformatted = regex.Replace(address, string.Empty);
 
         return reformatted;
     }

@@ -1,93 +1,96 @@
-﻿using System.Drawing;
+﻿using PhoneAssistant.Model;
+using System.Drawing;
 using System.Drawing.Printing;
 
-using PhoneAssistant.Model;
+namespace PhoneAssistant.WPF.Shared;
 
-namespace PhoneAssistant.WPF.Shared
+public interface IPrintDymoLabel
 {
-    public sealed class PrintDymoLabel(IApplicationSettingsRepository appSettings) : IPrintDymoLabel
+    void Execute(string address, string? includeDate);
+}
+
+public sealed class PrintDymoLabel(IApplicationSettingsRepository appSettings) : IPrintDymoLabel
+{
+    // For Dymo 450 printer and Label 30256 Shipping w231 x h400
+    // the largest rectangle we can draw is
+    // graphics.DrawRectangle(_linePen, 2, 20, 365, 193);
+    const int BodyHeight = 193;
+    const int BodyWidth = 365;
+    const int MarginTop = 20;
+    const int MarginLeft = 2;
+
+    private readonly IApplicationSettingsRepository _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
+    private string? _address;
+    private string? _includeDate;
+
+    public void Execute(string address, string? includeDate)
     {
-        // For Dymo 450 printer and Label 30256 Shipping w231 x h400
-        // the largest rectangle we can draw is
-        // graphics.DrawRectangle(_linePen, 2, 20, 365, 193);
-        const int BodyHeight = 193;
-        const int BodyWidth = 365;
-        const int MarginTop = 20;
-        const int MarginLeft = 2;
+        _address = address.Trim();
+        _includeDate = includeDate;
 
-        private readonly IApplicationSettingsRepository _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
-        private string? _address;
-        private string? _includeDate;
+        PrintDocument pd = new();
+        pd.DefaultPageSettings.Landscape = true;
+        pd.DefaultPageSettings.Color = false;
+        pd.DefaultPageSettings.PaperSize = new PaperSize("30256 Shipping", 231, 400);
 
-        public void Execute(string address, string? includeDate)
+        if (_appSettings.ApplicationSettings.DymoPrintToFile)
         {
-            _address = address.Trim();
-            _includeDate = includeDate;
-
-            PrintDocument pd = new();
-            pd.DefaultPageSettings.Landscape = true;
-            pd.DefaultPageSettings.Color = false;
-            pd.DefaultPageSettings.PaperSize = new PaperSize("30256 Shipping", 231, 400);
-
-            if (_appSettings.ApplicationSettings.DymoPrintToFile)
-            {
-                pd.PrinterSettings.PrinterName = "Microsoft Print to PDF";
-                pd.DefaultPageSettings.PrinterSettings.PrintToFile = true;
-                pd.DefaultPageSettings.PrinterSettings.PrintFileName = _appSettings.ApplicationSettings.DymoPrintFile;
-            }
-            else
-            {
-                pd.PrinterSettings.PrinterName = _appSettings.ApplicationSettings.DymoPrinter;
-                pd.DefaultPageSettings.PrinterSettings.PrintToFile = false;
-            }
-
-            pd.PrintPage += new PrintPageEventHandler(PrintPage);
-
-            if (pd.PrinterSettings.IsValid)
-                pd.Print();
+            pd.PrinterSettings.PrinterName = "Microsoft Print to PDF";
+            pd.DefaultPageSettings.PrinterSettings.PrintToFile = true;
+            pd.DefaultPageSettings.PrinterSettings.PrintFileName = _appSettings.ApplicationSettings.DymoPrintFile;
+        }
+        else
+        {
+            pd.PrinterSettings.PrinterName = _appSettings.ApplicationSettings.DymoPrinter;
+            pd.DefaultPageSettings.PrinterSettings.PrintToFile = false;
         }
 
-        private void PrintPage(object sender, PrintPageEventArgs ev)
+        pd.PrintPage += new PrintPageEventHandler(PrintPage);
+
+        if (pd.PrinterSettings.IsValid)
+            pd.Print();
+    }
+
+    private void PrintPage(object sender, PrintPageEventArgs ev)
+    {
+        if (ev.Graphics is null) return;
+        Graphics graphics = ev.Graphics;
+
+        Font dateFont = new("Segoe UI", 10);
+        int dateFontHeight = (int)dateFont.GetHeight(graphics);
+
+        int maxHeight = BodyHeight;
+        if (_includeDate is not null)
+            maxHeight -= dateFontHeight;
+
+        float fontSize = 22;
+        Font font = new("Segoe UI", fontSize);
+        while (true)
         {
-            if (ev.Graphics is null) return;
-            Graphics graphics = ev.Graphics;
+            SizeF stringSize = new SizeF();
+            stringSize = ev.Graphics.MeasureString(_address, font, BodyWidth);
 
-            Font dateFont = new("Segoe UI", 10);
-            int dateFontHeight = (int)dateFont.GetHeight(graphics);
+            if (stringSize.Height <= maxHeight)
+                break;
 
-            int maxHeight = BodyHeight;
-            if (_includeDate is not null)
-                maxHeight -= dateFontHeight;
-
-            float fontSize = 22;
-            Font font = new("Segoe UI", fontSize);
-            while (true)
-            {
-                SizeF stringSize = new SizeF();
-                stringSize = ev.Graphics.MeasureString(_address, font, BodyWidth);
-
-                if (stringSize.Height <= maxHeight)
-                    break;
-
-                fontSize = (float)(fontSize - 0.5);
-                font = new("Segoe UI", fontSize);
-            }
-
-            Brush brush = new SolidBrush(Color.Black);
-            Rectangle rectangle = new(MarginLeft, MarginTop, BodyWidth, maxHeight);
-            graphics.DrawString(_address, font, brush, rectangle);
-
-            if (_includeDate is not null)
-            {
-                StringFormat sf = new StringFormat();
-                sf.LineAlignment = StringAlignment.Far;
-                sf.Alignment = StringAlignment.Far;
-
-                rectangle = new(MarginLeft, MarginTop + BodyHeight - dateFontHeight, BodyWidth, dateFontHeight);
-                graphics.DrawString(_includeDate, dateFont, brush, rectangle, sf);
-            }
-
-            ev.HasMorePages = false;
+            fontSize = (float)(fontSize - 0.5);
+            font = new("Segoe UI", fontSize);
         }
+
+        Brush brush = new SolidBrush(Color.Black);
+        Rectangle rectangle = new(MarginLeft, MarginTop, BodyWidth, maxHeight);
+        graphics.DrawString(_address, font, brush, rectangle);
+
+        if (_includeDate is not null)
+        {
+            StringFormat sf = new StringFormat();
+            sf.LineAlignment = StringAlignment.Far;
+            sf.Alignment = StringAlignment.Far;
+
+            rectangle = new(MarginLeft, MarginTop + BodyHeight - dateFontHeight, BodyWidth, dateFontHeight);
+            graphics.DrawString(_includeDate, dateFont, brush, rectangle, sf);
+        }
+
+        ev.HasMorePages = false;
     }
 }

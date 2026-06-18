@@ -44,7 +44,6 @@ public static class ApplicationServicesExtensions
                             new UpdateOptions() { AllowVersionDowngrade = true }));
 
             // Repositories
-            services.AddSingleton<IImportHistoryRepository, ImportHistoryRepository>();
             services.AddSingleton<ILocationsRepository, LocationsRepository>();
             services.AddSingleton<IPhonesRepository, PhonesRepository>();
             services.AddSingleton<ISimRepository, SimRepository>();

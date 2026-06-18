@@ -10,9 +10,8 @@ public interface IBaseReportMainViewModel : IViewModel
 {
 }
 
-public partial class BaseReportMainViewModel(IImportHistoryRepository importHistory, ISimRepository repository) : ViewModelBase, IBaseReportMainViewModel
+public partial class BaseReportMainViewModel(ISimRepository repository) : ViewModelBase, IBaseReportMainViewModel
 {
-    private readonly IImportHistoryRepository _import = importHistory ?? throw new ArgumentNullException(nameof(importHistory));
     private readonly ISimRepository _repository = repository ?? throw new ArgumentNullException(nameof(repository));
 
     public ObservableCollection<BaseReportSim> BaseReportSims { get; } = [];
@@ -45,8 +44,7 @@ public partial class BaseReportMainViewModel(IImportHistoryRepository importHist
 
     public override async Task LoadAsync()
     {
-        ImportHistory? importHistory = await _import.GetLatestImportAsync(ImportType.BaseReport);
-        LatestImport = importHistory is null ? $"Latest Import: None" : $"Latest Import: {importHistory.Run} ({importHistory.ImportDate})";
+        LatestImport = $"Latest Import: {await _repository.GetLatestBillingPeriod()}";
     }
 }
 

@@ -2,6 +2,12 @@
 
 namespace PhoneAssistant.Model;
 
+public interface IImportHistoryRepository
+{
+    Task<ImportHistory> CreateAsync(ImportType importType, string file);
+    Task<ImportHistory?> GetLatestImportAsync(ImportType importType);
+}
+
 public sealed class ImportHistoryRepository(PhoneAssistantDbContext dbContext) : IImportHistoryRepository
 {
     private readonly PhoneAssistantDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));

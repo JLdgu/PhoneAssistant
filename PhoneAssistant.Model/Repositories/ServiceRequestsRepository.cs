@@ -1,8 +1,10 @@
 ﻿namespace PhoneAssistant.Model;
 
-public sealed class ServiceRequestsRepository : IServiceRequestsRepository
+public interface IServiceRequestsRepository
 {
-    private readonly PhoneAssistantDbContext _dbContext;
+}
 
-    public ServiceRequestsRepository(PhoneAssistantDbContext dbContext) => _dbContext = dbContext;
+public sealed class ServiceRequestsRepository(PhoneAssistantDbContext dbContext) : IServiceRequestsRepository
+{
+    private readonly PhoneAssistantDbContext _dbContext = dbContext;
 }

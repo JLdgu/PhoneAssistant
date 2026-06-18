@@ -11,8 +11,6 @@ public partial class PhoneAssistantDbContext : DbContext
 
     public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
 
-    public DbSet<ImportHistory> Imports => Set<ImportHistory>();
-
     public DbSet<Location> Locations => Set<Location>();
 
     public DbSet<Phone> Phones => Set<Phone>();
@@ -42,14 +40,6 @@ public partial class PhoneAssistantDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<ImportHistory>()
-            .ToTable("ImportHistory")
-            .HasKey(e => new { e.Name, e.Run });
-        modelBuilder.Entity<ImportHistory>()
-            .Property(e => e.Name).HasConversion(n => n.ToString(), n => Enum.Parse<ImportType>(n));
-        modelBuilder.Entity<ImportHistory>()
-            .Property(e => e.ImportDate).HasDefaultValueSql("CURRENT_TIMESTAMP");   
-
         modelBuilder.Entity<Location>(l =>
         {
             l.HasKey(e => e.Name);

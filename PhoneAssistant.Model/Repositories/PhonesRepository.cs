@@ -2,6 +2,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PhoneAssistant.Model;
 
+public interface IPhonesRepository
+{
+    Task<bool> AssetTagUniqueAsync(string? assetTag);
+    Task<bool> ConcurrentChange(string imei, string lastUpdate);
+    Task CreateAsync(Phone phone);
+    Task<bool> ExistsAsync(string imei);
+    Task<IEnumerable<Phone>> GetActivePhonesAsync();
+    Task<IEnumerable<Phone>> GetAllPhonesAsync();
+    Task<Phone?> GetPhoneAsync(string imei);
+    Task<bool> UserHasProductionPhone(string user);
+    Task<bool> PhoneNumberExistsAsync(string phoneNumber);
+    Task<UpdateStatus> UpdateAsync(Phone phone);
+    Task UpdateStatusAsync(string imei, string status);
+}
 public sealed class PhonesRepository(PhoneAssistantDbContext dbContext) : IPhonesRepository
 {
     public async Task<bool> AssetTagUniqueAsync(string? assetTag)

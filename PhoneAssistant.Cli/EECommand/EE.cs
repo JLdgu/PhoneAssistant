@@ -1,13 +1,9 @@
-﻿using System.CommandLine;
-using System.IO.Compression;
-using System.Numerics;
-using System.Text;
-
-using FluentResults;
-
+﻿using FluentResults;
 using PhoneAssistant.Model;
-
 using Serilog;
+using System.CommandLine;
+using System.IO.Compression;
+using System.Text;
 
 namespace PhoneAssistant.Cli.EECommand;
 
@@ -90,9 +86,9 @@ internal static class EE
         Log.Information("Billing period identified as: {BillingPeriod}", billingPeriod);
 
         PhoneAssistantDbContext dbContext = ModelContext.Create();
-        ImportHistoryRepository importRepository = new(dbContext);
-        bool runExists = importRepository.RunExistsAsync(ImportType.BaseReport, billingPeriod).GetAwaiter().GetResult();
-        if (runExists)
+        SimRepository repository = new(dbContext);
+        string latestBillingPeriod = repository.GetLatestBillingPeriod().GetAwaiter().GetResult();
+        if (latestBillingPeriod == billingPeriod)
         {
             Log.Error("A run for this billing period already exists.");
             return;
@@ -145,7 +141,6 @@ internal static class EE
             dbContext.Sims.Add(sim);
         }
 
-        importRepository.CreateAsync(ImportType.BaseReport, billingPeriod).GetAwaiter().GetResult();
         dbContext.SaveChanges();
         Log.Information("Import completed. {LineCount} records processed.", lineCount);
     }

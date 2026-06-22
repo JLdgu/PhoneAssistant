@@ -13,7 +13,7 @@
         <StartupObject>PhoneAssistant.WPF.App</StartupObject>
         <TargetFramework>net10.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
-        <Version>1.606.9</Version>
+        <Version>1.606.21</Version>
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
 

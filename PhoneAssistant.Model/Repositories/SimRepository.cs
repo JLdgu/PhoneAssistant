@@ -39,8 +39,13 @@ public sealed class SimRepository(PhoneAssistantDbContext dbContext) : ISimRepos
 
     public async Task<string?> GetSimNumberAsync(string phoneNumber)
     {
-        Sim? sim = await dbContext.Sims.FindAsync(phoneNumber);
+        string? simNumber = await dbContext.Sims
+            .Where(p => p.PhoneNumber == phoneNumber)
+            .OrderByDescending(p => p.BillingPeriod)
+            .AsNoTracking()
+            .Select(s => s.SIMNumber)
+            .FirstOrDefaultAsync();
 
-        return sim?.SIMNumber;
+        return simNumber;
     }
 }

@@ -9,4 +9,5 @@ public class Sim
     public required ulong BroadbandData { get; set; }
     public required uint TextMessages { get; set; }
     public required uint VoiceCalls { get; set; }
+    public bool? Esim { get; set; }
 }

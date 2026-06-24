@@ -17,6 +17,9 @@ public partial class BaseReportMainViewModel(ISimRepository repository) : ViewMo
     public ObservableCollection<BaseReportSim> BaseReportSims { get; } = [];
 
     [ObservableProperty]
+    public partial bool? Esim { get; set; }
+
+    [ObservableProperty]
     public partial string LatestImport {  get; set; } = string.Empty;
 
     [ObservableProperty]
@@ -65,6 +68,7 @@ public sealed class BaseReportSim : Sim
         BroadbandData = sim.BroadbandData;
         TextMessages = sim.TextMessages;
         VoiceCalls = sim.VoiceCalls;
+        Esim = sim.Esim;
         
         BroadbandDataText = FormatBytes(sim.BroadbandData);
         if (BroadbandData == 0)

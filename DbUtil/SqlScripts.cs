@@ -14,6 +14,7 @@ public class SqlScripts
             new Script("Restructure Locations",RestructureLocations),
             new Script("Add 3 columns to Phones", Add3ColumnsToPhones),
             new Script("Create SIMs Table", CreateSIMsTable),
+            new Script("Add eSIM to SIMs Table", "ALTER TABLE Sims ADD COLUMN eSIM INTEGER;")
         ];
     }
 

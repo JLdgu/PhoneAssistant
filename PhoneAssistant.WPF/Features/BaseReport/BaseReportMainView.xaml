@@ -70,6 +70,9 @@
                                     Header="Phone Number" />
                 <DataGridTextColumn Binding="{Binding BillingPeriod}" Header="Billing Period" />
                 <DataGridTextColumn Binding="{Binding SIMNumber}" Header="SIM Number" />
+                <DataGridCheckBoxColumn Binding="{Binding Esim, UpdateSourceTrigger=PropertyChanged, TargetNullValue=False}"
+                                        Header="eSIM"
+                                        IsThreeState="False" />
                 <DataGridTextColumn Binding="{Binding UserName}" Header="User Name" />
                 <DataGridTemplateColumn Header="Broadband Data">
                     <DataGridTemplateColumn.CellTemplate>

@@ -72,8 +72,12 @@ public partial class PhoneAssistantDbContext : DbContext
             entity.HasIndex(e => e.ScriptName, "IX_SchemaVersion_ScriptName").IsUnique();
         });
 
-        modelBuilder.Entity<Sim>()
-            .HasKey(s => new { s.PhoneNumber, s.BillingPeriod});               
+        modelBuilder.Entity<Sim>( s =>
+        {
+            s.HasKey(s => new { s.PhoneNumber, s.BillingPeriod});
+
+            s.Property(s => s.Esim).HasColumnName("eSIM");
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }

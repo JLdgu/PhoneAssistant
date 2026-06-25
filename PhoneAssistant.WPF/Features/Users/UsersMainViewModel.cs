@@ -71,11 +71,14 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
 
         ProgressVisibility = Visibility.Collapsed;
     }
-    private SearchResultCollection PersonSearch(string name)
+    private static SearchResultCollection PersonSearch(string name)
     {
-        using DirectoryEntry entry = new DirectoryEntry("LDAP://DC=ds2,DC=devon,DC=gov,DC=uk");
-        DirectorySearcher searcher = new DirectorySearcher(entry);
-        searcher.Filter = $"(&(objectClass=user)(objectCategory=person)(CN=*{name}*))";
+        using DirectoryEntry entry = new("LDAP://ds2.devon.gov.uk");
+        entry.AuthenticationType = AuthenticationTypes.Secure;
+        DirectorySearcher searcher = new(entry)
+        {
+            Filter = $"(&(objectClass=user)(objectCategory=person)(CN=*{name}*))"
+        };
         searcher.PropertiesToLoad.Add("displayName");
         searcher.PropertiesToLoad.Add("description");
         searcher.PropertiesToLoad.Add("lastLogon");
@@ -90,19 +93,19 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
     }
 
     [ObservableProperty]
-    private Visibility _progressVisibility = Visibility.Collapsed;
+    public partial Visibility ProgressVisibility { get; set; } = Visibility.Collapsed;
 
     [ObservableProperty]
-    private bool _noResultsFound;
+    public partial bool NoResultsFound { get; set; }
 
-    private string ParsePropertyString(ResultPropertyValueCollection resultPropertyValueCollection)
+    private static string ParsePropertyString(ResultPropertyValueCollection resultPropertyValueCollection)
     {
         if (resultPropertyValueCollection is null) return string.Empty;
         if (resultPropertyValueCollection.Count == 0) return string.Empty;
         return resultPropertyValueCollection[0].ToString() ?? string.Empty;
     }
 
-    private string ParsePropertyDateTime(ResultPropertyValueCollection resultPropertyValueCollection)
+    private static string ParsePropertyDateTime(ResultPropertyValueCollection resultPropertyValueCollection)
     {
         if (resultPropertyValueCollection is null) return string.Empty;
         if (resultPropertyValueCollection.Count == 0) return string.Empty;

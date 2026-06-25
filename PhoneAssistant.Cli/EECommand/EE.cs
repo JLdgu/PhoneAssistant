@@ -123,8 +123,15 @@ internal static class EE
         foreach (var phoneSummary in phoneSummariesResult.Value)
         {
             string simNumber = "Unknown";
+            bool eSIM = false;
             if (simDetailsResult.Value.TryGetValue(phoneSummary.Key, out var simDetail))
+            {
                 simNumber = simDetail.SimNumber;
+                if (string.Equals(simDetail.SimType, "eSIM", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    eSIM = true;
+                }
+            }
 
             var sim = new Sim
             {
@@ -134,7 +141,8 @@ internal static class EE
                 BroadbandData = phoneSummary.Value.BroadbandData,
                 TextMessages = phoneSummary.Value.TextMessageCount,
                 UserName = phoneSummary.Value.UserName,
-                VoiceCalls = phoneSummary.Value.VoiceCallCount
+                VoiceCalls = phoneSummary.Value.VoiceCallCount,
+                Esim = eSIM
             };
 
             lineCount++;

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.FileProviders;
 using PhoneAssistant.Model;
+
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Reflection;
@@ -43,9 +45,12 @@ internal sealed class PrintEnvelope : IPrintEnvelope
         _orderDetails = orderDetails;
         _verticalPosition = MARGIN_TOP;
 
+        string documentName = _orderDetails.Phone.Ticket > 999999
+            ? $"Envelope Insert: Incident# {_orderDetails.Phone.Ticket} {_orderDetails.Phone.NewUser}"
+            : $"Envelope Insert: SR# {_orderDetails.Phone.Ticket} {_orderDetails.Phone.NewUser}";
         PrintDocument pd = new()
         {
-            DocumentName = $"SR{_orderDetails.Phone.Ticket} {_orderDetails.Phone.NewUser} Envelope Insert"
+            DocumentName = documentName
         };
         pd.PrinterSettings.Copies = 1;
         pd.DefaultPageSettings.Landscape = false;

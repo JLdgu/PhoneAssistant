@@ -67,13 +67,37 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Width="120"
                                     Binding="{Binding PhoneNumber}"
-                                    Header="Phone Number" />
-                <DataGridTextColumn Binding="{Binding BillingPeriod}" Header="Billing Period" />
-                <DataGridTextColumn Binding="{Binding SIMNumber}" Header="SIM Number" />
+                                    Header="Phone Number"
+                                    IsReadOnly="True">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding BillingPeriod}"
+                                    Header="Billing Period"
+                                    IsReadOnly="True" />
+                <DataGridTextColumn Binding="{Binding SIMNumber}" Header="SIM Number">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <DataGridCheckBoxColumn Binding="{Binding Esim, UpdateSourceTrigger=PropertyChanged, TargetNullValue=False}"
                                         Header="eSIM"
+                                        IsReadOnly="True"
                                         IsThreeState="False" />
-                <DataGridTextColumn Binding="{Binding UserName}" Header="User Name" />
+                <DataGridTextColumn Binding="{Binding UserName}"
+                                    Header="User Name"
+                                    IsReadOnly="True">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <DataGridTemplateColumn Header="Broadband Data">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -93,8 +117,24 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Binding="{Binding TextMessages}" Header="Text Messages" />
-                <DataGridTextColumn Binding="{Binding VoiceCalls}" Header="Voice Calls" />
+                <DataGridTextColumn Binding="{Binding TextMessages}"
+                                    Header="Text Messages"
+                                    IsReadOnly="True">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding VoiceCalls}"
+                                    Header="Voice Calls"
+                                    IsReadOnly="True">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -1,4 +1,4 @@
-﻿
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PhoneAssistant.Model;
@@ -100,8 +100,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
             ViewModelType.Users => _usersMainViewModel,
             _ => throw new NotImplementedException()
         };
-        _appSettings.ApplicationSettings.CurrentView = (int)selectedViewModelType;
-        _appSettings.Save();
+
+        if (_appSettings.ApplicationSettings.CurrentView != (int)selectedViewModelType)
+        {
+            _appSettings.ApplicationSettings.CurrentView = (int)selectedViewModelType;
+            _appSettings.Save();
+        }
 
         await SelectedViewModel.LoadAsync();
     }

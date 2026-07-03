@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using PhoneAssistant.Model;
@@ -8,6 +8,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Media;
+
 using Velopack;
 
 namespace PhoneAssistant.WPF.Features.Settings;
@@ -20,8 +22,8 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
     private readonly ILogger _logger;
     private UpdateInfo? _updateInfo;
 
-    public SettingsMainViewModel(IApplicationSettingsRepository appSettings, 
-                                 IThemeWrapper themeWrapper, 
+    public SettingsMainViewModel(IApplicationSettingsRepository appSettings,
+                                 IThemeWrapper themeWrapper,
                                  UpdateManager updateManager,
                                  Serilog.ILogger logger)
     {
@@ -96,15 +98,14 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
 
     #region Database Settings
     [ObservableProperty]
-    private string _database;
+    public partial string Database { get; set; }
 
     partial void OnDatabaseChanged(string value)
     {
-        if (_appSettings.ApplicationSettings.Database != value)
-        {
-            _appSettings.ApplicationSettings.Database = value;
-            _appSettings.Save();
-        }
+        if (_appSettings.ApplicationSettings.Database == value) return;
+
+        _appSettings.ApplicationSettings.Database = value;
+        _appSettings.Save();
     }
 
     [RelayCommand]
@@ -129,19 +130,21 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
 
     #region Printer Settings
     [ObservableProperty]
-    private bool _printToPrinter;
+    public partial bool PrintToPrinter { get; set; }
 
     [ObservableProperty]
-    private bool _printToFile;
+    public partial bool PrintToFile { get; set; }
 
     partial void OnPrintToFileChanged(bool value)
     {
+        if (_appSettings.ApplicationSettings.PrintToFile == value) return;
+
         _appSettings.ApplicationSettings.PrintToFile = value;
         _appSettings.Save();
     }
 
     [ObservableProperty]
-    private string _printer;
+    public partial string Printer { get; set; }
     partial void OnPrinterChanged(string value)
     {
         if (_appSettings.ApplicationSettings.Printer == value) return;
@@ -151,7 +154,7 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
     }
 
     [ObservableProperty]
-    private string _printFile;
+    public partial string PrintFile { get; set; }
 
     partial void OnPrintFileChanged(string value)
     {
@@ -164,19 +167,21 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
 
     #region DymoPrinter Settings
     [ObservableProperty]
-    private bool _dymoPrintToPrinter;
+    public partial bool DymoPrintToPrinter { get; set; }
 
     [ObservableProperty]
-    private bool _dymoPrintToFile;
+    public partial bool DymoPrintToFile { get; set; }
 
     partial void OnDymoPrintToFileChanged(bool value)
     {
+        if (_appSettings.ApplicationSettings.DymoPrintToFile == value) return;
+
         _appSettings.ApplicationSettings.DymoPrintToFile = value;
         _appSettings.Save();
     }
 
     [ObservableProperty]
-    private string _dymoPrinter;
+    public partial string DymoPrinter { get; set; }
     partial void OnDymoPrinterChanged(string value)
     {
         if (_appSettings.ApplicationSettings.DymoPrinter == value) return;
@@ -186,7 +191,7 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
     }
 
     [ObservableProperty]
-    private string _dymoPrintFile;
+    public partial string DymoPrintFile { get; set; }
 
     partial void OnDymoPrintFileChanged(string value)
     {
@@ -199,8 +204,8 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
 
     [ObservableProperty]
     [NotifyDataErrorInfo]
-    [Range(100000,999999, ErrorMessage = "Ticket must be 6 digits")]
-    private string _defaultDecommissionedTicket;
+    [Range(100000, 999999, ErrorMessage = "Ticket must be 6 digits")]
+    public partial string DefaultDecommissionedTicket { get; set; }
 
     partial void OnDefaultDecommissionedTicketChanged(string value)
     {
@@ -213,28 +218,33 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
 
     #region Mode Setting
     [ObservableProperty]
-    private bool colourThemeDark;
+    public partial bool ColourThemeDark { get; set; }
 
     partial void OnColourThemeDarkChanged(bool value)
     {
+        if (_appSettings.ApplicationSettings.DarkMode == value) return;
+
         _appSettings.ApplicationSettings.DarkMode = value;
         _appSettings.Save();
-
+#if DEBUG
+        _themeWrapper.ModifyTheme(value,Colors.Orange,Colors.Yellow);
+#else
         _themeWrapper.ModifyTheme(value);
+#endif
     }
 
     [ObservableProperty]
-    private bool colourThemeLight;
+    public partial bool ColourThemeLight { get; set; }
     #endregion
 
     #region Update Application
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(UpdateAndRestartCommand))]
-    private ApplicationUpdateState _updateState = ApplicationUpdateState.Default;
+    public partial ApplicationUpdateState UpdateState { get; set; } = ApplicationUpdateState.Default;
 
     [ObservableProperty]
-    private string? _currentVersion;
+    public partial string? CurrentVersion { get; set; }
 
     private async Task CheckForUpdate()
     {
@@ -242,7 +252,7 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
 
         if (_updateManager is null)
             return;
-            
+
         if (!_updateManager.IsInstalled)
         {
             NewVersion = $" Version 9.9.999 available";
@@ -267,10 +277,10 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
     private const int MinimumDesktopVersion = 10;
 
     [ObservableProperty]
-    private Visibility _dotNetDesktopVersionWarning = Visibility.Collapsed;
+    public partial Visibility DotNetDesktopVersionWarning { get; set; } = Visibility.Collapsed;
 
     [ObservableProperty]
-    private string? _newVersion = "No updates outstanding";
+    public partial string? NewVersion { get; set; } = "No updates outstanding";
 
     private bool CanUpdate() => UpdateState == ApplicationUpdateState.UpdateAvailable && _desktopVersion == MinimumDesktopVersion;
 
@@ -281,7 +291,7 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
             return;
 
         _logger.Debug("UpdateAndRestart Started");
-        
+
         await _updateManager.DownloadUpdatesAsync(_updateInfo).ConfigureAwait(true);
         _logger.Debug("DownloadUpdate DownloadUpdatesAsync() called");
         UpdateState = ApplicationUpdateState.UpdateDownloaded;

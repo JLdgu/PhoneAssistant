@@ -38,7 +38,7 @@ public partial class AddItemViewModelTests
     {
         Mock<ISimRepository> sims = _mocker.GetMock<ISimRepository>();
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-        sims.Setup(r => r.GetSimNumberAsync("07123456789")).ReturnsAsync((string)null);
+        sims.Setup(r => r.GetSimNumber("07123456789")).ReturnsAsync((string)null);
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
         _ = MockValidator();
         AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
@@ -117,7 +117,7 @@ public partial class AddItemViewModelTests
     public async Task OnPhoneNumberChanged_ShouldSetSimNumber_WhenSimExistsAsync()
     {
         Mock<ISimRepository> repository = _mocker.GetMock<ISimRepository>();
-        repository.Setup(r => r.GetSimNumberAsync("07123456789")).ReturnsAsync("sim number");
+        repository.Setup(r => r.GetSimNumber("07123456789")).ReturnsAsync("sim number");
         _ = MockValidator();
         AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 

@@ -63,7 +63,7 @@ public sealed class SimsMainViewModelTests
     {
         MockValidator();
         Mock<ISimRepository> baseRepository = _mocker.GetMock<ISimRepository>();
-        baseRepository.Setup(r => r.GetSimNumberAsync("01234567890")).ReturnsAsync("sim number");
+        baseRepository.Setup(r => r.GetSimNumber("01234567890")).ReturnsAsync("sim number");
         var vm = _mocker.CreateInstance<SimsMainViewModel>();
 
         vm.NewUser = "Alice";

@@ -164,7 +164,7 @@ public sealed partial class AddItemViewModel : ValidatableViewModel<AddItemViewM
         
         await ValidatePropertyAsync(nameof(PhoneNumber));
 
-        string? simNumber = await _simRepository.GetSimNumberAsync(value);
+        string? simNumber = await _simRepository.GetSimNumber(value);
 
         if (simNumber is null) return;
 

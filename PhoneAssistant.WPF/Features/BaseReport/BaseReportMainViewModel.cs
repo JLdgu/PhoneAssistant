@@ -32,7 +32,7 @@ public partial class BaseReportMainViewModel(ISimRepository repository) : ViewMo
 
         BaseReportSims.Clear();
 
-        IEnumerable<Sim> sims = await _repository.GetSim(SearchPhoneNumber);
+        IEnumerable<Sim> sims = await _repository.GetSimsForPhoneNumber(SearchPhoneNumber);
         if (!sims.Any())
             return;
 

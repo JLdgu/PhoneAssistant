@@ -211,7 +211,7 @@ public sealed partial class PhonesItemViewModel : ObservableObject
         else
         {
             _phone.PhoneNumber = value;
-            string? simNumber = await _simRepository.GetSimNumberAsync(value);
+            string? simNumber = await _simRepository.GetSimNumber(value);
             if (simNumber is not null)
             {
                 _phone.SimNumber = simNumber;

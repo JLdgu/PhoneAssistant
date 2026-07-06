@@ -25,7 +25,7 @@ public sealed partial class SimsMainViewModel(ISimRepository simRepository,
     {
         await ValidatePropertyAsync(nameof(PhoneNumber));        
 
-        SimNumber = await _simRepository.GetSimNumberAsync(PhoneNumber!);
+        SimNumber = await _simRepository.GetSimNumber(PhoneNumber!);
     }
 
     [ObservableProperty]

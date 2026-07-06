@@ -38,19 +38,48 @@
                        Text="{Binding LatestImport}"
                        TextAlignment="Right" />
         </Grid>
-        <TextBox x:Name="Search"
-                 Grid.Row="1"
-                 Width="250"
-                 Margin="0,5,0,5"
-                 HorizontalAlignment="Left"
-                 materialDesign:HintAssist.Hint="Phone Number"
-                 materialDesign:TextFieldAssist.HasClearButton="True"
-                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                 Text="{Binding SearchPhoneNumber, UpdateSourceTrigger=PropertyChanged}">
-            <TextBox.InputBindings>
-                <KeyBinding Key="Enter" Command="{Binding EnterKeyCommand}" />
-            </TextBox.InputBindings>
-        </TextBox>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <TextBox x:Name="SearchPhoneNumber"
+                     Width="160"
+                     Margin="10,5,0,5"
+                     HorizontalAlignment="Left"
+                     materialDesign:HintAssist.Hint="Phone Number"
+                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                     materialDesign:TextFieldAssist.HasClearButton="True"
+                     MaxLength="12"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     Text="{Binding SearchPhoneNumber, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding PhoneNumberSearchCommand}" />
+                </TextBox.InputBindings>
+            </TextBox>
+            <TextBox x:Name="SearchSimNumber"
+                     Width="160"
+                     Margin="10,5,0,5"
+                     HorizontalAlignment="Left"
+                     materialDesign:HintAssist.Hint="SIM Number"
+                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                     materialDesign:TextFieldAssist.HasClearButton="True"
+                     MaxLength="19"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     Text="{Binding SearchSimNumber, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding SimNumberSearchCommand}" />
+                </TextBox.InputBindings>
+            </TextBox>
+            <TextBox x:Name="SearchUserName"
+                     Width="160"
+                     Margin="10,5,0,5"
+                     HorizontalAlignment="Left"
+                     materialDesign:HintAssist.Hint="User Name"
+                     materialDesign:TextFieldAssist.HasClearButton="True"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     Text="{Binding SearchUserName, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding UserNameSearchCommand}" />
+                </TextBox.InputBindings>
+            </TextBox>
+        </StackPanel>
 
         <DataGrid x:Name="BaseReportDataGrid"
                   Grid.Row="2"
@@ -77,8 +106,16 @@
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding BillingPeriod}"
                                     Header="Billing Period"
-                                    IsReadOnly="True" />
-                <DataGridTextColumn Binding="{Binding SIMNumber}" Header="SIM Number">
+                                    IsReadOnly="True">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding SIMNumber}"
+                                    Header="SIM Number"
+                                    IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="VerticalAlignment" Value="Center" />

@@ -25,24 +25,50 @@ public partial class BaseReportMainViewModel(ISimRepository repository) : ViewMo
     [ObservableProperty]
     public partial string SearchPhoneNumber { get; set; } = string.Empty;
 
-    [RelayCommand]
-    private async Task EnterKey()
-    {
-        if (string.IsNullOrEmpty(SearchPhoneNumber)) return;
+    [ObservableProperty]
+    public partial string SearchSimNumber { get; set; } = string.Empty;
 
-        BaseReportSims.Clear();
+    [ObservableProperty]
+    public partial string SearchUserName { get; set; } = string.Empty;
+
+    [RelayCommand]
+    private async Task PhoneNumberSearch()
+    {
+        if (string.IsNullOrEmpty(SearchPhoneNumber) && string.IsNullOrEmpty(SearchSimNumber))  return;
 
         IEnumerable<Sim> sims = await _repository.GetSimsForPhoneNumber(SearchPhoneNumber);
+        LoadSimsIntoCollection(sims);
+    }
+
+    [RelayCommand]
+    private async Task SimNumberSearch()
+    {
+        if (string.IsNullOrEmpty(SearchSimNumber)) return;
+
+        IEnumerable<Sim> sims = await _repository.GetSimsForSimNumber(SearchSimNumber);
+        LoadSimsIntoCollection(sims);
+    }
+
+    [RelayCommand]
+    private async Task UserNameSearch()
+    {
+        if (string.IsNullOrEmpty(SearchUserName)) return;
+
+        IEnumerable<Sim> sims = await _repository.GetSimsForUserName(SearchUserName);
+        LoadSimsIntoCollection(sims);
+    }
+
+    private void LoadSimsIntoCollection(IEnumerable<Sim> sims)
+    {
+        BaseReportSims.Clear();
         if (!sims.Any())
             return;
-
         ulong maxBoadbandData = sims.Max(s => s.BroadbandData);
         foreach (var sim in sims)
         {
             BaseReportSim baseReportSim = new(sim, maxBoadbandData);
             BaseReportSims.Add(baseReportSim);
         }
-        
     }
 
     public override async Task LoadAsync()

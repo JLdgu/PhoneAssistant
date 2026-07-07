@@ -1,7 +1,8 @@
-﻿using Moq;
+using Moq;
 using Moq.AutoMock;
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Features.Settings;
+using System.Windows.Media;
 
 namespace PhoneAssistant.Tests.Features.Settings;
 
@@ -28,7 +29,7 @@ public sealed class SettingsMainViewModelTests
 
         await Assert.That(_appSettings.DarkMode).IsTrue();
         _applicationSettingsRepository.Verify(s => s.Save(), Times.Once());
-        themeWrapperMock.Verify(t => t.ModifyTheme(true), Times.Once());
+        themeWrapperMock.Verify(t => t.ModifyTheme(true, Colors.Orange, Colors.Yellow), Times.Once());
     }
 
     [Test]

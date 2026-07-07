@@ -14,7 +14,7 @@ public sealed class ApplicationSettingsRepository : IApplicationSettingsReposito
 
     public ApplicationSettingsRepository()
     {
-        string currentPath = Path.Combine(Directory.GetCurrentDirectory(), AppSettingsJSON);
+        string currentPath = Path.Combine(GetSolutionDirectory(), AppSettingsJSON);
 #if DEBUG
         _appSettingsPath = currentPath;
 
@@ -59,5 +59,21 @@ public sealed class ApplicationSettingsRepository : IApplicationSettingsReposito
     {
         string json = System.Text.Json.JsonSerializer.Serialize(ApplicationSettings, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(_appSettingsPath, json);
+    }
+
+    private static string GetSolutionDirectory()
+    {
+        string? currentDir = AppDomain.CurrentDomain.BaseDirectory;
+        while (currentDir is not null)
+        {
+            // Check if the current directory contains a .slnx file  
+            if (Directory.EnumerateFiles(currentDir, "*.slnx").Any())
+            {
+                return currentDir;
+            }
+            // Move up one directory  
+            currentDir = Directory.GetParent(currentDir)?.FullName;
+        }
+        throw new DirectoryNotFoundException("Solution directory not found.");
     }
 }

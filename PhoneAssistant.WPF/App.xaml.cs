@@ -72,11 +72,8 @@ public partial class App : System.Windows.Application
     protected override void OnStartup(StartupEventArgs e)
     {
 #if DEBUG
-        var helper = new PaletteHelper();
-        var theme = helper.GetTheme();
-        theme.SetPrimaryColor(Colors.Orange);
-        theme.SetSecondaryColor(Colors.Yellow);
-        helper.SetTheme(theme);
+        ApplicationSettingsRepository repo = new();
+        new ThemeWrapper().ModifyTheme(repo.ApplicationSettings.DarkMode, Colors.Orange, Colors.Yellow);
 #endif
 
         base.OnStartup(e);

@@ -8,7 +8,7 @@
              xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
              xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
              d:DataContext="{d:DesignInstance Type=local:EmailViewModel,
-                                     IsDesignTimeCreatable=False}"
+                                              IsDesignTimeCreatable=False}"
              d:DesignHeight="700"
              d:DesignWidth="1500"
              mc:Ignorable="d">
@@ -89,8 +89,7 @@
                                    Text="{Binding AssetTag}" />
                     </StackPanel>
 
-                    <StackPanel VerticalAlignment="Top"
-                                Orientation="Horizontal">
+                    <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
                         <TextBlock VerticalAlignment="Center"
                                    Style="{StaticResource MaterialDesignBody2TextBlock}"
                                    Text="Order Type" />
@@ -107,7 +106,7 @@
                         <Button Margin="20,0,0,0"
                                 Padding="0"
                                 d:Content="{materialDesign:PackIcon Kind=EmailOpenOutline,
-                                                                Size=35}"
+                                                                    Size=35}"
                                 Command="{Binding PrintEnvelopeCommand}"
                                 Style="{StaticResource MaterialDesignFlatLightButton}"
                                 ToolTip="Print Envelope Insert">
@@ -126,9 +125,9 @@
 
                 </StackPanel>
 
-                <StackPanel Grid.Column="1"
-                            Orientation="Vertical">
-                    <ComboBox Width="300"
+                <StackPanel Grid.Column="1" Orientation="Vertical">
+                    <ComboBox x:Name="Locations"
+                              Width="300"
                               Margin="10,0,0,5"
                               HorizontalAlignment="Left"
                               DisplayMemberPath="Name"
@@ -156,7 +155,7 @@
                         Padding="0"
                         Command="{Binding PrintDymoLabelCommand}"
                         Content="{materialDesign:PackIcon Kind=LabelOutline,
-                                                      Size=35}"
+                                                          Size=35}"
                         Style="{StaticResource MaterialDesignFlatLightButton}"
                         ToolTip="Print Dymo Label" />
 

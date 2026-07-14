@@ -125,30 +125,12 @@
 
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Vertical">
-                    <ComboBox x:Name="Locations"
-                              Width="300"
-                              Margin="10,0,0,5"
-                              HorizontalAlignment="Left"
-                              DisplayMemberPath="Name"
-                              ItemsSource="{Binding Locations}"
-                              SelectedItem="{Binding SelectedLocation}" />
-
-                    <TextBox x:Name="DeliveryAddress"
-                             Width="330"
-                             Height="165"
-                             Margin="10,0,0,10"
-                             HorizontalAlignment="Left"
-                             VerticalAlignment="Top"
-                             materialDesign:HintAssist.Hint="Delivery Address"
-                             AcceptsReturn="True"
-                             BorderThickness="1"
-                             FontSize="16"
-                             Text="{Binding DeliveryAddress}"
-                             TextChanged="DeliveryAddress_TextChanged"
-                             TextWrapping="Wrap"
-                             VerticalScrollBarVisibility="Auto" />
-                </StackPanel>
+                <shared:DeliveryAddressView x:Name="DeliveryAddressView"
+                                            Grid.Column="1"
+                                            DeliveryAddress="{Binding DeliveryAddress, Mode=TwoWay}"
+                                            Locations="{Binding Locations}"
+                                            SelectedLocation="{Binding SelectedLocation, Mode=TwoWay}"
+                                            TextChanged="DeliveryAddress_TextChanged" />
 
                 <Button Grid.Column="2"
                         Margin="20,0,0,0"

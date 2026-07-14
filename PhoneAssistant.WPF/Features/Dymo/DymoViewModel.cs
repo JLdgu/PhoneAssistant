@@ -12,21 +12,19 @@ public partial class DymoViewModel(IPrintDymoLabel dymoLabel, ILocationsReposito
     private readonly IPrintDymoLabel _dymoLabel = dymoLabel ?? throw new ArgumentNullException(nameof(dymoLabel));
     private readonly ILocationsRepository _locationsRepository = locationsRepository ?? throw new ArgumentNullException(nameof(locationsRepository));
 
+    private DeliveryAddressModel? _deliveryAddressModel;
     private bool _loaded = false;
-    public ObservableCollection<Location> Locations { get; set; } = [];
 
-    [ObservableProperty]
-    public partial Location? SelectedLocation { get; set; }
+    public ObservableCollection<Location> Locations => _deliveryAddressModel?.Locations ?? new ObservableCollection<Location>();
 
-    partial void OnSelectedLocationChanged(Location? value)
+    public Location? SelectedLocation
     {
-        if (value is null) return;
-
-        Label = value.Address;
+        get => _deliveryAddressModel?.SelectedLocation;
+        set { _deliveryAddressModel?.SelectedLocation = value; }
     }
 
     [ObservableProperty]
-    public partial string Label { get; set;} = string.Empty;
+    public partial string Label { get; set; } = string.Empty;
 
     [RelayCommand]
     private async Task PrintDymoLabel()
@@ -39,9 +37,13 @@ public partial class DymoViewModel(IPrintDymoLabel dymoLabel, ILocationsReposito
     {
         if (_loaded) return;
 
-        IEnumerable<Location> locations = await _locationsRepository.GetAllLocationsAsync();
-        foreach (var location in locations)
-            Locations.Add(location);
+        if (_deliveryAddressModel is null)
+        {
+            _deliveryAddressModel = new DeliveryAddressModel(_locationsRepository);
+            _deliveryAddressModel.SelectedLocationChanged += (s, v) => { if (v is not null) Label = v.Address; };
+        }
+
+        await _deliveryAddressModel.LoadAsync();
 
         _loaded = true;
     }

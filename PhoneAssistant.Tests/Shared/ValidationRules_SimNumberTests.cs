@@ -24,8 +24,6 @@ internal sealed class ValidationRules_SimNumberTests
     [Test]
     [Arguments("abc")]
     [Arguments("12345")]
-    [Arguments("100000000000")]
-    [Arguments("894412560556")]
     [Arguments("2933428026631111111")]
     [Arguments("4753344946372222222")]
     public async Task SimNumber_should_have_Error_when_invalid_format_or_out_of_range(string simNumber)

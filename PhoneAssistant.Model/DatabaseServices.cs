@@ -33,6 +33,7 @@ public static class DatabaseServices
 
             if (recent) return;
             string newBackup = Path.Combine(dbPath.FullName, dbName.Replace(".", $"{DateTime.Now.ToString("yyy-MM-dd")}."));
+            if (File.Exists(newBackup)) return;
             File.Copy(database, newBackup);
         }
         catch (Exception)

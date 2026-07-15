@@ -33,8 +33,8 @@ public partial class EmailView : UserControl
     }
     private void DeliveryAddress_TextChanged(object sender, TextChangedEventArgs e)
     {
-        string newValue = EmailViewModel.ReformatDeliveryAddress(DeliveryAddress.Text);
-        if (newValue != DeliveryAddress.Text)
-            DeliveryAddress.Text = newValue;
+        string newValue = EmailViewModel.ReformatDeliveryAddress(DeliveryAddressView.DeliveryAddress);
+        if (newValue != DeliveryAddressView.DeliveryAddress)
+            DeliveryAddressView.DeliveryAddress = newValue;
     }
 }

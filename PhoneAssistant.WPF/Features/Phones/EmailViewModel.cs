@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Shared;
@@ -18,6 +18,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     private readonly ILocationsRepository _locationsRepository = locationsRepository ?? throw new ArgumentNullException();
     private readonly IPrintEnvelope _printEnvelope = printEnvelope ?? throw new ArgumentNullException();
     private readonly IPrintDymoLabel _dymoLabel = dymoLabel ?? throw new ArgumentNullException();
+
+    private DeliveryAddressModel? _deliveryAddressModel;
 
     private OrderDetails? _orderDetails;
     public OrderDetails OrderDetails
@@ -78,10 +80,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     {
         if (_orderDetails is null) return;
 
-        await Task.Run(() =>
-        {
-            _printEnvelope.Execute(_orderDetails);
-        });
+        await Task.Run(() => _printEnvelope.Execute(_orderDetails));
         EnvelopePrinted = true;
     }
 
@@ -101,11 +100,39 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     }
 
     private bool _loaded = false;
-    public ObservableCollection<Location> Locations { get; set; } = [];
 
-    [ObservableProperty]
-    public partial Location? SelectedLocation { get; set; }
-    partial void OnSelectedLocationChanged(Location? value)
+    private void EnsureDeliveryAddressModelInitialized()
+    {
+        if (_deliveryAddressModel is not null) return;
+
+        _deliveryAddressModel = new DeliveryAddressModel(_locationsRepository);
+        _deliveryAddressModel.SelectedLocationChanged += DeliveryAddressModel_SelectedLocationChanged;
+    }
+
+    public ObservableCollection<Location> Locations
+    {
+        get
+        {
+            EnsureDeliveryAddressModelInitialized();
+            return _deliveryAddressModel!.Locations;
+        }
+    }
+
+    public Location? SelectedLocation
+    {
+        get
+        {
+            EnsureDeliveryAddressModelInitialized();
+            return _deliveryAddressModel!.SelectedLocation;
+        }
+        set
+        {
+            EnsureDeliveryAddressModelInitialized();
+            _deliveryAddressModel!.SelectedLocation = value;
+        }
+    }
+
+    private void DeliveryAddressModel_SelectedLocationChanged(object? sender, Location? value)
     {
         if (value is null) return;
 
@@ -116,6 +143,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
         DeliveryAddress = deliveryAddress;
         GenerateEmailHtml();
+
+        OnPropertyChanged(nameof(SelectedLocation));
     }
 
     [ObservableProperty]
@@ -138,7 +167,6 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
 
         return reformatted;
     }
-
     [ObservableProperty]
     private bool _generatingEmail;
 
@@ -155,12 +183,13 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     {
         if (_loaded) return;
 
-        IEnumerable<Location> locations = await _locationsRepository.GetAllLocationsAsync();
-
-        foreach (Location location in locations)
+        if (_deliveryAddressModel is null)
         {
-            Locations.Add(location);
+            _deliveryAddressModel = new DeliveryAddressModel(_locationsRepository);
+            _deliveryAddressModel.SelectedLocationChanged += DeliveryAddressModel_SelectedLocationChanged;
         }
+
+        await _deliveryAddressModel.LoadAsync();
 
         _loaded = true;
     }

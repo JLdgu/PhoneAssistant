@@ -6,6 +6,8 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
+             d:DataContext="{d:DesignInstance Type=local:DymoViewModel,
+                                              IsDesignTimeCreatable=False}"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -21,16 +23,9 @@
                     Margin="20"
                     HorizontalAlignment="Center"
                     Orientation="Horizontal">
-            <TextBox Width="330"
-                     Height="165"
-                     Margin="10,0,0,10"
-                     materialDesign:HintAssist.Hint="Label Details"
-                     AcceptsReturn="True"
-                     BorderThickness="1"
-                     FontSize="16"
-                     Text="{Binding Label}"
-                     TextWrapping="Wrap"
-                     VerticalScrollBarVisibility="Auto" />
+            <shared:DeliveryAddressView DeliveryAddress="{Binding Label, Mode=TwoWay}"
+                                        Locations="{Binding Locations}"
+                                        SelectedLocation="{Binding SelectedLocation, Mode=TwoWay}" />
             <Button Margin="20,0,0,0"
                     Padding="0"
                     Command="{Binding PrintDymoLabelCommand}"

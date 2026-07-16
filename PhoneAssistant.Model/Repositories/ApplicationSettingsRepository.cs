@@ -14,8 +14,8 @@ public sealed class ApplicationSettingsRepository : IApplicationSettingsReposito
 
     public ApplicationSettingsRepository()
     {
-        string currentPath = Path.Combine(GetSolutionDirectory(), AppSettingsJSON);
 #if DEBUG
+        string currentPath = Path.Combine(GetSolutionDirectory(), AppSettingsJSON);
         _appSettingsPath = currentPath;
 
         if (!File.Exists(_appSettingsPath))
@@ -29,6 +29,7 @@ public sealed class ApplicationSettingsRepository : IApplicationSettingsReposito
             ApplicationSettings = System.Text.Json.JsonSerializer.Deserialize<ApplicationSettings>(json) ?? throw new InvalidOperationException();
         }
 #else
+        string currentPath = Path.Combine(Directory.GetCurrentDirectory(), AppSettingsJSON);
         string parentDir = Directory.GetParent(Directory.GetCurrentDirectory())?.FullName ?? Directory.GetCurrentDirectory();
         string parentPath = Path.Combine(parentDir, AppSettingsJSON);
 

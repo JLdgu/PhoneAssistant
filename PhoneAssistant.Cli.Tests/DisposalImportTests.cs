@@ -4,6 +4,8 @@ using System.Text;
 using ClosedXML.Excel;
 using ExcelDataReader;
 
+using PhoneAssistant.Cli.DisposalCommand;
+
 namespace PhoneAssistant.Cli.Tests;
 
 public sealed class DisposalImportTests

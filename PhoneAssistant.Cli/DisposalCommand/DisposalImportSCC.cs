@@ -1,9 +1,12 @@
 ﻿using ExcelDataReader;
+
 using FluentResults;
+
 using Serilog;
+
 using System.Data;
 
-namespace PhoneAssistant.Cli;
+namespace PhoneAssistant.Cli.DisposalCommand;
 
 public record SccDisposal(string PrimaryKey, string? SecondaryKey, int Certificate);
 

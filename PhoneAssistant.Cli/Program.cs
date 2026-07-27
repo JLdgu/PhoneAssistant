@@ -1,4 +1,5 @@
-﻿using PhoneAssistant.Cli.EECommand;
+﻿using PhoneAssistant.Cli.DisposalCommand;
+using PhoneAssistant.Cli.EECommand;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using System.CommandLine;

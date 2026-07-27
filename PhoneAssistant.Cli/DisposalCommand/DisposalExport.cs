@@ -1,8 +1,10 @@
 ﻿using ClosedXML.Excel;
+
 using FluentResults;
+
 using Serilog;
 
-namespace PhoneAssistant.Cli;
+namespace PhoneAssistant.Cli.DisposalCommand;
 
 public record ExcelRow(string Name, int Certificate);
 

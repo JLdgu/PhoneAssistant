@@ -1,5 +1,6 @@
 ﻿using PhoneAssistant.Cli.DisposalCommand;
 using PhoneAssistant.Cli.EECommand;
+using PhoneAssistant.Cli.EsimCommand;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using System.CommandLine;
@@ -16,7 +17,7 @@ public sealed class Program
 
         Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
-            .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen)
+            .WriteTo.Console(theme: AnsiConsoleTheme.Code)
             .MinimumLevel.Debug()
 #if !DEBUG
             .WriteTo.File("pac.log")
@@ -27,6 +28,8 @@ public sealed class Program
             RootCommand rootCommand = new("Phone Assistant Command Line Interface");
 
             EE.Command(rootCommand);
+
+            Esim.Command(rootCommand);
 
             Disposal.Command(rootCommand);
                        

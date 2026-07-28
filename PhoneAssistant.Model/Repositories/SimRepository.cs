@@ -11,8 +11,8 @@ public interface ISimRepository
     Task<IEnumerable<Sim>> GetSimsForPhoneNumber(string phoneNumber);
     Task<IEnumerable<Sim>> GetSimsForSimNumber(string simNumber);
     Task<IEnumerable<Sim>> GetSimsForUserName(string userName);
-
     Task<string?> GetSimNumber(string phoneNumber);
+    Task UpdateOrCreateAsync(Sim sim);
 }
 
 public sealed class SimRepository(PhoneAssistantDbContext dbContext) : ISimRepository
@@ -30,6 +30,18 @@ public sealed class SimRepository(PhoneAssistantDbContext dbContext) : ISimRepos
             .Select(s => s.BillingPeriod)
             .FirstOrDefaultAsync();
         return latestBillingPeriod ?? "Unknown";
+    }
+
+    public async Task<IEnumerable<string>> GetEsims()
+    {
+        IEnumerable<string> phoneNumbers = await dbContext.Sims
+            .Where(p => p.Esim == true)
+            .AsNoTracking()
+            .Select(s => s.PhoneNumber)
+            .Distinct()
+            .ToListAsync();
+
+        return phoneNumbers;
     }
 
     public async Task<string?> GetSimNumber(string phoneNumber)
@@ -72,5 +84,21 @@ public sealed class SimRepository(PhoneAssistantDbContext dbContext) : ISimRepos
             .AsNoTracking()
             .ToListAsync();
         return sims;
+    }
+
+    public async Task UpdateOrCreateAsync(Sim sim)
+    {
+        Sim? dbSim = await dbContext.Sims.FindAsync(sim.PhoneNumber, sim.BillingPeriod);
+        if (dbSim is  null)
+        {
+            await CreateAsync(sim);
+            return;
+        }
+        dbSim.SIMNumber = sim.SIMNumber;
+        dbSim.UserName = sim.UserName;
+        dbSim.BroadbandData = sim.BroadbandData;
+        dbSim.TextMessages = sim.TextMessages;
+        dbSim.VoiceCalls = sim.VoiceCalls;
+        await dbContext.SaveChangesAsync();
     }
 }

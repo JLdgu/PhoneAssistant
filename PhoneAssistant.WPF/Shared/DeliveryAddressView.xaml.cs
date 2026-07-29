@@ -25,6 +25,11 @@ public partial class DeliveryAddressView : UserControl
     // Inner TextBox TextChanged handler forwards to the control's RoutedEvent.
     private void InnerDeliveryAddress_TextChanged(object? sender, TextChangedEventArgs e)
     {
+        // Perform local formatting of the delivery address so formatting logic lives in the view.
+        string newValue = AddressFormatter.ReformatDeliveryAddress(DeliveryAddress);
+        if (newValue != DeliveryAddress)
+            DeliveryAddress = newValue;
+
         // Re-raise as this control's TextChanged routed event so parent handlers wired on the control are invoked.
         var args = new TextChangedEventArgs(TextChangedEvent, e.UndoAction);
         RaiseEvent(args);

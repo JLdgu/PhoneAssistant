@@ -110,33 +110,6 @@ public sealed class EmailViewModelTests
     }
 
     [Test]
-    public async Task ReformatDeliveryAddress_ShouldStripHeadingsAsync()
-    {
-        string actual = EmailViewModel.ReformatDeliveryAddress("""
-            User Name
-            First line of address
-            Devon County Council
-            Second line of address
-            Fishleigh Road
-            Town/city
-            Barnstaple
-            County
-            Devon
-            Postcode
-            EX31 3UD
-            """);
-
-        await Assert.That(actual).IsEqualTo("""
-            User Name
-            Devon County Council
-            Fishleigh Road
-            Barnstaple
-            Devon
-            EX31 3UD
-            """);
-    }
-
-    [Test]
     public async Task SelectedLocation_InterpolatesValuesFor_DeliveryAddress()
     {
         _phone.NewUser = "New User";

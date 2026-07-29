@@ -30,8 +30,8 @@
                  FontSize="16"
                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
                  Text="{Binding DeliveryAddress, ElementName=Root, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 TextChanged="InnerDeliveryAddress_TextChanged"
                  TextWrapping="Wrap"
-                 VerticalScrollBarVisibility="Auto"
-                 TextChanged="InnerDeliveryAddress_TextChanged" />
+                 VerticalScrollBarVisibility="Auto" />
     </StackPanel>
 </UserControl>

@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Shared;
 using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace PhoneAssistant.WPF.Features.Phones;
@@ -159,14 +158,6 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         GenerateEmailHtml();
     }
 
-    public static string ReformatDeliveryAddress(string address)
-    {
-        Regex regex = AddressReformat();
-
-        string reformatted = regex.Replace(address, string.Empty);
-
-        return reformatted;
-    }
     [ObservableProperty]
     private bool _generatingEmail;
 
@@ -194,6 +185,5 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         _loaded = true;
     }
 
-    [GeneratedRegex(@"First line of address\r\n|Second line of address\r\n|Town/City\r\n|County\r\n|Postcode\r\n", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-GB")]
-    private static partial Regex AddressReformat();
+
 }

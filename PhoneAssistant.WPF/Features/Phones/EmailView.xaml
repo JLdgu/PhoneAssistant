@@ -129,8 +129,7 @@
                                             Grid.Column="1"
                                             DeliveryAddress="{Binding DeliveryAddress, Mode=TwoWay}"
                                             Locations="{Binding Locations}"
-                                            SelectedLocation="{Binding SelectedLocation, Mode=TwoWay}"
-                                            TextChanged="DeliveryAddress_TextChanged" />
+                                            SelectedLocation="{Binding SelectedLocation, Mode=TwoWay}" />
 
                 <Button Grid.Column="2"
                         Margin="20,0,0,0"
@@ -147,7 +146,7 @@
                               Grid.ColumnSpan="4"
                               Height="375"
                               d:Visibility="Visible"
-                              local:WebBrowserHelper.NavigateTo="{Binding EmailHtml}"
+                              shared:WebBrowserHelper.NavigateTo="{Binding EmailHtml}"
                               Visibility="{Binding GeneratingEmail, Converter={StaticResource BooleanToVisibilityConverter}}"
                               ZoomFactor="0.8" />
             </Grid>

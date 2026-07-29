@@ -1,7 +1,6 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 
-namespace PhoneAssistant.WPF.Features.Phones;
+namespace PhoneAssistant.WPF.Shared;
 
 public static class WebBrowserHelper
 {

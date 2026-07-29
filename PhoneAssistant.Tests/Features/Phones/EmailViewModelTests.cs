@@ -1,4 +1,4 @@
-﻿using Moq;
+using Moq;
 using Moq.AutoMock;
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Features.Phones;

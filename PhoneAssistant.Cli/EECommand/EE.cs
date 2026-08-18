@@ -1,6 +1,9 @@
 ﻿using FluentResults;
+
 using PhoneAssistant.Model;
+
 using Serilog;
+
 using System.CommandLine;
 using System.IO.Compression;
 using System.Text;
@@ -16,7 +19,7 @@ internal static class EE
         description.AppendLine();
         description.AppendLine("Inputs");
         description.AppendLine("CMP-G01916_LONG_PHONE_SUMMARY_ccyymm.ZIP");
-        description.AppendLine("Manage SIMs.csv");
+        description.AppendLine("Manage SIMs ccyymm.csv");
         Command eeCommand = new("ee", description.ToString());
 
         Option<DirectoryInfo> folderOption = new("--folder", "-f")
@@ -38,12 +41,19 @@ internal static class EE
         };
         eeCommand.Add(folderOption);
 
-        eeCommand.SetAction(parseResult =>
+        Option<bool> force = new("--force")
+        {
+            Description = "Overwrite the history for an existing billing period",
+        };
+        eeCommand.Add(force);
+
+        eeCommand.SetAction(async (parseResult, cancellationToken) =>
         {
             try
             {
                 DirectoryInfo? folder = parseResult.GetValue(folderOption);
-                Execute(directory: folder);
+                bool forceOverwrite = parseResult.GetValue(force);
+                await ExecuteAsync(directory: folder, forceOverwrite: forceOverwrite);
             }
             catch (Exception ex)
             {
@@ -54,14 +64,44 @@ internal static class EE
         rootCommand.Add(eeCommand);
     }
 
-    private static void Execute(DirectoryInfo? directory)
+    private static async Task ExecuteAsync(DirectoryInfo? directory, bool forceOverwrite)
     {
         Log.Information("Looking for import files in folder: {Folder}", directory?.FullName);
 
-        FileInfo? manageSIMs = directory?.GetFiles("Manage SIMs.csv").FirstOrDefault();
+        FileInfo? summary = directory?.GetFiles("CMP-G01916_LONG_PHONE_SUMMARY_*.zip")
+                    .OrderByDescending(f => f.Name)
+                    .FirstOrDefault();
+        if (summary is null)
+        {
+            Log.Error("No 'CMP-G01916_LONG_PHONE_SUMMARY_ccyymm.zip' was found in the specified folder.");
+            return;
+        }
+
+        string billingPeriod = summary.Name.Replace(".zip", "", StringComparison.OrdinalIgnoreCase).Split('_').Last();
+        Log.Information("Billing period identified as: {BillingPeriod}", billingPeriod);
+
+        PhoneAssistantDbContext dbContext = ModelContext.Create();
+        SimRepository repository = new(dbContext);
+        string latestBillingPeriod = await repository.GetLatestBillingPeriod();
+        bool overwrite = false;
+        if (string.Compare(billingPeriod, latestBillingPeriod, StringComparison.Ordinal) <= 0)
+        {
+            if (forceOverwrite)
+            {
+                overwrite = true;
+                Log.Warning("A run for this billing period already exists. Overwriting due to --force option.");
+            }
+            else
+            {
+                Log.Error("A run for this billing period already exists. Use --force to overwrite.");
+                return;
+            }
+        }
+
+        FileInfo? manageSIMs = directory?.GetFiles("Manage SIMs *.csv").FirstOrDefault();
         if (manageSIMs is null)
         {
-            Log.Error("No 'Manage SIMs.csv' was found in the specified folder.");
+            Log.Error("No 'Manage SIMs ccyymm.csv' was found in the specified folder.");
             return;
         }
         Log.Information("Reading file {0}", manageSIMs.FullName);
@@ -72,27 +112,6 @@ internal static class EE
             Log.Error(simDetailsResult.Errors[0].Message);
             return;
         }
-
-        FileInfo? summary = directory?.GetFiles("CMP-G01916_LONG_PHONE_SUMMARY_*.zip")
-                    .OrderByDescending(f => f.Name)
-                    .FirstOrDefault();
-        if (summary is null)
-        {
-            Log.Error("No 'CMP-G01916_LONG_PHONE_SUMMARY_*.zip' was found in the specified folder.");
-            return;
-        }
-
-        string billingPeriod = summary.Name.Replace(".zip", "", StringComparison.OrdinalIgnoreCase).Split('_').Last();
-        Log.Information("Billing period identified as: {BillingPeriod}", billingPeriod);
-
-        PhoneAssistantDbContext dbContext = ModelContext.Create();
-        SimRepository repository = new(dbContext);
-        string latestBillingPeriod = repository.GetLatestBillingPeriod().GetAwaiter().GetResult();
-        if (latestBillingPeriod == billingPeriod)
-        {
-            Log.Error("A run for this billing period already exists.");
-            return;
-        }        
 
         using FileStream zipToOpen = new(summary.FullName, FileMode.Open, FileAccess.Read);
         using ZipArchive archive = new(zipToOpen, ZipArchiveMode.Read);
@@ -144,9 +163,12 @@ internal static class EE
                 VoiceCalls = phoneSummary.Value.VoiceCallCount,
                 Esim = eSIM
             };
+            if (overwrite)
+                await repository.UpdateOrCreateAsync(sim);
+            else
+                await repository.CreateAsync(sim);
 
             lineCount++;
-            dbContext.Sims.Add(sim);
         }
 
         dbContext.SaveChanges();

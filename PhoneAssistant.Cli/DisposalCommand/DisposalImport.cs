@@ -1,8 +1,10 @@
 ﻿using ExcelDataReader;
+
 using FluentResults;
+
 using System.Data;
 
-namespace PhoneAssistant.Cli;
+namespace PhoneAssistant.Cli.DisposalCommand;
 
 public record ExcelSheetData(string SheetName, int RowCount, Dictionary<int, Dictionary<int, string>> Rows);
 

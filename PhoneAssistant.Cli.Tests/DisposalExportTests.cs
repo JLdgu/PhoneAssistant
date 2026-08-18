@@ -1,5 +1,7 @@
 ﻿using FluentResults;
 
+using PhoneAssistant.Cli.DisposalCommand;
+
 namespace PhoneAssistant.Cli.Tests;
 
 public sealed class DisposalExportTests()

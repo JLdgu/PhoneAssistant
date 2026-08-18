@@ -1,4 +1,7 @@
 ﻿using FluentResults;
+
+using PhoneAssistant.Cli.DisposalCommand;
+
 using System.Data;
 
 namespace PhoneAssistant.Cli.Tests;

@@ -32,7 +32,10 @@ public class DbTestHelper : IDisposable
         var connection = new SqliteConnection(datasource);
         connection.Open();
         
-        Options = new DbContextOptionsBuilder<PhoneAssistantDbContext>().UseSqlite(connection!).Options;
+        Options = new DbContextOptionsBuilder<PhoneAssistantDbContext>()
+            //.LogTo(message => Console.WriteLine(message))
+            //.EnableSensitiveDataLogging()
+            .UseSqlite(connection!).Options;
         return connection;
     }
 

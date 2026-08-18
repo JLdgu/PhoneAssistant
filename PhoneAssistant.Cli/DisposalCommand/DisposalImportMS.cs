@@ -1,9 +1,12 @@
 ﻿using ExcelDataReader;
+
 using FluentResults;
+
 using Serilog;
+
 using System.Data;
 
-namespace PhoneAssistant.Cli;
+namespace PhoneAssistant.Cli.DisposalCommand;
 
 public record Device(string Name, string AssetTag, string SerialNumber, string Status, int Certificate = 0);
 

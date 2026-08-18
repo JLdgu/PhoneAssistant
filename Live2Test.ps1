@@ -18,4 +18,5 @@ If (Test-Path -Path $test)
 
 Copy-Item $live $test
 
-dotnet run --project DbUtil test
+$projectPath = Join-Path $PSScriptRoot 'DBUtil\DbUtil.csproj'
+dotnet run --project $projectPath test

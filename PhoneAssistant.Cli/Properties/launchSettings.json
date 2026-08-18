@@ -2,19 +2,15 @@
   "profiles": {
     "ee": {
       "commandName": "Project",
-      "commandLineArgs": "ee -f c:\\dev\\testdata\\eeImport"
+      "commandLineArgs": "ee -f c:\\dev\\testdata\\eeImport --force"
     },
-    "knox": {
+    "esim": {
       "commandName": "Project",
-      "commandLineArgs": "knox"
+      "commandLineArgs": "esim"
     },
     "disposal": {
       "commandName": "Project",
       "commandLineArgs": "disposal -f \"C:\\dev\\testData\\disposals\" "
-    },
-    "base": {
-      "commandName": "Project",
-      "commandLineArgs": "base -f \"C:\\dev\\PA Test Data\\Devon Base Report August.xlsx\" "
     }
   }
 }

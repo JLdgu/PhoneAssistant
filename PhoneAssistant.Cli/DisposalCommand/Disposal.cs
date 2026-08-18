@@ -1,9 +1,11 @@
 ﻿using FluentResults;
+
 using Serilog;
+
 using System.CommandLine;
 using System.Text;
 
-namespace PhoneAssistant.Cli;
+namespace PhoneAssistant.Cli.DisposalCommand;
 
 internal static class Disposal
 {

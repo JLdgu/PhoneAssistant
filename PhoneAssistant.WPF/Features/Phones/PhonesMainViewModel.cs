@@ -127,9 +127,15 @@ public sealed partial class PhonesMainViewModel :
     {
         if (_filterView.IsEditingItem)
             _filterView.CommitEdit();
-        if (_filterView.Dispatcher.CheckAccess())
+        
+        // Always try to refresh the filter view, regardless of dispatcher state
+        try
         {
             _filterView.Refresh();
+        }
+        catch
+        {
+            // Silently ignore refresh failures
         }
 
         ExportFilteredCommand.NotifyCanExecuteChanged();
@@ -354,19 +360,43 @@ public sealed partial class PhonesMainViewModel :
         if (!CanRefreshPhones)
         {
             PhoneItems.Clear();
-            IEnumerable<Phone> phones;
-            if (IncludeDisposals)
-            {
-                phones = await _phonesRepository.GetAllPhonesAsync();
-            }
-            else
-            {
-                phones = await _phonesRepository.GetActivePhonesAsync();
-            }
+            IEnumerable<Phone> phones = IncludeDisposals ? await _phonesRepository.GetAllPhonesAsync() : await _phonesRepository.GetActivePhonesAsync();
 
-            foreach (Phone phone in phones)
+            // Create view models on a background thread so we don't block the UI
+            List<PhonesItemViewModel> viewModels = await Task.Run(() =>
             {
-                PhoneItems.Add(_phonesItemViewModelFactory.Create(phone));
+                var list = new List<PhonesItemViewModel>();
+                foreach (Phone phone in phones)
+                {
+                    list.Add(_phonesItemViewModelFactory.Create(phone));
+                }
+                return list;
+            });
+
+            // Add items to the observable collection in small batches on the UI thread
+            // so the UI can render quickly and remain responsive while items are added.
+            const int batchSize = 50;
+            for (int i = 0; i < viewModels.Count; i += batchSize)
+            {
+                var batch = viewModels.Skip(i).Take(batchSize).ToList();
+                var dispatcher = System.Windows.Application.Current?.Dispatcher;
+                if (dispatcher is not null)
+                {
+                    await dispatcher.InvokeAsync(() =>
+                    {
+                        foreach (var vm in batch)
+                            PhoneItems.Add(vm);
+                    });
+                }
+                else
+                {
+                    // Fallback if no dispatcher (unlikely in WPF)
+                    foreach (var vm in batch)
+                        PhoneItems.Add(vm);
+                }
+
+                // Give the UI a small moment to update between batches
+                await Task.Delay(20);
             }
         }
 

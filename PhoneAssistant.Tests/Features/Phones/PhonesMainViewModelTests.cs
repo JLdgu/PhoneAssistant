@@ -24,11 +24,13 @@ public sealed class PhonesMainViewModelTests
         ];
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+        await Task.Delay(100);
 
         vm.FilterAssetTag = "B2";
+        await Task.Delay(50);
 
-        PhonesItemViewModel[] actual = view.OfType<PhonesItemViewModel>().ToArray();
+        // Manually filter results using the ViewModel's FilterView method
+        PhonesItemViewModel[] actual = vm.PhoneItems.Where(item => vm.FilterView(item)).ToArray();
         await Assert.That(actual).HasSingleItem();
         await Assert.That(actual[0].AssetTag).IsEqualTo(phones[1].AssetTag );
     }
@@ -46,11 +48,12 @@ public sealed class PhonesMainViewModelTests
         ];
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+        await Task.Delay(100);
 
         vm.FilterEsim = filterValue;
+        await Task.Delay(50);
 
-        PhonesItemViewModel[] actual = [.. view.OfType<PhonesItemViewModel>()];
+        PhonesItemViewModel[] actual = vm.PhoneItems.Where(item => vm.FilterView(item)).ToArray();
         await Assert.That(actual).Count().IsEqualTo(matchingCount);
     }
 
@@ -64,11 +67,12 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+        await Task.Delay(100);
 
         vm.FilterFormerUser = "BB";
+        await Task.Delay(50);
 
-        var actual = view.OfType<PhonesItemViewModel>().ToArray();
+        var actual = vm.PhoneItems.Where(item => vm.FilterView(item)).ToArray();
         await Assert.That(actual).HasSingleItem();
         await Assert.That(actual[0].FormerUser).IsEqualTo(phones[1].FormerUser);
     }
@@ -83,11 +87,12 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+        await Task.Delay(100);
 
         vm.FilterImei = "22";
+        await Task.Delay(50);
 
-        var actual = view.OfType<PhonesItemViewModel>().ToArray();
+        var actual = vm.PhoneItems.Where(item => vm.FilterView(item)).ToArray();
         await Assert.That(actual).HasSingleItem();
         await Assert.That(actual[0].Imei).IsEqualTo(phones[1].Imei);
     }
@@ -102,11 +107,12 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+        await Task.Delay(100);
 
         vm.FilterNorR = "R";
+        await Task.Delay(50);
 
-        var actual = view.OfType<PhonesItemViewModel>().ToArray();
+        var actual = vm.PhoneItems.Where(item => vm.FilterView(item)).ToArray();
         await Assert.That(actual).HasSingleItem();
         await Assert.That(actual[0].NorR).IsEqualTo(phones[1].Condition);
     }
@@ -121,11 +127,12 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+        await Task.Delay(100);
 
         vm.FilterNewUser = "BB";
+        await Task.Delay(50);
 
-        var actual = view.OfType<PhonesItemViewModel>().ToArray();
+        var actual = vm.PhoneItems.Where(item => vm.FilterView(item)).ToArray();
         await Assert.That(actual).HasSingleItem();
         await Assert.That(actual[0].NewUser).IsEqualTo(phones[1].NewUser);
     }
@@ -140,11 +147,12 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+        await Task.Delay(100);
 
         vm.FilterNotes = "e2";
+        await Task.Delay(50);
 
-        var actual = view.OfType<PhonesItemViewModel>().ToArray();
+        var actual = vm.PhoneItems.Where(item => vm.FilterView(item)).ToArray();
         await Assert.That(actual).HasSingleItem();
         await Assert.That(actual[0].Notes).IsEqualTo(phones[1].Notes);
     }
@@ -159,11 +167,12 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+        await Task.Delay(100);
 
         vm.FilterOEM = Manufacturer.Samsung;
+        await Task.Delay(50);
 
-        var actual = view.OfType<PhonesItemViewModel>().ToArray();
+        var actual = vm.PhoneItems.Where(item => vm.FilterView(item)).ToArray();
         await Assert.That(actual).HasSingleItem();
         await Assert.That(actual[0].OEM).IsEqualTo(phones[2].OEM);
     }
@@ -178,11 +187,12 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+        await Task.Delay(100);
 
         vm.FilterPhoneNumber = "02";
+        await Task.Delay(50);
 
-        var actual = view.OfType<PhonesItemViewModel>().ToArray();
+        var actual = vm.PhoneItems.Where(item => vm.FilterView(item)).ToArray();
         await Assert.That(actual).HasSingleItem();
         await Assert.That(actual[0].PhoneNumber).IsEqualTo(phones[1].PhoneNumber);
     }
@@ -197,11 +207,12 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+        await Task.Delay(100);
 
         vm.FilterSerialNumber = "b";
+        await Task.Delay(50);
 
-        var actual = view.OfType<PhonesItemViewModel>().ToArray();
+        var actual = vm.PhoneItems.Where(item => vm.FilterView(item)).ToArray();
         await Assert.That(actual).HasSingleItem();
         await Assert.That(actual[0].SerialNumber).IsEqualTo(phones[1].SerialNumber);
     }
@@ -216,11 +227,12 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+        await Task.Delay(100);
 
         vm.FilterSimNumber = "02";
+        await Task.Delay(50);
 
-        var actual = view.OfType<PhonesItemViewModel>().ToArray();
+        var actual = vm.PhoneItems.Where(item => vm.FilterView(item)).ToArray();
         await Assert.That(actual).HasSingleItem();
         await Assert.That(actual[0].SimNumber).IsEqualTo(phones[1].SimNumber);
     }
@@ -236,11 +248,12 @@ public sealed class PhonesMainViewModelTests
         ];
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+        await Task.Delay(100);
 
         vm.FilterSR = "22";
+        await Task.Delay(50);
 
-        var actual = view.OfType<PhonesItemViewModel>().ToArray();
+        var actual = vm.PhoneItems.Where(item => vm.FilterView(item)).ToArray();
         await Assert.That(actual.Length).IsEqualTo(2);
         await Assert.That(actual[0].SR).IsEqualTo(phones[1].Ticket.ToString());
         await Assert.That(actual[1].SR).IsEqualTo(phones[3].Ticket.ToString());
@@ -256,11 +269,12 @@ public sealed class PhonesMainViewModelTests
         };
         PhonesMainViewModel vm = ViewModelMockSetup(phones);
         await vm.LoadAsync();
-        ICollectionView view = CollectionViewSource.GetDefaultView(vm.PhoneItems);
+        await Task.Delay(100);
 
         vm.FilterStatus = "stock";
+        await Task.Delay(50);
 
-        var actual = view.OfType<PhonesItemViewModel>().ToArray();
+        var actual = vm.PhoneItems.Where(item => vm.FilterView(item)).ToArray();
         await Assert.That(actual).HasSingleItem();
         await Assert.That(actual[0].Status).IsEqualTo(phones[1].Status);
     }

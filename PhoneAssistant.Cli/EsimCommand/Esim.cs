@@ -37,7 +37,7 @@ public sealed class EsimExecutor
         Log.Information("eSim history update started");
 
         SimRepository repository = new(dbContext);
-        IEnumerable<string> phoneNumbers = await repository.GetEsims();
+        IEnumerable<Tuple<string,string>> phoneNumbers = await repository.GetEsims();
         if (!phoneNumbers.Any())
         {
             Log.Error("No eSims found.");
@@ -48,35 +48,23 @@ public sealed class EsimExecutor
         dbContext.SaveChanges();
     }
 
-    public static async Task CheckAndUpdateHistory(ISimRepository repository, IEnumerable<string> phoneNumbers)
+    public static async Task CheckAndUpdateHistory(ISimRepository repository, IEnumerable<Tuple<string,string>> phoneNumbers)
     {
-        foreach (string phoneNumber in phoneNumbers)
+        int updateCount = 0;
+        foreach (Tuple<string,string> phoneNumber in phoneNumbers)
         {
-            IEnumerable<Sim> sims = await repository.GetSimsForPhoneNumber(phoneNumber);
+            IEnumerable<Sim> sims = await repository.GetPhysicalSimsForPhoneNumberAndSimNumber(phoneNumber.Item1, phoneNumber.Item2);
             if (!sims.Any())
             {
-                Log.Error("No eSim history found for phone number {PhoneNumber}.", phoneNumber);
                 continue;
             }
-            string simNumber = string.Empty;
-            bool updateRequired = false;
-            Log.Information("Updating eSim history for phone number {PhoneNumber}", phoneNumber);
             foreach (Sim sim in sims)
             {
-                if (sim.Esim == true)
-                {
-                    simNumber = sim.SIMNumber;
-                    updateRequired = true;
-                    continue;
-                }
-
-                if (updateRequired && sim.SIMNumber == simNumber)
-                {
-                    sim.Esim = true;
-                    await repository.UpdateOrCreateAsync(sim);
-                    Log.Information("Updated eSim history {PhoneNumber} : {BillingPeriod}", phoneNumber, sim.BillingPeriod);
-                }
+                sim.Esim = true;
+                await repository.UpdateOrCreateAsync(sim);
+                updateCount++;
             }
         }
+        Log.Information("eSim history update completed. {UpdateCount} records updated.", updateCount);
     }
 }

@@ -1,5 +1,3 @@
-﻿using System.Numerics;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace PhoneAssistant.Model;
@@ -7,7 +5,9 @@ namespace PhoneAssistant.Model;
 public interface ISimRepository
 {
     Task CreateAsync(Sim sim);
+    Task<IEnumerable<Tuple<string, string>>> GetEsims();
     Task<string> GetLatestBillingPeriod();
+    Task<IEnumerable<Sim>> GetPhysicalSimsForPhoneNumberAndSimNumber(string phoneNumber, string simNumber);
     Task<IEnumerable<Sim>> GetSimsForPhoneNumber(string phoneNumber);
     Task<IEnumerable<Sim>> GetSimsForSimNumber(string simNumber);
     Task<IEnumerable<Sim>> GetSimsForUserName(string userName);
@@ -32,16 +32,25 @@ public sealed class SimRepository(PhoneAssistantDbContext dbContext) : ISimRepos
         return latestBillingPeriod ?? "Unknown";
     }
 
-    public async Task<IEnumerable<string>> GetEsims()
+    public async Task<IEnumerable<Tuple<string, string>>> GetEsims()
     {
-        IEnumerable<string> phoneNumbers = await dbContext.Sims
+        IEnumerable<Tuple<string, string>> phoneNumbers = await dbContext.Sims
             .Where(p => p.Esim == true)
             .AsNoTracking()
-            .Select(s => s.PhoneNumber)
+            .Select(s => new Tuple<string, string>(s.PhoneNumber, s.SIMNumber))
             .Distinct()
             .ToListAsync();
 
         return phoneNumbers;
+    }
+
+    public async Task<IEnumerable<Sim>> GetPhysicalSimsForPhoneNumberAndSimNumber(string phoneNumber, string simNumber)
+    {
+        IEnumerable<Sim> sims = await dbContext.Sims
+            .Where(p => p.PhoneNumber == phoneNumber && p.SIMNumber == simNumber && p.Esim != true)
+            .AsNoTracking()
+            .ToListAsync();
+        return sims;
     }
 
     public async Task<string?> GetSimNumber(string phoneNumber)
@@ -60,17 +69,20 @@ public sealed class SimRepository(PhoneAssistantDbContext dbContext) : ISimRepos
     {
         IEnumerable<Sim> sims = await dbContext.Sims
             .Where(p => p.PhoneNumber.Contains(phoneNumber))
-            .OrderByDescending(p => p.BillingPeriod)
+            .OrderByDescending(s => s.PhoneNumber)
+            .ThenByDescending(s => s.BillingPeriod)
             .AsNoTracking()
             .ToListAsync();
         return sims;
     }
 
+
     public async Task<IEnumerable<Sim>> GetSimsForSimNumber(string simNumber)
     {
         IEnumerable<Sim> sims = await dbContext.Sims
             .Where(s => s.SIMNumber.Contains(simNumber))
-            .OrderByDescending(s => s.BillingPeriod)
+            .OrderByDescending(s => s.PhoneNumber)
+            .ThenByDescending(s => s.BillingPeriod)
             .AsNoTracking()
             .ToListAsync();
         return sims;
@@ -78,9 +90,11 @@ public sealed class SimRepository(PhoneAssistantDbContext dbContext) : ISimRepos
 
     public async Task<IEnumerable<Sim>> GetSimsForUserName(string userName)
     {
+        string searchPattern = "%" + userName.Trim().Replace(" ", "%") + "%";
         IEnumerable<Sim> sims = await dbContext.Sims
-            .Where(s => s.UserName.Contains(userName))
-            .OrderByDescending(s => s.BillingPeriod)
+            .Where(s => EF.Functions.Like(s.UserName, searchPattern))
+            .OrderByDescending(s => s.PhoneNumber)
+            .ThenByDescending(s => s.BillingPeriod)
             .AsNoTracking()
             .ToListAsync();
         return sims;
@@ -94,6 +108,7 @@ public sealed class SimRepository(PhoneAssistantDbContext dbContext) : ISimRepos
             await CreateAsync(sim);
             return;
         }
+        dbSim.Esim = sim.Esim;
         dbSim.SIMNumber = sim.SIMNumber;
         dbSim.UserName = sim.UserName;
         dbSim.BroadbandData = sim.BroadbandData;

@@ -36,16 +36,14 @@ internal class EsimExecutorTests
     [Test]
     public async Task CheckAndUpdateHistory_should_update_sims_with_same_SimNumber()
     {
-        IEnumerable<string> phoneNumber = ["PN"];
+        IEnumerable<Tuple<string, string>> phoneNumber = [new Tuple<string, string>("PN", "Same")];
         IEnumerable<Sim> sims =
         [
-            new() { BillingPeriod = "202602", Esim = true, PhoneNumber = "PN", SIMNumber = "Same", UserName = "John Doe", BroadbandData = 100, TextMessages = 50, VoiceCalls = 20 },
-            new() { BillingPeriod = "202601", Esim = false, PhoneNumber = "PN", SIMNumber = "Same", UserName = "John Doe", BroadbandData = 150, TextMessages = 75, VoiceCalls = 30 },
-            new() { BillingPeriod = "202512", Esim = false, PhoneNumber = "PN", SIMNumber = "Different ", UserName = "Bob Johnson", BroadbandData = 200, TextMessages = 100, VoiceCalls = 40 }
+            new() { BillingPeriod = "202601", Esim = false, PhoneNumber = "PN", SIMNumber = "SN", UserName = "John Doe", BroadbandData = 150, TextMessages = 75, VoiceCalls = 30 },
         ];
         AutoMocker mocker = new();
         Mock<ISimRepository> simsRepository = mocker.GetMock<ISimRepository>();
-        simsRepository.Setup(x => x.GetSimsForPhoneNumber(It.IsAny<string>())).ReturnsAsync(sims);
+        simsRepository.Setup(x => x.GetPhysicalSimsForPhoneNumberAndSimNumber(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(sims);
         var sut = mocker.CreateInstance<EsimExecutor>();
 
         await EsimExecutor.CheckAndUpdateHistory(simsRepository.Object, phoneNumber);
@@ -56,16 +54,11 @@ internal class EsimExecutorTests
     [Test]
     public async Task CheckAndUpdateHistory_should_ignore_sims_with_dirrent_SimNumber()
     {
-        IEnumerable<string> phoneNumber = ["PN"];
-        IEnumerable<Sim> sims =
-        [
-            new() { BillingPeriod = "202602", Esim = true, PhoneNumber = "PN", SIMNumber = "Same", UserName = "John Doe", BroadbandData = 100, TextMessages = 50, VoiceCalls = 20 },
-            new() { BillingPeriod = "202601", Esim = false, PhoneNumber = "PN", SIMNumber = "Different", UserName = "Bob", BroadbandData = 150, TextMessages = 75, VoiceCalls = 30 },
-            new() { BillingPeriod = "202512", Esim = false, PhoneNumber = "PN", SIMNumber = "Different ", UserName = "Bob", BroadbandData = 200, TextMessages = 100, VoiceCalls = 40 }
-        ];
+        IEnumerable<Tuple<string, string>> phoneNumber = [new Tuple<string, string>("PN", "Same")];
+        IEnumerable<Sim> sims = [];
         AutoMocker mocker = new();
         Mock<ISimRepository> simsRepository = mocker.GetMock<ISimRepository>();
-        simsRepository.Setup(x => x.GetSimsForPhoneNumber(It.IsAny<string>())).ReturnsAsync(sims);
+        simsRepository.Setup(x => x.GetPhysicalSimsForPhoneNumberAndSimNumber(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(sims);
         var sut = mocker.CreateInstance<EsimExecutor>();
 
         await EsimExecutor.CheckAndUpdateHistory(simsRepository.Object, phoneNumber);

@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
-namespace PhoneAssistant.Model.Tests; 
+namespace PhoneAssistant.Model.Tests;
 
 internal class SimRepositoryTests
 {
@@ -11,11 +11,11 @@ internal class SimRepositoryTests
     {
         _repository = new(_helper.DbContext);
     }
-        
+
     [Test]
     internal async Task GetLatestBillingPeriod_should_return_Latest_when_Sims_exist()
     {
-        Sim sim1 = new() { BillingPeriod = "202601", SIMNumber = "8944122605563572205", PhoneNumber = "07814209742", UserName = "John Doe", BroadbandData = 100 , TextMessages = 50, VoiceCalls = 20 };
+        Sim sim1 = new() { BillingPeriod = "202601", SIMNumber = "8944122605563572205", PhoneNumber = "07814209742", UserName = "John Doe", BroadbandData = 100, TextMessages = 50, VoiceCalls = 20 };
         Sim sim2 = new() { BillingPeriod = "202602", SIMNumber = "8944122605563572206", PhoneNumber = "07814209743", UserName = "Jane Smith", BroadbandData = 150, TextMessages = 75, VoiceCalls = 30 };
         Sim sim3 = new() { BillingPeriod = "202501", SIMNumber = "8944122605563572207", PhoneNumber = "07814209744", UserName = "Bob Johnson", BroadbandData = 200, TextMessages = 100, VoiceCalls = 40 };
 
@@ -49,8 +49,26 @@ internal class SimRepositoryTests
         _helper.DbContext.Sims.Add(sim3);
         await _helper.DbContext.SaveChangesAsync();
 
-        IEnumerable<string> phoneNumbers = await _repository.GetEsims();
+        IEnumerable<Tuple<string, string>> phoneNumbers = await _repository.GetEsims();
         await Assert.That(phoneNumbers.Count()).IsEqualTo(1);
+    }
+
+    [Test]
+    internal async Task GetPhysicalSimsForPhoneNumberAndSimNumber_should_return_list_of_Physical_Sims()
+    {
+        Sim sim1 = new() { BillingPeriod = "202601", Esim = false, PhoneNumber = "P1", SIMNumber = "S1", UserName = "John Doe", BroadbandData = 100, TextMessages = 50, VoiceCalls = 20 };
+        Sim sim2 = new() { BillingPeriod = "202602", Esim = true, PhoneNumber = "P1", SIMNumber = "S1", UserName = "John Doe", BroadbandData = 150, TextMessages = 75, VoiceCalls = 30 };
+        Sim sim3 = new() { BillingPeriod = "202603", Esim = false, PhoneNumber = "P1", SIMNumber = "S1", UserName = "Bob Johnson", BroadbandData = 200, TextMessages = 100, VoiceCalls = 40 };
+        Sim sim4 = new() { BillingPeriod = "202604", Esim = true, PhoneNumber = "P1", SIMNumber = "S1", UserName = "Bob Johnson", BroadbandData = 200, TextMessages = 100, VoiceCalls = 40 };
+
+        _helper.DbContext.Sims.Add(sim1);
+        _helper.DbContext.Sims.Add(sim2);
+        _helper.DbContext.Sims.Add(sim3);
+        _helper.DbContext.Sims.Add(sim4);
+        await _helper.DbContext.SaveChangesAsync();
+
+        IEnumerable<Sim> sims = await _repository.GetPhysicalSimsForPhoneNumberAndSimNumber("P1", "S1");
+        await Assert.That(sims.Count()).IsEqualTo(2);
     }
 
     [Test]
@@ -66,7 +84,7 @@ internal class SimRepositoryTests
 
         string? simNumber = await _repository.GetSimNumber("07814209742");
         await Assert.That(simNumber).IsEqualTo("8944122605563572206");
-    }    
+    }
 
     [Test]
     internal async Task GetSimsForPhoneNumber_should_return_Sims_for_given_phoneNumber()
@@ -80,7 +98,7 @@ internal class SimRepositoryTests
         await _helper.DbContext.SaveChangesAsync();
 
         IEnumerable<Sim> sims = await _repository.GetSimsForPhoneNumber("07814209742");
-        
+
         Sim? firstSim = sims.FirstOrDefault();
         await Assert.That(sims).Count().IsEqualTo(2);
         await Assert.That(firstSim).IsNotNull();
@@ -130,6 +148,26 @@ internal class SimRepositoryTests
     }
 
     [Test]
+    [Arguments("J Smi")]
+    [Arguments("Smith")]
+    internal async Task GetSimsForUserName_should_search_using_wildcards(string searchName)
+    {
+        Sim sim1 = new() { BillingPeriod = "202601", SIMNumber = "8944122605563572205", PhoneNumber = "07814209741", UserName = "John Smith", BroadbandData = 100, TextMessages = 50, VoiceCalls = 20 };
+        Sim sim2 = new() { BillingPeriod = "202602", SIMNumber = "8944122605563572206", PhoneNumber = "07814209742", UserName = "Jane Smith", BroadbandData = 150, TextMessages = 75, VoiceCalls = 30 };
+        Sim sim3 = new() { BillingPeriod = "202603", SIMNumber = "8944122605563572206", PhoneNumber = "07814209742", UserName = "Jane Smith", BroadbandData = 50, TextMessages = 5, VoiceCalls = 3 };
+        Sim sim4 = new() { BillingPeriod = "202501", SIMNumber = "8944122605563572207", PhoneNumber = "07814209744", UserName = "Bob Johnson", BroadbandData = 200, TextMessages = 100, VoiceCalls = 40 };
+        _helper.DbContext.Sims.Add(sim1);
+        _helper.DbContext.Sims.Add(sim2);
+        _helper.DbContext.Sims.Add(sim3);
+        _helper.DbContext.Sims.Add(sim4);
+        await _helper.DbContext.SaveChangesAsync();
+
+        IEnumerable<Sim> simsFullNumber = await _repository.GetSimsForUserName(searchName);
+
+        await Assert.That(simsFullNumber).Count().IsEqualTo(3);
+    }
+
+    [Test]
     internal async Task UpdateOrCreateAsync_should_create_new_Sim()
     {
         await _repository.UpdateOrCreateAsync(new Sim { BillingPeriod = "BP", PhoneNumber = "PN", SIMNumber = "sim_number", UserName = "user_name", BroadbandData = 150, TextMessages = 75, VoiceCalls = 30 });
@@ -144,17 +182,18 @@ internal class SimRepositoryTests
     [Test]
     internal async Task UpdateOrCreateAsync_should_update_existing_Sim()
     {
-        Sim sim = new() { BillingPeriod = "202601", PhoneNumber = "07814209742", SIMNumber = "original_sim_number", UserName = "original_user_name", BroadbandData = 100, TextMessages = 50, VoiceCalls = 20 };
+        Sim sim = new() { PhoneNumber = "07814209742", BillingPeriod = "202601", SIMNumber = "original_sim_number", UserName = "original_user_name", BroadbandData = 100, TextMessages = 50, VoiceCalls = 20 };
         _helper.DbContext.Sims.Add(sim);
         await _helper.DbContext.SaveChangesAsync();
         _helper.DbContext.Entry(sim).State = EntityState.Detached;
 
-        await _repository.UpdateOrCreateAsync(new Sim {BillingPeriod = sim.BillingPeriod, SIMNumber = "updated_sim_number", PhoneNumber = sim.PhoneNumber, UserName = "updated_user_name", BroadbandData = 150, TextMessages = 75, VoiceCalls = 30 });
+        await _repository.UpdateOrCreateAsync(new Sim { PhoneNumber = sim.PhoneNumber, BillingPeriod = sim.BillingPeriod, Esim = true, SIMNumber = "updated_sim_number", UserName = "updated_user_name", BroadbandData = 150, TextMessages = 75, VoiceCalls = 30 });
 
         Sim? updatedSim = _helper.DbContext.Sims.FirstOrDefault();
         await Assert.That(_helper.DbContext.Sims).Count().IsEqualTo(1);
         await Assert.That(updatedSim).IsNotNull();
         await Assert.That(updatedSim.SIMNumber).IsEqualTo("updated_sim_number");
         await Assert.That(updatedSim.UserName).IsEqualTo("updated_user_name");
+        await Assert.That(updatedSim.Esim).IsTrue();
     }
 }

@@ -96,8 +96,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Width="120"
                                     Binding="{Binding PhoneNumber}"
-                                    Header="Phone Number"
-                                    IsReadOnly="True">
+                                    Header="Phone Number">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="VerticalAlignment" Value="Center" />
@@ -114,8 +113,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding SIMNumber}"
-                                    Header="SIM Number"
-                                    IsReadOnly="True">
+                                    Header="SIM Number">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="VerticalAlignment" Value="Center" />
@@ -127,8 +125,7 @@
                                         IsReadOnly="True"
                                         IsThreeState="False" />
                 <DataGridTextColumn Binding="{Binding UserName}"
-                                    Header="User Name"
-                                    IsReadOnly="True">
+                                    Header="User Name">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="VerticalAlignment" Value="Center" />

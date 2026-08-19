@@ -1,8 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Shared;
+
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace PhoneAssistant.WPF.Features.BaseReport;
 
@@ -20,7 +23,10 @@ public partial class BaseReportMainViewModel(ISimRepository repository) : ViewMo
     public partial bool? Esim { get; set; }
 
     [ObservableProperty]
-    public partial string LatestImport {  get; set; } = string.Empty;
+    public partial string LatestImport { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial bool NoResultsFound { get; set; } = false;
 
     [ObservableProperty]
     public partial string SearchPhoneNumber { get; set; } = string.Empty;
@@ -31,13 +37,16 @@ public partial class BaseReportMainViewModel(ISimRepository repository) : ViewMo
     [ObservableProperty]
     public partial string SearchUserName { get; set; } = string.Empty;
 
+    [ObservableProperty]
+    public partial Visibility ProgressVisibility { get; set; } = Visibility.Collapsed;
+
     [RelayCommand]
     private async Task PhoneNumberSearch()
     {
-        if (string.IsNullOrEmpty(SearchPhoneNumber) && string.IsNullOrEmpty(SearchSimNumber))  return;
+        if (string.IsNullOrEmpty(SearchPhoneNumber) && string.IsNullOrEmpty(SearchSimNumber)) return;
 
         IEnumerable<Sim> sims = await _repository.GetSimsForPhoneNumber(SearchPhoneNumber);
-        LoadSimsIntoCollection(sims);
+        await LoadSimsIntoCollection(sims);
     }
 
     [RelayCommand]
@@ -46,7 +55,7 @@ public partial class BaseReportMainViewModel(ISimRepository repository) : ViewMo
         if (string.IsNullOrEmpty(SearchSimNumber)) return;
 
         IEnumerable<Sim> sims = await _repository.GetSimsForSimNumber(SearchSimNumber);
-        LoadSimsIntoCollection(sims);
+        await LoadSimsIntoCollection(sims);
     }
 
     [RelayCommand]
@@ -55,20 +64,35 @@ public partial class BaseReportMainViewModel(ISimRepository repository) : ViewMo
         if (string.IsNullOrEmpty(SearchUserName)) return;
 
         IEnumerable<Sim> sims = await _repository.GetSimsForUserName(SearchUserName);
-        LoadSimsIntoCollection(sims);
+        await LoadSimsIntoCollection(sims);
     }
 
-    private void LoadSimsIntoCollection(IEnumerable<Sim> sims)
+    private async Task LoadSimsIntoCollection(IEnumerable<Sim> sims)
     {
         BaseReportSims.Clear();
-        if (!sims.Any())
-            return;
-        ulong maxBoadbandData = sims.Max(s => s.BroadbandData);
-        foreach (var sim in sims)
+        ProgressVisibility = Visibility.Visible;
+        await Task.Delay(500); // Allow UI to update before starting the search
+
+        try
         {
-            BaseReportSim baseReportSim = new(sim, maxBoadbandData);
-            BaseReportSims.Add(baseReportSim);
+            if (!sims.Any())
+            {
+                NoResultsFound = true;
+                return;
+            }
+            ulong maxBoadbandData = sims.Max(s => s.BroadbandData);
+            foreach (var sim in sims)
+            {
+                BaseReportSim baseReportSim = new(sim, maxBoadbandData);
+                BaseReportSims.Add(baseReportSim);
+            }
         }
+        finally
+        {
+            ProgressVisibility = Visibility.Collapsed;
+        }
+
+        return;
     }
 
     public override async Task LoadAsync()
@@ -95,7 +119,7 @@ public sealed class BaseReportSim : Sim
         TextMessages = sim.TextMessages;
         VoiceCalls = sim.VoiceCalls;
         Esim = sim.Esim;
-        
+
         BroadbandDataText = FormatBytes(sim.BroadbandData);
         if (BroadbandData == 0)
         {

@@ -3,25 +3,27 @@ using System.Text;
 
 namespace DbUtil;
 
-public class SqlScripts
+internal sealed class SqlScripts
 {
-    public Collection<Script> Scripts { get; }
+    internal Collection<Script> Scripts { get; }
 
-    public SqlScripts()
+    internal SqlScripts()
     {
         Scripts = [
             new Script("Drop table SchemaVersions", "DROP TABLE SchemaVersions;"),
             new Script("Restructure Locations",RestructureLocations),
             new Script("Add 3 columns to Phones", Add3ColumnsToPhones),
             new Script("Create SIMs Table", CreateSIMsTable),
-            new Script("Add eSIM to SIMs Table", "ALTER TABLE Sims ADD COLUMN eSIM INTEGER;")
+            new Script("Add eSIM to SIMs Table", "ALTER TABLE Sims ADD COLUMN eSIM INTEGER;"),
+            new Script("Clean up redundant tables", CleanUpRedundantTables)
         ];
     }
 
-    public SqlScripts(Collection<Script> scripts)
+    internal SqlScripts(Collection<Script> scripts)
     {
         Scripts = scripts;
     }
+
     private static string Add3ColumnsToPhones
     {
         get
@@ -34,6 +36,12 @@ public class SqlScripts
             return sb.ToString();
         }
     }
+
+    private const string CleanUpRedundantTables = """
+        DROP TABLE BaseReport;
+        DROP TABLE ImportHistory;
+        DROP TABLE UpdateHistoryPhones;
+        """;
 
     private const string CreateSIMsTable = """
         CREATE TABLE Sims (

@@ -19,8 +19,6 @@ public partial class PhoneAssistantDbContext : DbContext
 
     public DbSet<Sim> Sims => Set<Sim>();
 
-    public DbSet<SimHistory> SimsHistory => Set<SimHistory>();
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)

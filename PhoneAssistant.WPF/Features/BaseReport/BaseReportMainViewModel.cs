@@ -95,9 +95,24 @@ public partial class BaseReportMainViewModel(ISimRepository repository) : ViewMo
         return;
     }
 
-    public override async Task LoadAsync()
+    bool _loaded = false;
+    public override Task LoadAsync()
     {
-        LatestImport = $"Latest Import: {await _repository.GetLatestBillingPeriod()}";
+        if (_loaded) return Task.CompletedTask;
+
+        _loaded = true;
+        _ = LoadLatestImportAsync();
+        return Task.CompletedTask;
+    }
+
+    private async Task LoadLatestImportAsync()
+    {
+        LatestImport = "Loading...";
+
+        var period = await _repository.GetLatestBillingPeriod();
+
+        LatestImport = $"Latest Import: {period}";
+        OnPropertyChanged(nameof(LatestImport));
     }
 }
 

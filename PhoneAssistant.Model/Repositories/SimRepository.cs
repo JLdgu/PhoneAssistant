@@ -26,9 +26,9 @@ public sealed class SimRepository(PhoneAssistantDbContext dbContext) : ISimRepos
     public async Task<string> GetLatestBillingPeriod()
     {
         string? latestBillingPeriod = await dbContext.Sims
-            .OrderByDescending(s => s.BillingPeriod)
             .Select(s => s.BillingPeriod)
-            .FirstOrDefaultAsync();
+            .MaxAsync();
+
         return latestBillingPeriod ?? "Unknown";
     }
 

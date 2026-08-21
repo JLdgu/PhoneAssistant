@@ -360,11 +360,11 @@ public sealed partial class PhonesMainViewModel :
         if (!CanRefreshPhones)
         {
             PhoneItems.Clear();
-            IEnumerable<Phone> phones = IncludeDisposals ? await _phonesRepository.GetAllPhonesAsync() : await _phonesRepository.GetActivePhonesAsync();
 
             // Create view models on a background thread so we don't block the UI
             List<PhonesItemViewModel> viewModels = await Task.Run(() =>
             {
+                IEnumerable<Phone> phones = (IEnumerable<Phone>)(IncludeDisposals ? _phonesRepository.GetAllPhonesAsync().Result : _phonesRepository.GetActivePhonesAsync().Result);
                 var list = new List<PhonesItemViewModel>();
                 foreach (Phone phone in phones)
                 {

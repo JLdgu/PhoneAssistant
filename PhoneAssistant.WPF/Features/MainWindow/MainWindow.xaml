@@ -214,10 +214,9 @@
             </RadioButton>
         </DockPanel>
 
-        <StackPanel Grid.Column="1"
-                    d:Background="Aquamarine"
-                    Orientation="Vertical">
+        <Grid Grid.Column="1"
+              d:Background="Aquamarine">
             <ContentControl Content="{Binding SelectedViewModel}" Validation.ErrorTemplate="{x:Null}" />
-        </StackPanel>
+        </Grid>
     </Grid>
 </Window>

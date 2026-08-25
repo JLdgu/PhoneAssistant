@@ -6,7 +6,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
              xmlns:viewmodel="clr-namespace:PhoneAssistant.WPF.Features.Phones"
-             MaxHeight="1000"
              d:DataContext="{d:DesignInstance Type=viewmodel:PhonesMainViewModel,
                                               IsDesignTimeCreatable=False}"
              d:DesignHeight="200"
@@ -80,7 +79,6 @@
             </materialDesign:DrawerHost.TopDrawerContent>
 
             <DataGrid x:Name="PhonesDataGrid"
-                      MaxHeight="930"
                       Margin="10,5,0,0"
                       materialDesign:DataGridAssist.CellPadding="4 0 2 0"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="4 5 2 7"
@@ -88,10 +86,17 @@
                       AutoGenerateColumns="False"
                       CanUserAddRows="False" 
                       CanUserDeleteRows="False"
+                      EnableColumnVirtualization="True"
+                      EnableRowVirtualization="True"
                       HeadersVisibility="Column"
                       RowHeight="30"
                       ItemsSource="{Binding PhoneItems}"
-                      SelectedItem="{Binding SelectedPhone, Mode=TwoWay}">
+                      ScrollViewer.CanContentScroll="True"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      SelectedItem="{Binding SelectedPhone, Mode=TwoWay}"
+                      VirtualizingPanel.IsVirtualizing="True"
+                      VirtualizingPanel.VirtualizationMode="Recycling">
                 <DataGrid.Resources>
                     <shared:ConditionConverter x:Key="ConditionConverter" />
                 </DataGrid.Resources>

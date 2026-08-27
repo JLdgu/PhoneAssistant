@@ -17,8 +17,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <shared:HeaderMainView HeaderIcon="AlphaECircleOutline" HeaderText="Base Report" />
@@ -89,7 +89,6 @@
 
         <DataGrid x:Name="BaseReportDataGrid"
                   Grid.Row="3"
-                  MaxHeight="930"
                   Margin="10,5,0,0"
                   materialDesign:DataGridAssist.CellPadding="4 5 2 3"
                   materialDesign:DataGridAssist.ColumnHeaderPadding="4 5 2 7"
@@ -97,8 +96,15 @@
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
+                  EnableColumnVirtualization="True"
+                  EnableRowVirtualization="True"
                   HeadersVisibility="Column"
-                  ItemsSource="{Binding BaseReportSims}">
+                  ItemsSource="{Binding BaseReportSims}"
+                  ScrollViewer.CanContentScroll="True"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  VirtualizingPanel.IsVirtualizing="True"
+                  VirtualizingPanel.VirtualizationMode="Recycling">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="120"
                                     Binding="{Binding PhoneNumber}"
@@ -118,8 +124,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding SIMNumber}"
-                                    Header="SIM Number">
+                <DataGridTextColumn Binding="{Binding SIMNumber}" Header="SIM Number">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="VerticalAlignment" Value="Center" />
@@ -130,8 +135,7 @@
                                         Header="eSIM"
                                         IsReadOnly="True"
                                         IsThreeState="False" />
-                <DataGridTextColumn Binding="{Binding UserName}"
-                                    Header="User Name">
+                <DataGridTextColumn Binding="{Binding UserName}" Header="User Name">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="VerticalAlignment" Value="Center" />
@@ -184,8 +188,7 @@
                     d:Visibility="Visible"
                     Orientation="Horizontal"
                     Visibility="{Binding NoResultsFound, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                       Text="No Results Found" />
+            <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="No Results Found" />
         </StackPanel>
 
     </Grid>

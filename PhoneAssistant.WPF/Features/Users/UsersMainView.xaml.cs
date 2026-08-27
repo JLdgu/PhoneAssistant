@@ -10,16 +10,28 @@ public partial class UsersMainView : UserControl
     public UsersMainView()
     {
         InitializeComponent();
-        DataObject.AddPastingHandler(Search, OnPaste);
+        DataObject.AddPastingHandler(SearchName, OnPaste);
+        DataObject.AddPastingHandler(SearchEmail, OnPaste);
     }
 
     private void OnPaste(object sender, DataObjectPastingEventArgs e)
     {
-        UsersMainViewModel vm = (UsersMainViewModel)DataContext;
         bool isText = e.SourceDataObject.GetDataPresent(DataFormats.UnicodeText, true);
         if (!isText) return;
-        Search.Text = e.SourceDataObject.GetData(DataFormats.UnicodeText) as string;
-        vm.EnterKeyCommand.Execute(null);
+        if (sender is not TextBox textBox)
+            return;
+
+        UsersMainViewModel vm = (UsersMainViewModel)DataContext;
+        if (textBox.Name == "SearchName")
+        {
+            SearchName.Text = e.SourceDataObject.GetData(DataFormats.UnicodeText) as string;
+            vm.SearchNameCommand.Execute(null);
+        }
+        else
+        {
+            SearchEmail.Text = e.SourceDataObject.GetData(DataFormats.UnicodeText) as string;
+            vm.SearchEmailCommand.Execute(null);
+        }
         e.CancelCommand();
     }
 }

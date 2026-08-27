@@ -1,50 +1,49 @@
 using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System.DirectoryServices;
 using System.Windows;
 
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.Users;
+
+public interface IUsersMainViewModel : IViewModel
+{
+    public string? SearchUserName { get; set; }
+}
+
 public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainViewModel
 {
     private readonly IUsersItemViewModelFactory _usersItemViewModelFactory;
-    public ObservableCollection<UsersItemViewModel> UserItems { get; } = new();
+    public ObservableCollection<UsersItemViewModel> UserItems { get; } = [];
 
-    public UsersMainViewModel(IUsersItemViewModelFactory usersItemViewModelFactory)
-    {
-        _usersItemViewModelFactory = usersItemViewModelFactory ?? throw new ArgumentNullException(nameof(usersItemViewModelFactory));
-    }
+    public UsersMainViewModel(IUsersItemViewModelFactory usersItemViewModelFactory) => _usersItemViewModelFactory = usersItemViewModelFactory ?? throw new ArgumentNullException(nameof(usersItemViewModelFactory));
 
     [ObservableProperty]
-    private string? _searchUser;
+    public partial string? SearchUserEmail { get; set; }
 
-    [RelayCommand]
-    private async Task EnterKey()
+    [ObservableProperty]
+    public partial string? SearchUserName { get; set; }
+
+    private async Task Search(string ldapFilter)
     {
-        if (string.IsNullOrEmpty(SearchUser)) return;
-
         UserItems.Clear();
-
-        string person = SearchUser.Trim().Replace(" ", "*");
-        
         ProgressVisibility = Visibility.Visible;
+        NoResultsFound = false;
 
         await Task.Run(() =>
         {
-            using SearchResultCollection results = PersonSearch(person);
+            using SearchResultCollection results = PersonSearch(ldapFilter);
 
             if (results.Count == 0)
             {
                 NoResultsFound = true;
                 return;
             }
-            NoResultsFound = false;
 
             foreach (SearchResult sr in results)
             {
-                var srp = sr.Properties["mail"];
-
                 User user = new()
                 {
                     Name = ParsePropertyString(sr.Properties["displayName"]),
@@ -71,13 +70,35 @@ public sealed partial class UsersMainViewModel : ObservableObject, IUsersMainVie
 
         ProgressVisibility = Visibility.Collapsed;
     }
-    private static SearchResultCollection PersonSearch(string name)
+
+    [RelayCommand]
+    private async Task SearchEmail()
+    {
+        if (string.IsNullOrEmpty(SearchUserEmail)) return;
+
+        string filter = SearchUserEmail.Trim();
+
+        await Search($"mail=*{filter}*");
+
+    }
+
+    [RelayCommand]
+    private async Task SearchName()
+    {
+        if (string.IsNullOrEmpty(SearchUserName)) return;
+
+        string filter = SearchUserName.Trim().Replace(" ", "*");
+
+        await Search($"displayName=*{filter}*");
+    }
+
+    private static SearchResultCollection PersonSearch(string filter)
     {
         using DirectoryEntry entry = new("LDAP://ds2.devon.gov.uk");
         entry.AuthenticationType = AuthenticationTypes.Secure;
         DirectorySearcher searcher = new(entry)
         {
-            Filter = $"(&(objectClass=user)(objectCategory=person)(CN=*{name}*))"
+            Filter = $"(&(objectClass=user)(objectCategory=person)({filter}))"
         };
         searcher.PropertiesToLoad.Add("displayName");
         searcher.PropertiesToLoad.Add("description");

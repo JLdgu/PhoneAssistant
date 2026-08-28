@@ -39,18 +39,25 @@
                          IsReadOnly="True"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          Text="{Binding NewVersion, Mode=OneWay, FallbackValue=New Version}" />
-                
-                <TextBlock Margin="10,0" Foreground="Crimson"
-                         Padding="10,5"                          
-                         Style="{StaticResource MaterialDesignBody1TextBlock}"
-                         Text="DotNet Desktop runtime needs updating before application can update"
-                         d:Visibility="Visible"  
-                         Visibility="{Binding DotNetDesktopVersionWarning}"/>
-                
+
+                <TextBlock Margin="10,0"
+                           Padding="10,5"
+                           d:Visibility="Visible"
+                           Foreground="Crimson"
+                           Style="{StaticResource MaterialDesignBody1TextBlock}"
+                           Text="DotNet Desktop runtime needs updating before application can update"
+                           Visibility="{Binding DotNetDesktopVersionWarning}" />
+
                 <Button Margin="10,0"
                         Command="{Binding UpdateAndRestartCommand}"
                         Content="Update and Restart"
                         Style="{StaticResource MaterialDesignOutlinedButton}" />
+
+                <Button Margin="10,0"
+                        Command="{Binding CheckForUpdateCommand}"
+                        Content="Check for Updates"
+                        Style="{StaticResource MaterialDesignOutlinedButton}" />
+
                 <Button Margin="10,0"
                         Click="ReleaseNotes_Click"
                         Content="Release Notes"

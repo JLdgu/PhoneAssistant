@@ -246,6 +246,8 @@ public sealed partial class SettingsMainViewModel : ViewModelValidatorBase, ISet
     [ObservableProperty]
     public partial string? CurrentVersion { get; set; }
 
+    private bool CanCheckforUpdate() => UpdateState != ApplicationUpdateState.UpdateAvailable && _desktopVersion == MinimumDesktopVersion;
+    [RelayCommand(CanExecute = nameof(CanCheckforUpdate))]
     private async Task CheckForUpdate()
     {
         _logger.Debug("CheckForUpdate Started");

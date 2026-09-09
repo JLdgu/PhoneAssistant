@@ -30,14 +30,12 @@ public sealed partial class AddItemViewModel : ValidatableViewModel<AddItemViewM
         _simRepository = simRepository ?? throw new ArgumentNullException(nameof(simRepository));
         _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
-        OEM = Manufacturer.Apple;
-        Model = "iPhone SE 2022";
     }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
     [NotifyPropertyChangedFor(nameof(Status))]
-    private string? _assetTag;
+    public partial string? AssetTag { get; set; }
 
     async partial void OnAssetTagChanged(string? value)
     {
@@ -48,35 +46,37 @@ public sealed partial class AddItemViewModel : ValidatableViewModel<AddItemViewM
     public List<string> Conditions { get; } = ApplicationConstants.Conditions;
 
     [ObservableProperty]
-    private string _condition = ApplicationConstants.Conditions[1].Substring(0,1);
+    public partial string Condition { get; set; } = ApplicationConstants.Conditions[0][..1];
 
     [ObservableProperty]
-    private string? _formerUser;
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
-    private string _imei = string.Empty;
-    async partial void OnImeiChanged(string value) => await ValidatePropertyAsync(nameof(Imei));    
+    public partial string? FormerUser { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
-    private string _model = string.Empty;
+    public partial string Imei { get; set; } = string.Empty;
+
+    async partial void OnImeiChanged(string value) => await ValidatePropertyAsync(nameof(Imei));
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
+    public partial string Model { get; set; } = "iPad A16";
+
     async partial void OnModelChanged(string value) => await ValidatePropertyAsync(nameof(Model));
 
     [ObservableProperty]
-    private string? _phoneNotes;
+    public partial string? PhoneNotes { get; set; }
 
-    public static IEnumerable<Manufacturer> OEMs => Enum.GetValues(typeof(Manufacturer)).Cast<Manufacturer>();
+    public static IEnumerable<Manufacturer> OEMs => Enum.GetValues<Manufacturer>();
 
     [ObservableProperty]
-    private Manufacturer _oEM;
+    public partial Manufacturer OEM { get; set; } = Manufacturer.Apple;
 
     partial void OnOEMChanged(Manufacturer value)
     {
         switch (value)
         {
             case Manufacturer.Apple:
-                Model = "iPhone 16E";
+                Model = "iPad A16";
                 break;
             case Manufacturer.Nokia:
                 Model = "110 4G";
@@ -97,7 +97,7 @@ public sealed partial class AddItemViewModel : ValidatableViewModel<AddItemViewM
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(AssetTag))]
     [NotifyPropertyChangedFor(nameof(Ticket))]
-    private string _status = ApplicationConstants.StatusInStock;
+    public partial string Status { get; set; } = ApplicationConstants.StatusInStock;
 
     async partial void OnStatusChanged(string value)
     {
@@ -109,14 +109,15 @@ public sealed partial class AddItemViewModel : ValidatableViewModel<AddItemViewM
     }
 
     [ObservableProperty]
-    private string? _ticket;
+    public partial string? Ticket { get; set; }
+
     async partial void OnTicketChanged(string? value) => await ValidatePropertyAsync(nameof(Ticket));
 
     [RelayCommand]
     private async Task PhoneClearAsync()
     {
         AssetTag = null;
-        Condition = ApplicationConstants.Conditions[1][..1];
+        Condition = ApplicationConstants.Conditions[0][..1];
         FormerUser = null;
         Imei = string.Empty;
         PhoneNotes = null;
@@ -140,7 +141,7 @@ public sealed partial class AddItemViewModel : ValidatableViewModel<AddItemViewM
             sr = int.Parse(Ticket);
         Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, Notes = PhoneNotes, OEM = OEM, PhoneNumber = PhoneNumber, SimNumber = SimNumber, Ticket = sr, Status = Status };
         string conditionDesc = ApplicationConstants.ConditionRepurposed;
-        if (Condition == ApplicationConstants.ConditionNew.Substring(0,1))
+        if (Condition == ApplicationConstants.ConditionNew[..1])
             conditionDesc = ApplicationConstants.ConditionNew;
         
         string simDetails = string.Empty;
@@ -156,8 +157,8 @@ public sealed partial class AddItemViewModel : ValidatableViewModel<AddItemViewM
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
-    private string? _phoneNumber;
-    
+    public partial string? PhoneNumber { get; set; }
+
     async partial void OnPhoneNumberChanged(string? value)
     {
         if (string.IsNullOrWhiteSpace(value)) return;
@@ -173,7 +174,7 @@ public sealed partial class AddItemViewModel : ValidatableViewModel<AddItemViewM
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PhoneSaveCommand))]
-    private string? _simNumber;
+    public partial string? SimNumber { get; set; }
 
     async partial void OnSimNumberChanged(string? value) => await ValidatePropertyAsync(nameof(SimNumber));
 }

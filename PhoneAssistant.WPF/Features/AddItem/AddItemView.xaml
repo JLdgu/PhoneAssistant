@@ -95,6 +95,19 @@
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding PhoneNumber}" />
 
+                    <StackPanel Margin="10,5,0,0">
+                        <materialDesign:PackIcon Width="20"
+                                                 Height="20"
+                                                 HorizontalAlignment="Center"
+                                                 Kind="SimAlertOutline"
+                                                 ToolTip="eSIM" />
+
+
+                        <CheckBox IsChecked="{Binding Esim}"
+                                  IsThreeState="False"
+                                  Style="{StaticResource MaterialDesignCheckBox}" />
+                    </StackPanel>
+
                     <TextBox MinWidth="160"
                              Margin="10,5,0,0"
                              materialDesign:HintAssist.Hint="SIM Number"

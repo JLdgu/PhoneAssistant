@@ -49,6 +49,9 @@ public sealed partial class AddItemViewModel : ValidatableViewModel<AddItemViewM
     public partial string Condition { get; set; } = ApplicationConstants.Conditions[0][..1];
 
     [ObservableProperty]
+    public partial bool Esim { get; set; }
+
+    [ObservableProperty]
     public partial string? FormerUser { get; set; }
 
     [ObservableProperty]
@@ -139,14 +142,19 @@ public sealed partial class AddItemViewModel : ValidatableViewModel<AddItemViewM
         int? sr = null;
         if (Ticket is not null)
             sr = int.Parse(Ticket);
-        Phone phone = new() { AssetTag = AssetTag, Condition = Condition, FormerUser = FormerUser, Imei = Imei, Model = Model, Notes = PhoneNotes, OEM = OEM, PhoneNumber = PhoneNumber, SimNumber = SimNumber, Ticket = sr, Status = Status };
+        Phone phone = new() { AssetTag = AssetTag, Condition = Condition, Esim = Esim, FormerUser = FormerUser, Imei = Imei, Model = Model, Notes = PhoneNotes, OEM = OEM, PhoneNumber = PhoneNumber, SimNumber = SimNumber, Ticket = sr, Status = Status };
         string conditionDesc = ApplicationConstants.ConditionRepurposed;
         if (Condition == ApplicationConstants.ConditionNew[..1])
             conditionDesc = ApplicationConstants.ConditionNew;
         
         string simDetails = string.Empty;
         if (PhoneNumber is not null)
-            simDetails = $"SIM Card {PhoneNumber} {SimNumber}";
+        {
+            if (Esim == true)
+                simDetails += $"{PhoneNumber} eSIM {SimNumber}";
+            else
+                simDetails = $"SIM Card {PhoneNumber} SIM Card {SimNumber}";
+        }
 
         await _phonesRepository.CreateAsync(phone);
         LogItems.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} Phone added - {AssetTag} IMEI: {Imei} Status: {Status} Condition: {conditionDesc} {OEM} {Model} {FormerUser} {simDetails}");

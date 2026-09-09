@@ -24,13 +24,14 @@ public partial class AddItemViewModelTests
     }
 
     [Test]
-    public async Task AddItemViewModel_DefaultOEMAndModel()
+    public async Task AddItemViewModel_constructor_sets_default_values()
     {
         _ = MockValidator();
         AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
+        await Assert.That(sut.Condition).IsEqualTo(ApplicationConstants.Conditions[0][..1]);
         await Assert.That((Manufacturer)sut.OEM).IsEqualTo(Manufacturer.Apple);
-        await Assert.That(sut.Model).IsEqualTo("iPhone SE 2022");
+        await Assert.That(sut.Model).IsEqualTo("iPad A16");
     }
 
     [Test]
@@ -99,7 +100,7 @@ public partial class AddItemViewModelTests
     }
 
     [Test]
-    [Arguments(Manufacturer.Apple, "iPhone SE 2022")]
+    [Arguments(Manufacturer.Apple, "iPad A16")]
     [Arguments(Manufacturer.Nokia, "110 4G")]
     [Arguments(Manufacturer.Other, "")]
     [Arguments(Manufacturer.Samsung, "A32")]
@@ -328,10 +329,10 @@ public partial class AddItemViewModelTests
     private static async Task AssertResetAllPhonePropertiesAsync(AddItemViewModel sut)
     {
         await Assert.That(sut.AssetTag).IsNull();
-        await Assert.That(sut.Condition).IsEqualTo(ApplicationConstants.Conditions[1].Substring(0, 1));
+        await Assert.That(sut.Condition).IsEqualTo(ApplicationConstants.Conditions[0][..1]);
         await Assert.That(sut.FormerUser).IsNull();
         await Assert.That(sut.Imei).IsEqualTo(string.Empty);
-        await Assert.That(sut.Model).IsEqualTo("iPhone SE 2022");
+        await Assert.That(sut.Model).IsEqualTo("iPad A16");
         await Assert.That(sut.PhoneNotes).IsNull();
         await Assert.That(sut.PhoneNumber).IsNull();
         await Assert.That((Manufacturer)sut.OEM).IsEqualTo(Manufacturer.Apple);

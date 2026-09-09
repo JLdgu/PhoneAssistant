@@ -201,6 +201,7 @@ public partial class AddItemViewModelTests
         Phone actual = new()
         {
             Condition = "norr",
+            Esim = true,
             Imei = "imei",
             Model = "model",
             OEM = Manufacturer.Apple,
@@ -212,6 +213,7 @@ public partial class AddItemViewModelTests
         AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
         sut.AssetTag = expectedAssetTag;
+        sut.Esim = true;
         sut.Imei = expectedImei;
         sut.Model = expectedModel;
         sut.PhoneNumber = expectedPhoneNumber;
@@ -220,6 +222,7 @@ public partial class AddItemViewModelTests
         sut.PhoneSaveCommand.Execute(null);
 
         await Assert.That(actual.AssetTag).IsEqualTo(expectedAssetTag);
+        await Assert.That(actual.Esim).IsTrue();
         await Assert.That(actual.Imei).IsEqualTo(expectedImei);
         await Assert.That(actual.Model).IsEqualTo(expectedModel);
         await Assert.That(actual.PhoneNumber).IsEqualTo(expectedPhoneNumber);
@@ -253,6 +256,7 @@ public partial class AddItemViewModelTests
         sut.PhoneSaveCommand.Execute(null);
 
         await Assert.That(actual.AssetTag).IsEqualTo(expectedAssetTag);
+        await Assert.That(actual.Esim).IsFalse();
         await Assert.That(actual.Imei).IsEqualTo(expectedImei);
         await Assert.That(actual.Model).IsEqualTo(expectedModel);
         await Assert.That(actual.PhoneNumber).IsNull();

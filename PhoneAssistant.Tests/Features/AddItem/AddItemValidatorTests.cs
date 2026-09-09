@@ -42,17 +42,17 @@ public sealed class AddItemValidatorTests
         result.ShouldHaveValidationErrorFor(model => model.AssetTag).WithErrorMessage("Invalid format");
     }
 
-    [Test]
-    public async Task AssetTag_should_have_Error_when_empty_and_Status_InStock()
-    {
-        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
-        repository.Setup(r => r.AssetTagUniqueAsync(It.IsAny<string>())).ReturnsAsync(true);
-        _sut.Status = ApplicationConstants.StatusInStock;
+    //[Test]
+    //public async Task AssetTag_should_have_Error_when_empty_and_Status_InStock()
+    //{
+    //    Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
+    //    repository.Setup(r => r.AssetTagUniqueAsync(It.IsAny<string>())).ReturnsAsync(true);
+    //    _sut.Status = ApplicationConstants.StatusInStock;
 
-        var result = await _validator.TestValidateAsync(_sut);
+    //    var result = await _validator.TestValidateAsync(_sut);
 
-        result.ShouldHaveValidationErrorFor(model => model.AssetTag).WithErrorMessage("Asset Tag required");
-    }
+    //    result.ShouldHaveValidationErrorFor(model => model.AssetTag).WithErrorMessage("Asset Tag required");
+    //}
 
     [Test]
     public async Task AssetTag_should_have_Error_when_not_unique()

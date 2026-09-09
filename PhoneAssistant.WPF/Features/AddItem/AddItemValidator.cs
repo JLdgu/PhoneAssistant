@@ -15,9 +15,9 @@ public class AddItemValidator : AbstractValidator<AddItemViewModel>
 
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(model => model.AssetTag)
-            .NotEmpty().WithMessage("Asset Tag required")
-            .When(model => model.Status == ApplicationConstants.StatusInStock);
+        //RuleFor(model => model.AssetTag)
+        //    .NotEmpty().WithMessage("Asset Tag required")
+        //    .When(model => model.Status == ApplicationConstants.StatusInStock);
 
         RuleFor(model => model.AssetTag)
                 .Length(7).WithMessage("Invalid format")

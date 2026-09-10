@@ -15,9 +15,9 @@ public class AddItemValidator : AbstractValidator<AddItemViewModel>
 
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        //RuleFor(model => model.AssetTag)
-        //    .NotEmpty().WithMessage("Asset Tag required")
-        //    .When(model => model.Status == ApplicationConstants.StatusInStock);
+        RuleFor(model => model.AssetTag)
+            .NotEmpty().WithMessage("Asset Tag required")
+            .When(model => model.Status == ApplicationConstants.StatusProduction);
 
         RuleFor(model => model.AssetTag)
                 .Length(7).WithMessage("Invalid format")
@@ -27,7 +27,7 @@ public class AddItemValidator : AbstractValidator<AddItemViewModel>
                     bool unique = await _phonesRepository.AssetTagUniqueAsync(assetTag);
                     return unique;
                 }).WithMessage("Asset Tag must be unique")
-                .When(model => !string.IsNullOrEmpty( model.AssetTag));
+                .When(model => !string.IsNullOrEmpty(model.AssetTag));
 
         RuleFor(model => model.Imei)
             .NotEmpty().WithMessage("IMEI required")
@@ -45,6 +45,14 @@ public class AddItemValidator : AbstractValidator<AddItemViewModel>
 
         RuleFor(x => x.PhoneNumber)
             .PhoneNumberRules()
+            .When(model => !string.IsNullOrEmpty(model.PhoneNumber));
+
+        RuleFor(model => model.SerialNumber)
+            .NotEmpty().WithMessage("Serial Number required")
+            .When(model => model.OEM == Manufacturer.Apple);
+
+        RuleFor(model => model.SimNumber)
+            .NotEmpty().WithMessage("SIM Number required")
             .When(model => !string.IsNullOrEmpty(model.PhoneNumber));
 
         RuleFor(x => x.SimNumber)

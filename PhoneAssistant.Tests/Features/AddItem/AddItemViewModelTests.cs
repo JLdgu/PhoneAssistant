@@ -47,7 +47,9 @@ public partial class AddItemViewModelTests
         sut.Condition = "condition";
         sut.Imei = "355808981147090";
         sut.Model = "model";
+        sut.OEM = Manufacturer.Nokia;
         sut.PhoneNumber = "07123456789";
+        sut.SimNumber = "522357632248";
         sut.Status = "status";
 
         await Assert.That(sut.HasErrors).IsFalse();
@@ -66,6 +68,8 @@ public partial class AddItemViewModelTests
         sut.Condition = "condition";
         sut.Imei = "355808981147090";
         sut.Model = "model";
+        sut.OEM = Manufacturer.Nokia;
+        sut.SerialNumber = null;
         sut.Status = ApplicationConstants.StatusInStock;
 
         await Assert.That(sut.HasErrors).IsFalse();
@@ -82,6 +86,8 @@ public partial class AddItemViewModelTests
         sut.Condition = "condition";
         sut.Imei = "355808981147090";
         sut.Model = "model";
+        sut.OEM = Manufacturer.Apple;   
+        sut.SerialNumber = "serial";
         sut.Status = "status";
 
         await Assert.That(sut.HasErrors).IsFalse();
@@ -193,18 +199,12 @@ public partial class AddItemViewModelTests
     [Test]
     public async Task PhoneSaveCommand_WithPhoneAndSim_ShouldCallRepositoryAsync()
     {
-        const string expectedAssetTag = "MP00001";
-        const string expectedImei = "355808981147090";
-        const string expectedModel = "model";
-        const string expectedPhoneNumber = "07123456789";
-        const string expectedSimNumber = "355808981147090";
         Phone actual = new()
         {
             Condition = "norr",
-            Esim = true,
             Imei = "imei",
-            Model = "model",
-            OEM = Manufacturer.Apple,
+            Model = "default",
+            OEM = Manufacturer.Other,
             Status = "status"
         };
         var repository = MockValidator();
@@ -212,21 +212,23 @@ public partial class AddItemViewModelTests
         repository.Setup(r => r.CreateAsync(It.IsAny<Phone>())).Callback<Phone>((p) => actual = p);
         AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
 
-        sut.AssetTag = expectedAssetTag;
+        sut.AssetTag = "MP00001";
         sut.Esim = true;
-        sut.Imei = expectedImei;
-        sut.Model = expectedModel;
-        sut.PhoneNumber = expectedPhoneNumber;
-        sut.SimNumber = expectedSimNumber;
+        sut.Imei = "355808981147090";
+        sut.Model = "model";
+        sut.PhoneNumber = "07123456789";
+        sut.SerialNumber = "serial";
+        sut.SimNumber = "355808981147090";
 
         sut.PhoneSaveCommand.Execute(null);
 
-        await Assert.That(actual.AssetTag).IsEqualTo(expectedAssetTag);
+        await Assert.That(actual.AssetTag).IsEqualTo("MP00001");
         await Assert.That(actual.Esim).IsTrue();
-        await Assert.That(actual.Imei).IsEqualTo(expectedImei);
-        await Assert.That(actual.Model).IsEqualTo(expectedModel);
-        await Assert.That(actual.PhoneNumber).IsEqualTo(expectedPhoneNumber);
-        await Assert.That(actual.SimNumber).IsEqualTo(expectedSimNumber);
+        await Assert.That(actual.Imei).IsEqualTo("355808981147090");
+        await Assert.That(actual.Model).IsEqualTo("model");
+        await Assert.That(actual.PhoneNumber).IsEqualTo("07123456789");
+        await Assert.That(actual.SerialNumber).IsEqualTo("serial");
+        await Assert.That(actual.SimNumber).IsEqualTo("355808981147090");
         _mocker.VerifyAll();
     }
 
@@ -265,7 +267,7 @@ public partial class AddItemViewModelTests
     }
 
     [Test]
-    public async Task PhoneSaveCommand_hould_disable_PhoneSaveCommand()
+    public async Task PhoneSaveCommand_should_disable_PhoneSaveCommand()
     {
         _ = MockValidator();
         AddItemViewModel sut = _mocker.CreateInstance<AddItemViewModel>();
@@ -321,10 +323,12 @@ public partial class AddItemViewModelTests
     {
         sut.AssetTag = "MP00000";
         sut.Condition = "condition";
+        sut.Esim = true;
         sut.FormerUser = "former user";
         sut.Imei = "imei";
         sut.PhoneNotes = "notes";
         sut.PhoneNumber = "07123456789";        
+        sut.SerialNumber = "serial";
         sut.SimNumber = "8944125605540324743";
         sut.Status = "status";
         sut.Ticket = 7654321.ToString();
@@ -334,12 +338,14 @@ public partial class AddItemViewModelTests
     {
         await Assert.That(sut.AssetTag).IsNull();
         await Assert.That(sut.Condition).IsEqualTo(ApplicationConstants.Conditions[0][..1]);
+        await Assert.That(sut.Esim).IsFalse();
         await Assert.That(sut.FormerUser).IsNull();
         await Assert.That(sut.Imei).IsEqualTo(string.Empty);
         await Assert.That(sut.Model).IsEqualTo("iPad A16");
+        await Assert.That((Manufacturer)sut.OEM).IsEqualTo(Manufacturer.Apple);
         await Assert.That(sut.PhoneNotes).IsNull();
         await Assert.That(sut.PhoneNumber).IsNull();
-        await Assert.That((Manufacturer)sut.OEM).IsEqualTo(Manufacturer.Apple);
+        await Assert.That(sut.SerialNumber).IsNull();
         await Assert.That(sut.Status).IsEqualTo(ApplicationConstants.Statuses[1]);
         await Assert.That(sut.SimNumber).IsNull();
         await Assert.That(sut.Ticket).IsNull();

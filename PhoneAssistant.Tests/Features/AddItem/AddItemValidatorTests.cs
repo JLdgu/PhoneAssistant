@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using FluentValidation.TestHelper;
 
 using Moq;
@@ -42,17 +42,17 @@ public sealed class AddItemValidatorTests
         result.ShouldHaveValidationErrorFor(model => model.AssetTag).WithErrorMessage("Invalid format");
     }
 
-    //[Test]
-    //public async Task AssetTag_should_have_Error_when_empty_and_Status_InStock()
-    //{
-    //    Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
-    //    repository.Setup(r => r.AssetTagUniqueAsync(It.IsAny<string>())).ReturnsAsync(true);
-    //    _sut.Status = ApplicationConstants.StatusInStock;
+    [Test]
+    public async Task AssetTag_should_have_Error_when_empty_and_Status_Production()
+    {
+        Mock<IPhonesRepository> repository = _mocker.GetMock<IPhonesRepository>();
+        repository.Setup(r => r.AssetTagUniqueAsync(It.IsAny<string>())).ReturnsAsync(true);
+        _sut.Status = ApplicationConstants.StatusProduction;
 
-    //    var result = await _validator.TestValidateAsync(_sut);
+        var result = await _validator.TestValidateAsync(_sut);
 
-    //    result.ShouldHaveValidationErrorFor(model => model.AssetTag).WithErrorMessage("Asset Tag required");
-    //}
+        result.ShouldHaveValidationErrorFor(model => model.AssetTag).WithErrorMessage("Asset Tag required");
+    }
 
     [Test]
     public async Task AssetTag_should_have_Error_when_not_unique()
@@ -184,6 +184,38 @@ public sealed class AddItemValidatorTests
 
     // Phone number validation is tested in ValidationRules_PhoneNumberTests
     // Sim number validation is tested in ValidationRules_SimNumberTests
+    [Test]
+    internal async Task SerialNumber_should_have_error_when_empty_and_OEM_is_Apple()
+    {
+        _sut.OEM = Manufacturer.Apple;
+
+        var result = await _validator.TestValidateAsync(_sut);
+
+        result.ShouldHaveValidationErrorFor(model => model.SerialNumber);
+    }
+
+    [Test]
+    [Arguments(Manufacturer.Nokia)]
+    [Arguments(Manufacturer.Other)]
+    [Arguments(Manufacturer.Samsung)]
+    internal async Task SerialNumber_is_optional_for_none_Apple_phones(Manufacturer oem)
+    {
+        _sut.OEM = oem;
+
+        var result = await _validator.TestValidateAsync(_sut);
+
+        result.ShouldNotHaveValidationErrorFor(model => model.SerialNumber);
+    }
+
+    [Test]
+    internal async Task SimNumber_should_have_error_when_PhoneNumber_is_present_and_SimNumber_is_empty()
+    {
+        _sut.PhoneNumber = "1234567890";
+     
+        var result = await _validator.TestValidateAsync(_sut);
+
+        result.ShouldHaveValidationErrorFor(model => model.SimNumber);
+    }
 
     [Test]
     [Arguments(ApplicationConstants.StatusDecommissioned)]

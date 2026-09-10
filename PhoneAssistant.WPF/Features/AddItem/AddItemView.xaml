@@ -87,6 +87,14 @@
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding Imei}" />
 
+                    <TextBox MinWidth="100"
+                             Margin="10,5,0,0"
+                             materialDesign:HintAssist.Hint="Serial Number"
+                             materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                             MaxLength="10"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Text="{Binding SerialNumber}" />
+
                     <TextBox MinWidth="125  "
                              Margin="10,5,0,0"
                              materialDesign:HintAssist.Hint="Phone Number"

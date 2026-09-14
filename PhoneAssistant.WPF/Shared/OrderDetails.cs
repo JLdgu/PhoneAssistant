@@ -22,6 +22,16 @@ public sealed class OrderDetails
 
     public DeviceType DeviceType { get; }
 
+    public string DocumentName
+    {
+        get
+        {
+            return Phone.Ticket > 999999
+                ? $"Incident: {Phone.Ticket} {Phone.NewUser} - Envelope Insert"
+                : $"SR: {Phone.Ticket} {Phone.NewUser} - Envelope Insert";
+        }
+    }
+
     public string EmailText { get; private set; } = string.Empty;
 
     public string EnvelopeInsertText { get; private set; } = string.Empty;
@@ -149,7 +159,7 @@ public sealed class OrderDetails
             envelopeText.AppendLine("");
             envelopeText.AppendLine($"SIM:\t{Phone.SimNumber}");
         }
-
+        
         EmailText = html.ToString();
         EnvelopeInsertText = envelopeText.ToString();
     }

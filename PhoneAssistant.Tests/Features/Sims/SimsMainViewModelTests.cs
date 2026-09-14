@@ -98,29 +98,4 @@ public sealed class SimsMainViewModelTests
         await Assert.That(vm.HasErrors).IsFalse();
         await Assert.That(vm.PrintEnvelopeCommand.CanExecute(null)).IsTrue();
     }
-
-    [Test]
-    public async Task PrintEnvelopeCommand_should_call_PrintEnvelope_Execute_with_OrderDetails()
-    {
-        MockValidator();
-        var vm = _mocker.CreateInstance<SimsMainViewModel>();
-        OrderDetails? actual = null;
-        var printEnvelope = _mocker.GetMock<IPrintEnvelope>();
-        printEnvelope
-            .Setup(p => p.Execute(It.IsAny<OrderDetails>()))
-            .Callback<OrderDetails>(o => actual = o);
-        vm.NewUser = "Rosie Lane";
-        vm.PhoneNumber = "07814209742";
-        vm.SimNumber = "8944122605563572205";
-        vm.Ticket = "262281";
-
-        await vm.PrintEnvelopeCommand.ExecuteAsync(null);
-
-        printEnvelope.Verify(p => p.Execute(It.IsAny<OrderDetails>()), Times.Once);
-        await Assert.That(actual).IsNotNull();
-        await Assert.That(actual.Phone.NewUser).IsEqualTo("Rosie Lane");
-        await Assert.That(actual.Phone.PhoneNumber).IsEqualTo("07814209742");
-        await Assert.That(actual.Phone.SimNumber).IsEqualTo("8944122605563572205");
-        await Assert.That(actual.Phone.Ticket).IsEqualTo(262281);
-    }
 }

@@ -2,5 +2,5 @@
 
 public interface IPrintEnvelope
 {
-    void Execute(OrderDetails orderDetails);
+    void Execute(string documentName, string envelopeInsertText);
 }

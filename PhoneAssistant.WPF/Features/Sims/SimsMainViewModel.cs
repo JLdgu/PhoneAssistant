@@ -58,7 +58,7 @@ public sealed partial class SimsMainViewModel(ISimRepository simRepository,
 
         OrderDetails orderDetails = new(phone);
 
-        await Task.Run(() => _printEnvelope.Execute(orderDetails));
+        await Task.Run(() => _printEnvelope.Execute(orderDetails.DocumentName, orderDetails.EnvelopeInsertText));
     }
     private bool CanPrintEnvelope() => HasErrors == false;
 }

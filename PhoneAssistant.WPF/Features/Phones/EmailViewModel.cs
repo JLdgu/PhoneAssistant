@@ -80,7 +80,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     {
         if (_orderDetails is null) return;
 
-        await Task.Run(() => _printEnvelope.Execute(_orderDetails));
+        await Task.Run(() => _printEnvelope.Execute(_orderDetails.DocumentName, _orderDetails.EnvelopeInsertText));
         EnvelopePrinted = true;
     }
 

@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.FileProviders;
-using PhoneAssistant.Model;
-
-using System.Diagnostics.Eventing.Reader;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Printing;
 using System.Reflection;
+using System.Text;
+
+using Microsoft.Extensions.FileProviders;
+
+using PhoneAssistant.Model;
 
 namespace PhoneAssistant.WPF.Shared;
 
@@ -12,7 +13,6 @@ internal sealed class PrintEnvelope : IPrintEnvelope
 {
     const int A4_PAGE_HEIGHT = 1169;
     const int A4_PAGE_WIDTH = 827;
-    //const int A4_BODY_HEIGHT = 969;
     const int A4_BODY_WIDTH = 667;
     const int MARGIN_TOP = 70;
     const int MARGIN_LEFT = 80;
@@ -23,15 +23,15 @@ internal sealed class PrintEnvelope : IPrintEnvelope
     const int IMAGE_WIDTH = 120;
     const int IMAGE_VERTICAL_PADDING = 30;
 
+    private readonly Brush _blackBrush = new SolidBrush(Color.Black);
+    private readonly Font _bodyFont = new("Arial", 18);
     private readonly Brush _lineBrush = new SolidBrush(Color.FromArgb(255, 91, 155, 213));
     private readonly Pen _linePen;
-    private readonly Brush _blackBrush = new SolidBrush(Color.Black);
-
-    private readonly Font _bodyFont = new("Arial", 18);
     int _verticalPosition = MARGIN_TOP;
 
+    string _envelopeInsertText = string.Empty;
+
     private readonly IApplicationSettingsRepository _appSettings;
-    private OrderDetails? _orderDetails;
 
     public PrintEnvelope(IApplicationSettingsRepository appSettings)
     {
@@ -39,15 +39,11 @@ internal sealed class PrintEnvelope : IPrintEnvelope
         _linePen = new Pen(_lineBrush, 2);
     }
 
-    public void Execute(OrderDetails orderDetails)
+    public void Execute(string documentName, string envelopeInsertText)
     {
-        ArgumentNullException.ThrowIfNull(orderDetails);
-        _orderDetails = orderDetails;
         _verticalPosition = MARGIN_TOP;
+        _envelopeInsertText = envelopeInsertText.Trim() ?? throw new ArgumentNullException(nameof(envelopeInsertText));
 
-        string documentName = _orderDetails.Phone.Ticket > 999999
-            ? $"Envelope Insert: Incident# {_orderDetails.Phone.Ticket} {_orderDetails.Phone.NewUser}"
-            : $"Envelope Insert: SR# {_orderDetails.Phone.Ticket} {_orderDetails.Phone.NewUser}";
         PrintDocument pd = new()
         {
             DocumentName = documentName
@@ -74,7 +70,7 @@ internal sealed class PrintEnvelope : IPrintEnvelope
 
     void PrintPage(object sender, PrintPageEventArgs ev)
     {
-        if (ev.Graphics is null || _orderDetails is null)
+        if (ev.Graphics is null)
             return;
         Graphics graphics = ev.Graphics;
 
@@ -105,13 +101,14 @@ internal sealed class PrintEnvelope : IPrintEnvelope
         _verticalPosition += IMAGE_HEIGHT + IMAGE_VERTICAL_PADDING;
 
         float fontLineHeight = _bodyFont.GetHeight(graphics);
-        RectangleF bodyRectangle = new(MARGIN_LEFT, _verticalPosition, A4_BODY_WIDTH, fontLineHeight * 15);
+        int lineCount = CountLines(_envelopeInsertText);
+        RectangleF bodyRectangle = new(MARGIN_LEFT, _verticalPosition, A4_BODY_WIDTH, fontLineHeight * lineCount);
 
         StringFormat stringFormat = new();
         float[] tabs = { 225 };
         stringFormat.SetTabStops(0, tabs);
 
-        graphics.DrawString(_orderDetails.EnvelopeInsertText, _bodyFont, _blackBrush, bodyRectangle, stringFormat);
+        graphics.DrawString(_envelopeInsertText, _bodyFont, _blackBrush, bodyRectangle, stringFormat);
 
         _verticalPosition = A4_PAGE_HEIGHT - MARGIN_BOTTOM;
         DrawLine(graphics);
@@ -123,5 +120,31 @@ internal sealed class PrintEnvelope : IPrintEnvelope
     {
         graphics.DrawLine(_linePen, MARGIN_LEFT, _verticalPosition, MARGIN_LEFT + A4_BODY_WIDTH, _verticalPosition);
         _verticalPosition += (int)_linePen.Width;
+    }
+
+    /// <summary>
+    /// Counts the number of lines in a string by counting newline characters.
+    /// Works cross-platform by checking Environment.NewLine.
+    /// </summary>
+    static int CountLines(string content)
+    {
+        if (content == null || content.Length == 0)
+            return 0;
+
+        int count = 0;
+        int index = 0;
+
+        // Count occurrences of Environment.NewLine
+        while ((index = content.IndexOf(Environment.NewLine, index, StringComparison.Ordinal)) != -1)
+        {
+            count++;
+            index += Environment.NewLine.Length;
+        }
+
+        // If the last line doesn't end with a newline, count it as well
+        if (!content.EndsWith(Environment.NewLine))
+            count++;
+
+        return count;
     }
 }

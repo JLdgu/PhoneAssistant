@@ -7,6 +7,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:shared="clr-namespace:PhoneAssistant.WPF.Shared"
              xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+             xmlns:behaviors="clr-namespace:PhoneAssistant.WPF.Behaviors"
              d:DataContext="{d:DesignInstance Type=local:EmailViewModel,
                                               IsDesignTimeCreatable=False}"
              d:DesignHeight="700"
@@ -129,8 +130,8 @@
                                             DeliveryAddress="{Binding DeliveryAddress, Mode=TwoWay}"
                                             Locations="{Binding Locations}"
                                             ShowIncludeDate="False"
-                                            SelectedLocation="{Binding SelectedLocation, Mode=TwoWay}"
-                                            TextChanged="DeliveryAddress_TextChanged" />
+                                            TextChangedCommand="{Binding DeliveryAddressTextChangedCommand}"
+                                            SelectedLocation="{Binding SelectedLocation, Mode=TwoWay}" />
 
                 <wv2:WebView2 Name="WebView2"
                               Grid.Row="0"

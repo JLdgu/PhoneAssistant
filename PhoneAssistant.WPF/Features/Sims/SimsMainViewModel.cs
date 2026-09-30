@@ -18,25 +18,39 @@ public sealed partial class SimsMainViewModel(
     private readonly IPrintEnvelope _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
     private readonly ISimRepository _simRepository = simRepository ?? throw new ArgumentNullException(nameof(simRepository));
 
-    private DeliveryAddressModel? _deliveryAddressModel;
-    private readonly OrderDetails _orderDetails = new(new() { Status = "Production", Imei = "imei", Model = "SIM Card", Condition = "norr", OEM = Manufacturer.EE });
+    private DeliveryAddressModel? _deliveryAddressModel;    
+
+    [RelayCommand]
+    private void Clear()
+    {
+        Esim = false;
+        NewUser = null;
+        PhoneNumber = null;
+        SimNumber = null;
+        Ticket = null;
+    }
 
     [ObservableProperty]
     public partial string EmailHtml { get; set; } = "<p>Control will update when no errors are present</p>";
 
     [ObservableProperty]
+    public partial bool Esim { get; set; }
+
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
     public partial string? NewUser { get; set; }
-    async partial void OnNewUserChanged(string? value) => await ValidatePropertyAsync(nameof(NewUser));
+    async partial void OnNewUserChanged(string? value) => await ValidateAllPropertiesAsync();
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]
     public partial string? PhoneNumber { get; set; }
     async partial void OnPhoneNumberChanged(string? value)
     {
-        await ValidatePropertyAsync(nameof(PhoneNumber));        
+        await ValidateAllPropertiesAsync();
+        if (GetErrors(nameof(PhoneNumber)).Cast<string>().Any()) return;
 
         SimNumber = await _simRepository.GetSimNumber(PhoneNumber!);
+        GenerateEmailHtml();
     }
 
     [ObservableProperty]
@@ -44,7 +58,7 @@ public sealed partial class SimsMainViewModel(
     public partial string? SimNumber { get;  set; }
     async partial void OnSimNumberChanged(string? value)
     {
-        await ValidatePropertyAsync(nameof(SimNumber));
+        await ValidateAllPropertiesAsync();
         GenerateEmailHtml();
     }
 
@@ -53,10 +67,9 @@ public sealed partial class SimsMainViewModel(
     public partial string? Ticket { get;  set; } 
     async partial void OnTicketChanged(string? value)
     {
-        await ValidatePropertyAsync(nameof(Ticket));
+        await ValidateAllPropertiesAsync();
         GenerateEmailHtml();
     }
-
 
     [RelayCommand(CanExecute = nameof(CanPrintEnvelope))]
     private async Task PrintEnvelope()
@@ -65,14 +78,14 @@ public sealed partial class SimsMainViewModel(
         int? ticket = int.Parse(Ticket);
         Phone phone = new()
         {
-            PhoneNumber = PhoneNumber,
-            SimNumber = SimNumber,
-            Status = "Production",
+            Condition = "norr",
             Imei = "imei",
             Model = "SIM Card",
             NewUser = NewUser,
-            Condition = "norr",
             OEM = Manufacturer.Apple,
+            PhoneNumber = PhoneNumber,
+            SimNumber = SimNumber,
+            Status = "Production",
             Ticket = ticket
         };
 
@@ -88,10 +101,10 @@ public sealed partial class SimsMainViewModel(
     {
         if (value is null) return;
 
-        string deliveryAddress = value.Address;
-        deliveryAddress = deliveryAddress.Replace("{NewUser}", _orderDetails!.Phone.NewUser);
-        deliveryAddress = deliveryAddress.Replace("{SR}", Ticket + " " + _orderDetails.OrderType + " " + _orderDetails.DeviceType);
-        deliveryAddress = deliveryAddress.Replace("{PhoneNumber}", PhoneNumber);
+        //string deliveryAddress = value.Address;
+        //deliveryAddress = deliveryAddress.Replace("{NewUser}", _orderDetails!.Phone.NewUser);
+        //deliveryAddress = deliveryAddress.Replace("{SR}", Ticket + " " + _orderDetails.OrderType + " " + _orderDetails.DeviceType);
+        //deliveryAddress = deliveryAddress.Replace("{PhoneNumber}", PhoneNumber);
 
         //DeliveryAddress = deliveryAddress;
         GenerateEmailHtml();
@@ -99,18 +112,25 @@ public sealed partial class SimsMainViewModel(
         //OnPropertyChanged(nameof(SelectedLocation));
     }
 
-
     public void GenerateEmailHtml()
     {
         if (HasErrors) return;
+        
+        OrderDetails orderDetails = new(
+            new() { 
+                Condition = "norr", 
+                Imei = "imei", 
+                Model = "SIM Card", 
+                NewUser = NewUser,
+                OEM = Manufacturer.EE,
+                PhoneNumber = PhoneNumber,
+                SimNumber = SimNumber,
+                Ticket = int.Parse(Ticket!),
+                Status = "Production" 
+            });
 
-        _orderDetails.Phone.PhoneNumber = PhoneNumber;
-        _orderDetails.Phone.NewUser = NewUser;
-        _orderDetails.Phone.SimNumber = SimNumber;
-        _orderDetails.Phone.Ticket = int.Parse(Ticket!);
-
-        _orderDetails.Execute(null);
-        EmailHtml = _orderDetails.EmailText;
+        orderDetails.Execute(null);
+        EmailHtml = orderDetails.EmailText;
     }
 
     private bool _loaded = false;

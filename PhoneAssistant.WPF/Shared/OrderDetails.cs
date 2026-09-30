@@ -7,12 +7,10 @@ namespace PhoneAssistant.WPF.Shared;
 public sealed record class Order(OrderDetails OrderDetails);
 
 public sealed class OrderDetails
-{
-    public string AssetTag { get; } = string.Empty;
-    
+{    
     public string DeliveryAddress { get; set; } = string.Empty;
 
-    public string DeviceSupplied
+    private string DeviceSupplied
     {
         get
         {
@@ -35,21 +33,14 @@ public sealed class OrderDetails
     public string EmailText { get; private set; } = string.Empty;
 
     public string EnvelopeInsertText { get; private set; } = string.Empty;
-
-    public string Imei { get; }
-
+   
     public OrderType OrderType { get; set; } = OrderType.None;
 
     public Phone Phone { get; }
     
-    public string PhoneNumber { get; }
-    
-    public string Ticket { get; } = string.Empty;
-
     public OrderDetails(Phone phone)
     {
         Phone = phone ?? throw new ArgumentNullException(nameof(phone));
-        AssetTag = phone.AssetTag ?? string.Empty;
         if (phone.DespatchDetails is null)
         {
             StringBuilder user = new();
@@ -58,10 +49,6 @@ public sealed class OrderDetails
         }
         else
             DeliveryAddress = phone.DespatchDetails;
-
-        Imei = phone.Imei;
-        PhoneNumber = phone.PhoneNumber ?? string.Empty;
-        Ticket = phone.Ticket.ToString() ?? string.Empty;
 
         DeviceType = DeviceType.Phone;
         if (phone.Model is not null)
@@ -130,9 +117,9 @@ public sealed class OrderDetails
 
         StringBuilder envelopeText = new();
         if (Phone.Ticket > 999999)
-            envelopeText.AppendLine($"Issue:\t#{Ticket}");
+            envelopeText.AppendLine($"Issue:\t#{Phone.Ticket}");
         else
-            envelopeText.AppendLine($"Service Request:\t#{Ticket}");
+            envelopeText.AppendLine($"Service Request:\t#{Phone.Ticket}");
 
         envelopeText.AppendLine("");
         envelopeText.AppendLine($"Device User:\t{Phone.NewUser}");
@@ -145,17 +132,17 @@ public sealed class OrderDetails
             envelopeText.AppendLine($"Device supplied:\t{DeviceSupplied}");
             html.AppendLine($"<tr><td>Device supplied:</td><td>{DeviceSupplied}</td></tr>");
             envelopeText.AppendLine("");
-            envelopeText.AppendLine($"Handset identifier:\t{Imei}");
-            html.AppendLine($"<tr><td>Handset identifier:</td><td>{Imei}</td></tr>");
+            envelopeText.AppendLine($"Handset identifier:\t{Phone.Imei}");
+            html.AppendLine($"<tr><td>Handset identifier:</td><td>{Phone.Imei}</td></tr>");
             envelopeText.AppendLine("");
-            envelopeText.AppendLine($"Asset Tag:\t{AssetTag}");
-            html.AppendLine($"<tr><td>Asset tag:</td><td>{AssetTag}</td></tr>");
+            envelopeText.AppendLine($"Asset Tag:\t{Phone.AssetTag}");
+            html.AppendLine($"<tr><td>Asset tag:</td><td>{Phone.AssetTag}</td></tr>");
             envelopeText.AppendLine("");
         }
-        if (!string.IsNullOrWhiteSpace(PhoneNumber))
+        if (!string.IsNullOrWhiteSpace(Phone.PhoneNumber))
         {
-            envelopeText.AppendLine($"Phone number:\t{PhoneNumber}");
-            html.AppendLine($"<tr><td>Phone number:</td><td>{PhoneNumber}</td></tr></table>");
+            envelopeText.AppendLine($"Phone number:\t{Phone.PhoneNumber}");
+            html.AppendLine($"<tr><td>Phone number:</td><td>{Phone.PhoneNumber}</td></tr></table>");
             envelopeText.AppendLine("");
             envelopeText.AppendLine($"SIM:\t{Phone.SimNumber}");
         }

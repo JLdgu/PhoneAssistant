@@ -37,22 +37,30 @@
                          materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                          MaxLength="7"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding Ticket}" />
+                         Text="{Binding Ticket, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBox MinWidth="150"
-                         Margin="10,0,0,0"
-                         materialDesign:HintAssist.Hint="New User"
-                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding NewUser}" />
-
-                <TextBox MinWidth="125  "
+                <TextBox MinWidth="125"
                          Margin="10,0,0,0"
                          materialDesign:HintAssist.Hint="Phone Number"
                          materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                          MaxLength="11"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding PhoneNumber}" />
+                         Text="{Binding PhoneNumber, UpdateSourceTrigger=PropertyChanged}" />
+
+                <StackPanel Margin="10,0,0,0">
+                    <materialDesign:PackIcon Width="15"
+                                             Height="15"
+                                             HorizontalAlignment="Center"
+                                             Kind="SimOutline" />
+                    <TextBlock HorizontalAlignment="Center"
+                               Style="{StaticResource MaterialDesignOverlineTextBlock}"
+                               Text="eSIM" />
+                    <CheckBox Margin="0,-5"
+                              Padding="0"
+                              IsChecked="{Binding Esim, UpdateSourceTrigger=PropertyChanged}"
+                              IsThreeState="False"
+                              Style="{StaticResource MaterialDesignCheckBox}" />
+                </StackPanel>
 
                 <TextBox MinWidth="160"
                          Margin="10,0,0,0"
@@ -60,7 +68,14 @@
                          materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
                          MaxLength="19"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding SimNumber}" />
+                         Text="{Binding SimNumber, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBox MinWidth="150"
+                         Margin="10,0,0,0"
+                         materialDesign:HintAssist.Hint="New User"
+                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding NewUser, UpdateSourceTrigger=PropertyChanged}" />
 
                 <Button Margin="20,0,0,0"
                         Padding="0"
@@ -69,6 +84,13 @@
                                                           Size=35}"
                         Style="{StaticResource MaterialDesignFlatLightButton}"
                         ToolTip="Print Envelope" />
+
+                <Button Margin="10,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Command="{Binding ClearCommand}"
+                        Content="Clear Changes"
+                        Style="{StaticResource MaterialDesignRaisedButton}" />
 
             </StackPanel>
         </GroupBox>

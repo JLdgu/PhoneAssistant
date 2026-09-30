@@ -26,6 +26,19 @@ public sealed class OrderDetailsTests
     }
 
     [Test]
+    [Arguments(7654321, "Incident")]
+    [Arguments(123456, "SR")]
+    internal async Task DocumentName_should_reflect_Incident_or_SR(int ticket, string ticketType)
+    {
+        _phone.Ticket = ticket;
+        OrderDetails sut = new(_phone);
+
+        sut.Execute(null);
+
+        await Assert.That(sut.DocumentName).IsEqualTo($"{ticketType}: {ticket} {_phone.NewUser} - Envelope Insert");
+    }
+
+    [Test]
     [Arguments(OrderType.New)]
     [Arguments(OrderType.Replacement)]
     public async Task Execute_OrderType_Email_Contains_Order_Type_Details(OrderType orderType)
@@ -50,11 +63,7 @@ public sealed class OrderDetailsTests
 
         sut.Execute(null);
 
-        await Assert.That(sut.AssetTag).IsEqualTo("");
-        await Assert.That(sut.Imei).IsEqualTo("imei");
-        await Assert.That(sut.OrderType).IsEqualTo(orderType);
-        await Assert.That(sut.PhoneNumber).IsEqualTo(expected);
-        await Assert.That(sut.Ticket).IsEqualTo("1000000");
+        await Assert.That(sut.OrderType).IsEqualTo(orderType);        
     }
 
     [Test]

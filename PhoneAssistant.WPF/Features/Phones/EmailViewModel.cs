@@ -30,13 +30,13 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             _orderDetails = value;
             EnvelopePrinted = false;
 
-            AssetTag = value.AssetTag;
+            AssetTag = value.Phone.AssetTag ?? string.Empty;
             DeliveryAddress = value.DeliveryAddress;
-            Imei = value.Imei;
+            Imei = value.Phone.Imei;
             OrderType = value.OrderType;
-            PhoneNumber = value.PhoneNumber;
+            PhoneNumber = value.Phone.PhoneNumber ?? string.Empty;
             SelectedLocation = null;
-            Ticket = value.Ticket;
+            Ticket = value.Phone.Ticket.ToString() ?? string.Empty;
 
             GeneratingEmail = true;
             GenerateEmailHtml();

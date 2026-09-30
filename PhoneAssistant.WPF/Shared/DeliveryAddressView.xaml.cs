@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using PhoneAssistant.Model;
 
 namespace PhoneAssistant.WPF.Shared;
@@ -33,6 +34,22 @@ public partial class DeliveryAddressView : UserControl
         // Re-raise as this control's TextChanged routed event so parent handlers wired on the control are invoked.
         var args = new TextChangedEventArgs(TextChangedEvent, e.UndoAction);
         RaiseEvent(args);
+
+        // If a command is bound to the control, execute it. Pass the TextChangedEventArgs as the parameter.
+        if (TextChangedCommand is ICommand command && command.CanExecute(e))
+        {
+            command.Execute(e);
+        }
+    }
+
+    // Optional ICommand on the control so parent view-models can bind directly to text changes.
+    public static readonly DependencyProperty TextChangedCommandProperty =
+        DependencyProperty.Register(nameof(TextChangedCommand), typeof(ICommand), typeof(DeliveryAddressView), new PropertyMetadata(null));
+
+    public ICommand? TextChangedCommand
+    {
+        get => (ICommand?)GetValue(TextChangedCommandProperty);
+        set => SetValue(TextChangedCommandProperty, value);
     }
 
     public static readonly DependencyProperty LocationsProperty =

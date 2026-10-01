@@ -6,7 +6,7 @@ namespace PhoneAssistant.WPF.Shared;
 
 public interface IPrintDymoLabel
 {
-    void Execute(string address, string? includeDate);
+    void Execute(string address, bool includeDate);
 }
 
 public sealed class PrintDymoLabel(IApplicationSettingsRepository appSettings) : IPrintDymoLabel
@@ -21,9 +21,9 @@ public sealed class PrintDymoLabel(IApplicationSettingsRepository appSettings) :
 
     private readonly IApplicationSettingsRepository _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
     private string? _address;
-    private string? _includeDate;
+    private bool _includeDate;
 
-    public void Execute(string address, string? includeDate)
+    public void Execute(string address, bool includeDate)
     {
         _address = address.Trim();
         _includeDate = includeDate;
@@ -60,7 +60,7 @@ public sealed class PrintDymoLabel(IApplicationSettingsRepository appSettings) :
         int dateFontHeight = (int)dateFont.GetHeight(graphics);
 
         int maxHeight = BodyHeight;
-        if (_includeDate is not null)
+        if (_includeDate)
             maxHeight -= dateFontHeight;
 
         float fontSize = 22;
@@ -81,16 +81,62 @@ public sealed class PrintDymoLabel(IApplicationSettingsRepository appSettings) :
         Rectangle rectangle = new(MarginLeft, MarginTop, BodyWidth, maxHeight);
         graphics.DrawString(_address, font, brush, rectangle);
 
-        if (_includeDate is not null)
+        if (_includeDate)
         {
-            StringFormat sf = new StringFormat();
-            sf.LineAlignment = StringAlignment.Far;
-            sf.Alignment = StringAlignment.Far;
+            StringFormat sf = new()
+            {
+                LineAlignment = StringAlignment.Far,
+                Alignment = StringAlignment.Far
+            };
 
             rectangle = new(MarginLeft, MarginTop + BodyHeight - dateFontHeight, BodyWidth, dateFontHeight);
-            graphics.DrawString(_includeDate, dateFont, brush, rectangle, sf);
+            graphics.DrawString(Utility.ToOrdinalWorkingDate(DateTime.Now, true), dateFont, brush, rectangle, sf);
         }
 
         ev.HasMorePages = false;
+    }
+
+    public static string ToOrdinalWorkingDate(DateTime date, bool hexSuperscript = false, int buffer = 0)
+    {
+        DateTime weekDay = date.AddDays(buffer);
+        if (buffer > 0)
+        {
+            while (weekDay.DayOfWeek == DayOfWeek.Saturday || weekDay.DayOfWeek == DayOfWeek.Sunday)
+                weekDay = weekDay.AddDays(buffer);
+        }
+
+        string ordinalDay = string.Empty;
+        int number = weekDay.Day;
+        switch (number % 100)
+        {
+            case 11:
+            case 12:
+            case 13:
+                ordinalDay = hexSuperscript ? number.ToString() + "\x1D57\x02B0" : number.ToString() + "<sup>th</sup>";
+                break;
+        }
+
+        if (ordinalDay == string.Empty)
+        {
+            switch (number % 10)
+            {
+                case 1:
+                    ordinalDay = hexSuperscript ? number.ToString() + "\x02E2\x1D57" : number.ToString() + "<sup>st</sup>";
+                    break;
+                case 2:
+                    ordinalDay = hexSuperscript ? number.ToString() + "\x207F\x1D48" : number.ToString() + "<sup>nd</sup>";
+                    break;
+                case 3:
+                    ordinalDay = hexSuperscript ? number.ToString() + "\x02B3\x1D48" : number.ToString() + "<sup>rd</sup>";
+                    break;
+                default:
+                    ordinalDay = hexSuperscript ? number.ToString() + "\x1D57\x02B0" : number.ToString() + "<sup>th</sup>";
+                    break;
+            }
+        }
+        string from = weekDay.ToString("dddd * MMMM yyyy");
+        from = from.Replace("*", ordinalDay);
+
+        return from;
     }
 }

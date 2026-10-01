@@ -29,7 +29,7 @@ public partial class DymoViewModel(IPrintDymoLabel dymoLabel, ILocationsReposito
     [RelayCommand]
     private async Task PrintDymoLabel()
     {
-        await Task.Run(() => _dymoLabel.Execute(Label, null));
+        await Task.Run(() => _dymoLabel.Execute(Label, false));
         Clipboard.SetText(Label);
     }
 

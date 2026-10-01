@@ -86,19 +86,19 @@ public sealed class OrderDetails
             if (location.Name.Contains("GMH"))
             {
                 html.AppendLine("DTS End User Compute Team, Hardware Room, Great Moor House, Bittern Road, Exeter, EX2 7FW</br>");
-                html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now, buffer: 2)}</p>");
+                html.AppendLine($"It will be available for collection from {Utility.ToOrdinalWorkingDate(DateTime.Now, buffer: 2)}</p>");
             }
             else
             {
                 html.AppendLine("DTS End User Compute Team, Room L87, County Hall, Topsham Road, Exeter, EX2 4QD</br>");
-                html.AppendLine($"It will be available for collection from {ToOrdinalWorkingDate(DateTime.Now)}</p>");
+                html.AppendLine($"It will be available for collection from {Utility.ToOrdinalWorkingDate(DateTime.Now)}</p>");
             }
         }
         else
         {
             string formattedAddress = string.IsNullOrWhiteSpace(Phone.DespatchDetails) ? string.Empty : Phone.DespatchDetails.Replace(Environment.NewLine, "<br />");
             html.AppendLine($"<p>Your {Phone.OEM} {Phone.Model} {DeviceType.ToString().ToLower()} has been sent to<br />{formattedAddress}</br>");
-            html.AppendLine($"It was sent on {ToOrdinalWorkingDate(DateTime.Now)}</p>");
+            html.AppendLine($"It was sent on {Utility.ToOrdinalWorkingDate(DateTime.Now)}</p>");
         }
 
         if (location.Note is not null)
@@ -163,51 +163,6 @@ public sealed class OrderDetails
         EmailText = html.ToString();
         EnvelopeInsertText = envelopeText.ToString();
     }
-
-    public static string ToOrdinalWorkingDate(DateTime date, bool hexSuperscript = false, int buffer = 0)
-    {
-        DateTime weekDay = date.AddDays(buffer);
-        if (buffer > 0)
-        {
-            while (weekDay.DayOfWeek == DayOfWeek.Saturday || weekDay.DayOfWeek == DayOfWeek.Sunday)
-                weekDay = weekDay.AddDays(buffer);
-        }
-
-        string ordinalDay = string.Empty;
-        int number = weekDay.Day;
-        switch (number % 100)
-        {
-            case 11:
-            case 12:
-            case 13:
-                ordinalDay = hexSuperscript ? number.ToString() + "\x1D57\x02B0" : number.ToString() + "<sup>th</sup>";
-                break;
-        }
-
-        if (ordinalDay == string.Empty)
-        {
-            switch (number % 10)
-            {
-                case 1:
-                    ordinalDay = hexSuperscript ? number.ToString() + "\x02E2\x1D57" : number.ToString() + "<sup>st</sup>";
-                    break;
-                case 2:
-                    ordinalDay = hexSuperscript ? number.ToString() + "\x207F\x1D48" : number.ToString() + "<sup>nd</sup>";
-                    break;
-                case 3:
-                    ordinalDay = hexSuperscript ? number.ToString() + "\x02B3\x1D48" : number.ToString() + "<sup>rd</sup>";
-                    break;
-                default:
-                    ordinalDay = hexSuperscript ? number.ToString() + "\x1D57\x02B0" : number.ToString() + "<sup>th</sup>";
-                    break;
-            }
-        }
-        string from = weekDay.ToString("dddd * MMMM yyyy");
-        from = from.Replace("*", ordinalDay);
-
-        return from;
-    }
-
 }
 
 public enum OrderType

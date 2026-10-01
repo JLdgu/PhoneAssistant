@@ -89,9 +89,9 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     {
         await Task.Run(() =>
         {
-            string? includeDate = null;
+            bool includeDate = false;
             if (SelectedLocation is not null && SelectedLocation.Collection)
-                includeDate = OrderDetails.ToOrdinalWorkingDate(DateTime.Now, true);
+                includeDate = true; 
 
             _dymoLabel.Execute(DeliveryAddress, includeDate);
         });

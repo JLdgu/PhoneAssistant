@@ -26,13 +26,6 @@
             <shared:DeliveryAddressView DeliveryAddress="{Binding Label, Mode=TwoWay}"
                                         Locations="{Binding Locations}"
                                         SelectedLocation="{Binding SelectedLocation, Mode=TwoWay}" />
-            <Button Margin="20,0,0,0"
-                    Padding="0"
-                    Command="{Binding PrintDymoLabelCommand}"
-                    Content="{materialDesign:PackIcon Kind=LabelOutline,
-                                                      Size=35}"
-                    Style="{StaticResource MaterialDesignFlatLightButton}"
-                    ToolTip="Print Dymo Label" />
         </StackPanel>
 
     </Grid>

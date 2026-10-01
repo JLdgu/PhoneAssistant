@@ -28,7 +28,6 @@
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="auto" />
-                    <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
@@ -132,19 +131,10 @@
                                             SelectedLocation="{Binding SelectedLocation, Mode=TwoWay}"
                                             TextChanged="DeliveryAddress_TextChanged" />
 
-                <Button Grid.Column="2"
-                        Margin="20,0,0,0"
-                        Padding="0"
-                        Command="{Binding PrintDymoLabelCommand}"
-                        Content="{materialDesign:PackIcon Kind=LabelOutline,
-                                                          Size=35}"
-                        Style="{StaticResource MaterialDesignFlatLightButton}"
-                        ToolTip="Print Dymo Label" />
-
                 <wv2:WebView2 Name="WebView2"
                               Grid.Row="0"
-                              Grid.Column="3"
-                              Grid.ColumnSpan="4"
+                              Grid.Column="2"
+                              Grid.ColumnSpan="2"
                               Height="375"
                               d:Visibility="Visible"
                               local:WebBrowserHelper.NavigateTo="{Binding EmailHtml}"

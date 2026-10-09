@@ -26,10 +26,13 @@ public partial class DymoViewModel(IPrintDymoLabel dymoLabel, ILocationsReposito
     [ObservableProperty]
     public partial string Label { get; set; } = string.Empty;
 
+    [ObservableProperty]
+    public partial bool IncludeDate { get; set; }
+
     [RelayCommand]
     private async Task PrintDymoLabel()
     {
-        await Task.Run(() => _dymoLabel.Execute(Label, false));
+        await Task.Run(() => _dymoLabel.Execute(Label, IncludeDate));
         Clipboard.SetText(Label);
     }
 

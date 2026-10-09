@@ -56,4 +56,23 @@ public partial class DeliveryAddressView : UserControl
         get => (string)GetValue(DeliveryAddressProperty);
         set => SetValue(DeliveryAddressProperty, value);
     }
+
+    public static readonly DependencyProperty IncludeDateProperty =
+        DependencyProperty.Register(nameof(IncludeDate), typeof(bool), typeof(DeliveryAddressView), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+    public bool IncludeDate
+    {
+        get => (bool)GetValue(IncludeDateProperty);
+        set => SetValue(IncludeDateProperty, value);
+    }
+
+    public static readonly DependencyProperty ShowIncludeDateProperty =
+        DependencyProperty.Register(nameof(ShowIncludeDate), typeof(bool), typeof(DeliveryAddressView), new PropertyMetadata(false));
+
+    public bool ShowIncludeDate
+    {
+        get => (bool)GetValue(ShowIncludeDateProperty);
+        set => SetValue(ShowIncludeDateProperty, value);
+    }
+
 }

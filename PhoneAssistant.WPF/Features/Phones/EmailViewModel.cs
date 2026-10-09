@@ -87,14 +87,8 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     [RelayCommand]
     private async Task PrintDymoLabel()
     {
-        await Task.Run(() =>
-        {
-            bool includeDate = false;
-            if (SelectedLocation is not null && SelectedLocation.Collection)
-                includeDate = true; 
-
-            _dymoLabel.Execute(DeliveryAddress, includeDate);
-        });
+        bool includeDate = SelectedLocation is not null && SelectedLocation.Collection;
+        await Task.Run(() => _dymoLabel.Execute(DeliveryAddress, includeDate));
 
         Clipboard.SetText(DeliveryAddress);
     }

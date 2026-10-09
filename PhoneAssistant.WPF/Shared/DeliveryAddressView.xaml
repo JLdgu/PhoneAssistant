@@ -6,8 +6,9 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              x:Name="Root"
-             d:DesignHeight="200"
-             d:DesignWidth="400"
+             d:Background="AntiqueWhite"
+             d:DesignHeight="300"
+             d:DesignWidth="500"
              mc:Ignorable="d">
     <StackPanel Orientation="Horizontal">
         <StackPanel Orientation="Vertical">
@@ -31,9 +32,16 @@
                      FontSize="16"
                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
                      Text="{Binding DeliveryAddress, ElementName=Root, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     TextChanged="InnerDeliveryAddress_TextChanged"
                      TextWrapping="Wrap"
-                     VerticalScrollBarVisibility="Auto"
-                     TextChanged="InnerDeliveryAddress_TextChanged" />
+                     VerticalScrollBarVisibility="Auto" />
+            <CheckBox Margin="2,0,0,0"
+                      VerticalAlignment="Center"
+                      Content="Print todays date on lower right"
+                      IsChecked="{Binding IncludeDate, ElementName=Root, Mode=TwoWay}"
+                      IsThreeState="False"
+                      Style="{StaticResource MaterialDesignCheckBox}"
+                      Visibility="{Binding ShowIncludeDate, ElementName=Root, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </StackPanel>
         <Button Margin="20,0,0,0"
                 Padding="0"

@@ -24,7 +24,9 @@
                     HorizontalAlignment="Center"
                     Orientation="Horizontal">
             <shared:DeliveryAddressView DeliveryAddress="{Binding Label, Mode=TwoWay}"
+                                        IncludeDate="{Binding IncludeDate, Mode=TwoWay}"
                                         Locations="{Binding Locations}"
+                                        ShowIncludeDate="True"
                                         SelectedLocation="{Binding SelectedLocation, Mode=TwoWay}" />
         </StackPanel>
 

@@ -43,11 +43,17 @@ public partial class DymoViewModel(IPrintDymoLabel dymoLabel, ILocationsReposito
         if (_deliveryAddressModel is null)
         {
             _deliveryAddressModel = new DeliveryAddressModel(_locationsRepository);
-            _deliveryAddressModel.SelectedLocationChanged += (s, v) => { if (v is not null) Label = v.Address; };
+            _deliveryAddressModel.SelectedLocationChanged += DeliveryAddressModel_SelectedLocationChanged;
         }
 
         await _deliveryAddressModel.LoadAsync();
 
         _loaded = true;
+    }
+
+    private void DeliveryAddressModel_SelectedLocationChanged(object? sender, Location? value)
+    {
+        IncludeDate = value?.Collection ?? false;
+        if (value is not null) Label = value.Address;
     }
 }

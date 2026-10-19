@@ -20,16 +20,23 @@ public partial class DymoViewModel(IPrintDymoLabel dymoLabel, ILocationsReposito
     public Location? SelectedLocation
     {
         get => _deliveryAddressModel?.SelectedLocation;
-        set { _deliveryAddressModel?.SelectedLocation = value; }
+        set
+        {
+            _deliveryAddressModel?.SelectedLocation = value;
+            PrintDymoLabelCommand.NotifyCanExecuteChanged();
+        }
     }
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PrintDymoLabelCommand))]
     public partial string Label { get; set; } = string.Empty;
 
     [ObservableProperty]
     public partial bool IncludeDate { get; set; }
 
-    [RelayCommand]
+    private bool CanPrintDymoLabel() => SelectedLocation is not null || !string.IsNullOrWhiteSpace(Label);
+
+    [RelayCommand(CanExecute = nameof(CanPrintDymoLabel))]
     private async Task PrintDymoLabel()
     {
         await Task.Run(() => _dymoLabel.Execute(Label, IncludeDate));

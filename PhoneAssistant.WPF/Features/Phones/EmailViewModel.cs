@@ -84,7 +84,9 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         EnvelopePrinted = true;
     }
 
-    [RelayCommand]
+    private bool CanPrintDymoLabel() => SelectedLocation is not null || !string.IsNullOrWhiteSpace(DeliveryAddress);
+
+    [RelayCommand(CanExecute = nameof(CanPrintDymoLabel))]
     private async Task PrintDymoLabel()
     {
         bool includeDate = SelectedLocation is not null && SelectedLocation.Collection;
@@ -123,6 +125,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         {
             EnsureDeliveryAddressModelInitialized();
             _deliveryAddressModel!.SelectedLocation = value;
+            PrintDymoLabelCommand.NotifyCanExecuteChanged();
         }
     }
 
@@ -142,6 +145,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     }
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PrintDymoLabelCommand))]
     [NotifyPropertyChangedFor(nameof(EmailHtml))]
     public partial string DeliveryAddress { get; set; } = string.Empty;
     partial void OnDeliveryAddressChanged(string value)

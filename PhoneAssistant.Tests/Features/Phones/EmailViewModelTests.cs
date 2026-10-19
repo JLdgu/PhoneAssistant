@@ -150,4 +150,29 @@ public sealed class EmailViewModelTests
         await Assert.That(_vm.DeliveryAddress).Contains(_phone.Ticket.ToString()!);
         await Assert.That(_vm.DeliveryAddress).Contains(_phone.PhoneNumber);
     }
+
+    [Test]
+    public async Task PrintDymoLabelCommand_RequiresLocationOrNonWhitespaceDeliveryAddress()
+    {
+        TestSetup(_phone);
+        _vm.DeliveryAddress = string.Empty;
+
+        await Assert.That(_vm.PrintDymoLabelCommand.CanExecute(null)).IsFalse();
+
+        _vm.DeliveryAddress = "   ";
+        await Assert.That(_vm.PrintDymoLabelCommand.CanExecute(null)).IsFalse();
+
+        _vm.DeliveryAddress = "Delivery address";
+        await Assert.That(_vm.PrintDymoLabelCommand.CanExecute(null)).IsTrue();
+
+        _vm.DeliveryAddress = string.Empty;
+        await Assert.That(_vm.PrintDymoLabelCommand.CanExecute(null)).IsFalse();
+
+        _vm.SelectedLocation = new Location { Name = "Delivery", Address = string.Empty, Collection = false };
+        _vm.DeliveryAddress = string.Empty;
+        await Assert.That(_vm.PrintDymoLabelCommand.CanExecute(null)).IsTrue();
+
+        _vm.SelectedLocation = null;
+        await Assert.That(_vm.PrintDymoLabelCommand.CanExecute(null)).IsFalse();
+    }
 }

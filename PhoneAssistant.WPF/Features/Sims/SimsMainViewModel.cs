@@ -6,12 +6,22 @@ using PhoneAssistant.WPF.Shared;
 
 namespace PhoneAssistant.WPF.Features.Sims;
 
+public enum SimCardType
+{
+    Data,
+    VoiceTextData,
+    VoiceText
+}
+
 public sealed partial class SimsMainViewModel(ISimRepository simRepository,
                          IPrintEnvelope printEnvelope,
                          IServiceProvider serviceProvider) : ValidatableViewModel<SimsMainViewModel>(serviceProvider), ISimsMainViewModel
 {
     private readonly ISimRepository _simRepository = simRepository ?? throw new ArgumentNullException(nameof(simRepository));
     private readonly IPrintEnvelope _printEnvelope = printEnvelope ?? throw new ArgumentNullException(nameof(printEnvelope));
+
+    [ObservableProperty]
+    public partial SimCardType SimType { get; set; } = SimCardType.Data;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]

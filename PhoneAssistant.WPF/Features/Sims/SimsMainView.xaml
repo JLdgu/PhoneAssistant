@@ -52,6 +52,20 @@
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          Text="{Binding PhoneNumber}" />
 
+                <ComboBox MinWidth="180"
+                          Margin="10,0,0,0"
+                          materialDesign:HintAssist.Hint="SIM type"
+                          SelectedValue="{Binding SimType}"
+                          SelectedValuePath="Tag"
+                          Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                    <ComboBoxItem Content="Data"
+                                  Tag="{x:Static viewmodel:SimCardType.Data}" />
+                    <ComboBoxItem Content="Voice/Text/Data"
+                                  Tag="{x:Static viewmodel:SimCardType.VoiceTextData}" />
+                    <ComboBoxItem Content="Voice/Text"
+                                  Tag="{x:Static viewmodel:SimCardType.VoiceText}" />
+                </ComboBox>
+
                 <TextBox MinWidth="160"
                          Margin="10,0,0,0"
                          materialDesign:HintAssist.Hint="SIM Number"

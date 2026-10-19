@@ -28,6 +28,19 @@ public sealed class SimsMainViewModelTests
     }
 
     [Test]
+    public async Task SimType_should_default_to_Data_and_accept_other_values()
+    {
+        MockValidator();
+        var vm = _mocker.CreateInstance<SimsMainViewModel>();
+
+        await Assert.That(vm.SimType).IsEqualTo(SimCardType.Data);
+
+        vm.SimType = SimCardType.VoiceText;
+
+        await Assert.That(vm.SimType).IsEqualTo(SimCardType.VoiceText);
+    }
+
+    [Test]
     public async Task HasErrors_should_be_false_when_required_fields_supplied()
     {
         MockValidator();

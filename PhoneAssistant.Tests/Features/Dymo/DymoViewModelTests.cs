@@ -8,6 +8,35 @@ namespace PhoneAssistant.Tests.Features.Dymo;
 public sealed class DymoViewModelTests
 {
     [Test]
+    public async Task PrintDymoLabelCommand_RequiresLocationOrNonWhitespaceLabel()
+    {
+        AutoMocker mocker = new();
+        mocker.GetMock<ILocationsRepository>()
+            .Setup(repository => repository.GetAllLocationsAsync())
+            .ReturnsAsync(Array.Empty<Location>());
+
+        DymoViewModel viewModel = mocker.CreateInstance<DymoViewModel>();
+        await viewModel.LoadAsync();
+
+        await Assert.That(viewModel.PrintDymoLabelCommand.CanExecute(null)).IsFalse();
+
+        viewModel.Label = "   ";
+        await Assert.That(viewModel.PrintDymoLabelCommand.CanExecute(null)).IsFalse();
+
+        viewModel.Label = "Delivery address";
+        await Assert.That(viewModel.PrintDymoLabelCommand.CanExecute(null)).IsTrue();
+
+        viewModel.Label = string.Empty;
+        await Assert.That(viewModel.PrintDymoLabelCommand.CanExecute(null)).IsFalse();
+
+        viewModel.SelectedLocation = new Location { Name = "Delivery", Address = string.Empty, Collection = false };
+        await Assert.That(viewModel.PrintDymoLabelCommand.CanExecute(null)).IsTrue();
+
+        viewModel.SelectedLocation = null;
+        await Assert.That(viewModel.PrintDymoLabelCommand.CanExecute(null)).IsFalse();
+    }
+
+    [Test]
     public async Task SelectedLocationChanged_UpdatesIncludeDateFromCollection()
     {
         AutoMocker mocker = new();

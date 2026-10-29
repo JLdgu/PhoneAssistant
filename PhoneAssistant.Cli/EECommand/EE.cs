@@ -139,6 +139,14 @@ internal static class EE
         }
 
         int lineCount = 0;
+        int totalCount = phoneSummariesResult.Value.Count;
+        Progress progress = new();
+        if (totalCount > 0)
+        {
+            Log.Information("Processing {0} phone summaries", totalCount);
+            progress.Draw(0, totalCount);
+        }
+
         foreach (var phoneSummary in phoneSummariesResult.Value)
         {
             string simNumber = "Unknown";
@@ -169,6 +177,10 @@ internal static class EE
                 await repository.CreateAsync(sim);
 
             lineCount++;
+            if (lineCount % 50 == 0 || lineCount == totalCount)
+            {
+                progress.Draw(lineCount, totalCount);
+            }
         }
 
         dbContext.SaveChanges();

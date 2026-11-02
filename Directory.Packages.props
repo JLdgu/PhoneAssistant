@@ -24,7 +24,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
-    <PackageVersion Include="CsvHelper" Version="34.0.0" />
+    <PackageVersion Include="CsvHelper" Version="33.1.0" />
     <PackageVersion Include="EntityFrameworkCore.Triggered" Version="3.2.2" />
     <PackageVersion Include="ExcelDataReader" Version="3.9.0" />
     <PackageVersion Include="FluentResults" Version="4.0.0" />

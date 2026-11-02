@@ -1,12 +1,17 @@
 version: 2
+
 updates:
-  - package-ecosystem: "nuget" 
-    directory: "/" 
+  - package-ecosystem: "nuget"
+    directory: "/"
     schedule:
       interval: "monthly"
+    ignore:
+      - dependency-name: "CsvHelper"
+        versions:
+          - ">=34.0.0"
 
-  - package-ecosystem: "github-actions" # update GitHub Actions workflows
-    directory: "/" 
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
       interval: "monthly"
     groups:

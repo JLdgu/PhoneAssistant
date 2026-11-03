@@ -7,6 +7,8 @@ using Serilog;
 using System.CommandLine;
 using System.IO.Compression;
 using System.Text;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace PhoneAssistant.Cli.EECommand;
 
@@ -147,6 +149,7 @@ internal static class EE
             progress.Draw(0, totalCount);
         }
 
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
         foreach (var phoneSummary in phoneSummariesResult.Value)
         {
             string simNumber = "Unknown";
@@ -183,7 +186,25 @@ internal static class EE
             }
         }
 
-        dbContext.SaveChanges();
+        await transaction.CommitAsync();
         Log.Information("Import completed. {LineCount} records processed.", lineCount);
+
+        if (string.Compare(billingPeriod, latestBillingPeriod, StringComparison.Ordinal) > 0)
+        {
+            var cacheOptions = new DbContextOptionsBuilder<SimCacheDbContext>()
+                .UseSqlite($"Data Source={SimCacheDbContext.GetDatabasePath()}")
+                .Options;
+            await using SimCacheDbContext cacheDbContext = new(cacheOptions);
+            SimCacheService cacheService = new(dbContext, cacheDbContext);
+            try
+            {
+                if (await cacheService.RefreshIfNewerAsync())
+                    Log.Information("Local SIM cache refreshed after the new billing period import.");
+            }
+            catch (SqliteException ex)
+            {
+                Log.Warning(ex, "Import succeeded, but the local SIM cache could not be refreshed.");
+            }
+        }
     }
 }

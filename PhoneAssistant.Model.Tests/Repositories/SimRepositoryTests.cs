@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 
 namespace PhoneAssistant.Model.Tests;
 
@@ -103,6 +104,47 @@ internal class SimRepositoryTests
         await Assert.That(sims).Count().IsEqualTo(2);
         await Assert.That(firstSim).IsNotNull();
         await Assert.That(firstSim.BillingPeriod).IsEqualTo("202602");
+    }
+
+    [Test]
+    internal async Task GetSimsForPhoneNumber_should_read_from_local_cache_when_configured()
+    {
+        using SqliteConnection cacheConnection = new("Data Source=:memory:");
+        await cacheConnection.OpenAsync();
+        DbContextOptions<SimCacheDbContext> cacheOptions = new DbContextOptionsBuilder<SimCacheDbContext>()
+            .UseSqlite(cacheConnection)
+            .Options;
+        await using SimCacheDbContext cacheDbContext = new(cacheOptions);
+        await cacheDbContext.Database.EnsureCreatedAsync();
+
+        cacheDbContext.Sims.Add(new Sim
+        {
+            PhoneNumber = "07814209742",
+            BillingPeriod = "202602",
+            SIMNumber = "cached-sim",
+            UserName = "Cached User",
+            BroadbandData = 150,
+            TextMessages = 75,
+            VoiceCalls = 30
+        });
+        await cacheDbContext.SaveChangesAsync();
+
+        _helper.DbContext.Sims.Add(new Sim
+        {
+            PhoneNumber = "07814209742",
+            BillingPeriod = "202602",
+            SIMNumber = "shared-sim",
+            UserName = "Shared User",
+            BroadbandData = 150,
+            TextMessages = 75,
+            VoiceCalls = 30
+        });
+        await _helper.DbContext.SaveChangesAsync();
+
+        SimRepository repository = new(_helper.DbContext, cacheDbContext);
+        IEnumerable<Sim> sims = await repository.GetSimsForPhoneNumber("07814209742");
+
+        await Assert.That(sims.Single().SIMNumber).IsEqualTo("cached-sim");
     }
 
     [Test]

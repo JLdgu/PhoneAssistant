@@ -17,6 +17,16 @@ public interface ISimRepository
 
 public sealed class SimRepository(PhoneAssistantDbContext dbContext) : ISimRepository
 {
+    private readonly SimCacheDbContext? _simCacheDbContext;
+
+    public SimRepository(PhoneAssistantDbContext dbContext, SimCacheDbContext simCacheDbContext)
+        : this(dbContext)
+    {
+        _simCacheDbContext = simCacheDbContext;
+    }
+
+    private IQueryable<Sim> SearchSims => _simCacheDbContext?.Sims ?? dbContext.Sims;
+
     public async Task CreateAsync(Sim sim)
     {
         dbContext.Sims.Add(sim);
@@ -67,7 +77,7 @@ public sealed class SimRepository(PhoneAssistantDbContext dbContext) : ISimRepos
 
     public async Task<IEnumerable<Sim>> GetSimsForPhoneNumber(string phoneNumber)
     {
-        IEnumerable<Sim> sims = await dbContext.Sims
+        IEnumerable<Sim> sims = await SearchSims
             .Where(p => p.PhoneNumber.Contains(phoneNumber))
             .OrderByDescending(s => s.PhoneNumber)
             .ThenByDescending(s => s.BillingPeriod)
@@ -79,7 +89,7 @@ public sealed class SimRepository(PhoneAssistantDbContext dbContext) : ISimRepos
 
     public async Task<IEnumerable<Sim>> GetSimsForSimNumber(string simNumber)
     {
-        IEnumerable<Sim> sims = await dbContext.Sims
+        IEnumerable<Sim> sims = await SearchSims
             .Where(s => s.SIMNumber.Contains(simNumber))
             .OrderByDescending(s => s.PhoneNumber)
             .ThenByDescending(s => s.BillingPeriod)
@@ -91,7 +101,7 @@ public sealed class SimRepository(PhoneAssistantDbContext dbContext) : ISimRepos
     public async Task<IEnumerable<Sim>> GetSimsForUserName(string userName)
     {
         string searchPattern = "%" + userName.Trim().Replace(" ", "%") + "%";
-        IEnumerable<Sim> sims = await dbContext.Sims
+        IEnumerable<Sim> sims = await SearchSims
             .Where(s => EF.Functions.Like(s.UserName, searchPattern))
             .OrderByDescending(s => s.PhoneNumber)
             .ThenByDescending(s => s.BillingPeriod)

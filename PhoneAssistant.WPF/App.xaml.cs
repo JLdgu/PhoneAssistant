@@ -1,6 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Data.Sqlite;
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.Settings;
@@ -53,6 +54,18 @@ public partial class App : System.Windows.Application
             .Build();
 
         await host.StartAsync().ConfigureAwait(true);
+
+        ISimCacheService simCacheService = host.Services.GetRequiredService<ISimCacheService>();
+        try
+        {
+            bool refreshed = await simCacheService.RefreshIfNewerAsync();
+            if (refreshed)
+                Log.Information("SIM cache refreshed from the shared database.");
+        }
+        catch (SqliteException ex)
+        {
+            Log.Warning(ex, "Unable to refresh the local SIM cache; using the last cached data if available.");
+        }
 
         App app = new();
         app.InitializeComponent();

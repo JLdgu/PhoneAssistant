@@ -36,6 +36,10 @@ public static class ApplicationServicesExtensions
             services.AddDbContext<PhoneAssistantDbContext>(
                             options => options.UseSqlite(connectionString),
                             ServiceLifetime.Singleton);
+            services.AddDbContext<SimCacheDbContext>(
+                            options => options.UseSqlite($"Data Source={SimCacheDbContext.GetDatabasePath()}"),
+                            ServiceLifetime.Singleton);
+            services.AddSingleton<ISimCacheService, SimCacheService>();
             
             services.AddSingleton<WeakReferenceMessenger>();
             services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider => provider.GetRequiredService<WeakReferenceMessenger>());

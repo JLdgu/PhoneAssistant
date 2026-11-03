@@ -1,15 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace PhoneAssistant.Model;
 
 public partial class PhoneAssistantDbContext : DbContext
 {
-    private static readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(builder => { });
-
     public PhoneAssistantDbContext() { }
 
-    public PhoneAssistantDbContext(DbContextOptions options) : base(options) { }
+    public PhoneAssistantDbContext(DbContextOptions<PhoneAssistantDbContext> options) : base(options) { }
 
     public DbSet<Location> Locations => Set<Location>();
 
@@ -21,16 +19,12 @@ public partial class PhoneAssistantDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        optionsBuilder.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.CommandExecuted));
+
         if (!optionsBuilder.IsConfigured)
             optionsBuilder.UseSqlite(@"DataSource=c:\dev\PhoneAssistant.db;");
 
         optionsBuilder.UseTriggers(t => t.AddTrigger<PhoneTrigger>());
-
-#if DEBUG
-        optionsBuilder.UseLoggerFactory(_loggerFactory);  // Comment out to log EF calls
-        //optionsBuilder.EnableDetailedErrors();
-        //optionsBuilder.EnableSensitiveDataLogging();        
-#endif
 
         //optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         base.OnConfiguring(optionsBuilder);

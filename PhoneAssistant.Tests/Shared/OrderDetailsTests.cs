@@ -23,19 +23,6 @@ public sealed class OrderDetailsTests
     }
 
     [Test]
-    [Arguments(7654321, "Incident")]
-    [Arguments(123456, "SR")]
-    internal async Task DocumentName_should_reflect_Incident_or_SR(int ticket, string ticketType)
-    {
-        _phone.Ticket = ticket;
-        OrderDetails sut = new(_phone);
-
-        sut.Execute(null);
-
-        await Assert.That(sut.DocumentName).IsEqualTo($"{ticketType}: {ticket} {_phone.NewUser} - Envelope Insert");
-    }
-
-    [Test]
     [Arguments(OrderType.New)]
     [Arguments(OrderType.Replacement)]
     public async Task Execute_OrderType_Email_Contains_Order_Type_Details(OrderType orderType)
@@ -51,9 +38,9 @@ public sealed class OrderDetailsTests
     }
 
     [Test]
-    [Arguments(null, "", OrderType.Replacement)]
-    [Arguments("phonenumber", "phonenumber", OrderType.New)]
-    public async Task Execute_Sets_Properties(string? phoneNumber, string expected, OrderType orderType)
+    [Arguments(null, OrderType.Replacement)]
+    [Arguments("phonenumber", OrderType.New)]
+    public async Task Execute_Sets_Properties(string? phoneNumber, OrderType orderType)
     {
         _phone.PhoneNumber = phoneNumber;
         OrderDetails sut = new(_phone);
@@ -64,7 +51,7 @@ public sealed class OrderDetailsTests
     }
 
     [Test]
-    public async Task Execute_After_Constructor_Email_Contains_BoilerPlate()
+    public async Task EmailText_Contains_BoilerPlate()
     {
         OrderDetails sut = new(_phone);
 
@@ -77,7 +64,7 @@ public sealed class OrderDetailsTests
     }
 
     [Test]
-    public async Task Execute_When_Collection_False_Email_Contains_DeliveryDetails()
+    public async Task EmailText_With_Location_Has_Collection_False_should_Contain_DeliveryDetails()
     {
         OrderDetails sut = new(_phone);
         Location location = new() { Name = "name", Address = "address", Collection = false };
@@ -89,7 +76,7 @@ public sealed class OrderDetailsTests
     }
 
     [Test]
-    public async Task Execute_When_Collection_True_Email_Contains_CollectionDetails()
+    public async Task EmailText_With_Location_Has_Collection_True_should_Contain_CollectionDetails()
     {
         _phone.NewUser = "new user";
         OrderDetails sut = new(_phone);
@@ -103,7 +90,7 @@ public sealed class OrderDetailsTests
     }
 
     [Test]
-    public async Task Execute_When_Collection_True_And_Location_GMH_Email_Contains_GMHDetails()
+    public async Task EmailText_With_Location_Has_Collection_True_And_Location_GMH_should_contain_GMHDetails()
     {
         OrderDetails sut = new(_phone);
         Location location = new() { Name = "GMH", Address = "address", Collection = true };
@@ -277,15 +264,17 @@ public sealed class OrderDetailsTests
     }
 
     [Test]
-    [Arguments(123456, "Service Request")]
-    [Arguments(1234567, "Issue")]
-    public async Task Ticket_Length_Determines_Issue_or_ServiceRequest(int ticket, string label)
+    [Arguments(7654321, "Incident", "Incident")]
+    [Arguments(123456, "Service Request", "SR")]
+    public async Task Ticket_Length_Determines_Issue_or_ServiceRequest(int ticket, string label, string documentTicketType)
     {
         _phone.Ticket = ticket;
         OrderDetails sut = new(_phone);
 
         sut.Execute(null);
 
+        await Assert.That(sut.DocumentName).IsEqualTo($"{documentTicketType}: {ticket} {_phone.NewUser} - Envelope Insert");
         await Assert.That(sut.EnvelopeInsertText).Contains($"{label}:\t#{ticket}");
-    }    
+        await Assert.That(sut.EmailText).Contains($"<tr><td>{label}:</td><td>{ticket}</td></tr>");
+    }
 }

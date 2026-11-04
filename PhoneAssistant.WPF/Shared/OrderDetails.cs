@@ -117,15 +117,23 @@ public sealed class OrderDetails
 
         StringBuilder envelopeText = new();
         if (Phone.Ticket > 999999)
-            envelopeText.AppendLine($"Issue:\t#{Phone.Ticket}");
+        {
+            html.AppendLine($"<tr><td>Incident:</td><td>{Phone.Ticket}</td></tr>");
+            envelopeText.AppendLine($"Incident:\t#{Phone.Ticket}");
+        }
         else
+        { 
+            html.AppendLine($"<tr><td>Service Request:</td><td>{Phone.Ticket}</td></tr>");
             envelopeText.AppendLine($"Service Request:\t#{Phone.Ticket}");
-
-        envelopeText.AppendLine("");
-        envelopeText.AppendLine($"Device User:\t{Phone.NewUser}");
+        }
+       
         envelopeText.AppendLine("");
         envelopeText.AppendLine($"Order type:\t{OrderType} {DeviceType}");
         html.AppendLine($"<tr><td>Order type:</td><td>{OrderType} {DeviceType}</td></tr>");
+        
+        envelopeText.AppendLine("");
+        envelopeText.AppendLine($"Device User:\t{Phone.NewUser}");
+
         envelopeText.AppendLine("");
         if (DeviceType != DeviceType.SIM)
         {

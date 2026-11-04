@@ -38,9 +38,6 @@ public sealed partial class SimsMainViewModel(
     }
 
     [ObservableProperty]
-    public partial SimCardType SimType { get; set; } = SimCardType.Data;
-
-    [ObservableProperty]
     public partial string EmailHtml { get; set; } = "<p>Control will update when no errors are present</p>";
 
     [ObservableProperty]
@@ -62,6 +59,10 @@ public sealed partial class SimsMainViewModel(
         SimNumber = await _simRepository.GetSimNumber(PhoneNumber!);
         GenerateEmailHtml();
     }
+
+    [ObservableProperty]
+    public partial SimCardType SimType { get; set; } = SimCardType.Data;
+
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PrintEnvelopeCommand))]

@@ -137,6 +137,17 @@ public sealed class EmailViewModelTests
     }
 
     [Test]
+    public async Task DeliveryAddressChanged_ReformatsAddressAndUpdatesDespatchDetails()
+    {
+        TestSetup(_phone);
+
+        _vm.DeliveryAddress = "First line of address\r\nSuite 2";
+
+        await Assert.That(_vm.DeliveryAddress).IsEqualTo("Suite 2");
+        await Assert.That(_phone.DespatchDetails).IsEqualTo("Suite 2");
+    }
+
+    [Test]
     public async Task SelectedLocation_InterpolatesValuesFor_DeliveryAddress()
     {
         _phone.NewUser = "New User";

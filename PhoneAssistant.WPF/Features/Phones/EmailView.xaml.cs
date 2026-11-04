@@ -31,10 +31,4 @@ public partial class EmailView : UserControl
             // Swallow exceptions during initialization to avoid crashing the XAML designer
         }
     }
-    private void DeliveryAddress_TextChanged(object sender, TextChangedEventArgs e)
-    {
-        string newValue = EmailViewModel.ReformatDeliveryAddress(DeliveryAddressView.DeliveryAddress);
-        if (newValue != DeliveryAddressView.DeliveryAddress)
-            DeliveryAddressView.DeliveryAddress = newValue;
-    }
 }

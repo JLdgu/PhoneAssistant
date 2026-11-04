@@ -29,18 +29,18 @@ public partial class DymoViewModel(IPrintDymoLabel dymoLabel, ILocationsReposito
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PrintDymoLabelCommand))]
-    public partial string Label { get; set; } = string.Empty;
+    public partial string DeliveryAddress { get; set; } = string.Empty;
 
     [ObservableProperty]
     public partial bool IncludeDate { get; set; }
 
-    private bool CanPrintDymoLabel() => SelectedLocation is not null || !string.IsNullOrWhiteSpace(Label);
+    private bool CanPrintDymoLabel() => SelectedLocation is not null || !string.IsNullOrWhiteSpace(DeliveryAddress);
 
     [RelayCommand(CanExecute = nameof(CanPrintDymoLabel))]
     private async Task PrintDymoLabel()
     {
-        await Task.Run(() => _dymoLabel.Execute(Label, IncludeDate));
-        Clipboard.SetText(Label);
+        await Task.Run(() => _dymoLabel.Execute(DeliveryAddress, IncludeDate));
+        Clipboard.SetText(DeliveryAddress);
     }
 
     public override async Task LoadAsync()
@@ -61,6 +61,6 @@ public partial class DymoViewModel(IPrintDymoLabel dymoLabel, ILocationsReposito
     private void DeliveryAddressModel_SelectedLocationChanged(object? sender, Location? value)
     {
         IncludeDate = value?.Collection ?? false;
-        if (value is not null) Label = value.Address;
+        if (value is not null) DeliveryAddress = value.Address;
     }
 }

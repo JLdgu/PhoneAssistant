@@ -23,7 +23,7 @@
                     Margin="20"
                     HorizontalAlignment="Center"
                     Orientation="Horizontal">
-            <shared:DeliveryAddressView DeliveryAddress="{Binding Label, Mode=TwoWay}"
+            <shared:DeliveryAddressView DeliveryAddress="{Binding DeliveryAddress, Mode=TwoWay}"
                                         IncludeDate="{Binding IncludeDate, Mode=TwoWay}"
                                         Locations="{Binding Locations}"
                                         ShowIncludeDate="True"

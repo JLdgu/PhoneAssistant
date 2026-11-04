@@ -8,7 +8,7 @@ namespace PhoneAssistant.Tests.Features.Dymo;
 public sealed class DymoViewModelTests
 {
     [Test]
-    public async Task PrintDymoLabelCommand_RequiresLocationOrNonWhitespaceLabel()
+    public async Task PrintDymoLabelCommand_RequiresLocationOrNonWhitespaceDeliveryAddress()
     {
         AutoMocker mocker = new();
         mocker.GetMock<ILocationsRepository>()
@@ -20,13 +20,13 @@ public sealed class DymoViewModelTests
 
         await Assert.That(viewModel.PrintDymoLabelCommand.CanExecute(null)).IsFalse();
 
-        viewModel.Label = "   ";
+        viewModel.DeliveryAddress = "   ";
         await Assert.That(viewModel.PrintDymoLabelCommand.CanExecute(null)).IsFalse();
 
-        viewModel.Label = "Delivery address";
+        viewModel.DeliveryAddress = "Delivery address";
         await Assert.That(viewModel.PrintDymoLabelCommand.CanExecute(null)).IsTrue();
 
-        viewModel.Label = string.Empty;
+        viewModel.DeliveryAddress = string.Empty;
         await Assert.That(viewModel.PrintDymoLabelCommand.CanExecute(null)).IsFalse();
 
         viewModel.SelectedLocation = new Location { Name = "Delivery", Address = string.Empty, Collection = false };

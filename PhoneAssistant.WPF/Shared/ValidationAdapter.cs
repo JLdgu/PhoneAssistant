@@ -36,6 +36,7 @@ public sealed class ValidationAdapter<T> where T : class
             return;
         }
 
+        var propertiesWithErrors = _errors.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);
         var result = await _validator.ValidateAsync(instance);
         _errors.Clear();
         foreach (var failure in result.Errors)
@@ -45,7 +46,8 @@ public sealed class ValidationAdapter<T> where T : class
             _errors[failure.PropertyName].Add(failure.ErrorMessage);
         }
 
-        foreach (var prop in _errors.Keys.ToList())
+        propertiesWithErrors.UnionWith(_errors.Keys);
+        foreach (var prop in propertiesWithErrors)
             RaiseErrorsChanged(prop);
     }
 

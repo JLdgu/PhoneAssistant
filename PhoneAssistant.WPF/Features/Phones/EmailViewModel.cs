@@ -151,7 +151,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     public partial string DeliveryAddress { get; set; } = string.Empty;
     partial void OnDeliveryAddressChanged(string value)
     {
-        string reformattedAddress = ReformatDeliveryAddress(value);
+        string reformattedAddress = AddressFormatter.ReformatDeliveryAddress(value);
         if (reformattedAddress != value)
         {
             DeliveryAddress = reformattedAddress;

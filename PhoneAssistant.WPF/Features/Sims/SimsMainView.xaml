@@ -21,112 +21,132 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <shared:HeaderMainView Margin="0,0,5,0"
+        <shared:HeaderMainView Margin="2,0,5,0"
                                HeaderIcon="SimOutline"
                                HeaderText="SIMs" />
         <GroupBox Grid.Row="1"
-                  Margin="2,10,5,0"
+                  Margin="2,5,5,0"
                   VerticalAlignment="Top"
                   materialDesign:ColorZoneAssist.Mode="SecondaryMid"
                   Header="New SIM orders"
                   Style="{StaticResource MaterialDesignGroupBox}">
-            <StackPanel Margin="0,0,0,25" Orientation="Horizontal">
-                <TextBox MinWidth="85"
-                         Margin="0,0,0,0"
-                         materialDesign:HintAssist.Hint="Ticket #"
-                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                         MaxLength="7"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding Ticket, UpdateSourceTrigger=PropertyChanged}" />
 
-                <ComboBox MinWidth="120"
-                          Margin="10,0,0,0"
-                          materialDesign:HintAssist.Hint="SIM type"
-                          SelectedValue="{Binding SimType}"
-                          SelectedValuePath="Tag"
-                          Style="{StaticResource MaterialDesignOutlinedComboBox}">
-                    <ComboBoxItem Content="Data" Tag="{x:Static viewmodel:SimCardType.Data}" />
-                    <ComboBoxItem Content="Voice/Text/Data" Tag="{x:Static viewmodel:SimCardType.VoiceTextData}" />
-                    <ComboBoxItem Content="Voice/Text" Tag="{x:Static viewmodel:SimCardType.VoiceText}" />
-                </ComboBox>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                <TextBox MinWidth="125"
-                         Margin="10,0,0,0"
-                         materialDesign:HintAssist.Hint="Phone Number"
-                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                         MaxLength="11"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding PhoneNumber, UpdateSourceTrigger=PropertyChanged}" />
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Margin="0,0,0,25" Orientation="Horizontal">
+                        <TextBox Width="110"
+                                 HorizontalAlignment="Left"
+                                 materialDesign:HintAssist.Hint="Ticket #"
+                                 materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                                 MaxLength="7"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 Text="{Binding Ticket, UpdateSourceTrigger=PropertyChanged}" />
 
-                <StackPanel Margin="10,0,0,0">
-                    <materialDesign:PackIcon Width="15"
-                                             Height="15"
-                                             HorizontalAlignment="Center"
-                                             Kind="SimOutline" />
-                    <TextBlock HorizontalAlignment="Center"
-                               Style="{StaticResource MaterialDesignOverlineTextBlock}"
-                               Text="eSIM" />
-                    <CheckBox Margin="0,-5"
-                              Padding="0"
-                              IsChecked="{Binding Esim, UpdateSourceTrigger=PropertyChanged}"
-                              IsThreeState="False"
-                              Style="{StaticResource MaterialDesignCheckBox}" />
+                        <TextBox MinWidth="180"
+                                 Margin="10,0,0,0"
+                                 materialDesign:HintAssist.Hint="New User"
+                                 materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 Text="{Binding NewUser, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <Button Margin="10,0,0,0"
+                                VerticalAlignment="Center"
+                                Command="{Binding ClearCommand}"
+                                Content="Clear Changes"
+                                Style="{StaticResource MaterialDesignRaisedButton}" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,0,25" Orientation="Horizontal">
+                        <ComboBox MinWidth="120"
+                                  materialDesign:HintAssist.Hint="SIM type"
+                                  SelectedValue="{Binding SimType}"
+                                  SelectedValuePath="Tag"
+                                  Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                            <ComboBoxItem Content="Data" Tag="{x:Static viewmodel:SimCardType.Data}" />
+                            <ComboBoxItem Content="Voice/Text/Data" Tag="{x:Static viewmodel:SimCardType.VoiceTextData}" />
+                            <ComboBoxItem Content="Voice/Text" Tag="{x:Static viewmodel:SimCardType.VoiceText}" />
+                        </ComboBox>
+
+                        <TextBox MinWidth="125"
+                                 Margin="10,0,0,0"
+                                 materialDesign:HintAssist.Hint="Phone Number"
+                                 materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                                 MaxLength="11"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 Text="{Binding PhoneNumber, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <StackPanel Margin="10,0,0,0" Visibility="Collapsed">
+                            <materialDesign:PackIcon Width="15"
+                                                     Height="15"
+                                                     HorizontalAlignment="Center"
+                                                     Kind="SimOutline" />
+                            <TextBlock HorizontalAlignment="Center"
+                                       Style="{StaticResource MaterialDesignOverlineTextBlock}"
+                                       Text="eSIM" />
+                            <CheckBox Margin="0,-5"
+                                      Padding="0"
+                                      IsChecked="{Binding Esim, UpdateSourceTrigger=PropertyChanged}"
+                                      IsThreeState="False"
+                                      Style="{StaticResource MaterialDesignCheckBox}" />
+                        </StackPanel>
+
+                        <TextBox MinWidth="160"
+                                 Margin="10,0,0,0"
+                                 materialDesign:HintAssist.Hint="SIM Number"
+                                 materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
+                                 MaxLength="19"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 Text="{Binding SimNumber, UpdateSourceTrigger=PropertyChanged}" />
+
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Margin="0,0,0,0"
+                                Padding="0"
+                                Command="{Binding PrintEnvelopeCommand}"
+                                Content="{materialDesign:PackIcon Kind=EmailOutline,
+                                                                  Size=35}"
+                                Style="{StaticResource MaterialDesignFlatLightButton}"
+                                ToolTip="Print Envelope" />
+
+
+                        <shared:DeliveryAddressView x:Name="DeliveryAddressView"
+                                                    DeliveryAddress="{Binding DeliveryAddress, Mode=TwoWay}"
+                                                    Locations="{Binding Locations}"
+                                                    SelectedLocation="{Binding SelectedLocation, Mode=TwoWay}"
+                                                    ShowIncludeDate="False">
+                            <shared:DeliveryAddressView.Style>
+                                <Style TargetType="{x:Type shared:DeliveryAddressView}">
+                                    <Setter Property="IsEnabled" Value="True" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasErrors}" Value="True">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </shared:DeliveryAddressView.Style>
+                        </shared:DeliveryAddressView>
+                    </StackPanel>
+
                 </StackPanel>
-
-                <ComboBox MinWidth="180"
-                          Margin="10,0,0,0"
-                          materialDesign:HintAssist.Hint="SIM type"
-                          SelectedValue="{Binding SimType}"
-                          SelectedValuePath="Tag"
-                          Style="{StaticResource MaterialDesignOutlinedComboBox}">
-                    <ComboBoxItem Content="Data"
-                                  Tag="{x:Static viewmodel:SimCardType.Data}" />
-                    <ComboBoxItem Content="Voice/Text/Data"
-                                  Tag="{x:Static viewmodel:SimCardType.VoiceTextData}" />
-                    <ComboBoxItem Content="Voice/Text"
-                                  Tag="{x:Static viewmodel:SimCardType.VoiceText}" />
-                </ComboBox>
-
-                <TextBox MinWidth="160"
-                         Margin="10,0,0,0"
-                         materialDesign:HintAssist.Hint="SIM Number"
-                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                         MaxLength="19"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding SimNumber, UpdateSourceTrigger=PropertyChanged}" />
-
-                <TextBox MinWidth="150"
-                         Margin="10,0,0,0"
-                         materialDesign:HintAssist.Hint="New User"
-                         materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding NewUser, UpdateSourceTrigger=PropertyChanged}" />
-
-                <Button Margin="20,0,0,0"
-                        Padding="0"
-                        Command="{Binding PrintEnvelopeCommand}"
-                        Content="{materialDesign:PackIcon Kind=EmailOutline,
-                                                          Size=35}"
-                        Style="{StaticResource MaterialDesignFlatLightButton}"
-                        ToolTip="Print Envelope" />
-
-                <Button Margin="10,0,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Command="{Binding ClearCommand}"
-                        Content="Clear Changes"
-                        Style="{StaticResource MaterialDesignRaisedButton}" />
-
-            </StackPanel>
+                <wv2:WebView2 Name="WebView2"
+                              Grid.Column="1"
+                              Width="800"
+                              Height="450"
+                              Margin="10,0"
+                              HorizontalAlignment="Left"
+                              shared:WebBrowserHelper.NavigateTo="{Binding EmailHtml}"
+                              Visibility="Visible"
+                              ZoomFactor="0.8" />
+            </Grid>
         </GroupBox>
 
-        <wv2:WebView2 Name="WebView2"
-                      Grid.Row="2"
-                      Width="800"
-                      Height="400"
-                      HorizontalAlignment="Left"
-                      shared:WebBrowserHelper.NavigateTo="{Binding EmailHtml}"
-                      Visibility="Visible"
-                      ZoomFactor="0.8" />
     </Grid>
 </UserControl>

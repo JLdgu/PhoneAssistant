@@ -2,8 +2,10 @@ using FluentValidation;
 using Moq;
 using Moq.AutoMock;
 using PhoneAssistant.Model;
-using PhoneAssistant.WPF.Application;
 using PhoneAssistant.WPF.Features.Sims;
+using PhoneAssistant.WPF.Shared;
+
+using System.ComponentModel;
 
 namespace PhoneAssistant.Tests.Features.Sims;
 
@@ -41,7 +43,7 @@ internal sealed class SimsMainViewModelTests
     }
 
     [Test]
-    internal async Task ClearCommand_should_set_all_properties_to_null() 
+    internal async Task ClearCommand_should_set_all_properties_to_default() 
     {
         var vm = _mocker.CreateInstance<SimsMainViewModel>();
         vm.Esim = true;
@@ -49,8 +51,13 @@ internal sealed class SimsMainViewModelTests
         vm.PhoneNumber = "01234567890";
         vm.SimNumber = "475334494637";
         vm.Ticket = "654321";
+        vm.DeliveryAddress = "123 Main St";
 
         vm.ClearCommand.Execute(null);
+
+        await Assert.That(vm.HasErrors).IsTrue();
+
+        await Assert.That(vm.DeliveryAddress).IsEqualTo(string.Empty);
 
         await Assert.That(vm.Esim).IsFalse();
         await Assert.That(vm.NewUser).IsNull();
@@ -60,9 +67,7 @@ internal sealed class SimsMainViewModelTests
     }
 
     [Test]
-    [Arguments(123456,"Service Request")]
-    [Arguments(7654321, "Issue")]
-    internal async Task EmailHtml_should_be_generated_when_HasError_is_false(int ticket, string heading)
+    internal async Task ClearCommand_should_disable_buttons()
     {
         var vm = _mocker.CreateInstance<SimsMainViewModel>();
         vm.Esim = true;
@@ -71,14 +76,49 @@ internal sealed class SimsMainViewModelTests
         vm.SimNumber = "475334494637";
         vm.Ticket = "654321";
 
+        vm.ClearCommand.Execute(null);
+        
+
+        await Assert.That(vm.PrintDymoLabelCommand.CanExecute(null)).IsFalse();
+        await Assert.That(vm.PrintEnvelopeCommand.CanExecute(null)).IsFalse();
+    }
+
+    [Test]
+    internal async Task EmailHtml_should_include_delivery_address()
+    {
+        var vm = _mocker.CreateInstance<SimsMainViewModel>();
+        vm.Esim = true;
+        vm.NewUser = "Alice";
+        vm.PhoneNumber = "01234567890";
+        vm.SimNumber = "475334494637";
+        vm.Ticket = "1234567";
+
+        vm.DeliveryAddress = "123 High Street";
+
+        await Assert.That(vm.EmailHtml).Contains("123 High Street");
+    }
+
+    [Test]
+    internal async Task EmailHtml_should_include_ticket_when_required_fields_are_valid()
+    {
+        var vm = _mocker.CreateInstance<SimsMainViewModel>();
+
+        vm.Esim = true;
+        vm.NewUser = "Alice";
+        vm.PhoneNumber = "01234567890";
+        vm.SimNumber = "475334494637";
+        vm.Ticket = "123456";
+        vm.DeliveryAddress = "123 High Street";
+
         await Assert.That(vm.HasErrors).IsFalse();
-        await Assert.That(vm.EmailHtml).Contains(Constants.Email_Main_Boilerplate);
+        await Assert.That(vm.EmailHtml).Contains("123456");
     }
 
     [Test]
     internal async Task HasErrors_should_be_false_when_required_fields_supplied()
     {
         var vm = _mocker.CreateInstance<SimsMainViewModel>();
+
         vm.NewUser = "Rosie Lane";
         vm.PhoneNumber = "07814209742";
         vm.SimNumber = "8944122605563572205";
@@ -94,14 +134,49 @@ internal sealed class SimsMainViewModelTests
 
         await Assert.That(vm.HasErrors).IsTrue();
 
-        IEnumerable<string> errors = vm.GetErrors(nameof(vm.NewUser)).Cast<string>();
-        await Assert.That(errors.First()).IsEqualTo("New User required");
-        errors = vm.GetErrors(nameof(vm.PhoneNumber)).Cast<string>();
-        await Assert.That(errors.First()).IsEqualTo("Phone Number required");
-        errors = vm.GetErrors(nameof(vm.SimNumber)).Cast<string>();
-        await Assert.That(errors.First()).IsEqualTo("SIM Number required");
-        errors = vm.GetErrors(nameof(vm.Ticket)).Cast<string>();
-        await Assert.That(errors.First()).IsEqualTo("Ticket required");
+        await Assert.That(vm.GetErrors(nameof(vm.NewUser)).Cast<string>()).Contains("New User required");
+        await Assert.That(vm.GetErrors(nameof(vm.PhoneNumber)).Cast<string>()).Contains("Phone Number required");
+        await Assert.That(vm.GetErrors(nameof(vm.SimNumber)).Cast<string>()).Contains("SIM Number required");
+        await Assert.That(vm.GetErrors(nameof(vm.Ticket)).Cast<string>()).Contains("Ticket required");
+    }
+
+    [Test]
+    internal async Task HasErrors_should_notify_when_validation_errors_are_added_or_cleared()
+    {
+        var vm = _mocker.CreateInstance<SimsMainViewModel>();
+
+        await AssertHasErrorsChangedAsync(vm, false, () =>
+        {
+            vm.NewUser = "Alice";
+            vm.PhoneNumber = "01234567890";
+            vm.SimNumber = "475334494637";
+            vm.Ticket = "654321";
+        });
+
+        await AssertHasErrorsChangedAsync(vm, true, () => vm.Ticket = null);
+    }
+
+    private static async Task AssertHasErrorsChangedAsync(SimsMainViewModel viewModel, bool expected, Action update)
+    {
+        TaskCompletionSource notification = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        PropertyChangedEventHandler handler = (_, args) =>
+        {
+            if (args.PropertyName == nameof(SimsMainViewModel.HasErrors) && viewModel.HasErrors == expected)
+                notification.TrySetResult();
+        };
+
+        viewModel.PropertyChanged += handler;
+        try
+        {
+            update();
+            if (viewModel.HasErrors == expected)
+                notification.TrySetResult();
+            await notification.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        }
+        finally
+        {
+            viewModel.PropertyChanged -= handler;
+        }
     }
 
     [Test]
@@ -142,17 +217,12 @@ internal sealed class SimsMainViewModelTests
         await Assert.That(vm.PrintEnvelopeCommand.CanExecute(null)).IsTrue();
     }
 
-    /*
-    TODO: Fix call to Execute
-
     [Test]
-    internal async Task PrintEnvelopeCommand_should_call_PrintEnvelope_Execute_with_OrderDetails()
+    internal async Task PrintEnvelopeCommand_should_call_PrintEnvelope_Execute()
     {
         var vm = _mocker.CreateInstance<SimsMainViewModel>();
-        OrderDetails? actual = null;
         var printEnvelope = _mocker.GetMock<IPrintEnvelope>();
-        printEnvelope.Setup(p => p.Execute(It.IsAny<OrderDetails>()))
-                     .Callback<OrderDetails>(o => actual = o);
+        printEnvelope.Setup(p => p.Execute(It.IsAny<string>(), It.IsAny<string>()));
         vm.Esim = true;
         vm.NewUser = "Rosie Lane";
         vm.PhoneNumber = "07814209742";
@@ -161,13 +231,7 @@ internal sealed class SimsMainViewModelTests
 
         await vm.PrintEnvelopeCommand.ExecuteAsync(null);
 
-        printEnvelope.Verify(p => p.Execute(It.IsAny<OrderDetails>()), Times.Once);
-        await Assert.That(actual).IsNotNull();
-        await Assert.That(actual.Phone.Esim).IsTrue();
-        await Assert.That(actual.Phone.NewUser).IsEqualTo("Rosie Lane");
-        await Assert.That(actual.Phone.PhoneNumber).IsEqualTo("07814209742");
-        await Assert.That(actual.Phone.SimNumber).IsEqualTo("8944122605563572205");
-        await Assert.That(actual.Phone.Ticket).IsEqualTo(262281);
+
+        printEnvelope.Verify(p => p.Execute(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
     }
-    */
 }

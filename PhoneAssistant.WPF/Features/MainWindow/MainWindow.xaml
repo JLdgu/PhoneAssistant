@@ -72,7 +72,7 @@
                          CommandParameter="{x:Static viewmodel:ViewModelType.Dashboard}"
                          DockPanel.Dock="Top"
                          IsChecked="{Binding SelectedView, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static viewmodel:ViewModelType.Dashboard}}"
-                         IsEnabled="False"
+                         IsEnabled="{Binding Development}"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon Width="24"
@@ -102,7 +102,6 @@
                          CommandParameter="{x:Static viewmodel:ViewModelType.Sims}"
                          DockPanel.Dock="Top"
                          IsChecked="{Binding SelectedView, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static viewmodel:ViewModelType.Sims}}"
-                         IsEnabled="{Binding Development}"
                          Style="{StaticResource MaterialDesignTabRadioButton}">
                 <StackPanel>
                     <materialDesign:PackIcon Width="24"
@@ -214,7 +213,8 @@
             </RadioButton>
         </DockPanel>
 
-        <Grid Grid.Column="1" VerticalAlignment="Top"
+        <Grid Grid.Column="1"
+              VerticalAlignment="Top"
               d:Background="Aquamarine">
             <ContentControl Content="{Binding SelectedViewModel}" Validation.ErrorTemplate="{x:Null}" />
         </Grid>

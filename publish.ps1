@@ -90,6 +90,7 @@ if ($Pack)
 
     vpk pack -u PhoneAssistant `
         -v $Version `
+        --runtime win-x64 `
         -p .\publish `
         -e PhoneAssistant.exe `
         -i PhoneAssistant.WPF\Resources\Release.ico `

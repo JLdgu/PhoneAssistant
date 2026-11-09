@@ -28,7 +28,7 @@
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
-        WindowStartupLocation="CenterScreen"
+        WindowStartupLocation="Manual"
         mc:Ignorable="d">
     <Window.Resources>
         <shared:EnumBooleanConverter x:Key="EnumBooleanConverter" />

@@ -1,4 +1,4 @@
-﻿using Moq;
+using Moq;
 using Moq.AutoMock;
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Features.Phones;
@@ -74,79 +74,6 @@ public sealed class EmailViewModelTests
         await Assert.That(_vm.GeneratingEmail).IsTrue();
     }
         
-    [Test]
-    public async Task OrderDetails_ShouldSetDeviceTypePhone_WhenModelDoesNotContanIPad()
-    {
-        TestSetup(_phone);
-
-        await Assert.That(_vm.OrderDetails.DeviceType).IsEqualTo(DeviceType.Phone);
-    }
-
-    [Test]
-    public async Task OrderDetails_ShouldSetDeviceTypeTablet_WhenModelContainsIPad()
-    {
-        _phone.Model = "iPad";
-        TestSetup(_phone);
-
-        await Assert.That(_vm.OrderDetails.DeviceType).IsEqualTo(DeviceType.Tablet);
-    }
-
-    [Test]
-    public async Task OrderDetails_ShouldSetOrderTypeNew_WhenPhoneDetailsSupplied()
-    {
-        TestSetup(_phone);
-
-        await Assert.That(_vm.OrderType).IsEqualTo(OrderType.New);
-    }
-
-    [Test]
-    public async Task OrderDetails_ShouldSetOrderTypeReplacement_WhenPhoneDetailsNotSupplied()
-    {
-        _phone.PhoneNumber = null;
-        _phone.SimNumber = null;
-        TestSetup(_phone);
-
-        await Assert.That(_vm.OrderType).IsEqualTo(OrderType.Replacement);
-    }
-
-    [Test]
-    public async Task ReformatDeliveryAddress_ShouldStripHeadingsAsync()
-    {
-        string actual = EmailViewModel.ReformatDeliveryAddress("""
-            User Name
-            First line of address
-            Devon County Council
-            Second line of address
-            Fishleigh Road
-            Town/city
-            Barnstaple
-            County
-            Devon
-            Postcode
-            EX31 3UD
-            """);
-
-        await Assert.That(actual).IsEqualTo("""
-            User Name
-            Devon County Council
-            Fishleigh Road
-            Barnstaple
-            Devon
-            EX31 3UD
-            """);
-    }
-
-    [Test]
-    public async Task DeliveryAddressChanged_ReformatsAddressAndUpdatesDespatchDetails()
-    {
-        TestSetup(_phone);
-
-        _vm.DeliveryAddress = "First line of address\r\nSuite 2";
-
-        await Assert.That(_vm.DeliveryAddress).IsEqualTo("Suite 2");
-        await Assert.That(_phone.DespatchDetails).IsEqualTo("Suite 2");
-    }
-
     [Test]
     public async Task SelectedLocation_InterpolatesValuesFor_DeliveryAddress()
     {

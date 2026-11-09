@@ -17,6 +17,7 @@ public abstract partial class ValidatableViewModel<T> : ObservableObject, IViewM
     protected ValidatableViewModel(IServiceProvider serviceProvider)
     {
         _adapter = new ValidationAdapter<T>(serviceProvider);
+        _adapter.ErrorsChanged += (_, _) => OnPropertyChanged(nameof(HasErrors));
         _ = _adapter.ValidateAllAsync((T)(object)this);
     }
 

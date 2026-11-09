@@ -3,8 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Shared;
 using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace PhoneAssistant.WPF.Features.Phones;
 
@@ -30,13 +31,13 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
             _orderDetails = value;
             EnvelopePrinted = false;
 
-            AssetTag = value.AssetTag;
+            AssetTag = value.Phone.AssetTag ?? string.Empty;
             DeliveryAddress = value.DeliveryAddress;
-            Imei = value.Imei;
+            Imei = value.Phone.Imei;
             OrderType = value.OrderType;
-            PhoneNumber = value.PhoneNumber;
+            PhoneNumber = value.Phone.PhoneNumber ?? string.Empty;
             SelectedLocation = null;
-            Ticket = value.Ticket;
+            Ticket = value.Phone.Ticket.ToString() ?? string.Empty;
 
             GeneratingEmail = true;
             GenerateEmailHtml();
@@ -150,7 +151,7 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     public partial string DeliveryAddress { get; set; } = string.Empty;
     partial void OnDeliveryAddressChanged(string value)
     {
-        string reformattedAddress = ReformatDeliveryAddress(value);
+        string reformattedAddress = AddressFormatter.ReformatDeliveryAddress(value);
         if (reformattedAddress != value)
         {
             DeliveryAddress = reformattedAddress;
@@ -164,14 +165,6 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         GenerateEmailHtml();
     }
 
-    public static string ReformatDeliveryAddress(string address)
-    {
-        Regex regex = AddressReformat();
-
-        string reformatted = regex.Replace(address, string.Empty);
-
-        return reformatted;
-    }
     [ObservableProperty]
     private bool _generatingEmail;
 
@@ -182,6 +175,14 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
     {
         OrderDetails.Execute(SelectedLocation);
         EmailHtml = OrderDetails.EmailText;
+    }
+
+    [RelayCommand]
+    private void DeliveryAddressTextChanged(TextChangedEventArgs e)
+    {
+        // Called from the view when the delivery address text changes.
+        // Use the existing generation logic to update the email HTML immediately.
+        GenerateEmailHtml();
     }
 
     public async Task LoadAsync()
@@ -199,6 +200,5 @@ public partial class EmailViewModel(IPhonesRepository phonesRepository,
         _loaded = true;
     }
 
-    [GeneratedRegex(@"First line of address\r\n|Second line of address\r\n|Town/City\r\n|County\r\n|Postcode\r\n", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-GB")]
-    private static partial Regex AddressReformat();
+
 }

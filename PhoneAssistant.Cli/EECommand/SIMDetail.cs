@@ -1,5 +1,4 @@
 ﻿using CsvHelper;
-using CsvHelper.Configuration;
 using FluentResults;
 using System.Globalization;
 
@@ -12,9 +11,11 @@ internal static class SIMDetailParser
         Dictionary<string, SIMDetail> simDetails = new(StringComparer.OrdinalIgnoreCase);
 
         using StreamReader reader = new(filePath);
-        using CsvReader csv = new(reader, CultureInfo.InvariantCulture);
-
-        csv.Context.RegisterClassMap<SIMDetailMap>();
+        CsvReaderOptions options = new()
+        {
+            FormatProvider = CultureInfo.InvariantCulture
+        };
+        using CsvReader csv = CsvReader.Create(reader, options);
 
         var records = csv.GetRecords<SIMDetail>();
         try
@@ -27,9 +28,8 @@ internal static class SIMDetailParser
                 simDetails[record.PhoneNumber] = record; 
             }
         }
-        catch (HeaderValidationException ex)
+        catch (CsvFormatException ex)
         {
-
             return Result.Fail(ex.Message);
         }
 
@@ -37,27 +37,21 @@ internal static class SIMDetailParser
     }
 }
 
-internal sealed class SIMDetailMap : ClassMap<SIMDetail>
+[CsvRecord]
+internal sealed partial class SIMDetail
 {
-    public SIMDetailMap()
-    {
-        Map(m => m.PhoneNumber).Name("Phone");
-        Map(m => m.SimNumber).Name("SIM number");
-        Map(m => m.UserName).Name("Label");
-        Map(m => m.EID).Name("Active EID");
-        Map(m => m.SimType).Name("SIM type");
-        Map(m => m.Status).Name("Status");
-        Map(m => m.Plan).Name("Plan");
-    }
-}
-
-internal sealed class SIMDetail
-{
+    [CsvColumn("Phone")]
     public required string PhoneNumber { get; init; }
+    [CsvColumn("SIM number")]
     public required string SimNumber { get; init; }
+    [CsvColumn("Label")]
     public required string UserName { get; init; }
+    [CsvColumn("Active EID")]
     public required string EID { get; init; }
+    [CsvColumn("SIM type")]
     public required string SimType { get; init; }
+    [CsvColumn("Status")]
     public required string Status { get; init; }
+    [CsvColumn("Plan")]
     public required string Plan { get; init; }
 }

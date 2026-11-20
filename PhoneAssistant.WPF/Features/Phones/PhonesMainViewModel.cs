@@ -108,7 +108,11 @@ public sealed partial class PhonesMainViewModel :
             "Downloads",
             $"Phones {DateTime.Now:yyyy-MM-dd HHmmss}.csv");
         StreamWriter writer = new(exportCsv);
-        CsvWriter csv = new(writer, CultureInfo.InvariantCulture);
+        CsvWriterOptions options = new()
+        {
+            FormatProvider = CultureInfo.InvariantCulture
+        };
+        using CsvWriter csv = CsvWriter.Create(writer, options);
         csv.WriteRecords(phones);
     }
     private bool CanExport => !_filterView.IsEmpty;

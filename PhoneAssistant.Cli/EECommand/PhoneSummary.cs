@@ -1,5 +1,4 @@
 ﻿using CsvHelper;
-using CsvHelper.Configuration;
 using FluentResults;
 using System.Globalization;
 using System.IO.Compression;
@@ -14,9 +13,11 @@ internal static class PhoneSummaryParser
         Dictionary<string, PhoneSummary> phoneSummaries = new(StringComparer.OrdinalIgnoreCase);
 
         using var reader = new StreamReader(zipEntry.Open(), Encoding.Latin1);
-        using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-
-        csv.Context.RegisterClassMap<PhoneSummaryMap>();
+        CsvReaderOptions options = new()
+        {
+            FormatProvider = CultureInfo.InvariantCulture
+        };
+        using var csv = CsvReader.Create(reader, options);
 
         var records = csv.GetRecords<PhoneSummary>();
 
@@ -30,9 +31,8 @@ internal static class PhoneSummaryParser
                 phoneSummaries[record.PhoneNumber] = record;
             }
         }
-        catch (HeaderValidationException ex)
+        catch (CsvFormatException ex)
         {
-
             return Result.Fail(ex.Message);
         }
 
@@ -41,23 +41,38 @@ internal static class PhoneSummaryParser
 }
 
 
-internal sealed class PhoneSummaryMap : ClassMap<PhoneSummary>
+[CsvRecord]
+internal sealed partial class PhoneSummary
 {
-    public PhoneSummaryMap()
-    {
-        Map(m => m.TextMessageCount).Name("Number of SMS").TypeConverterOption.NumberStyles(NumberStyles.AllowThousands);
-        Map(m => m.VoiceCallCount).Name("Number of voice calls").TypeConverterOption.NumberStyles(NumberStyles.AllowThousands);
-        Map(m => m.PhoneNumber).Name("Phone number");
-        Map(m => m.BroadbandData).Name("Quantity of data (bytes)").TypeConverterOption.NumberStyles(NumberStyles.AllowThousands);
-        Map(m => m.UserName).Name("User name");
-    }
+    [CsvColumn("Phone number")]
+    public required string PhoneNumber { get; init; }
+    [CsvColumn("Quantity of data (bytes)")]
+    [CsvConverter(typeof(UlongThousandsConverter))]
+    public required ulong BroadbandData { get; init; }
+    [CsvColumn("Number of SMS")]
+    [CsvConverter(typeof(UintThousandsConverter))]
+    public required uint TextMessageCount { get; init; }
+    [CsvColumn("User name")]
+    public required string UserName { get; init; }
+    [CsvColumn("Number of voice calls")]
+    [CsvConverter(typeof(UintThousandsConverter))]
+    public required uint VoiceCallCount { get; init; }
 }
 
-internal sealed class PhoneSummary
+internal sealed class UlongThousandsConverter : ICsvConverter<ulong>
 {
-    public required string PhoneNumber { get; init; }
-    public required ulong BroadbandData { get; init; }
-    public required uint TextMessageCount { get; init; }
-    public required string UserName { get; init; }
-    public required uint VoiceCallCount { get; init; }
+    public ulong Read(CsvReader reader, int index)
+        => ulong.Parse(reader.GetString(index), NumberStyles.AllowThousands, CultureInfo.InvariantCulture);
+
+    public void Write(CsvWriter writer, ulong value)
+        => writer.WriteField(value);
+}
+
+internal sealed class UintThousandsConverter : ICsvConverter<uint>
+{
+    public uint Read(CsvReader reader, int index)
+        => uint.Parse(reader.GetString(index), NumberStyles.AllowThousands, CultureInfo.InvariantCulture);
+
+    public void Write(CsvWriter writer, uint value)
+        => writer.WriteField(value);
 }

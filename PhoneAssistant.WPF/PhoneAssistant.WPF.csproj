@@ -22,6 +22,8 @@
         <None Remove="Resources\Keyboard.jpg" />
         <None Remove="Resources\MobilePhone.jpg" />
         <None Remove="Resources\Monitor.png" />
+        <None Remove="Resources\Debug.png" />
+        <None Remove="Resources\Release.png" />
     </ItemGroup>
 
     <ItemGroup>
@@ -34,6 +36,11 @@
         <EmbeddedResource Include="Resources\Keyboard.jpg" />
         <EmbeddedResource Include="Resources\MobilePhone.jpg" />
         <EmbeddedResource Include="Resources\Monitor.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Resource Include="Resources\Debug.png" />
+        <Resource Include="Resources\Release.png" />
     </ItemGroup>
 
     <ItemGroup>

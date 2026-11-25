@@ -71,6 +71,16 @@ public sealed partial class MainWindowViewModel : ObservableObject
         if (_settingsMainViewModel.UpdateState == ApplicationUpdateState.UpdateAvailable)
             ShowUpdateBadge = Visibility.Visible;
 
+        _settingsMainViewModel.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(ISettingsMainViewModel.UpdateState))
+            {
+                ShowUpdateBadge = _settingsMainViewModel.UpdateState == ApplicationUpdateState.UpdateAvailable
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+        };
+
         SelectedView = (ViewModelType)appSettings.ApplicationSettings.CurrentView;
     }
 

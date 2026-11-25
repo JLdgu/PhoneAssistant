@@ -16,6 +16,9 @@ namespace PhoneAssistant.WPF;
 
 public partial class App : System.Windows.Application
 {
+    private IHost? _host;
+    private bool _startupCompleted;
+
     [STAThread]
     private static void Main(string[] args)
     {
@@ -33,9 +36,17 @@ public partial class App : System.Windows.Application
 
         VelopackApp.Build().Run();
         
+        App? app = null;
         try
         {
-            MainAsync(args).GetAwaiter().GetResult();
+            app = new App();
+            app.InitializeComponent();
+            app.Run();
+
+            if (app._startupCompleted && app._host is not null)
+                DatabaseServices.BackupDatabase(app._host);
+
+            app._host?.StopAsync().GetAwaiter().GetResult();
         }
         catch (Exception ex)
         {
@@ -43,19 +54,25 @@ public partial class App : System.Windows.Application
         }
         finally
         {
+            app?._host?.Dispose();
             Log.CloseAndFlush();
         }
     }
 
-    private static async Task MainAsync(string[] args)
+    private async Task InitializeApplicationAsync()
     {
-        using IHost host = Host.CreateDefaultBuilder()
+        _host = Host.CreateDefaultBuilder()
             .ConfigureApplicationServices()
             .Build();
 
-        await host.StartAsync().ConfigureAwait(true);
+        await _host.StartAsync();
 
-        ISimCacheService simCacheService = host.Services.GetRequiredService<ISimCacheService>();
+        MainWindow mainWindow = _host.Services.GetRequiredService<MainWindow>();
+        MainWindow = mainWindow;
+        SplashWindow splashWindow = new(mainWindow);
+        splashWindow.Show();
+
+        ISimCacheService simCacheService = _host.Services.GetRequiredService<ISimCacheService>();
         try
         {
             bool refreshed = await simCacheService.RefreshIfNewerAsync();
@@ -67,22 +84,15 @@ public partial class App : System.Windows.Application
             Log.Warning(ex, "Unable to refresh the local SIM cache; using the last cached data if available.");
         }
 
-        App app = new();
-        app.InitializeComponent();
-
-        var settings = host.Services.GetRequiredService<ISettingsMainViewModel>();
+        ISettingsMainViewModel settings = _host.Services.GetRequiredService<ISettingsMainViewModel>();
         await settings.LoadAsync();
 
-        app.MainWindow = host.Services.GetRequiredService<MainWindow>();
-        app.MainWindow.Visibility = Visibility.Visible;
-        app.Run();
-
-        DatabaseServices.BackupDatabase(host);
-
-        await host.StopAsync().ConfigureAwait(true);
+        mainWindow.ContentRendered += (_, _) => splashWindow.Close();
+        mainWindow.Show();
+        _startupCompleted = true;
     }
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
 #if DEBUG
         ApplicationSettingsRepository repo = new();
@@ -90,6 +100,15 @@ public partial class App : System.Windows.Application
 #endif
 
         base.OnStartup(e);
+
+        try
+        {
+            await InitializeApplicationAsync();
+        }
+        catch (Exception ex)
+        {
+            LogAndHandleException(ex);
+        }
     }
 
     private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

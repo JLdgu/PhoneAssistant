@@ -1,5 +1,7 @@
 ﻿using Moq;
 using Moq.AutoMock;
+using System.ComponentModel;
+using System.Windows;
 
 using PhoneAssistant.Model;
 using PhoneAssistant.WPF.Features.Dashboard;
@@ -81,5 +83,27 @@ public sealed class MainWindowViewModelTests
                 Assert.Fail("Unexpected Type");
                 break;
         }
+    }
+
+    [Test]
+    public async Task UpdateStateChangedToUpdateAvailable_ShowsUpdateBadge()
+    {
+        AutoMocker mocker = new();
+        mocker.GetMock<IApplicationSettingsRepository>()
+            .Setup(settings => settings.ApplicationSettings)
+            .Returns(new ApplicationSettings());
+        Mock<ISettingsMainViewModel> settingsViewModel = mocker.GetMock<ISettingsMainViewModel>();
+        settingsViewModel.Setup(viewModel => viewModel.UpdateState)
+            .Returns(ApplicationUpdateState.Default);
+
+        MainWindowViewModel viewModel = mocker.CreateInstance<MainWindowViewModel>();
+
+        settingsViewModel.Setup(settings => settings.UpdateState)
+            .Returns(ApplicationUpdateState.UpdateAvailable);
+        settingsViewModel.Raise(
+            settings => settings.PropertyChanged += null,
+            new PropertyChangedEventArgs(nameof(ISettingsMainViewModel.UpdateState)));
+
+        await Assert.That(viewModel.ShowUpdateBadge).IsEqualTo(Visibility.Visible);
     }
 }

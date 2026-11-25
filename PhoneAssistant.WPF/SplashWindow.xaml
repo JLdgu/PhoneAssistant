@@ -1,6 +1,7 @@
 <Window x:Class="PhoneAssistant.WPF.SplashWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:PhoneAssistant.WPF"
         Width="400"
         Height="800"
         AllowsTransparency="True"
@@ -12,6 +13,9 @@
         WindowStartupLocation="Manual"
         WindowStyle="None">
     <Border Background="White">
-        <Image x:Name="SplashImage" Stretch="None" />
+        <Grid>
+            <Image x:Name="SplashImage" Stretch="None" />
+            <local:OutlinedTitle IsHitTestVisible="False" />
+        </Grid>
     </Border>
 </Window>

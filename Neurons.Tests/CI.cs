@@ -22,6 +22,46 @@ internal sealed class CI : TestBase
     }
 
     [Test]
+    internal async Task CreateAndUpdatePhoneConfigurationItem_DeletesCI()
+    {
+        ConfigurationItemClient client = new(HttpClient);
+        ConfigurationItem? createdItem = null;
+
+        try
+        {
+            createdItem = await client.CreateAsync(new ConfigurationItem
+            {
+                Name = UniqueId,
+                AcPurchaseOrderId = "130010227",
+                AcPurchaseDate = "2025-09-05",
+                AcWarrantyExpiry = "2025-07-22",
+                AssetTag = "MP90001",
+                CiType = "Phone",
+                Description = "Apple iPhone 16e",
+                Manufacturer = "Apple",
+                Model = "iPhone 16E",
+                SerialNumber = "G41D7KVH46",
+                Status = "In Stock",
+                SubLocation = "L87 CH",
+                Supplier = "EE",
+                TelephonyCiType = "SIM Card"
+            });
+
+            await Assert.That(createdItem.RecId).IsNotNullOrEmpty();
+            await Assert.That(createdItem.TelephonyCiType).IsEqualTo("SIM Card");
+
+            await client.UpdateTelephonyCITypeAsync(createdItem.RecId!, "Tablet");
+        }
+        finally
+        {
+            if (!string.IsNullOrWhiteSpace(createdItem?.RecId))
+            {
+                await client.DeleteAsync(createdItem.RecId);
+            }
+        }
+    }
+
+    [Test]
     internal async Task GetIncidentByNumber_ReturnsValidResponse()
     {
         // Arrange

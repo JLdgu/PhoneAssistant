@@ -5,6 +5,7 @@ Phone Assistant is a .NET C# WPF desktop application for administering mobile ph
 
 ## Development Environment
 Windows is required to build and develop the WPF application. Visual Studio 2022 or Visual Studio Code with the C# extension are supported options. Use PowerShell for repository build scripts.
+When setting up a new worktree, configure `PhoneAssistant.WPF` as the startup project.
 
 ## Code Style and Conventions
 - Treat `.editorconfig` and established repository patterns as the source of truth. Use 4-space indentation for C#, 2 spaces for XAML/XML, Allman braces, PascalCase for public members, and `I`-prefixed interface names.

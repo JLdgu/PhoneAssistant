@@ -9,6 +9,11 @@ using PhoneAssistant.Model;
 
 namespace PhoneAssistant.WPF.Shared;
 
+public interface IPrintEnvelope
+{
+    void Execute(string documentName, string envelopeInsertText);
+}
+
 internal sealed class PrintEnvelope : IPrintEnvelope
 {
     const int A4_PAGE_HEIGHT = 1169;

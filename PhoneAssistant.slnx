@@ -18,9 +18,12 @@
     <File Path="Live2Test.ps1" />
     <File Path="publish.ps1" />
     <File Path="README.md" />
+    <File Path="user-secrets.ps1" />
   </Folder>
   <Project Path="DbUtil.Tests/DbUtil.Tests.csproj" />
   <Project Path="DbUtil/DbUtil.csproj" />
+  <Project Path="Neurons.api/Neurons.api.csproj" DisplayName="Neurons.Api" />
+  <Project Path="Neurons.Tests/Neurons.Tests.csproj" />
   <Project Path="PhoneAssistant.Cli.Tests/PhoneAssistant.Cli.Tests.csproj" />
   <Project Path="PhoneAssistant.Cli/PhoneAssistant.Cli.csproj" />
   <Project Path="PhoneAssistant.Model.Tests/PhoneAssistant.Model.Tests.csproj" />

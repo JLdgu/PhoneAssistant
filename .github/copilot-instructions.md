@@ -9,6 +9,7 @@ Windows is required to build and develop the WPF application. Visual Studio 2022
 ## Code Style and Conventions
 - Treat `.editorconfig` and established repository patterns as the source of truth. Use 4-space indentation for C#, 2 spaces for XAML/XML, Allman braces, PascalCase for public members, and `I`-prefixed interface names.
 - Avoid `this.` unless needed, prefer explicit types over `var` for built-in types, and use file-scoped namespaces in new or updated C# files.
+- Declare new interfaces alongside their implementing class in that class's source file; do not create separate interface files.
 
 ## Testing
 - Use TUnit for .NET tests. Do not add or migrate to another test framework unless explicitly requested.

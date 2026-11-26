@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+      <ProjectReference Include="..\Neurons.api\Neurons.Api.csproj" />
       <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
       <PackageReference Include="TUnit" />
   </ItemGroup>

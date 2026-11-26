@@ -13,6 +13,8 @@ Windows is required to build and develop the WPF application. Visual Studio 2022
 
 ## Testing
 - Use TUnit for .NET tests. Do not add or migrate to another test framework unless explicitly requested.
+- UAT means User Access Testing; API tests may be run against the UAT service without asking for permission.
+- STG means Staging; ask the user for permission before running any API tests against the STG service.
 - Before changing tests or test configuration, inspect the relevant target framework, SDK settings, test projects, package versions, CI commands, and existing conventions. Use APIs and runner configuration supported by the TUnit version in use; consult its official setup guidance rather than guessing.
 - Preserve existing test intent, coverage, setup, teardown, categories, timeouts, and relevant parallelization. Keep changes focused on testing; do not change production behavior merely to make tests pass or weaken assertions.
 - Keep tests discoverable and runnable through the repository's documented commands and CI. Configure the runner only when needed, preserving unrelated settings in `global.json`.

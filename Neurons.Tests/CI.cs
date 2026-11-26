@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Neurons.Api;
 using TUnit.Core.Logging;
 
 namespace Neurons.Tests;
@@ -6,6 +7,20 @@ namespace Neurons.Tests;
 [Category("Neurons")]
 internal sealed class CI : TestBase
 {
+    [Test]
+    internal async Task GetPhoneConfigurationItemByName_ReturnsCI()
+    {
+        ConfigurationItemClient client = new(HttpClient);
+        ConfigurationItem? configurationItem = await client.GetByNameAsync("350868238038075");
+
+        await Assert.That(configurationItem).IsNotNull();
+        await Assert.That(configurationItem!.Name).IsNotNullOrEmpty();
+        await Assert.That(configurationItem.SerialNumber).IsEqualTo("G41D7KVH46");
+
+        Console.WriteLine(configurationItem.AssetTag);
+        Console.WriteLine(configurationItem.CiType);
+    }
+
     [Test]
     internal async Task GetIncidentByNumber_ReturnsValidResponse()
     {
